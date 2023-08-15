@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Web\Auth\AdminAuthController;
+use App\Http\Controllers\Web\DashboardController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,5 +17,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('admin-page.dashboard.dashboard');
+});
+
+Route::get('/login', [AdminAuthController::class, 'login']);
+Route::post('/login', [AdminAuthController::class, 'saveLogin'])->name('admin.saveLogin');
+
+Route::group(['prefix'=> 'admin', 'as' => 'admin.'], function(){
+    Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+
 });
