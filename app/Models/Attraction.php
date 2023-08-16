@@ -5,29 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Tour extends Model
+class Attraction extends Model
 {
     use HasFactory;
-    protected $table = 'tours';
+    protected $table = 'attractions';
     protected $fillable = [
-        'capacity',
-        'under_age_limit',
-        'over_age_limit',
-        'tour_provider_id',
-        'package_tour',
         'name',
-        'type',
-        'description',
-        'contact_no',
+        'attraction_provider',
         'featured_image',
         'images',
+        'contact_no',
+        'description',
+        'interests',
+        'youtube_id',
+        'product_categories',
+        'price',
         'operating_hours',
         'is_cancellable',
         'is_refundable',
         'status',
-        'links',
-        'minimum_capacity',
-        'tour_itinerary',
-        'tour_inclusions'
     ];
 }

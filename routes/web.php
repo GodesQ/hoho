@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\Auth\AdminAuthController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\TourController;
+use App\Http\Controllers\Web\AttractionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,10 +28,10 @@ Route::get('/', function () {
     }
 });
 
-Route::get('login', [AdminAuthController::class, 'login'])->name('admin.login');
-Route::post('login', [AdminAuthController::class, 'saveLogin'])->name('admin.saveLogin');
+Route::get('admin/login', [AdminAuthController::class, 'login'])->name('admin.login');
+Route::post('admin/login', [AdminAuthController::class, 'saveLogin'])->name('admin.saveLogin');
 
-Route::group(['prefix'=> 'admin', 'as' => 'admin.'], function(){
+Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function(){
     Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
@@ -47,4 +48,11 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.'], function(){
     Route::get('tours/edit/{id}', [TourController::class, 'edit'])->name('tours.edit');
     Route::post('tours/update/{id}', [TourController::class, 'update'])->name('tours.update');
     Route::delete('tours/destroy', [TourController::class, 'destroy'])->name('tours.destroy');
+
+    Route::get('attractions', [AttractionController::class, 'list'])->name('attractions.list');
+    Route::get('attractions/create', [AttractionController::class, 'create'])->name('attractions.create');
+    Route::post('attractions/store', [AttractionController::class, 'store'])->name('attractions.store');
+    Route::get('attractions/edit/{id}', [AttractionController::class, 'edit'])->name('attractions.edit');
+    Route::post('attractions/update/{id}', [AttractionController::class, 'update'])->name('attractions.update');
+    Route::delete('attractions/destroy', [AttractionController::class, 'destroy'])->name('attractions.destroy');
 });

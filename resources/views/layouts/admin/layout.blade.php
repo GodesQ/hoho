@@ -145,8 +145,8 @@
                         </a>
                     </li>
                     <!-- Attractions -->
-                    <li class="menu-item">
-                        <a href="#" class="menu-link">
+                    <li class="menu-item {{ preg_match('/admin\/attractions/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.attractions.list') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-dock-bottom"></i>
                             <div data-i18n="Attractions">Attractions</div>
                         </a>
@@ -351,6 +351,8 @@
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     @if (Session::get('success'))
         <script>

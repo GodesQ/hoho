@@ -20,7 +20,7 @@
                                     <div class="mb-3">
                                         <label for="name" class="form-label">Tour Name <span
                                                 class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" name="name">
+                                        <input type="text" class="form-control" name="name" required>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -28,10 +28,10 @@
                                         <label for="name" class="form-label">Tour Type</label>
                                         <select name="type" id="type" class="form-select">
                                             <option value="">---- SELECT TOUR TYPE ----</option>
-                                            <option value="Luxury">Luxury Tour</option>
-                                            <option value="City">City Tour</option>
-                                            <option value="Guided">Guided Tour</option>
-                                            <option value="DIY">DIY Tour Tour</option>
+                                            <option value="Luxury Tour">Luxury Tour</option>
+                                            <option value="City Tour">City Tour</option>
+                                            <option value="Guided Tour">Guided Tour</option>
+                                            <option value="DIY Tour">DIY Tour</option>
                                             <option value="Others">Others</option>
                                         </select>
                                     </div>
@@ -86,13 +86,25 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="description" class="form-label">Description</label>
-                                        <textarea name="description" id="description" cols="30" rows="7" class="form-control"></textarea>
+                                        <textarea name="description" id="description" cols="30" rows="5" class="form-control"></textarea>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="operating_hours" class="form-label">Operating Hours</label>
-                                        <textarea name="operating_hours" id="operating_hours" cols="30" rows="7" class="form-control"></textarea>
+                                        <textarea name="operating_hours" id="operating_hours" cols="30" rows="5" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="tour_itinerary" class="form-label">Tour Itinerary</label>
+                                        <textarea name="tour_itinerary" id="tour_itinerary" cols="30" rows="5" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="tour_inclusions" class="form-label">Tour Inclusions</label>
+                                        <textarea name="tour_inclusions" id="tour_inclusions" cols="30" rows="5" class="form-control"></textarea>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -110,12 +122,12 @@
                                         <div class="col-lg-6">
                                             <div class="form-check ">
                                                 <input name="status" class="form-check-input" type="radio"
-                                                    value="active" id="statusActive" checked />
+                                                    value="1" id="statusActive" checked />
                                                 <label class="form-check-label" for="statusActive"> Active </label>
                                             </div>
                                             <div class="form-check">
                                                 <input name="status" class="form-check-input" type="radio"
-                                                    value="inactive" id="statusInactive" />
+                                                    value="0" id="statusInactive" />
                                                 <label class="form-check-label" for="statusInactive"> In Active </label>
                                             </div>
                                         </div>
