@@ -5,23 +5,18 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Models\User;
-use DataTables;
+use App\Models\Tour;
 
-class UserController extends Controller
+use DataTables;
+class TourController extends Controller
 {
     public function list(Request $request) {
+
         if($request->ajax()) {
-            $data = User::latest('created_at');
+            $data = Tour::latest();
             return DataTables::of($data)
                     ->addIndexColumn()
-                    ->addColumn('username', function($row) {
-                        return '<a href="/admin/users/edit/' .$row->id. '">'. $row->username .'</a>';
-                    })
-                    ->addColumn('status', function($row) {
-                        return '<span class="badge bg-label-success me-1">Active</span>';
-                    })
-                    ->addColumn('actions', function($row) {
+                    ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
                                     <i class="bx bx-dots-vertical-rounded"></i>
@@ -36,15 +31,15 @@ class UserController extends Controller
                                     </div>
                                 </div>';
                     })
-                    ->rawColumns(['status', 'username', 'actions'])
+                    ->rawColumns(['actions'])
                     ->make(true);
         }
 
-        return view('admin-page.users.list-user');
+        return view('admin-page.tours.list-tour');
     }
 
     public function create(Request $request) {
-        return view('admin-page.users.create-user');
+        return view('admin-page.tours.create-tour');
     }
 
     public function store(Request $request) {
@@ -52,11 +47,11 @@ class UserController extends Controller
     }
 
     public function edit(Request $request) {
-        return view('admin-page.users.edit-user');
+        return view('admin-page.tours.edit-tour');
     }
 
     public function update(Request $request) {
-        dd($request->all());
+
     }
 
     public function destroy(Request $request) {

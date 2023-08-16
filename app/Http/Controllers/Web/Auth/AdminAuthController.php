@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
+use App\Http\Requests\AdminAuth\LoginRequest;
+
 use App\Models\Admin;
 
 class AdminAuthController extends Controller
@@ -15,12 +17,17 @@ class AdminAuthController extends Controller
         return view('admin-page.auth.login');
     }
 
-    public function saveLogin(Request $request) {
-        $credentials = $request->except('_token');
+    public function saveLogin(LoginRequest $request) {
+        $credentials = $request->validated();
         if (Auth::guard('admin')->attempt(array_merge($credentials))) {
             return redirect()->route('admin.dashboard')->with('success', 'Login Successfully');
         } else {
             return back()->with('fail', 'Invalid Credentials.');
         }
+    }
+
+    public function logout(Request $request) {
+        Auth::logout();
+        return redirect()->route('admin.login');
     }
 }

@@ -6,6 +6,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta property="fb:app_id" content="514817087155790" />
+    <meta property="og:title" content="Guest Partner Dashboard" />
+    <meta property="og:description" content="The official LGU / Merchant dashboard for Guest PH." />
+    <meta property="og:image" content="http://guest-app-main.s3.ap-southeast-1.amazonaws.com/Web/guest-brand-logo.jpg" />
+    <meta property="og:image:secure_url" content="https://guest-app-main.s3.ap-southeast-1.amazonaws.com/Web/guest-brand-logo.jpg" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://guestapp.ph" />
+    <meta property="og:site_name" content="guestapp.ph" />
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" href="{{ URL::asset('assets/img/logo/hoho.jpg') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ URL::asset('assets/img/logo/hoho.jpg') }}">
     <title>@yield('title')</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,11 +43,14 @@
 
     <link rel="stylesheet" href="{{ URL::asset('assets/vendor/libs/apex-charts/apex-charts.css') }}" />
 
+    <link rel="stylesheet" href="{{ URL::asset('assets/css/selects/select2.min.css') }}">
+
     <!-- Page CSS -->
 
     <!-- Helpers -->
     <script src="{{ URL::asset('assets/vendor/js/helpers.js') }}"></script>
 
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
 
 
@@ -49,7 +67,7 @@
 
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo">
-                    <a href="index.html" class="app-brand-link">
+                    <a href="{{ route('admin.dashboard') }}" class="app-brand-link">
                         <span class="app-brand-logo demo">
                             <img src="https://pepmedia.s3.ap-southeast-1.amazonaws.com/clients/hoho.jpg"
                                 style="width:35px; border-radius: 5px;" alt="">
@@ -67,8 +85,8 @@
 
                 <ul class="menu-inner py-1">
                     <!-- Dashboard -->
-                    <li class="menu-item active">
-                        <a href="index.html" class="menu-link">
+                    <li class="menu-item {{ preg_match('/admin\/dashboard/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.dashboard') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-home-circle"></i>
                             <div data-i18n="Dashboard">Dashboard</div>
                         </a>
@@ -77,14 +95,14 @@
                     <li class="menu-header small text-uppercase">
                         <span class="menu-header-text">Accounts</span>
                     </li>
-                    <li class="menu-item">
-                        <a href="index.html" class="menu-link">
+                    <li class="menu-item {{ preg_match('/admin\/users/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.users.list') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-user-circle"></i>
-                            <div data-i18n="Users">Users</div>
+                            <div data-i18n="Guests">Guests</div>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="index.html" class="menu-link">
+                        <a href="" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-user-circle"></i>
                             <div data-i18n="Admins">Admins</div>
                         </a>
@@ -120,8 +138,8 @@
                     <!-- Components -->
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Tours</span></li>
                     <!-- Tours -->
-                    <li class="menu-item">
-                        <a href="#" class="menu-link">
+                    <li class="menu-item {{ preg_match('/admin\/tours/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.tours.list') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-dock-top"></i>
                             <div data-i18n="Tours">Tours</div>
                         </a>
@@ -173,7 +191,7 @@
                         </a>
                     </li>
 
-                    <!-- Transactions -->
+                    <!-- Others -->
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Others</span></li>
                     <li class="menu-item">
                         <a href="icons-boxicons.html" class="menu-link">
@@ -185,6 +203,21 @@
                         <a href="icons-boxicons.html" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-gift"></i>
                             <div data-i18n="Referrals">Referrals</div>
+                        </a>
+                    </li>
+
+                    <!-- Roles & Permissions -->
+                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Roles & Permissions</span></li>
+                    <li class="menu-item">
+                        <a href="icons-boxicons.html" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-user-check"></i>
+                            <div data-i18n="Roles">Roles</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="icons-boxicons.html" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-user-check"></i>
+                            <div data-i18n="Permissions">Permissions</div>
                         </a>
                     </li>
                 </ul>
@@ -220,7 +253,7 @@
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
                                     data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
-                                        <img src="../assets/img/avatars/1.png" alt
+                                        <img src="{{ URL::asset('assets/img/avatars/6.png') }}" alt
                                             class="w-px-40 h-auto rounded-circle" />
                                     </div>
                                 </a>
@@ -230,12 +263,12 @@
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 me-3">
                                                     <div class="avatar avatar-online">
-                                                        <img src="../assets/img/avatars/1.png" alt
+                                                        <img src="{{ URL::asset('assets/img/avatars/6.png') }}" alt
                                                             class="w-px-40 h-auto rounded-circle" />
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <span class="fw-semibold d-block">John Doe</span>
+                                                    <span class="fw-semibold d-block">{{ Auth::guard('admin')->user()->username }}</span>
                                                     <small class="text-muted">Admin</small>
                                                 </div>
                                             </div>
@@ -269,11 +302,15 @@
                                     <li>
                                         <div class="dropdown-divider"></div>
                                     </li>
-                                    <li>
-                                        <a class="dropdown-item" href="auth-login-basic.html">
+                                    <li onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <a class="dropdown-item" href="#">
                                             <i class="bx bx-power-off me-2"></i>
                                             <span class="align-middle">Log Out</span>
                                         </a>
+                                        <form method="POST" action="{{ route('admin.logout') }}" id="logout-form"
+                                            style="display: none;">
+                                            @csrf
+                                        </form>
                                     </li>
                                 </ul>
                             </li>
@@ -296,6 +333,7 @@
     <script src="{{ URL::asset('assets/vendor/libs/popper/popper.js') }}"></script>
     <script src="{{ URL::asset('assets/vendor/js/bootstrap.js') }}"></script>
     <script src="{{ URL::asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ URL::asset('assets/js/select/select2.full.min.js') }}"></script>
 
     <script src="{{ URL::asset('assets/vendor/js/menu.js') }}"></script>
     <!-- endbuild -->
@@ -308,8 +346,10 @@
 
     <!-- Page JS -->
     <script src="{{ URL::asset('assets/js/dashboards-analytics.js') }}"></script>
+    <script src="{{ asset('assets/js/select/form-select2.js') }}"></script>
 
-
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     @if (Session::get('success'))

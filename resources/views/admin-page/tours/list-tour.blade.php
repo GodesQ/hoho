@@ -1,12 +1,12 @@
 @extends('layouts.admin.layout')
 
-@section('title', 'Guests List')
+@section('title', 'Hop On Hop Off - Tours List')
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center">
-        <h4 class="fw-bold py-3 mb-4">Guests List</h4>
-        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">Add User <i class="bx bx-plus"></i></a>
+        <h4 class="fw-bold py-3 mb-4">Tours List</h4>
+        <a href="{{ route('admin.tours.create') }}" class="btn btn-primary">Add Tour <i class="bx bx-plus"></i></a>
     </div>
 
     <div class="card">
@@ -16,8 +16,8 @@
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Username</th>
-                            <th>Email</th>
+                            <th>Tour</th>
+                            <th>Tour Provider</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -34,23 +34,23 @@
         function loadTable() {
             let table = $('.data-table').DataTable({
                 processing: true,
-                pageLength: 25,
+                pageLength: 10,
                 responsive: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('admin.users.list') }}"
+                    url: "{{ route('admin.tours.list') }}"
                 },
                 columns: [{
-                        data: 'account_uid',
-                        name: 'account_uid'
+                        data: 'id',
+                        name: 'id'
                     },
                     {
-                        data: 'username',
-                        name: 'username'
+                        data: 'tour',
+                        name: 'tour'
                     },
                     {
-                        data: 'email',
-                        name: 'email'
+                        data: 'tour_provider',
+                        name: 'tour_provider'
                     },
                     {
                         data: 'status',
@@ -61,7 +61,7 @@
                         name: 'actions'
                     }
                 ],
-            })
+            });
         }
 
         loadTable();
