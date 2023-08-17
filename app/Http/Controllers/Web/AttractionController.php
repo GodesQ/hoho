@@ -51,7 +51,14 @@ class AttractionController extends Controller
     }
 
     public function store(Request $request) {
+        $data = $request->except('_token');
+        $attraction = Attraction::create(array_merge($data, [
+            'is_cancellable' => $request->has('is_cancellable'),
+            'is_refundable' => $request->has('is_refundable'),
+            'status' => $request->has('is_active'),
+        ]));
 
+        if($attraction) return redirect()->route('admin.attractions.edit', $attraction->id)->withSuccess('Attraction Created Successfully');
     }
 
     public function edit(Request $request) {
@@ -60,10 +67,27 @@ class AttractionController extends Controller
     }
 
     public function update(Request $request) {
+        $data = $request->except("_token");
+        $attraction = Attraction::findOrFail($request->id);
 
+        $update_attraction = $attraction->update(array_merge($data, [
+            'is_cancellable' => $request->has('is_cancellable'),
+            'is_refundable' => $request->has('is_refundable'),
+            'status' => $request->has('is_active'),
+        ]));
+
+        if($update_attraction) return back()->withSuccess('Attraction Updated Successfully');
     }
 
     public function destroy(Request $request) {
+        $attraction = Attraction::findOrFail($request->id);
 
+        $remove_attraction = $attraction->delete();
+        if($remove_attraction) {
+            return response([
+                'status' => true,
+                'message' => 'Attraction deleted successfully'
+            ]);
+        }
     }
 }

@@ -60,6 +60,50 @@
                                 id="price">
                         </div>
                     </div>
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label for="contact_no" class="form-label">Contact Number</label>
+                            <input type="text" class="form-control" name="contact_no"
+                                id="contact_no">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label for="youtube_id" class="form-label">Youtube Id</label>
+                            <input type="text" class="form-control" name="youtube_id"
+                                id="youtube_id">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea name="description" id="description" cols="30" rows="5" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label for="operating_hours" class="form-label">Operating Hours</label>
+                            <textarea name="operating_hours" id="operating_hours" cols="30" rows="5" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="isCancellable" name="is_cancellable" />
+                                    <label class="form-check-label" for="isCancellable">Cancellable</label>
+                                </div>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="isRefundable" name="is_refundable" />
+                                    <label class="form-check-label" for="isRefundable">Refundable</label>
+                                </div>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="isActive" name="is_active" />
+                                    <label class="form-check-label" for="isActive">Active</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <hr>

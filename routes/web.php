@@ -8,6 +8,11 @@ use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\TourController;
 use App\Http\Controllers\Web\AttractionController;
+use App\Http\Controllers\Web\MerchantController;
+use App\Http\Controllers\Web\MerchantHotelController;
+use App\Http\Controllers\Web\MerchantStoreController;
+
+use App\Http\Controllers\Web\InterestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,4 +60,34 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('attractions/edit/{id}', [AttractionController::class, 'edit'])->name('attractions.edit');
     Route::post('attractions/update/{id}', [AttractionController::class, 'update'])->name('attractions.update');
     Route::delete('attractions/destroy', [AttractionController::class, 'destroy'])->name('attractions.destroy');
+
+    Route::get('merchants', [MerchantController::class, 'list'])->name('merchants.list');
+    Route::get('merchants/create', [MerchantController::class, 'create'])->name('merchants.create');
+    Route::post('merchants/store', [MerchantController::class, 'store'])->name('merchants.store');
+    Route::get('merchants/edit/{id}', [MerchantController::class, 'edit'])->name('merchants.edit');
+    Route::post('merchants/update/{id}', [MerchantController::class, 'update'])->name('merchants.update');
+    Route::delete('merchants/destroy', [MerchantController::class, 'destroy'])->name('merchants.destroy');
+
+    Route::prefix('merchants')->as('merchants.')->group(function () {
+        Route::get('hotels', [MerchantHotelController::class, 'list'])->name('hotels.list');
+        Route::get('hotels/create', [MerchantHotelController::class, 'create'])->name('hotels.create');
+        Route::post('hotels/store', [MerchantHotelController::class, 'store'])->name('hotels.store');
+        Route::get('hotels/edit/{id}', [MerchantHotelController::class, 'edit'])->name('hotels.edit');
+        Route::post('hotels/update/{id}', [MerchantHotelController::class, 'update'])->name('hotels.update');
+        Route::delete('hotels/destroy', [MerchantHotelController::class, 'destroy'])->name('hotels.destroy');
+
+        Route::get('stores', [MerchantStoreController::class, 'list'])->name('stores.list');
+        Route::get('stores/create', [MerchantStoreController::class, 'create'])->name('stores.create');
+        Route::post('stores/store', [MerchantStoreController::class, 'store'])->name('stores.store');
+        Route::get('stores/edit/{id}', [MerchantStoreController::class, 'edit'])->name('stores.edit');
+        Route::post('stores/update/{id}', [MerchantStoreController::class, 'update'])->name('stores.update');
+        Route::delete('stores/destroy', [MerchantStoreController::class, 'destroy'])->name('stores.destroy');
+    });
+
+    Route::get('interests', [InterestController::class, 'list'])->name('interests.list');
+    Route::get('interests/create', [InterestController::class, 'create'])->name('interests.create');
+    Route::post('interests/store', [InterestController::class, 'store'])->name('interests.store');
+    Route::get('interests/edit/{id}', [InterestController::class, 'edit'])->name('interests.edit');
+    Route::post('interests/update/{id}', [InterestController::class, 'update'])->name('interests.update');
+    Route::delete('interests/destroy', [InterestController::class, 'destroy'])->name('interests.destroy');
 });

@@ -1,12 +1,12 @@
 @extends('layouts.admin.layout')
 
-@section('title', 'Hop On Hop Off - Attractions List')
+@section('title', 'Hop On Hop Off - Stores List')
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center">
-        <h4 class="fw-bold py-3 mb-4">Attractions List</h4>
-        <a href="{{ route('admin.attractions.create') }}" class="btn btn-primary">Add Attraction <i class="bx bx-plus"></i></a>
+        <h4 class="fw-bold py-3 mb-4">Stores List</h4>
+        <a href="{{ route('admin.merchants.stores.create') }}" class="btn btn-primary">Add Store <i class="bx bx-plus"></i></a>
     </div>
 
     <div class="card">
@@ -15,10 +15,9 @@
                 <table class="table table-striped data-table">
                     <thead>
                         <tr>
-                            <th>Id</th>
                             <th>Name</th>
+                            <th>Nature Of Business</th>
                             <th>Interests</th>
-                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -38,29 +37,25 @@
                 responsive: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('admin.attractions.list') }}"
+                    url: "{{ route('admin.merchants.stores.list') }}"
                 },
                 columns: [
                     {
-                        data: 'id',
-                        name: 'id',
+                        data: 'name',
+                        name: 'name',
                     },
                     {
-                        data: 'name',
-                        name: 'name'
+                        data: 'nature_of_business',
+                        name: 'nature_of_business'
                     },
                     {
                         data: 'interests',
                         name: 'interests'
                     },
                     {
-                        data: 'status',
-                        name: 'status'
-                    },
-                    {
                         data: 'actions',
                         name: 'actions'
-                    }
+                    },
                 ]
             })
         }
@@ -69,7 +64,7 @@
             let id = $(this).attr("id");
             Swal.fire({
                 title: 'Are you sure?',
-                text: "Remove attraction from list",
+                text: "Remove hotel from list",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -78,7 +73,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "{{ route('admin.attractions.destroy') }}",
+                        url: "{{ route('admin.merchants.stores.destroy') }}",
                         method: "DELETE",
                         data: {
                             _token: "{{ csrf_token() }}",

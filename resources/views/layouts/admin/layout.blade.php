@@ -107,14 +107,14 @@
                             <div data-i18n="Admins">Admins</div>
                         </a>
                     </li>
-                    <li class="menu-item">
+                    <li class="menu-item {{ preg_match('/admin\/merchants/', Request::path()) ? 'active open' : null }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons bx bx-cube-alt"></i>
                             <div data-i18n="Merchants">Merchants</div>
                         </a>
                         <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
+                            <li class="menu-item {{ preg_match('/admin\/merchants\/stores/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.merchants.stores.list') }}" class="menu-link">
                                     <div data-i18n="Stores">Stores</div>
                                 </a>
                             </li>
@@ -123,8 +123,8 @@
                                     <div data-i18n="Restaurants">Restaurants</div>
                                 </a>
                             </li>
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
+                            <li class="menu-item {{ preg_match('/admin\/merchants\/hotels/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.merchants.hotels.list') }}" class="menu-link">
                                     <div data-i18n="Hotels">Hotels</div>
                                 </a>
                             </li>
@@ -168,7 +168,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="icons-boxicons.html" class="menu-link">
+                        <a href="#" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-file"></i>
                             <div data-i18n="Tour Reservations">Tour Reservations</div>
                         </a>
@@ -179,13 +179,13 @@
                             Reports</span></li>
                     <!-- Forms -->
                     <li class="menu-item">
-                        <a href="icons-boxicons.html" class="menu-link">
+                        <a href="#" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-money"></i>
                             <div data-i18n="Booking Transactions">Booking Transactions</div>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="icons-boxicons.html" class="menu-link">
+                        <a href="#" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-chart"></i>
                             <div data-i18n="Reports">Reports</div>
                         </a>
@@ -193,14 +193,14 @@
 
                     <!-- Others -->
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Others</span></li>
-                    <li class="menu-item">
-                        <a href="icons-boxicons.html" class="menu-link">
+                    <li class="menu-item {{ preg_match('/admin\/interests/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.interests.list') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-square"></i>
                             <div data-i18n="Interests">Interests</div>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="icons-boxicons.html" class="menu-link">
+                        <a href="#" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-gift"></i>
                             <div data-i18n="Referrals">Referrals</div>
                         </a>
@@ -209,13 +209,13 @@
                     <!-- Roles & Permissions -->
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Roles & Permissions</span></li>
                     <li class="menu-item">
-                        <a href="icons-boxicons.html" class="menu-link">
+                        <a href="#" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-user-check"></i>
                             <div data-i18n="Roles">Roles</div>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="icons-boxicons.html" class="menu-link">
+                        <a href="#" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-user-check"></i>
                             <div data-i18n="Permissions">Permissions</div>
                         </a>
