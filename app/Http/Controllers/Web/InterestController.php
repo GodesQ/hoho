@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 use App\Models\Interest;
 use DataTables;
@@ -21,7 +22,7 @@ class InterestController extends Controller
                                 <i class="bx bx-dots-vertical-rounded"></i>
                                 </button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="/admin/merchants/stores/edit/' .$row->id. '">
+                                    <a class="dropdown-item" href="/admin/interests/edit/' .$row->id. '">
                                         <i class="bx bx-edit-alt me-1"></i> Edit
                                     </a>
                                     <a class="dropdown-item remove-btn" href="javascript:void(0);" id="' .$row->id. '">
@@ -43,10 +44,27 @@ class InterestController extends Controller
 
     public function store(Request $request) {
 
+        if($request->hasFile('image')) {
+            $file = $request->file('image');
+            $file_name = Str::snake(Str::lower($request->name)) . '.' . $file->getClientOriginalExtension();
+            $save_file = $file->move(public_path() . '/assets/img/interests', $file_name);
+        } else {
+            $file_name = null;
+        }
+
+        $interest = Interest::create([
+            'name' => $request->name,
+            'image' => $file_name
+        ]);
+
+        if($interest) return redirect()->route('admin.interests.edit', $interest->id)->withSuccess('Interest Created Successfully');
+
+        abort(404);
     }
 
     public function edit(Request $request) {
-        return view('admin-page.interests.edit-interest');
+        $interest = Interest::where('id', $request->id)->firstOrFail();
+        return view('admin-page.interests.edit-interest', compact('interest'));
     }
 
     public function update(Request $request) {

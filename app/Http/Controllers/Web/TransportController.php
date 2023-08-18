@@ -5,62 +5,57 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Models\User;
+use App\Models\Transport;
+
 use DataTables;
 
-class UserController extends Controller
+class TransportController extends Controller
 {
     public function list(Request $request) {
+
         if($request->ajax()) {
-            $data = User::latest('created_at');
+            $data = Transport::latest();
             return DataTables::of($data)
                     ->addIndexColumn()
-                    ->addColumn('username', function($row) {
-                        return '<a href="/admin/users/edit/' .$row->id. '">'. $row->username .'</a>';
+                    ->addColumn('transport_provider', function() {
+                        return null;
                     })
-                    ->addColumn('status', function($row) {
-                        if($row->status == 'active') {
-                            return '<span class="badge bg-label-success me-1">Active</span>';
-                        } else {
-                            return '<span class="badge bg-label-warning me-1">In Active</span>';
-                        }
-                    })
-                    ->addColumn('actions', function($row) {
+                    ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
                                     <i class="bx bx-dots-vertical-rounded"></i>
                                     </button>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="/admin/users/edit/' .$row->id. '">
+                                        <a class="dropdown-item" href="/admin/transports/edit/' .$row->id. '">
                                             <i class="bx bx-edit-alt me-1"></i> Edit
                                         </a>
-                                        <a class="dropdown-item" href="javascript:void(0);">
+                                        <a class="dropdown-item remove-btn" href="javascript:void(0);" id="' .$row->id. '">
                                             <i class="bx bx-trash me-1"></i> Delete
                                         </a>
                                     </div>
                                 </div>';
                     })
-                    ->rawColumns(['status', 'username', 'actions'])
+                    ->rawColumns(['actions', 'transport_provider'])
                     ->make(true);
         }
 
-        return view('admin-page.users.list-user');
+        return view('admin-page.transports.list-transport');
     }
 
     public function create(Request $request) {
-        return view('admin-page.users.create-user');
+        return view('admin-page.transports.create-transport');
     }
 
     public function store(Request $request) {
-        dd($request->all());
+
     }
 
     public function edit(Request $request) {
-        return view('admin-page.users.edit-user');
+        return view('admin-page.transports.edit-transport');
     }
 
     public function update(Request $request) {
-        dd($request->all());
+
     }
 
     public function destroy(Request $request) {

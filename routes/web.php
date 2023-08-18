@@ -7,12 +7,14 @@ use App\Http\Controllers\Web\Auth\AdminAuthController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\TourController;
+use App\Http\Controllers\Web\TransportController;
 use App\Http\Controllers\Web\AttractionController;
 use App\Http\Controllers\Web\MerchantController;
 use App\Http\Controllers\Web\MerchantHotelController;
 use App\Http\Controllers\Web\MerchantStoreController;
 
 use App\Http\Controllers\Web\InterestController;
+use App\Http\Controllers\Web\OrganizationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,12 +49,26 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::post('users/update/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('users/destroy', [UserController::class, 'destroy'])->name('users.destroy');
 
+    Route::get('organizations', [OrganizationController::class, 'list'])->name('organizations.list');
+    Route::get('organizations/create', [OrganizationController::class, 'create'])->name('organizations.create');
+    Route::post('organizations/store', [OrganizationController::class, 'store'])->name('organizations.store');
+    Route::get('organizations/edit/{id}', [OrganizationController::class, 'edit'])->name('organizations.edit');
+    Route::post('organizations/update/{id}', [OrganizationController::class, 'update'])->name('organizations.update');
+    Route::delete('organizations/destroy', [OrganizationController::class, 'destroy'])->name('organizations.destroy');
+
     Route::get('tours', [TourController::class, 'list'])->name('tours.list');
     Route::get('tours/create', [TourController::class, 'create'])->name('tours.create');
     Route::post('tours/store', [TourController::class, 'store'])->name('tours.store');
     Route::get('tours/edit/{id}', [TourController::class, 'edit'])->name('tours.edit');
     Route::post('tours/update/{id}', [TourController::class, 'update'])->name('tours.update');
     Route::delete('tours/destroy', [TourController::class, 'destroy'])->name('tours.destroy');
+
+    Route::get('transports', [TransportController::class, 'list'])->name('transports.list');
+    Route::get('transports/create', [TransportController::class, 'create'])->name('transports.create');
+    Route::post('transports/store', [TransportController::class, 'store'])->name('transports.store');
+    Route::get('transports/edit/{id}', [TransportController::class, 'edit'])->name('transports.edit');
+    Route::post('transports/update/{id}', [TransportController::class, 'update'])->name('transports.update');
+    Route::delete('transports/destroy', [TransportController::class, 'destroy'])->name('transports.destroy');
 
     Route::get('attractions', [AttractionController::class, 'list'])->name('attractions.list');
     Route::get('attractions/create', [AttractionController::class, 'create'])->name('attractions.create');

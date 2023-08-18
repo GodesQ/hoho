@@ -101,6 +101,12 @@
                             <div data-i18n="Guests">Guests</div>
                         </a>
                     </li>
+                    <li class="menu-item {{ preg_match('/admin\/organizations/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.organizations.list') }}" class="menu-link">
+                            <i class='bx bx-globe menu-icon'></i>
+                            <div data-i18n="Organizations">Organizations</div>
+                        </a>
+                    </li>
                     <li class="menu-item">
                         <a href="" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-user-circle"></i>
@@ -154,14 +160,14 @@
 
                     <li class="menu-item">
                         <a href="#" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-dock-bottom"></i>
+                            <i class='menu-icon tf-icons bx bx-body'></i>
                             <div data-i18n="Activities">Activities</div>
                         </a>
                     </li>
 
                     <!-- Transports -->
-                    <li class="menu-item">
-                        <a href="#" class="menu-link">
+                    <li class="menu-item {{ preg_match('/admin\/transports/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.transports.list') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-bus"></i>
                             <div data-i18n="Transports">Transports</div>
                         </a>
@@ -195,7 +201,7 @@
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Others</span></li>
                     <li class="menu-item {{ preg_match('/admin\/interests/', Request::path()) ? 'active' : null }}">
                         <a href="{{ route('admin.interests.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-square"></i>
+                            <i class="menu-icon tf-icons bx bx-bulb"></i>
                             <div data-i18n="Interests">Interests</div>
                         </a>
                     </li>
