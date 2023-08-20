@@ -10,7 +10,6 @@ class Admin extends Authenticatable
 {
     use HasFactory;
     protected $table = 'admins';
-    protected $fillable = ['username', 'email', 'password', 'firstname', 'lastname', 'middlename', 'age', 'birthdate', 'is_active'];
-
+    protected $fillable = ['username', 'email', 'password', 'firstname', 'lastname', 'middlename', 'age', 'birthdate', 'role', 'is_active'];
     protected $hidden = ['password'];
 }

@@ -107,8 +107,8 @@
                             <div data-i18n="Organizations">Organizations</div>
                         </a>
                     </li>
-                    <li class="menu-item">
-                        <a href="" class="menu-link">
+                    <li class="menu-item {{ preg_match('/admin\/admins/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.admins.list') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-user-circle"></i>
                             <div data-i18n="Admins">Admins</div>
                         </a>
@@ -173,8 +173,8 @@
                         </a>
                     </li>
 
-                    <li class="menu-item">
-                        <a href="#" class="menu-link">
+                    <li class="menu-item {{ preg_match('/admin\/tour_reservations/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.tour_reservations.list') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-file"></i>
                             <div data-i18n="Tour Reservations">Tour Reservations</div>
                         </a>
@@ -214,8 +214,8 @@
 
                     <!-- Roles & Permissions -->
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Roles & Permissions</span></li>
-                    <li class="menu-item">
-                        <a href="#" class="menu-link">
+                    <li class="menu-item {{ preg_match('/admin\/roles/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.roles.list') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-user-check"></i>
                             <div data-i18n="Roles">Roles</div>
                         </a>
@@ -358,6 +358,7 @@
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initMap"></script> --}}
 
 
     @if (Session::get('success'))

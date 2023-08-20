@@ -10,10 +10,10 @@
         </div>
 
         <div class="row">
-            <div class="col-xl">
+            <div class="col-lg-8">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('admin.tours.update', $tour->id) }}" method="POST">
+                        <form action="{{ route('admin.tours.update', $tour->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
                                 <div class="col-lg-6">
@@ -40,7 +40,7 @@
                                     <div class="mb-3">
                                         <label for="featured_image" class="form-label">Featured Image</label>
                                         <input type="file" class="form-control" name="featured_image"
-                                            id="featured_image">
+                                            id="featured_image" accept="image/*">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -81,6 +81,16 @@
                                             <label for="capacity" class="form-label">Maximum Capacity</label>
                                             <input type="number" class="form-control" name="capacity" id="capacity" value="{{ $tour->capacity }}">
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="mb-3">
+                                        <label for="attractions_assignments" class="form-label">Attractions Assignment</label>
+                                        <select name="attractions_assignments_ids" id="attractions_assignments" class="select2 form-select" multiple>
+                                            @foreach ($attractions as $attraction)
+                                                <option value="{{ $attraction->id }}">{{ $attraction->name }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -145,6 +155,41 @@
                     </div>
                 </div>
             </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>Preview of Featured Image</h6>
+                        @if($tour->featured_image)
+                            <img src="{{ URL::asset('assets/img/tours/' . $tour->id . '/' . $tour->featured_image) }}" alt="{{ $tour->name }}" style="border-radius: 10px !important;" id="previewImage" width="100%">
+                        @else
+                            <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt="{{ $tour->name }}" style="border-radius: 10px !important;" id="previewImage" width="100%">
+                        @endif
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        // Function to handle file selection and display preview image
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const previewImage = document.getElementById('previewImage');
+                    previewImage.src = event.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Attach the 'handleFileSelect' function to the file input's change event
+        document.getElementById('featured_image').addEventListener('change', handleFileSelect);
+    </script>
+@endpush

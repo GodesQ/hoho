@@ -28,6 +28,7 @@ class Tour extends Model
         'links',
         'minimum_capacity',
         'tour_itinerary',
-        'tour_inclusions'
+        'tour_inclusions',
+        'attractions_assignments_ids'
     ];
 }

@@ -83,6 +83,16 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-lg-12">
+                                    <div class="mb-3">
+                                        <label for="attractions_assignments" class="form-label">Attractions Assignment</label>
+                                        <select name="attractions_assignments_ids" id="attractions_assignments" class="select2 form-select" multiple>
+                                            @foreach ($attractions as $attraction)
+                                                <option value="{{ $attraction->id }}">{{ $attraction->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="description" class="form-label">Description</label>

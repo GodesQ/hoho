@@ -76,6 +76,28 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <input type="text" class="form-control" name="address" id="address" value="{{ $attraction->address }}">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label action="latitude" class="form-label">Latitude</label>
+                                    <input type="text" class="form-control" name="latitude" id="latitude" value="{{ $attraction->latitude }}">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label action="longitude" class="form-label">longitude</label>
+                                    <input type="text" class="form-control" name="longitude" id="longitude" value="{{ $attraction->longitude }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea name="description" id="description" cols="30" rows="5" class="form-control">{{ $attraction->description }}</textarea>
                         </div>

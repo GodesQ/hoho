@@ -18,8 +18,8 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Name</label>
-                                    <input type="text" class="form-control" name="name" id="name" value="">
+                                    <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="name" id="name" value="" required>
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -35,23 +35,54 @@
                                 </div>
                             </div>
                             <div class="col-lg-6">
-                                <div class="mb-3">
-                                    <label for="duration" class="form-label">Duration</label>
-                                    <input type="text" class="form-control" name="duration" id="duration" value="">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="duration" class="form-label">Duration</label>
+                                            <input type="text" class="form-control" name="duration" id="duration" value="">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="operator" class="form-label">Operator</label>
+                                            <select name="operator_id" id="operator" class="form-select">
+                                                <option value="">--- SELECT OPERATOR ---</option>
+                                                @foreach ($operators as $operator)
+                                                    <option value="{{ $operator->id }}">{{ $operator->username }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
+
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="route" class="form-label">Route</label>
-                                    <input type="text" class="form-control" name="route" id="route" value="">
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="mb-3">
-                                    <label for="transport_provider_id" class="form-label">Transport Provider</label>
-                                    <select name="transport_provider_id" id="transport_provider_id" class="form-select">
-                                        <option value=""></option>
+                                    <label for="tour_assignment_ids" class="form-label">Tour Assignments</label>
+                                    <select name="tour_assignment_ids[]" id="tour_assignment_ids" class="select2 form-select" multiple>
+                                        @foreach ($tours as $tour)
+                                            <option value="{{ $tour->id }}">{{ $tour->name }}</option>
+                                        @endforeach
                                     </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="transport_provider_id" class="form-label">Transport Provider</label>
+                                            <select name="transport_provider_id" id="transport_provider_id" class="form-select">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="route" class="form-label">Route</label>
+                                            <input type="text" class="form-control" name="route" id="route" value="">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-lg-6">

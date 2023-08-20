@@ -4,27 +4,34 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
-use App\Models\Admin;
-use App\Models\Role;
+use App\Models\TourReservation;
 
 use DataTables;
 
-class AdminController extends Controller
+class TourReservationController extends Controller
 {
     public function list(Request $request) {
         if($request->ajax()) {
-            $data = Admin::latest();
+            $data = TourReservation::latest()->with('user', 'tour');
             return DataTables::of($data)
                     ->addIndexColumn()
+                    ->addColumn('reserved_user', function($row) {
+                        return $row->user->email;
+                    })
+                    ->addColumn('type', function($row) {
+                        return $row->tour->type;
+                    })
+                    ->addColumn('tour', function($row) {
+                        return $row->tour->name;
+                    })
                     ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
                                     <i class="bx bx-dots-vertical-rounded"></i>
                                     </button>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="/admin/admins/edit/' .$row->id. '">
+                                        <a class="dropdown-item" href="/admin/tour_reservations/edit/' .$row->id. '">
                                             <i class="bx bx-edit-alt me-1"></i> Edit
                                         </a>
                                         <a class="dropdown-item remove-btn" href="javascript:void(0);" id="' .$row->id. '">
@@ -36,37 +43,24 @@ class AdminController extends Controller
                     ->rawColumns(['actions'])
                     ->make(true);
         }
-        return view('admin-page.admins.list-admin');
+
+        return view('admin-page.tour_reservations.list-tour-reservation');
     }
 
     public function create(Request $request) {
-        $roles = Role::get();
-        return view('admin-page.admins.create-admin', compact('roles'));
+        return view('admin-page.tour_reservations.create-tour-reservation');
     }
 
     public function store(Request $request) {
-        $data = $request->except('_token', 'password');
 
-        $admin = Admin::create(array_merge($data, [
-            'password' => Hash::make($request->password)
-        ]));
-
-        if($admin) return redirect()->route('admin.admins.edit', $admin->id)->withSuccess('Admin created successfully');
     }
 
     public function edit(Request $request) {
-        $roles = Role::get();
-        $admin = Admin::where('id', $request->id)->first();
-        return view('admin-page.admins.edit-admin', compact('admin', 'roles'));
+
     }
 
     public function update(Request $request) {
-        $data = $request->except('_token');
-        $admin = Admin::where('id', $request->id)->first();
 
-        $update_admin = $admin->update($data);
-
-        return back()->withSuccess('Admin updated successfully');
     }
 
     public function destroy(Request $request) {

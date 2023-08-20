@@ -4,18 +4,14 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
-use App\Models\Admin;
 use App\Models\Role;
-
 use DataTables;
-
-class AdminController extends Controller
+class RoleController extends Controller
 {
     public function list(Request $request) {
         if($request->ajax()) {
-            $data = Admin::latest();
+            $data = Role::latest();
             return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('actions', function ($row) {
@@ -24,7 +20,7 @@ class AdminController extends Controller
                                     <i class="bx bx-dots-vertical-rounded"></i>
                                     </button>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="/admin/admins/edit/' .$row->id. '">
+                                        <a class="dropdown-item" href="/admin/roles/edit/' .$row->id. '">
                                             <i class="bx bx-edit-alt me-1"></i> Edit
                                         </a>
                                         <a class="dropdown-item remove-btn" href="javascript:void(0);" id="' .$row->id. '">
@@ -35,38 +31,35 @@ class AdminController extends Controller
                     })
                     ->rawColumns(['actions'])
                     ->make(true);
+
         }
-        return view('admin-page.admins.list-admin');
+        return view('admin-page.roles.list-role');
     }
 
     public function create(Request $request) {
-        $roles = Role::get();
-        return view('admin-page.admins.create-admin', compact('roles'));
+        return view('admin-page.roles.create-role');
+
     }
 
     public function store(Request $request) {
-        $data = $request->except('_token', 'password');
+        $data = $request->except('_token');
+        $role = Role::create($data);
 
-        $admin = Admin::create(array_merge($data, [
-            'password' => Hash::make($request->password)
-        ]));
-
-        if($admin) return redirect()->route('admin.admins.edit', $admin->id)->withSuccess('Admin created successfully');
+        if($role) return redirect()->route('admin.roles.edit', $role->id)->withSuccess('Role created successfully');
     }
 
     public function edit(Request $request) {
-        $roles = Role::get();
-        $admin = Admin::where('id', $request->id)->first();
-        return view('admin-page.admins.edit-admin', compact('admin', 'roles'));
+        $role = Role::where('id', $request->id)->first();
+        return view('admin-page.roles.edit-role', compact('role'));
+
     }
 
     public function update(Request $request) {
         $data = $request->except('_token');
-        $admin = Admin::where('id', $request->id)->first();
+        $role = Role::where('id', $request->id)->first();
 
-        $update_admin = $admin->update($data);
-
-        return back()->withSuccess('Admin updated successfully');
+        $update_role = $role->update($data);
+        if($update_role) return back()->withSuccess('Role updated successfully');
     }
 
     public function destroy(Request $request) {

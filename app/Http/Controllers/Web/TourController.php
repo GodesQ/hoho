@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 use App\Models\Tour;
+use App\Models\Attraction;
 
 use DataTables;
 class TourController extends Controller
@@ -47,7 +49,8 @@ class TourController extends Controller
     }
 
     public function create(Request $request) {
-        return view('admin-page.tours.create-tour');
+        $attractions = Attraction::get();
+        return view('admin-page.tours.create-tour', compact('attractions'));
     }
 
     public function store(Request $request) {
@@ -61,18 +64,39 @@ class TourController extends Controller
     }
 
     public function edit(Request $request) {
+        $attractions = Attraction::get();
         $tour = Tour::where('id', $request->id)->firstOrFail();
-        return view('admin-page.tours.edit-tour', compact('tour'));
+        return view('admin-page.tours.edit-tour', compact('tour', 'attractions'));
     }
 
     public function update(Request $request) {
-        $data = $request->except('_token');
+        $data = $request->except('_token', 'featured_image');
         $tour = Tour::where('id', $request->id)->firstOrFail();
 
         $update_tour = $tour->update(array_merge($data, [
             'is_cancellable' => $request->has('is_cancellable'),
             'is_refundable' => $request->has('is_refundable'),
         ]));
+
+        if($request->hasFile('featured_image')) {
+            $file = $request->file('featured_image');
+            $outputString = str_replace(array(":", ";"), " ", $request->name);
+
+            $name = Str::snake(Str::lower($outputString));
+            $featured_file_name = $name . '.' . $file->getClientOriginalExtension();
+
+            $old_upload_image = public_path('assets/img/tours/') . $tour->id . '/' . $tour->featured_image;
+            if($old_upload_image) {
+                $remove_image = @unlink($old_upload_image);
+            }
+            $save_file = $file->move(public_path() . '/assets/img/tours/' . $tour->id, $featured_file_name);
+        } else {
+            $featured_file_name = $tour->featured_image;
+        }
+
+        $update_tour = $tour->update([
+            'featured_image' => $featured_file_name
+        ]);
 
         if($update_tour) return back()->with('success', 'Tour updated successfully');
     }
