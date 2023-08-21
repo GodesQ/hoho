@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\TourReservation;
+use App\Models\User;
+use App\Models\Tour;
 
 use DataTables;
 
@@ -48,7 +50,10 @@ class TourReservationController extends Controller
     }
 
     public function create(Request $request) {
-        return view('admin-page.tour_reservations.create-tour-reservation');
+        $diy_tours = Tour::where('type', 'DIY Tour')->get();
+        $guided_tours = Tour::where('type', 'Guided Tour')->limit(50)->get();
+        $tours = Tour::get();
+        return view('admin-page.tour_reservations.create-tour-reservation', compact('diy_tours', 'guided_tours', 'tours'));
     }
 
     public function store(Request $request) {

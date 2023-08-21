@@ -47,6 +47,25 @@ class UserController extends Controller
         return view('admin-page.users.list-user');
     }
 
+    public function lookup(Request $request) {
+        $query = $request->input('q'); // Get the user input
+
+        // Use the input to filter users
+        $users = User::where('email', 'LIKE', "%$query%")
+                     ->select('id', 'email')
+                     ->get();
+
+        $formattedUsers = [];
+
+        foreach ($users as $user) {
+            $formattedUsers[] = [
+                'id' => $user->id,
+                'text' => $user->email,
+            ];
+        }
+        return response()->json($formattedUsers);
+    }
+
     public function create(Request $request) {
         return view('admin-page.users.create-user');
     }

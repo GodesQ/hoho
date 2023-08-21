@@ -55,6 +55,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::delete('admins/destroy', [AdminController::class, 'destroy'])->name('admins.destroy');
 
     Route::get('users', [UserController::class, 'list'])->name('users.list');
+    Route::get('users/lookup', [UserController::class, 'lookup'])->name('users.lookup');
     Route::get('users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('users/store', [UserController::class, 'store'])->name('users.store');
     Route::get('users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');

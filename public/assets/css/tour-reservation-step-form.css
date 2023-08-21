@@ -1,5 +1,5 @@
 .steps-reservation-form {
-    height: 650px;
+    height: 600px;
     width: 100%;
 }
 .steps-header {
@@ -36,7 +36,7 @@
     font-size: 13px;
 }
 .step-icon::after {
-    content: '';
+    content: "";
     width: 20px;
     height: 3px;
     background: #db5252;
@@ -44,7 +44,7 @@
     right: -22px;
 }
 .step-four-icon::after {
-    content: '';
+    content: "";
     width: 20px;
     height: 3px;
     background: transparent !important;
@@ -84,6 +84,10 @@
     gap: 20px;
     border-radius: 10px;
     cursor: pointer;
+}
+.tour-type img,
+h4 {
+    pointer-events: none;
 }
 .tour-type.selected {
     border: 2px solid #db5252;
