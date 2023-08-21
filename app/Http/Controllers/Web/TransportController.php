@@ -9,6 +9,7 @@ use App\Models\Transport;
 use App\Models\Tour;
 use App\Models\Admin;
 
+use App\Events\BusLocationEvent;
 use DataTables;
 
 class TransportController extends Controller
@@ -65,6 +66,29 @@ class TransportController extends Controller
         dd($transport->tour_assignment_ids);
         $tours = Tour::get();
         return view('admin-page.transports.edit-transport', compact('transport', 'operators', 'tours'));
+    }
+
+    public function updateLocation(Request $request) {
+        $transport = Transport::where('id', $request->id)->first();
+
+        $update = $transport->update([
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude
+        ]);
+
+        $user_id = auth('admin')->user()->id;
+
+        $coordinates = [
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude
+        ];
+
+        $event = event(new BusLocationEvent($user_id, $coordinates));
+        // dd($event);
+        return response([
+            'status' => true,
+            'message' => 'Updated Successfully'
+        ]);
     }
 
     public function update(Request $request) {

@@ -41,6 +41,8 @@ Route::get('/', function () {
 Route::get('admin/login', [AdminAuthController::class, 'login'])->name('admin.login');
 Route::post('admin/login', [AdminAuthController::class, 'saveLogin'])->name('admin.saveLogin');
 
+Route::get('test_location', [DashboardController::class, 'testLocation']);
+
 Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function(){
     Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
@@ -76,6 +78,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('transports', [TransportController::class, 'list'])->name('transports.list');
     Route::get('transports/create', [TransportController::class, 'create'])->name('transports.create');
     Route::post('transports/store', [TransportController::class, 'store'])->name('transports.store');
+    Route::post('transport/updateLocation', [TransportController::class, 'updateLocation'])->name('transports.updateLocation');
     Route::get('transports/edit/{id}', [TransportController::class, 'edit'])->name('transports.edit');
     Route::post('transports/update/{id}', [TransportController::class, 'update'])->name('transports.update');
     Route::delete('transports/destroy', [TransportController::class, 'destroy'])->name('transports.destroy');

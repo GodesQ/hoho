@@ -5,7 +5,7 @@
 @section('content')
     <style>
         #map {
-            height: 600px;
+            height: 500px;
             width: 100%;
         }
     </style>
@@ -28,6 +28,7 @@
                         @empty
                         @endforelse
                     </select>
+                    <input type="hidden" name="user_id" id="user_id" value="{{ auth('admin')->user()->id }}">
                 </div>
                 <div id="map"></div>
             </div>
@@ -86,101 +87,131 @@
     </script>
 
     <script>
-        let map, operatorMarker, INITIAL_LATITUDE, INITIAL_LONGITUDE;
+        let map, operatorMarker;
+        let isActive = true;
 
         function initMap() {
-            INITIAL_LATITUDE = 14.5889842;
-            INITIAL_LONGITUDE = 120.9768261;
-
             const busIcon = {
-                url: "{{ URL::asset('assets/img/icons/bus.png') }}", // Replace with the actual path to your icon image
-                scaledSize: new google.maps.Size(50, 50), // Adjust the size of the icon
-                origin: new google.maps.Point(0, 0), // Icon origin
-                anchor: new google.maps.Point(20, 40) // Anchor point
+                url: "{{ URL::asset('assets/img/icons/bus.png') }}",
+                scaledSize: new google.maps.Size(50, 50),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(20, 40)
             };
+            createMapAndMarker(busIcon);
 
+            // Fetch directions and simulate movement
+            if ('{{ env('APP_ENVIRONMENT') }}' === 'TEST') {
+                getLocalDirections();
+            }
+        }
+
+        // $('#transport').on('change', function(e) {
+        //     setUpPusher();
+        // })
+
+        function setUpPusher() {
+
+        }
+        // Set up Pusher to watch real-time updates
+        let backendBaseUrl = "http://192.168.100.116:8000";
+
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher('aa9ec307de589143a5bc', {
+            cluster: 'ap1',
+        });
+
+        let user_id = document.querySelector('#user_id');
+
+        var channel = pusher.subscribe('bus-location');
+        channel.bind('new-bus-location', function(data) {
+            console.log(data);
+            const newLocation = {
+                lat: data.coordinates.latitude,
+                lng: data.coordinates.longitude
+            };
+            operatorMarker.setPosition(newLocation);
+            map.panTo(newLocation);
+        });
+
+        channel.bind('pusher:subscription_succeeded', function(members) {});
+        channel.bind('pusher:subscription_error', function(data) {});
+
+        let lastTimestamp = Date.now();
+
+        function createMapAndMarker(icon) {
             map = new google.maps.Map(document.getElementById('map'), {
                 center: {
-                    lat: INITIAL_LATITUDE,
-                    lng: INITIAL_LONGITUDE
+                    lat: 14.5889842,
+                    lng: 120.9768261
                 },
-                zoom: 16,
+                zoom: 15,
                 tilt: 45
             });
 
             operatorMarker = new google.maps.Marker({
                 map,
                 position: {
-                    lat: INITIAL_LATITUDE,
-                    lng: INITIAL_LONGITUDE
+                    lat: 14.5889842,
+                    lng: 120.9768261
                 },
                 title: 'Bus Operator',
-                icon: busIcon // Set the custom icon for the marker
+                icon: icon
             });
-
-            simulateMovement();
         }
-        let lastTimestamp = Date.now();
-        let isActive = true;
 
-        document.addEventListener('visibilitychange', () => {
-            isActive = !document.hidden;
-            console.log(isActive);
-            if (isActive) {
-                // If the tab becomes active again, simulate movement immediately
-                simulateMovement();
+        function resetMapAndMarker() {
+            operatorMarker.setMap(null); // Remove the marker
+
+            const busIcon = {
+                url: "{{ URL::asset('assets/img/icons/bus.png') }}",
+                scaledSize: new google.maps.Size(50, 50),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(20, 40)
+            };
+
+            createMapAndMarker(busIcon); // Recreate the map and marker
+        }
+
+        function getLocalDirections() {
+            const directionsService = new google.maps.DirectionsService();
+
+            directionsService.route({
+                    origin: "Manila City Hall, Padre Burgos Ave, Ermita, Manila, 1000 Metro Manila",
+                    destination: "Robinsons Place Manila, Pedro Gil, cor M. Adriatico St, Ermita, Manila, 1000 Metro Manila",
+                    travelMode: google.maps.TravelMode.DRIVING
+                },
+                function(response, status) {
+                    if (status === 'OK') {
+                        // Get the route's overview path (waypoints)
+                        const waypoints = response.routes[0].overview_path;
+                        // Animate marker movement along waypoints
+                        animateMarkerMovement(waypoints);
+                    } else {
+                        console.log('Directions request failed:', status);
+                    }
+                }
+            );
+        }
+
+        function animateMarkerMovement(waypoints) {
+            let currentIndex = 0;
+
+            function moveMarker() {
+                if (currentIndex < waypoints.length) {
+                    const newLocation = waypoints[currentIndex];
+                    operatorMarker.setPosition(newLocation);
+                    map.panTo(newLocation);
+                    currentIndex++;
+                    setTimeout(moveMarker, 1000); // Move to the next location every 1 second
+                }
             }
-        });
 
-        const SPEED_KMH = 60; // Speed of the bus in km/h
-
-        // Convert speed from km/h to m/s
-        const SPEED_MS = SPEED_KMH * 1000 / 3600; // Convert to meters per second
-        const TIME_INTERVAL = 1; // 1 second interval
-
-        function simulateMovement() {
-            // If the tab is not active, simulate the movement based on time
-            const elapsedTime = Date.now() - lastTimestamp;
-            const distanceTraveled = (SPEED_MS * elapsedTime) / 1000;
-            const latitudeChange = distanceTraveled / 111111;
-            const longitudeChange = distanceTraveled / (111111 * Math.cos(INITIAL_LATITUDE * Math.PI / 180));
-
-            INITIAL_LATITUDE += latitudeChange;
-            INITIAL_LONGITUDE += longitudeChange;
-
-            if (!isActive) {
-                const newLocation = {
-                    lat: INITIAL_LATITUDE,
-                    lng: INITIAL_LONGITUDE
-                };
-
-                updateMarkerPosition(newLocation);
-                map.panTo(newLocation);
-
-                lastTimestamp = Date.now();
-            } else {
-                const newLocation = {
-                    lat: INITIAL_LATITUDE,
-                    lng: INITIAL_LONGITUDE
-                };
-                const timestamp = Date.now();
-                updateMarkerPosition(newLocation, timestamp);
-                map.panTo(newLocation);
-
-                lastTimestamp = timestamp;
-
-                setTimeout(simulateMovement, 2000); // Update every 2 seconds
-            }
+            moveMarker();
         }
-        // let previousLocation = null;
-        // let previousTimestamp = null;
 
-        function updateMarkerPosition(newLocation, timestamp) {
-            previousLocation = newLocation;
-            operatorMarker.setPosition(newLocation);
-        }
+        // setUpPusher();
     </script>
-
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initMap">
     </script>

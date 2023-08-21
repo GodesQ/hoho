@@ -44,6 +44,8 @@
     <link rel="stylesheet" href="{{ URL::asset('assets/vendor/libs/apex-charts/apex-charts.css') }}" />
 
     <link rel="stylesheet" href="{{ URL::asset('assets/css/selects/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ URL::asset('assets/css/wizard.css') }}">
+    <link rel="stylesheet" href="{{ URL::asset('assets/css/tour-reservation-step-form.css') }}">
 
     <!-- Page CSS -->
 
@@ -340,7 +342,7 @@
     <script src="{{ URL::asset('assets/vendor/js/bootstrap.js') }}"></script>
     <script src="{{ URL::asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
     <script src="{{ URL::asset('assets/js/select/select2.full.min.js') }}"></script>
-
+    <script src="{{ asset('assets/js/jquery.steps.min.js') }}"></script>
     <script src="{{ URL::asset('assets/vendor/js/menu.js') }}"></script>
     <!-- endbuild -->
 
@@ -353,6 +355,7 @@
     <!-- Page JS -->
     <script src="{{ URL::asset('assets/js/dashboards-analytics.js') }}"></script>
     <script src="{{ asset('assets/js/select/form-select2.js') }}"></script>
+    <script src="{{ asset('assets/js/wizard-steps.js') }}"></script>
 
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
@@ -360,6 +363,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initMap"></script> --}}
 
+    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 
     @if (Session::get('success'))
         <script>
