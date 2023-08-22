@@ -48,7 +48,7 @@
                                         <label for="tour_provider" class="form-label">Tour Provider</label>
                                         <select name="tour_provider_id" id="tour_provider" class="form-select">
                                             {{-- <option value="">HoHo Manila</option>
-                                        <option value=""> Owllah Travel & Tours</option> --}}
+                                                <option value=""> Owllah Travel & Tours</option> --}}
                                         </select>
                                     </div>
                                 </div>
@@ -80,6 +80,34 @@
                                         <div class="col-lg-6">
                                             <label for="capacity" class="form-label">Maximum Capacity</label>
                                             <input type="number" class="form-control" name="capacity" id="capacity" value="{{ $tour->capacity }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <div class="mb-3">
+                                                <label for="price" class="form-label">Default Price</label>
+                                                <input type="number" class="form-control" name="price" id="price" value="{{ $tour->price }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="mb-3">
+                                                <label for="bracket_price_one" class="form-label">Bracket Price (Min of 4)</label>
+                                                <input type="text" class="form-control" name="bracket_price_one" id="bracket_price_one" value="{{ $tour->bracket_price_one }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="mb-3">
+                                                <label for="bracket_price_two" class="form-label">Bracket Price (Min of 10)</label>
+                                                <input type="text" class="form-control" name="bracket_price_two" id="bracket_price_two" value="{{ $tour->bracket_price_two }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="mb-3">
+                                                <label for="bracket_price_three" class="form-label">Bracket Price (Min of 25)</label>
+                                                <input type="text" class="form-control" name="bracket_price_three" id="bracket_price_three" value="{{ $tour->bracket_price_three }}">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

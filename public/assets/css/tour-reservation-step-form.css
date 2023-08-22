@@ -1,15 +1,19 @@
 .steps-reservation-form {
+    min-height: 600px;
     height: 600px;
+    max-height: 100px;
     width: 100%;
 }
 .steps-header {
     width: 100%;
-    height: 15%;
-    box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+    height: 20%;
+    /* box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12); */
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 20px;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
 }
 .steps-bottom {
     width: 100%;
@@ -57,7 +61,7 @@
 }
 .steps {
     display: none;
-    height: 75%;
+    height: 70%;
 }
 
 .step-one {
@@ -73,8 +77,8 @@
 }
 
 .tour-type {
-    width: 200px;
-    height: 180px;
+    width: 120px;
+    height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;

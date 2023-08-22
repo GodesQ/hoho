@@ -25,20 +25,19 @@
                     <div class="card">
                         <div class="card-body">
                             <h4>Enter your details</h4>
-                            <hr>
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <div class="form-check form-check-inline mt-3">
                                             <input class="form-check-input" type="radio" name="type"
-                                                id="guided_tour" value="Guided" required />
+                                                id="guided_tour" value="Guided" />
                                             <label class="form-check-label" for="guided_tour">
                                                 Guided Tour
                                             </label>
                                         </div>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="type"
-                                                id="diy_tour" value="DIY" required />
+                                                id="diy_tour" value="DIY" />
                                             <label class="form-check-label" for="diy_tour">
                                                 DIY Tour
                                             </label>
@@ -48,7 +47,7 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="Tour" class="form-label">Tour</label>
-                                        <select name="tour_id" id="tour" class="form-select" required>
+                                        <select name="tour_id" id="tour" class="form-select">
                                             <option value="">--- SELECT TOUR TYPE FIRST ---</option>
                                         </select>
                                     </div>
@@ -56,7 +55,7 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="reserved_user" class="form-label">Reserved User</label>
-                                        <select name="resevered_user_id" id="user" class="reserved_users form-select" style="width: 100%;" required>
+                                        <select name="resevered_user_id" id="user" class="reserved_users form-select" style="width: 100%;">
                                         </select>
                                     </div>
                                 </div>
@@ -69,14 +68,14 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Number of Pax</label>
-                                        <select name="number_of_pass" id="number_of_pass" class="form-select" required>
+                                        <select name="number_of_pass" id="number_of_pass" class="form-select">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="trip_date" class="form-label">Trip Date</label>
-                                        <input type="date" class="form-control" name="trip_date" id="trip_date" required>
+                                        <input type="date" class="form-control" name="trip_date" id="trip_date">
                                     </div>
                                 </div>
                                 <div class="col-lg-12 diy_ticket_pass">
@@ -85,7 +84,7 @@
                                         <div class="form-check form-check-inline mt-3">
                                             <input class="form-check-input" type="radio" name="ticket_pass"
                                                 id="one_day_diy_ticket_pass" value="1 Day Pass" />
-                                            <label class="form-check-label" for="one_day_diy_ticket_pass" style="cursor: pointer;">
+                                            <label class="form-check-label" for="one_day_diy_ticket_pass">
                                                 <img src="https://metrohoho.s3.ap-southeast-1.amazonaws.com/tickets/1-day.png" alt="1 Day Ticket Pass" width="120px">
                                                 <h6 class="text-center my-2">₱ 990.00</h6>
                                             </label>
@@ -93,7 +92,7 @@
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="ticket_pass"
                                                 id="two_day_diy_ticket_pass" value="2 Day Pass" />
-                                            <label class="form-check-label" for="two_day_diy_ticket_pass" style="cursor: pointer;">
+                                            <label class="form-check-label" for="two_day_diy_ticket_pass">
                                                 <img src="https://metrohoho.s3.ap-southeast-1.amazonaws.com/tickets/2-day.png" alt="2 Day Ticket Pass" width="120px">
                                                 <h6 class="text-center my-2">₱ 1799.00</h6>
                                             </label>
@@ -101,7 +100,7 @@
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="ticket_pass"
                                                 id="three_day_diy_ticket_pass" value="3 Day Pass" />
-                                            <label class="form-check-label" for="three_day_diy_ticket_pass" style="cursor: pointer;">
+                                            <label class="form-check-label" for="three_day_diy_ticket_pass">
                                                 <img src="https://metrohoho.s3.ap-southeast-1.amazonaws.com/tickets/3-day.png" alt="3 Day Ticket Pass" width="120px">
                                                 <h6 class="text-center my-2">₱ 2499.00</h6>
                                             </label>
@@ -116,48 +115,6 @@
                     <div class="card">
                         <div class="card-body">
                             <h4>Book Reservation Summary</h4>
-                            <hr>
-                            <div class="row">
-                                <div class="col-xl-6">
-                                    <h6 class="text-primary">Trip Date</h6>
-                                </div>
-                                <div class="col-xl-6">
-                                    <h6 id="trip_date_text">Aug 20, 2023</h6>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xl-6">
-                                    <h6 class="text-primary">Pax</h6>
-                                </div>
-                                <div class="col-xl-6">
-                                    <h6 id="pax_text">4 Pax</h6>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xl-6">
-                                    <h6 class="text-primary">Ticket Pass</h6>
-                                </div>
-                                <div class="col-xl-6">
-                                    <h6 id="pax_text">1 Days</h6>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xl-6">
-                                    <h6 class="text-primary">Sub Amount</h6>
-                                </div>
-                                <div class="col-xl-6">
-                                    <h6 id="sub_amount_text">₱ 6500.00</h6>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-xl-6">
-                                    <h6 class="text-primary">Total Amount</h6>
-                                </div>
-                                <div class="col-xl-6">
-                                    <h6 id="total_amount_text">₱ 9000.00</h6>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -190,25 +147,6 @@
             select.appendChild(option);
         }
 
-        function fetchAndPopulateTours(route, placeholder, tours) {
-            $.ajax({
-                url: route,
-                method: "GET",
-                success: function (response) {
-                    let tours = response;
-
-                    tourSelect.innerHTML = `<option value=''>--- SELECT A ${placeholder} TOUR ---</option>`;
-                    tours.forEach(function (tour) {
-                        const option = document.createElement("option");
-                        option.value = tour.id;
-                        option.textContent = tour.name;
-                        option.setAttribute('data-value', JSON.stringify([tour.price, tour.bracket_price_one, tour.bracket_price_two, tour.bracket_price_three]));
-                        tourSelect.appendChild(option);
-                    });
-                },
-            });
-        }
-
         const guidedTourRadio = document.getElementById("guided_tour");
         const diyTourRadio = document.getElementById("diy_tour");
         const tourSelect = document.getElementById("tour");
@@ -216,16 +154,56 @@
 
         guidedTourRadio.addEventListener("change", function () {
             if (guidedTourRadio.checked) {
-                fetchAndPopulateTours("{{ route('admin.tours.guided') }}", "GUIDED");
+                // Make an AJAX call to get the guided tours and populate the select input
+                // For demonstration purposes, let's assume you have an array of guided tours
+                let guidedTours = [];
+                $.ajax({
+                    url: "{{ route('admin.tours.guided') }}",
+                    method: "GET",
+                    success: function(response) {
+                        guidedTours = response;
+
+                        tourSelect.innerHTML = "<option value=''>--- SELECT A GUIDED TOUR ---</option>";
+                        guidedTours.forEach(function (tour) {
+                            const option = document.createElement("option");
+                            option.value = tour.id;
+                            option.textContent = tour.name;
+                            tourSelect.appendChild(option);
+                        });
+                    }
+                })
+
+                // Hide the DIY Ticket Pass options
                 diyTicketPass.classList.remove("active");
             }
         });
 
         diyTourRadio.addEventListener("change", function () {
             if (diyTourRadio.checked) {
-                fetchAndPopulateTours("{{ route('admin.tours.diy') }}", "DIY");
+               // Make an AJAX call to get the diy tours and populate the select input
+                // For demonstration purposes, let's assume you have an array of diy tours
+                let diyTours = [];
+                $.ajax({
+                    url: "{{ route('admin.tours.diy') }}",
+                    method: "GET",
+                    success: function(response) {
+                        diyTours = response;
+
+                        tourSelect.innerHTML = "<option value=''>--- SELECT A DIY TOUR ---</option>";
+                        diyTours.forEach(function (tour) {
+                            const option = document.createElement("option");
+                            option.value = tour.id;
+                            option.textContent = tour.name;
+                            tourSelect.appendChild(option);
+                        });
+                    }
+                })
+
+                // Show the DIY Ticket Pass options
                 diyTicketPass.classList.add("active");
             }
         });
+
+
     </script>
 @endpush

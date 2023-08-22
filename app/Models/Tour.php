@@ -29,6 +29,10 @@ class Tour extends Model
         'minimum_capacity',
         'tour_itinerary',
         'tour_inclusions',
+        'price',
+        'bracket_price_one',
+        'bracket_price_two',
+        'bracket_price_three',
         'attractions_assignments_ids'
     ];
 }

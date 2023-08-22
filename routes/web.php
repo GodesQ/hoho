@@ -70,6 +70,8 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::delete('organizations/destroy', [OrganizationController::class, 'destroy'])->name('organizations.destroy');
 
     Route::get('tours', [TourController::class, 'list'])->name('tours.list');
+    Route::get('tours/diy', [TourController::class, 'getDiyTours'])->name('tours.diy');
+    Route::get('tours/guided', [TourController::class, 'getGuidedTours'])->name('tours.guided');
     Route::get('tours/create', [TourController::class, 'create'])->name('tours.create');
     Route::post('tours/store', [TourController::class, 'store'])->name('tours.store');
     Route::get('tours/edit/{id}', [TourController::class, 'edit'])->name('tours.edit');

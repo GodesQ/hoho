@@ -48,6 +48,16 @@ class TourController extends Controller
         return view('admin-page.tours.list-tour');
     }
 
+    public function getDiyTours(Request $request) {
+        $diy_tours = Tour::where('type', 'DIY Tour')->get();
+        return response($diy_tours);
+    }
+
+    public function getGuidedTours(Request $request) {
+        $guided_tours = Tour::where('type', 'Guided Tour')->get();
+        return response($guided_tours);
+    }
+
     public function create(Request $request) {
         $attractions = Attraction::get();
         return view('admin-page.tours.create-tour', compact('attractions'));

@@ -84,6 +84,34 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <div class="mb-3">
+                                                <label for="price" class="form-label">Default Price</label>
+                                                <input type="number" class="form-control" name="price" id="price">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="mb-3">
+                                                <label for="bracket_price_one" class="form-label">Bracket Price (Min of 4)</label>
+                                                <input type="number" class="form-control" name="bracket_price_one" id="bracket_price_one">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="mb-3">
+                                                <label for="bracket_price_two" class="form-label">Bracket Price (Min of 10)</label>
+                                                <input type="number" class="form-control" name="bracket_price_two" id="bracket_price_two">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="mb-3">
+                                                <label for="bracket_price_three" class="form-label">Bracket Price (Min of 25)</label>
+                                                <input type="number" class="form-control" name="bracket_price_three" id="bracket_price_three">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
                                     <div class="mb-3">
                                         <label for="attractions_assignments" class="form-label">Attractions Assignment</label>
                                         <select name="attractions_assignments_ids" id="attractions_assignments" class="select2 form-select" multiple>

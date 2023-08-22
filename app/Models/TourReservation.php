@@ -13,7 +13,7 @@ class TourReservation extends Model
         'tour_id',
         'type',
         'amount',
-        'resevered_user_id',
+        'reserved_user_id',
         'passenger_ids',
         'reference_code',
         'order_transaction_id',
@@ -21,6 +21,7 @@ class TourReservation extends Model
         'end_date',
         'status',
         'number_of_pass',
+        'ticket_pass'
     ];
 
     public function user() {
