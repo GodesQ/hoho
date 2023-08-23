@@ -57,7 +57,6 @@ class TourReservationController extends Controller
     }
 
     public function store(Request $request) {
-
     }
 
     public function edit(Request $request) {
