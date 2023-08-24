@@ -105,7 +105,7 @@ class TourReservationController extends Controller
             return back()->with('fail', 'Failed to Create Reservation');
         }
 
-        $client = new Client();
+        $client = new Client(['verify' => 'C:\wamp64\bin\php\php8.0.26\extras\ssl\cacert.pem']);
         $requestModel = $this->setRequestModel($transaction, $reservation);
 
         $jsonPayload = json_encode($requestModel, JSON_UNESCAPED_UNICODE);

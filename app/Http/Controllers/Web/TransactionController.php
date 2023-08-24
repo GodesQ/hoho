@@ -39,7 +39,7 @@ class TransactionController extends Controller
                                         </button>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" href="/admin/transactions/edit/' .$row->id. '">
-                                                <i class="bx bx-edit-alt me-1"></i> Edit
+                                                <i class="bx bx-check me-1"></i> View
                                             </a>
                                             <a class="dropdown-item remove-btn" href="javascript:void(0);" id="' .$row->id. '">
                                                 <i class="bx bx-trash me-1"></i> Delete
@@ -53,6 +53,15 @@ class TransactionController extends Controller
         }
 
         return view('admin-page.transactions.list-transaction');
+    }
+
+    public function edit(Request $request) {
+        $transaction = Transaction::where('id', $request->id)->with('user')->first();
+        return view('admin-page.transactions.edit-transaction', compact('transaction'));
+    }
+
+    public function update(Request $request) {
+
     }
 
 

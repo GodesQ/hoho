@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use App\Models\Transaction;
 use App\Models\TourReservation;
 
+use Carbon\Carbon;
 class AqwireController extends Controller
 {
     public function success(Request $request) {
@@ -19,7 +20,8 @@ class AqwireController extends Controller
             'aqwire_referenceId' => $request->referenceId,
             'aqwire_paymentMethodCode' => $request->paymentMethodCode,
             'aqwire_totalAmount' => $request->totalAmount,
-            'payment_status' => Str::lower('success')
+            'payment_status' => Str::lower('success'),
+            'payment_date' => Carbon::now()
         ]);
 
         if($update_transaction) {
