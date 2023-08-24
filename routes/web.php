@@ -9,6 +9,7 @@ use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\AdminController;
 use App\Http\Controllers\Web\TourController;
 use App\Http\Controllers\Web\TourReservationController;
+use App\Http\Controllers\Web\TransactionController;
 use App\Http\Controllers\Web\TransportController;
 use App\Http\Controllers\Web\AttractionController;
 use App\Http\Controllers\Web\MerchantController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Web\MerchantStoreController;
 use App\Http\Controllers\Web\InterestController;
 use App\Http\Controllers\Web\OrganizationController;
 use App\Http\Controllers\Web\RoleController;
+use App\Http\Controllers\Web\AqwireController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +44,12 @@ Route::get('admin/login', [AdminAuthController::class, 'login'])->name('admin.lo
 Route::post('admin/login', [AdminAuthController::class, 'saveLogin'])->name('admin.saveLogin');
 
 Route::get('test_location', [DashboardController::class, 'testLocation']);
+
+Route::get('aqwire/payment/success/{id}', [AqwireController::class, 'success']);
+Route::get('aqwire/payment/view_success', [AqwireController::class, 'viewSuccess']);
+Route::get('aqwire/payment/cancel/{id}', [AqwireController::class, 'cancel']);
+Route::get('aqwire/payment/view_cancel', [AqwireController::class, 'viewCancel']);
+Route::post('aqwire/payment/callback/{id}', [AqwireController::class, 'callback']);
 
 Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function(){
     Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
@@ -136,4 +144,11 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('roles/edit/{id}', [RoleController::class, 'edit'])->name('roles.edit');
     Route::post('roles/update/{id}', [RoleController::class, 'update'])->name('roles.update');
     Route::delete('roles/destroy', [RoleController::class, 'destroy'])->name('roles.destroy');
+
+    Route::get('transactions', [TransactionController::class, 'list'])->name('transactions.list');
+    Route::get('transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
+    Route::post('transactions/store', [TransactionController::class, 'store'])->name('transactions.store');
+    Route::get('transactions/edit/{id}', [TransactionController::class, 'edit'])->name('transactions.edit');
+    Route::post('transactions/update/{id}', [TransactionController::class, 'update'])->name('transactions.update');
+    Route::delete('transactions/destroy', [TransactionController::class, 'destroy'])->name('transactions.destroy');
 });

@@ -186,8 +186,8 @@
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Transactions &
                             Reports</span></li>
                     <!-- Forms -->
-                    <li class="menu-item">
-                        <a href="#" class="menu-link">
+                    <li class="menu-item {{ preg_match('/admin\/transactions/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.transactions.list') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-money"></i>
                             <div data-i18n="Booking Transactions">Booking Transactions</div>
                         </a>

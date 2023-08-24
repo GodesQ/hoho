@@ -17,7 +17,7 @@
         }
 
         .ticket_pass_text_container.active {
-            display: block !important;
+            display: flex !important;
         }
     </style>
 
@@ -28,7 +28,7 @@
                 List</a>
         </div>
 
-        <form action="" method="POST">
+        <form action="{{ route('admin.tour_reservations.store') }}" method="POST">
             @csrf
             <input type="hidden" id="amount" name="amount" value="">
             <div class="row">
@@ -67,7 +67,7 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="reserved_user" class="form-label">Reserved User</label>
-                                        <select name="resevered_user_id" id="user" class="reserved_users form-select"
+                                        <select name="reserved_user_id" id="user" class="reserved_users form-select"
                                             style="width: 100%;" required>
                                         </select>
                                     </div>
@@ -88,7 +88,7 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label class="form-label">Registered Passengers</label>
-                                        <select name="passenger_ids" id="passengers"
+                                        <select name="passenger_ids[]" id="passengers"
                                             class="registered_passengers form-select" style="width: 100%;" multiple
                                             max="4"></select>
                                     </div>
@@ -158,7 +158,7 @@
                                     <h6 class="text-primary">Ticket Pass</h6>
                                 </div>
                                 <div class="col-xl-6">
-                                    <h6 id="ticket_pass_text">1 Days</h6>
+                                    <h6 id="ticket_pass_text">N/A</h6>
                                 </div>
                             </div>
                             <div class="row">
@@ -177,6 +177,9 @@
                                 <div class="col-xl-6">
                                     <h6 id="total_amount_text">₱ 0.00</h6>
                                 </div>
+                            </div>
+                            <div class="my-3 justify-content-end d-flex">
+                                <button class="btn btn-primary">Book Reservation</button>
                             </div>
                         </div>
                     </div>
@@ -241,13 +244,15 @@
         let tour_text = document.querySelector('#tour_text');
         let total_amount_text = document.querySelector('#total_amount_text');
         let sub_amount_text = document.querySelector('#sub_amount_text');
-        const ticketPassTextContainer = document.querySelector('.ticket_pass_text_container');
+        let ticketPassTextContainer = document.querySelector('.ticket_pass_text_container');
+        let ticketPassText = document.querySelector('#ticket_pass_text');
+        let amount = document.querySelector('#amount');
 
         guidedTourRadio.addEventListener("change", function() {
             if (guidedTourRadio.checked) {
                 fetchAndPopulateTours("{{ route('admin.tours.guided') }}", "GUIDED");
                 diyTicketPass.classList.remove("active");
-                ticketPassTextContainer.remove("active");
+                ticketPassTextContainer.classList.remove("active");
                 computeTotalAmount();
             }
         });
@@ -256,9 +261,14 @@
             if (diyTourRadio.checked) {
                 fetchAndPopulateTours("{{ route('admin.tours.diy') }}", "DIY");
                 diyTicketPass.classList.add("active");
-                ticket_pass_text_container.add('active');
+                ticketPassTextContainer.classList.add('active');
             }
         });
+
+        $('#one_day_diy_ticket_pass, #two_day_diy_ticket_pass, #three_day_diy_ticket_pass').on('change', function(e) {
+            computeTotalAmount();
+        });
+
 
         tour.addEventListener("change", function(e) {
             let selectedTour = tour.options[tour.selectedIndex];
@@ -284,29 +294,61 @@
                 document.querySelector('#three_day_diy_ticket_pass')
             ];
 
-            if (!guidedTourRadio.checked) {
-                return;
-            }
+            let totalAmount = 0;
 
             const selectedTour = tour.options[tour.selectedIndex];
             const prices = JSON.parse(selectedTour.getAttribute('data-value'));
 
-            if (prices && prices.length > 0) {
-                let priceIndex = 0;
+            if (guidedTourRadio.checked) {
+                if (prices && prices.length > 0) {
+                    let priceIndex = 0;
 
-                if (number_of_pass.value <= 9 && number_of_pass.value >= 4) {
-                    priceIndex = 1;
-                } else if (number_of_pass.value <= 24 && number_of_pass.value >= 10) {
-                    priceIndex = 2;
-                } else if (number_of_pass.value >= 25) {
-                    priceIndex = 3;
+                    if (number_of_pass.value <= 9 && number_of_pass.value >= 4) {
+                        priceIndex = 1;
+                    } else if (number_of_pass.value <= 24 && number_of_pass.value >= 10) {
+                        priceIndex = 2;
+                    } else if (number_of_pass.value >= 25) {
+                        priceIndex = 3;
+                    }
+
+                    const selectedPrice = prices[priceIndex] !== 0 && prices[priceIndex] !== null ? prices[priceIndex] :
+                        prices[0];
+
+                    sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(selectedPrice)}`;
+                    totalAmount = selectedPrice * number_of_pass.value;
+                    amount.value = totalAmount;
+                    total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
                 }
-
-                const selectedPrice = prices[priceIndex] !== 0 && prices[priceIndex] !== null ? prices[priceIndex] : prices[0];
-
-                sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(selectedPrice)}`;
-                total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(selectedPrice * number_of_pass.value)}`;
             }
+
+            if (diyTourRadio.checked) {
+                if (ticketPasses[0].checked) {
+                    ticket_pass_text.innerHTML = ticketPasses[0].value;
+                    sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(990)}`;
+                    totalAmount = 990 * number_of_pass.value;
+                    amount.value = totalAmount;
+                    total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
+                } else if (ticketPasses[1].checked) {
+                    ticket_pass_text.innerHTML = ticketPasses[1].value;
+                    sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(1799)}`;
+                    totalAmount = 1799 * number_of_pass.value;
+                    amount.value = totalAmount;
+                    total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
+                } else if (ticketPasses[2].checked) {
+                    ticket_pass_text.innerHTML = ticketPasses[2].value;
+                    sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(2499)}`;
+                    totalAmount = 2499 * number_of_pass.value;
+                    amount.value = totalAmount;
+                    total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
+                } else {
+                    ticketPasses.innerHTML = 'N/A';
+                    sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(0)}`;
+                    totalAmount = 0 * number_of_pass.value;
+                    amount.value = totalAmount;
+                    total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
+                }
+            }
+
         }
 
 
