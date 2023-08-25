@@ -21,4 +21,8 @@ class MerchantTourProvider extends Model
         'business_hours',
         'address',
     ];
+
+    public function merchant() {
+        return $this->belongsTo(Merchant::class, 'merchant_id');
+    }
 }

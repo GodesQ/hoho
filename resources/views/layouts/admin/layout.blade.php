@@ -126,8 +126,8 @@
                                     <div data-i18n="Stores">Stores</div>
                                 </a>
                             </li>
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
+                            <li class="menu-item {{ preg_match('/admin\/merchants\/restaurants/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.merchants.restaurants.list') }}" class="menu-link">
                                     <div data-i18n="Restaurants">Restaurants</div>
                                 </a>
                             </li>
@@ -136,8 +136,8 @@
                                     <div data-i18n="Hotels">Hotels</div>
                                 </a>
                             </li>
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
+                            <li class="menu-item {{ preg_match('/admin\/merchants\/tour_providers/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.merchants.tour_providers.list') }}" class="menu-link">
                                     <div data-i18n="Tour Providers">Tour Providers</div>
                                 </a>
                             </li>

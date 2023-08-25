@@ -22,4 +22,8 @@ class MerchantRestaurant extends Model
         'address',
         'atmosphere',
     ];
+
+    public function merchant() {
+        return $this->belongsTo(Merchant::class, 'merchant_id');
+    }
 }

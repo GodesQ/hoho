@@ -15,6 +15,8 @@ use App\Http\Controllers\Web\AttractionController;
 use App\Http\Controllers\Web\MerchantController;
 use App\Http\Controllers\Web\MerchantHotelController;
 use App\Http\Controllers\Web\MerchantStoreController;
+use App\Http\Controllers\Web\MerchantRestaurantController;
+use App\Http\Controllers\Web\MerchantTourProviderController;
 
 use App\Http\Controllers\Web\InterestController;
 use App\Http\Controllers\Web\OrganizationController;
@@ -124,6 +126,20 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
         Route::get('hotels/edit/{id}', [MerchantHotelController::class, 'edit'])->name('hotels.edit');
         Route::post('hotels/update/{id}', [MerchantHotelController::class, 'update'])->name('hotels.update');
         Route::delete('hotels/destroy', [MerchantHotelController::class, 'destroy'])->name('hotels.destroy');
+
+        Route::get('restaurants', [MerchantRestaurantController::class, 'list'])->name('restaurants.list');
+        Route::get('restaurants/create', [MerchantRestaurantController::class, 'create'])->name('restaurants.create');
+        Route::post('restaurants/store', [MerchantRestaurantController::class, 'store'])->name('restaurants.store');
+        Route::get('restaurants/edit/{id}', [MerchantRestaurantController::class, 'edit'])->name('restaurants.edit');
+        Route::post('restaurants/update/{id}', [MerchantRestaurantController::class, 'update'])->name('restaurants.update');
+        Route::delete('restaurants/destroy', [MerchantRestaurantController::class, 'destroy'])->name('restaurants.destroy');
+
+        Route::get('tour_providers', [MerchantTourProviderController::class, 'list'])->name('tour_providers.list');
+        Route::get('tour_providers/create', [MerchantTourProviderController::class, 'create'])->name('tour_providers.create');
+        Route::post('tour_providers/store', [MerchantTourProviderController::class, 'store'])->name('tour_providers.store');
+        Route::get('tour_providers/edit/{id}', [MerchantTourProviderController::class, 'edit'])->name('tour_providers.edit');
+        Route::post('tour_providers/update/{id}', [MerchantTourProviderController::class, 'update'])->name('tour_providers.update');
+        Route::delete('tour_providers/destroy', [MerchantTourProviderController::class, 'destroy'])->name('tour_providers.destroy');
 
         Route::get('stores', [MerchantStoreController::class, 'list'])->name('stores.list');
         Route::get('stores/create', [MerchantStoreController::class, 'create'])->name('stores.create');
