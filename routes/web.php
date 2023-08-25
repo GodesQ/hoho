@@ -19,6 +19,8 @@ use App\Http\Controllers\Web\MerchantStoreController;
 use App\Http\Controllers\Web\InterestController;
 use App\Http\Controllers\Web\OrganizationController;
 use App\Http\Controllers\Web\RoleController;
+use App\Http\Controllers\Web\ProductCategoryController;
+
 use App\Http\Controllers\Web\AqwireController;
 
 /*
@@ -151,4 +153,11 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('transactions/edit/{id}', [TransactionController::class, 'edit'])->name('transactions.edit');
     Route::post('transactions/update/{id}', [TransactionController::class, 'update'])->name('transactions.update');
     Route::delete('transactions/destroy', [TransactionController::class, 'destroy'])->name('transactions.destroy');
+
+    Route::get('product_categories', [ProductCategoryController::class, 'list'])->name('product_categories.list');
+    Route::get('product_categories/create', [ProductCategoryController::class, 'create'])->name('product_categories.create');
+    Route::post('product_categories/store', [ProductCategoryController::class, 'store'])->name('product_categories.store');
+    Route::get('product_categories/edit/{id}', [ProductCategoryController::class, 'edit'])->name('product_categories.edit');
+    Route::post('product_categories/update/{id}', [ProductCategoryController::class, 'update'])->name('product_categories.update');
+    Route::delete('product_categories/destroy', [ProductCategoryController::class, 'destroy'])->name('product_categories.destroy');
 });

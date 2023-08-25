@@ -15,9 +15,9 @@ class UserController extends Controller
             $data = User::latest('created_at');
             return DataTables::of($data)
                     ->addIndexColumn()
-                    ->addColumn('username', function($row) {
-                        return '<a href="/admin/users/edit/' .$row->id. '">'. $row->username .'</a>';
-                    })
+                    // ->addColumn('username', function($row) {
+                    //     return '<a href="/admin/users/edit/' .$row->id. '">'. $row->username .'</a>';
+                    // })
                     ->addColumn('status', function($row) {
                         if($row->status == 'active') {
                             return '<span class="badge bg-label-success me-1">Active</span>';

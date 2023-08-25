@@ -213,6 +213,12 @@
                             <div data-i18n="Referrals">Referrals</div>
                         </a>
                     </li>
+                    <li class="menu-item {{ preg_match('/admin\/product_categories/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.product_categories.list') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-box"></i>
+                            <div data-i18n="Product Categories">Product Categories</div>
+                        </a>
+                    </li>
 
                     <!-- Roles & Permissions -->
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Roles & Permissions</span></li>

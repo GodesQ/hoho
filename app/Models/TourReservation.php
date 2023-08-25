@@ -24,11 +24,30 @@ class TourReservation extends Model
         'ticket_pass'
     ];
 
+    protected $appends = ['passengers'];
+
     public function user() {
         return $this->belongsTo(User::class, 'reserved_user_id');
     }
 
+    public function transaction() {
+        return $this->belongsTo(Transaction::class, 'order_transaction_id');
+    }
+
     public function tour() {
         return $this->hasOne(Tour::class, 'id', 'tour_id');
+    }
+
+    public function getPassengersAttribute() {
+        $passenger_ids = json_decode($this->passenger_ids, true); // Passing true as the second argument to get an associative array
+
+        if (is_array($passenger_ids) && !empty($passenger_ids)) {
+            $data = User::select('id', 'email', 'username', 'firstname', 'lastname')->whereIn('id', $passenger_ids)
+                ->get()
+                ->toArray();
+            if (!empty($data)) {
+                return $data;
+            }
+        }
     }
 }
