@@ -1,11 +1,11 @@
 @extends('layouts.admin.layout')
 
-@section('title', 'Hop On Hop Off - Create Hotel')
+@section('title', 'Hop On Hop Off - Create Store')
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center">
-            <h4 class="fw-bold py-3 mb-4">Create Hotel</h4>
+            <h4 class="fw-bold py-3 mb-4">Create Store</h4>
             <a href="{{ route('admin.merchants.stores.list') }}" class="btn btn-dark"><i class="bx bx-undo"></i> Back to List</a>
         </div>
 
@@ -54,9 +54,11 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="organizations" class="form-label">Organizations</label>
-                                        <select name="organizations[]" id="organizations" class="select2 form-select" multiple>
-                                            <option value=""></option>
+                                        <label for="organization_id" class="form-label">Organization</label>
+                                        <select name="organization_id" id="organization_id" class="select2 form-select" >
+                                            @foreach ($organizations as $organization)
+                                                <option value="{{ $organization->id }}">{{ $organization->name }}</option>                                                
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>

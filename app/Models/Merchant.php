@@ -14,7 +14,7 @@ class Merchant extends Model
         'type',
         'featured_image',
         'nature_of_business',
-        'organizations',
+        'organization_id',
         'code',
         'description',
     ];

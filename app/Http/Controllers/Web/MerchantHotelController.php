@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 
 use App\Models\MerchantHotel;
 use App\Models\Merchant;
+use App\Models\Organization;
 
 use DataTables;
 
@@ -27,17 +28,8 @@ class MerchantHotelController extends Controller
                     })
                     ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
-                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                    <i class="bx bx-dots-vertical-rounded"></i>
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="/admin/merchants/hotels/edit/' .$row->id. '">
-                                            <i class="bx bx-edit-alt me-1"></i> Edit
-                                        </a>
-                                        <a class="dropdown-item remove-btn" href="javascript:void(0);" id="' .$row->id. '">
-                                            <i class="bx bx-trash me-1"></i> Delete
-                                        </a>
-                                    </div>
+                                    <a href="/admin/merchants/hotels/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                     })
                     ->rawColumns(['actions'])
@@ -48,7 +40,8 @@ class MerchantHotelController extends Controller
     }
 
     public function create(Request $request) {
-        return view('admin-page.merchants.hotels.create-hotel');
+        $organizations = Organization::get();
+        return view('admin-page.merchants.hotels.create-hotel', compact('organizations'));
     }
 
     public function store(Request $request) {
@@ -85,8 +78,9 @@ class MerchantHotelController extends Controller
     }
 
     public function edit(Request $request) {
+        $organizations = Organization::get();
         $hotel = MerchantHotel::where('id', $request->id)->with('merchant')->first();
-        return view('admin-page.merchants.hotels.edit-hotel', compact('hotel'));
+        return view('admin-page.merchants.hotels.edit-hotel', compact('hotel', 'organizations'));
     }
 
     public function update(Request $request) {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Attraction;
+use App\Models\Organization;
 use DataTables;
 
 class AttractionController extends Controller
@@ -18,17 +19,8 @@ class AttractionController extends Controller
                 ->addIndexColumn()
                 ->addColumn('actions', function ($row) {
                     return '<div class="dropdown">
-                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                <i class="bx bx-dots-vertical-rounded"></i>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="/admin/attractions/edit/' .$row->id. '">
-                                        <i class="bx bx-edit-alt me-1"></i> Edit
-                                    </a>
-                                    <a class="dropdown-item remove-btn" href="javascript:void(0);" id="' .$row->id. '">
-                                        <i class="bx bx-trash me-1"></i> Delete
-                                    </a>
-                                </div>
+                                <a href="/admin/attractions/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
+                                <a href="javascript:void(0);" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                             </div>';
                 })
                 ->addColumn('status', function($row) {
@@ -47,11 +39,12 @@ class AttractionController extends Controller
     }
 
     public function create(Request $request) {
-        return view('admin-page.attractions.create-attraction');
+        $organizations = Organization::get();
+        return view('admin-page.attractions.create-attraction', compact('organizations'));
     }
 
     public function store(Request $request) {
-        $data = $request->except('_token');
+        $data = $request->except('_token', 'organization_ids');
         $attraction = Attraction::create(array_merge($data, [
             'is_cancellable' => $request->has('is_cancellable'),
             'is_refundable' => $request->has('is_refundable'),
@@ -63,7 +56,8 @@ class AttractionController extends Controller
 
     public function edit(Request $request) {
         $attraction = Attraction::findOrFail($request->id);
-        return view('admin-page.attractions.edit-attraction', compact('attraction'));
+        $organizations = Organization::get();
+        return view('admin-page.attractions.edit-attraction', compact('attraction', 'organizations'));
     }
 
     public function update(Request $request) {

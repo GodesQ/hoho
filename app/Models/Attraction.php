@@ -21,6 +21,7 @@ class Attraction extends Model
         'product_categories',
         'price',
         'operating_hours',
+        'organization_id',
         'address',
         'latitude',
         'longitude',
@@ -28,4 +29,5 @@ class Attraction extends Model
         'is_refundable',
         'status',
     ];
+    
 }

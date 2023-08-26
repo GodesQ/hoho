@@ -4,6 +4,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\TourReservationController;
+use App\Http\Controllers\Api\OrganizationController;
+use App\Http\Controllers\Api\UserController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -24,4 +28,13 @@ Route::post('register', [AuthController::class, 'register']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
+
+    Route::get('user', [UserController::class, 'getUser']);
+    Route::post('user/profile', [UserController::class, 'updateProfile']);
+    // get the current tour
+    Route::get('today_reservation', [TourReservationController::class, 'getUserTodayReservation']);
+
+    Route::get('organizations', [OrganizationController::class, 'getOrganizations']);
+    Route::get('organization/{id}', [OrganizationController::class, 'getOrganization']);
+
 });

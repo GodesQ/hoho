@@ -113,7 +113,7 @@
 
         }
         // Set up Pusher to watch real-time updates
-        let backendBaseUrl = "http://192.168.100.116:8000";
+        let backendBaseUrl = "http://127.0.0.1:8000";
 
         Pusher.logToConsole = true;
 

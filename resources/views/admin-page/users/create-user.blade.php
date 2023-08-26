@@ -13,9 +13,8 @@
             <div class="col-xl">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <form method="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
-
                             <h5 class="card-title"><i class="bx bx-lock"></i> Account Information</h5>
                             <hr>
                             <div class="row my-2">

@@ -109,6 +109,17 @@
                         </div>
                     </div>
                     <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label for="organization_id" class="form-label">Organizations </label>
+                            <select name="organization_id" id="organization_id" class="select2 form-select">
+                                <option value="">--- SELECT ORGANIZATION ---</option>
+                                @foreach ($organizations as $organization)
+                                    <option {{ $organization->id == $attraction->organization_id ? 'selected' : null }} value="{{ $organization->id }}">{{ $organization->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="form-check form-switch mb-2">

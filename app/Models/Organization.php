@@ -20,4 +20,20 @@ class Organization extends Model
         'visibility',
         'is_active',
     ];
+
+    public function attractions() {
+        return $this->hasMany(Attraction::class, 'organization_id');
+    }
+
+    public function stores() {
+        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Store');
+    }
+
+    public function hotels() {
+        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Hotel');
+    }
+
+    public function restaurants() {
+        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Restaurant');
+    }
 }

@@ -28,20 +28,29 @@ class AuthController extends Controller
         }
 
         $user = null;
+        $role = 'guest';
         $token = '';
 
         // Find the user based on email or username
         $fieldType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        if ($request->role == 'guest') {
-            $user = User::where($fieldType, $request->username)->first();
-        } elseif ($request->role == 'bus_operator') {
-            $user = Admin::where($fieldType, $request->username)->where('role', $request->role)->first();
+        $user = User::where($fieldType, $request->username)->first();
+
+        if(!$user) {
+            $user = Admin::where($fieldType, $request->username)->first();
+            $role = $user->role;
         }
+
+        // if ($request->role == 'guest') {
+        //     $user = User::where($fieldType, $request->username)->first();
+        // } elseif ($request->role == 'bus_operator') {
+        //     $user = Admin::where($fieldType, $request->username)->where('role', $request->role)->first();
+        // }
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response([
                 'status' => false,
+                'user_role' => $role,
                 'message' => "Invalid credentials."
             ], 200);
         }

@@ -18,6 +18,7 @@
                             <th>Id</th>
                             <th>Username</th>
                             <th>Email</th>
+                            <th>Contact No</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -41,8 +42,8 @@
                     url: "{{ route('admin.users.list') }}"
                 },
                 columns: [{
-                        data: 'account_uid',
-                        name: 'account_uid'
+                        data: 'id',
+                        name: 'id'
                     },
                     {
                         data: 'username',
@@ -51,6 +52,10 @@
                     {
                         data: 'email',
                         name: 'email'
+                    },
+                    {
+                        data: 'contact_no',
+                        name: 'contact_no'
                     },
                     {
                         data: 'status',
