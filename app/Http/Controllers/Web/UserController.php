@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 use App\Models\User;
+use App\Models\Interest;
+
 use DataTables;
 
 class UserController extends Controller
@@ -28,7 +31,7 @@ class UserController extends Controller
                     ->addColumn('actions', function($row) {
                         return '<div class="dropdown">
                                     <a href="/admin/users/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="javascript:void(0);" class="btn btn-outline-danger btn-sm"><i class="bx bx-trash me-1"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-outline-danger remove-btn btn-sm" id="' .$row->id. '"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                     })
                     ->rawColumns(['status', 'username', 'actions'])
@@ -58,22 +61,62 @@ class UserController extends Controller
     }
 
     public function create(Request $request) {
-        return view('admin-page.users.create-user');
+        $interests = Interest::get();
+        return view('admin-page.users.create-user', compact('interests'));
     }
 
     public function store(Request $request) {
-       // $data = $request->except
+        $account_uid = $this->generateRandomUuid();
+        $user = User::create(array_merge($request->all(), [
+                            'account_uid' => $account_uid,
+                            'password' => Hash::make($request->password),
+                            'interests' => $request->has('interest_ids') ? json_encode($request->interest_ids) : null
+                ]));
+
+        if($user) return redirect()->route('admin.users.edit', $user->id)->withSuccess('User created successfully');
     }
 
     public function edit(Request $request) {
-        return view('admin-page.users.edit-user');
+        $user = User::where('id', $request->id)->first();
+        $interests = Interest::get();
+        return view('admin-page.users.edit-user', compact('user', 'interests'));
     }
 
     public function update(Request $request) {
-        dd($request->all());
+        $user = User::where('id', $request->id)->first();
+
+        $update_user = $user->update(array_merge($request->all(), [
+            'interest_ids' => $request->has('interest_ids') ? json_encode($request->interest_ids) : null
+        ]));
+
+        if($update_user) return back()->withSuccess('User updated successfully');
     }
 
     public function destroy(Request $request) {
+        $user = User::where('id', $request->id)->first();
 
+        if($user) {
+            $delete_user = $user->delete();
+            if($delete_user) {
+                return response()->json([
+                    'status' => TRUE,
+                    'message' => 'User deleted successfully'
+                ], 200);
+            }
+        } else {
+            return response()->json([
+                'status' => FALSE,
+                'message' => 'User not found'
+            ], 200);
+        }
+    }
+
+    private function generateRandomUuid() {
+        $data = random_bytes(16);
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // Version 4 (random)
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // Variant (RFC 4122)
+
+        $uuid = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+        return $uuid;
     }
 }

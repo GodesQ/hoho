@@ -104,9 +104,11 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="mb-3">
-                                        <label for="interests" class="form-label">Interests</label>
-                                        <select name="interests[]" id="interests" class="select2 form-select" multiple>
-                                            <option value="">---- Select Interests ----</option>
+                                        <label for="interest_ids" class="form-label">Interests</label>
+                                        <select name="interest_ids[]" id="interest_ids" class="select2 form-select" multiple>
+                                            @foreach ($interests as $interest)
+                                                <option value="{{ $interest->id }}">{{ $interest->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>

@@ -18,6 +18,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'account_uid',
         'username',
         'email',
         'password',
@@ -29,7 +30,7 @@ class User extends Authenticatable
         'birthdate',
         'gender',
         'contact_no',
-        'interests',
+        'interest_ids',
         'status',
     ];
 
@@ -51,4 +52,20 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected $appends = ['interests'];
+
+    public function getInterestsAttribute() {
+        $interest_ids = json_decode($this->interest_ids, true);
+
+        if (is_array($interest_ids) && !empty($interest_ids)) {
+            $data = Interest::whereIn('id', $interest_ids)
+                ->get()
+                ->toArray();
+
+            if (!empty($data)) {
+                return $data;
+            }
+        }
+    }
 }

@@ -6,7 +6,7 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center">
         <h4 class="fw-bold py-3 mb-4">Product Categories List</h4>
-        <a href="{{ route('admin.organizations.create') }}" class="btn btn-primary">Add Product Category <i class="bx bx-plus"></i></a>
+        <a href="{{ route('admin.product_categories.create') }}" class="btn btn-primary">Add Product Category <i class="bx bx-plus"></i></a>
     </div>
 
     <div class="card">

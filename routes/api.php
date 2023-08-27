@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\TourReservationController;
 use App\Http\Controllers\Api\OrganizationController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\AttractionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,5 +37,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('organizations', [OrganizationController::class, 'getOrganizations']);
     Route::get('organization/{id}', [OrganizationController::class, 'getOrganization']);
+
+    Route::get('attraction/{id}', [AttractionController::class, 'getAttraction']);
 
 });
