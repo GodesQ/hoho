@@ -54,7 +54,34 @@ class AttractionController extends Controller
             'status' => $request->has('is_active'),
         ]));
 
-        if($attraction) return redirect()->route('admin.attractions.edit', $attraction->id)->withSuccess('Attraction Created Successfully');
+        if($request->hasFile('featured_image')) {
+            $file = $request->file('featured_image');
+            $file_name = Str::snake(Str::lower($request->name)) . '.' . $file->getClientOriginalExtension();
+            $save_file = $file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $file_name);
+        } else {
+            $file_name = $attraction->featured_image;
+        }
+
+        $count = 1;
+        $images = [];
+
+        if($request->has('images')) {
+            foreach ($request->images as $key => $image) {
+                $image_file = $image;
+                $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $count . '.' . $image_file->getClientOriginalExtension();
+                $save_file = $image_file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $image_file_name);
+
+                array_push($images, $image_file_name);
+                $count++;
+            }
+        }
+
+        $update_attraction = $attraction->update([
+            'featured_image' => $file_name,
+            'images' => count($images) > 0 ? json_encode($images) : null,
+        ]);
+
+        if($attraction) return redirect()->route('admin.attractions.edit', $attraction->id)->withSuccess('Attraction created successfully');
     }
 
     public function edit(Request $request) {

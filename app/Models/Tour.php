@@ -33,6 +33,9 @@ class Tour extends Model
         'bracket_price_one',
         'bracket_price_two',
         'bracket_price_three',
-        'attractions_assignments_ids'
+        'attractions_assignments_ids',
+        'start_date_duration',
+        'end_date_duration',
+        'tour_duration'
     ];
 }

@@ -111,6 +111,30 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="date_duration" class="form-label">Date Duration</label>
+                                        <input type="text" class="form-control" name="date_duration" id="date_duration" readonly>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="my-2">
+                                                    <input type="text" class="form-control" name="start_date_duration" id="start_date_duration" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="my-2">
+                                                    <input type="text" class="form-control" name="end_date_duration" id="end_date_duration" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="total_duration" class="form-label">Total Duration</label>
+                                        <input type="text" class="form-control" name="tour_duration" id="total_duration" readonly>
+                                    </div>
+                                </div>
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <label for="attractions_assignments" class="form-label">Attractions Assignment</label>
@@ -201,6 +225,9 @@
 
 @push('scripts')
     <script>
+        $('#date_duration').daterangepicker({
+            minDate: new Date(),
+        });
         // Function to handle file selection and display preview image
         function handleFileSelect(event) {
             const file = event.target.files[0];

@@ -19,8 +19,8 @@
     <meta property="og:site_name" content="guestapp.ph" />
 
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="apple-touch-icon" href="{{ URL::asset('assets/img/logo/hoho.jpg') }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ URL::asset('assets/img/logo/hoho.jpg') }}">
+    <link rel="apple-touch-icon" href="{{ URL::asset('assets/img/logo/favicon-hoho.ico') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ URL::asset('assets/img/logo/favicon-hoho.ico') }}">
     <title>@yield('title')</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -54,7 +54,7 @@
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
-
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
@@ -71,7 +71,7 @@
                 <div class="app-brand demo">
                     <a href="{{ route('admin.dashboard') }}" class="app-brand-link">
                         <span class="app-brand-logo demo">
-                            <img src="https://pepmedia.s3.ap-southeast-1.amazonaws.com/clients/hoho.jpg"
+                            <img src="https://philippines-hoho.ph/philippines_hoho.3b7019f3d8ced762.jpg"
                                 style="width:35px; border-radius: 5px;" alt="">
                         </span>
                         <span class="app-brand-text demo menu-text fw-bolder ms-2">Menu</span>
@@ -367,9 +367,12 @@
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     {{-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initMap"></script> --}}
 
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+
 
     @if (Session::get('success'))
         <script>

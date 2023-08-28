@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\OrganizationController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AttractionController;
 use App\Http\Controllers\Api\MerchantController;
+use App\Http\Controllers\Api\TourController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,4 +44,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('attraction/{id}', [AttractionController::class, 'getAttraction']);
     Route::get('merchant/{id}', [MerchantController::class, 'getMerchant']);
 
+    Route::get('tours/guided', [TourController::class, 'getGuidedTours']);
 });
