@@ -1,11 +1,11 @@
 @extends('layouts.admin.layout')
 
-@section('title', 'Hop On Hop Off - Create Product Category')
+@section('title', 'Hop On Hop Off - Edit Product Category')
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center">
-        <h4 class="fw-bold py-3 mb-4">Create Product Category</h4>
+        <h4 class="fw-bold py-3 mb-4">Edit Product Category</h4>
         <a href="{{ route('admin.product_categories.list') }}" class="btn btn-dark"> <i class="bx bx-undo"></i> Back to List</a>
     </div>
 

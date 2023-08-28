@@ -33,10 +33,10 @@
                                     <div class="mb-3">
                                         <label for="type" class="form-label">Merchant Type <span class="text-danger">*</span></label>
                                         <select name="type" id="type" class="form-select" required>
+                                            <option value="Restaurant">Restaurant</option>
                                             <option value="Hotel">Hotel</option>
                                             <option value="Store">Store</option>
                                             <option value="Tour Provider">Tour Provider</option>
-                                            <option value="Restaurant">Restaurant</option>
                                         </select>
                                     </div>
                                 </div>
@@ -57,7 +57,7 @@
                                         <label for="organizations" class="form-label">Organizations</label>
                                         <select name="organization_id" id="organization_id" class="select2 form-select" >
                                             @foreach ($organizations as $organization)
-                                                <option value="{{ $organization->id }}">{{ $organization->name }}</option>                                                
+                                                <option value="{{ $organization->id }}">{{ $organization->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>

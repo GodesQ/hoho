@@ -7,11 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\EmailVerification;
 
 use App\Models\Admin;
 use App\Models\User;
 
 use App\Http\Requests\Auth\RegisterRequest;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -50,7 +52,6 @@ class AuthController extends Controller
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response([
                 'status' => false,
-                'user_role' => $role,
                 'message' => "Invalid credentials."
             ], 200);
         }
@@ -70,16 +71,28 @@ class AuthController extends Controller
 
 
     public function register(RegisterRequest $request) {
+        $account_uid = $this->generateRandomUuid();
         $register = User::create([
+            'account_uid' => $account_uid,
             'email' => $request->email,
             'username' => $request->username,
             'password' => Hash::make($request->password),
-            'birthdate' => $request->birthdate,
+            'birthdate' => Carbon::createFromFormat('Y-m-d', $request->birthdate),
             'country_of_residence' => $request->country_of_residence,
             'is_old_user' => false,
             'is_first_time_philippines' => $request->has('is_first_time_philippines'),
             'is_international_tourist' => $request->has('is_international_tourist')
         ]);
+
+        # details for sending email to worker
+        $details = [
+            'title' => 'Verification email from HOHO',
+            'email' => $request->email,
+            'username' => $request->username,
+        ];
+
+        // SEND EMAIL FOR VERIFICATION
+        Mail::to($request->email)->send(new EmailVerification($details));
 
         if($register) {
             return response([
@@ -99,5 +112,14 @@ class AuthController extends Controller
             'status' => true,
             'message' => 'Logout Successfully',
         ], 200);
+    }
+
+    private function generateRandomUuid() {
+        $data = random_bytes(16);
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // Version 4 (random)
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // Variant (RFC 4122)
+
+        $uuid = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+        return $uuid;
     }
 }

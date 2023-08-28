@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Web\Auth\AdminAuthController;
+use App\Http\Controllers\Web\Auth\UserAuthController;
 
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\UserController;
@@ -48,12 +49,15 @@ Route::get('admin/login', [AdminAuthController::class, 'login'])->name('admin.lo
 Route::post('admin/login', [AdminAuthController::class, 'saveLogin'])->name('admin.saveLogin');
 
 Route::get('test_location', [DashboardController::class, 'testLocation']);
+Route::view('user/success_verification_message', 'misc.success_verification_message')->name('user.success_verification_message');
 
 Route::get('aqwire/payment/success/{id}', [AqwireController::class, 'success']);
 Route::get('aqwire/payment/view_success', [AqwireController::class, 'viewSuccess']);
 Route::get('aqwire/payment/cancel/{id}', [AqwireController::class, 'cancel']);
 Route::get('aqwire/payment/view_cancel', [AqwireController::class, 'viewCancel']);
 Route::post('aqwire/payment/callback/{id}', [AqwireController::class, 'callback']);
+
+Route::get('user/verify_email', [UserAuthController::class, 'verifyEmail']);
 
 Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function(){
     Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
@@ -104,6 +108,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('attractions/edit/{id}', [AttractionController::class, 'edit'])->name('attractions.edit');
     Route::post('attractions/update/{id}', [AttractionController::class, 'update'])->name('attractions.update');
     Route::delete('attractions/destroy', [AttractionController::class, 'destroy'])->name('attractions.destroy');
+    Route::delete('attractions/remove_image', [AttractionController::class, 'removeImage'])->name('attractions.remove_image');
 
     Route::get('merchants', [MerchantController::class, 'list'])->name('merchants.list');
     Route::get('merchants/create', [MerchantController::class, 'create'])->name('merchants.create');

@@ -17,6 +17,7 @@ class Merchant extends Model
         'organization_id',
         'code',
         'description',
+        'is_active'
     ];
 
     public function hotels() {

@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 use App\Models\Attraction;
 use App\Models\Organization;
+use App\Models\ProductCategory;
+
 use DataTables;
 
 class AttractionController extends Controller
@@ -57,14 +60,38 @@ class AttractionController extends Controller
     public function edit(Request $request) {
         $attraction = Attraction::findOrFail($request->id);
         $organizations = Organization::get();
-        return view('admin-page.attractions.edit-attraction', compact('attraction', 'organizations'));
+        $product_categories = ProductCategory::get();
+        return view('admin-page.attractions.edit-attraction', compact('attraction', 'organizations', 'product_categories'));
     }
 
     public function update(Request $request) {
         $data = $request->except("_token");
         $attraction = Attraction::findOrFail($request->id);
+        if($request->hasFile('featured_image')) {
+            $file = $request->file('featured_image');
+            $file_name = Str::snake(Str::lower($request->name)) . '.' . $file->getClientOriginalExtension();
+            $save_file = $file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $file_name);
+        } else {
+            $file_name = $attraction->featured_image;
+        }
+
+        $images = $attraction->images ? json_decode($attraction->images) : [];
+        $count = $attraction->images ? count(json_decode($attraction->images)) : 1;
+
+        if($request->has('images')) {
+            foreach ($request->images as $key => $image) {
+                $count++;
+                $image_file = $image;
+                $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $count . '.' . $image_file->getClientOriginalExtension();
+                $save_file = $image_file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $image_file_name);
+
+                array_push($images, $image_file_name);
+            }
+        }
 
         $update_attraction = $attraction->update(array_merge($data, [
+            'featured_image' => $file_name,
+            'images' => count($images) > 0 ? json_encode($images) : $attraction->images,
             'is_cancellable' => $request->has('is_cancellable'),
             'is_refundable' => $request->has('is_refundable'),
             'status' => $request->has('is_active'),
@@ -81,6 +108,31 @@ class AttractionController extends Controller
             return response([
                 'status' => true,
                 'message' => 'Attraction deleted successfully'
+            ]);
+        }
+    }
+
+    public function removeImage(Request $request) {
+        $attraction = Attraction::where('id', $request->id)->first();
+        $images = json_decode($attraction->images);
+        $image_path = $request->image_path;
+
+        if(is_array($images)) {
+            if (($key = array_search($image_path, $images)) !== false) {
+                unset($images[$key]);
+                $old_upload_image = public_path('/assets/img/attractions/') . $attraction->id . '/' . $image_path;
+                $remove_image = @unlink($old_upload_image);
+            }
+        }
+
+        $update = $attraction->update([
+            'images' => json_encode(array_values($images))
+        ]);
+
+        if($update) {
+            return response([
+                'status' => TRUE,
+                'message' => 'Image successfully remove'
             ]);
         }
     }

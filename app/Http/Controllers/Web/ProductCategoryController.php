@@ -70,7 +70,23 @@ class ProductCategoryController extends Controller
     }
 
     public function update(Request $request) {
+        $data = $request->except('_token');
+        $product_category = ProductCategory::where('id', $request->id)->firstOrFail();
 
+        if($request->hasFile('featured_image')) {
+            $file = $request->file('featured_image');
+            $file_name = Str::snake(Str::lower($request->name)) . '.' . $file->getClientOriginalExtension();
+            // dd($file_name);
+            $save_file = $file->move(public_path() . '/assets/img/product_categories', $file_name);
+        } else {
+            $file_name = $product_category->featured_image;
+        }
+
+        $update_product_category = $product_category->update(array_merge($data, [
+            'featured_image' => $file_name
+        ]));
+
+        if($update_product_category) return back()->withSuccess('Product Category updated successfully');
     }
 
     public function destroy(Request $request) {

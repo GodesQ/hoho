@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\TourReservationController;
 use App\Http\Controllers\Api\OrganizationController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AttractionController;
+use App\Http\Controllers\Api\MerchantController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
@@ -39,5 +41,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('organization/{id}', [OrganizationController::class, 'getOrganization']);
 
     Route::get('attraction/{id}', [AttractionController::class, 'getAttraction']);
+    Route::get('merchant/{id}', [MerchantController::class, 'getMerchant']);
 
 });

@@ -17,7 +17,6 @@
                         <tr>
                             <th>Id</th>
                             <th>Name</th>
-                            <th>Interests</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -48,10 +47,6 @@
                     {
                         data: 'name',
                         name: 'name'
-                    },
-                    {
-                        data: 'interests',
-                        name: 'interests'
                     },
                     {
                         data: 'status',

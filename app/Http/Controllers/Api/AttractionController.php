@@ -11,7 +11,7 @@ class AttractionController extends Controller
 {
     public function getAttraction(Request $request) {
         $attraction = Attraction::where('id', $request->id)->with('organization')->first();
-
+        return response($attraction);
         if(!$attraction) return response(['status' => FALSE, 'message' => 'Attraction not found.'], 404);
 
         return response([

@@ -32,6 +32,7 @@ class User extends Authenticatable
         'contact_no',
         'interest_ids',
         'status',
+        'is_verify'
     ];
 
     /**
@@ -53,7 +54,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    protected $appends = ['interests'];
+    protected $appends = ['interests', 'role'];
 
     public function getInterestsAttribute() {
         $interest_ids = json_decode($this->interest_ids, true);
@@ -67,5 +68,9 @@ class User extends Authenticatable
                 return $data;
             }
         }
+    }
+
+    public function getRoleAttribute() {
+        return 'guest';
     }
 }
