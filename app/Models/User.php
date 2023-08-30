@@ -53,7 +53,8 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'is_old_user' => 'integer'
+        'is_old_user' => 'integer',
+        'is_active' => 'integer'
     ];
 
     protected $appends = ['interests', 'role'];

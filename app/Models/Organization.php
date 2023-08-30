@@ -21,6 +21,10 @@ class Organization extends Model
         'is_active',
     ];
 
+    protected $casts = [
+        'is_active' => 'integer'
+    ];
+
     public function attractions() {
         return $this->hasMany(Attraction::class, 'organization_id');
     }
