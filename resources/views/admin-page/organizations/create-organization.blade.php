@@ -19,7 +19,7 @@
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Name</label>
-                                    <input type="text" class="form-control" name="name" id="name" value="">
+                                    <input type="text" class="form-control" name="name" id="name" value="" required>
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -43,7 +43,7 @@
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="featured_image" class="form-label">Featured Image</label>
-                                    <input type="file" class="form-control" name="featured_image" id="featured_image" value="">
+                                    <input type="file" class="form-control" name="featured_image" id="featured_image" value="" required>
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -65,6 +65,32 @@
                                 <div class="form-check form-switch mb-2">
                                     <input class="form-check-input" type="checkbox" id="isActive" name="is_active" checked />
                                     <label class="form-check-label" for="isActive">Active</label>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <h4>Images</h4>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="mb-3">
+                                            <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_1" onchange="handlePreviewImage(this, 'previewImage1')">
+                                            <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage1" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="mb-3">
+                                            <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_2" onchange="handlePreviewImage(this, 'previewImage2')">
+                                            <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage2" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="mb-3">
+                                            <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_3" onchange="handlePreviewImage(this, 'previewImage3')">
+                                            <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage3" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -122,6 +148,21 @@
                 reader.onload = function(event) {
                     const previewIcon = document.getElementById('previewIcon');
                     previewIcon.src = event.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handlePreviewImage(event, previewImageId) {
+            const file = event.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const previewImage = document.getElementById(previewImageId);
+                    console.log(previewImage);
+                    previewImage.src = event.target.result;
                 };
 
                 reader.readAsDataURL(file);

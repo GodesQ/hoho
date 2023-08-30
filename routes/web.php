@@ -84,6 +84,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('organizations/edit/{id}', [OrganizationController::class, 'edit'])->name('organizations.edit');
     Route::post('organizations/update/{id}', [OrganizationController::class, 'update'])->name('organizations.update');
     Route::delete('organizations/destroy', [OrganizationController::class, 'destroy'])->name('organizations.destroy');
+    Route::delete('organizations/remove_image', [OrganizationController::class, 'removeImage'])->name('organizations.remove_image');
 
     Route::get('tours', [TourController::class, 'list'])->name('tours.list');
     Route::get('tours/diy', [TourController::class, 'getDiyTours'])->name('tours.diy');

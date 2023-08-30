@@ -23,7 +23,7 @@ class AttractionController extends Controller
                 ->addColumn('actions', function ($row) {
                     return '<div class="dropdown">
                                 <a href="/admin/attractions/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                <a href="javascript:void(0);" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
+                                <a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                             </div>';
                 })
                 ->addColumn('status', function($row) {
@@ -47,7 +47,8 @@ class AttractionController extends Controller
     }
 
     public function store(Request $request) {
-        $data = $request->except('_token', 'organization_ids');
+        $data = $request->except('_token', 'organization_ids', 'images', 'featured_image');
+
         $attraction = Attraction::create(array_merge($data, [
             'is_cancellable' => $request->has('is_cancellable'),
             'is_refundable' => $request->has('is_refundable'),
@@ -64,8 +65,7 @@ class AttractionController extends Controller
 
         $count = 1;
         $images = [];
-
-        if($request->has('images')) {
+        if($request->images) {
             foreach ($request->images as $key => $image) {
                 $image_file = $image;
                 $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $count . '.' . $image_file->getClientOriginalExtension();
@@ -128,7 +128,12 @@ class AttractionController extends Controller
     }
 
     public function destroy(Request $request) {
-        $attraction = Attraction::findOrFail($request->id);
+        $attraction = Attraction::where('id', $request->id)->firstOr(function () {
+            return response()->json([
+                'status' => false,
+                'message' => 'Not Found'
+            ]);
+        });
 
         $remove_attraction = $attraction->delete();
         if($remove_attraction) {

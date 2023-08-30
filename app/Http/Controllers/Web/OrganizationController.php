@@ -42,8 +42,7 @@ class OrganizationController extends Controller
     }
 
     public function store(Request $request) {
-        $data = $request->except('_token', 'featured_image', 'icon');
-
+        $data = $request->except('_token', 'featured_image', 'icon', 'images');
         $organization = Organization::create(array_merge($data, [
             'is_active' => $request->has('is_active')
         ]));
@@ -68,6 +67,23 @@ class OrganizationController extends Controller
             ]);
         }
 
+        $count = 1;
+        $images = [];
+        if($request->images) {
+            foreach ($request->images as $key => $image) {
+                $image_file = $image;
+                $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $count . '.' . $image_file->getClientOriginalExtension();
+                $save_file = $image_file->move(public_path() . '/assets/img/organizations/' . $organization->id, $image_file_name);
+
+                array_push($images, $image_file_name);
+                $count++;
+            }
+
+            $organization->update([
+                'images' => count($images) > 0 ? json_encode($images) : null
+            ]);
+        }
+
         if($organization) return redirect()->route('admin.organizations.edit', $organization->id)->withSuccess('Organization created successfully');
         abort(400);
     }
@@ -78,7 +94,7 @@ class OrganizationController extends Controller
     }
 
     public function update(Request $request) {
-        $data = $request->except('_token', 'featured_image', 'icon');
+        $data = $request->except('_token', 'featured_image', 'icon', 'images');
         $organization = Organization::where('id', $request->id)->firstOrFail();
 
         $organization->update(array_merge($data, [
@@ -113,9 +129,23 @@ class OrganizationController extends Controller
             $icon_file_name = $organization->icon;
         }
 
+        $images = $organization->images ? json_decode($organization->images, true) : [];
+        $count = $organization->images ? count(json_decode($organization->images, true)) + 1 : 1;
+
+        if($request->has('images')) {
+            foreach ($request->images as $key => $image) {
+                $image_file = $image;
+                $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $count . '.' . $image_file->getClientOriginalExtension();
+                $save_file = $image_file->move(public_path() . '/assets/img/organizations/' . $organization->id, $image_file_name);
+                array_push($images, $image_file_name);
+                $count++;
+            }
+        }
+
         $organization->update([
             'featured_image' => $featured_file_name,
-            'icon' => $icon_file_name
+            'icon' => $icon_file_name,
+            'images' => count($images) > 0 ? json_encode($images) : $organization->images,
         ]);
 
         if($organization) return back()->withSuccess('Organization updated successfully');
@@ -124,5 +154,30 @@ class OrganizationController extends Controller
 
     public function destroy(Request $request) {
 
+    }
+
+    public function removeImage(Request $request) {
+        $organization = Organization::where('id', $request->id)->first();
+        $images = json_decode($organization->images);
+        $image_path = $request->image_path;
+
+        if(is_array($images)) {
+            if (($key = array_search($image_path, $images)) !== false) {
+                unset($images[$key]);
+                $old_upload_image = public_path('/assets/img/organizations/') . $organization->id . '/' . $image_path;
+                $remove_image = @unlink($old_upload_image);
+            }
+        }
+
+        $update = $organization->update([
+            'images' => json_encode(array_values($images))
+        ]);
+
+        if($update) {
+            return response([
+                'status' => TRUE,
+                'message' => 'Image successfully remove'
+            ]);
+        }
     }
 }
