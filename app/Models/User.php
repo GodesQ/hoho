@@ -32,6 +32,7 @@ class User extends Authenticatable
         'contact_no',
         'interest_ids',
         'status',
+        'is_old_user',
         'is_verify'
     ];
 
@@ -52,6 +53,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_old_user' => 'integer'
     ];
 
     protected $appends = ['interests', 'role'];
