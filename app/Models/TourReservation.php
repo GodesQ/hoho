@@ -24,6 +24,13 @@ class TourReservation extends Model
         'ticket_pass'
     ];
 
+    protected $casts = [
+        'tour_id' => 'integer',
+        'amount' => 'integer',
+        'number_of_pass' => 'integer',
+        'order_transaction_id' => 'integer'
+    ];
+
     protected $appends = ['passengers'];
 
     public function user() {
