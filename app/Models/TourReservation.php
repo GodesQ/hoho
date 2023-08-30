@@ -28,7 +28,8 @@ class TourReservation extends Model
         'tour_id' => 'integer',
         'amount' => 'integer',
         'number_of_pass' => 'integer',
-        'order_transaction_id' => 'integer'
+        'order_transaction_id' => 'integer',
+        'reserved_user_id' => 'integer'
     ];
 
     protected $appends = ['passengers'];
