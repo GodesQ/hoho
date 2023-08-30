@@ -92,8 +92,8 @@
 
         function initMap() {
             const busIcon = {
-                url: "{{ URL::asset('assets/img/icons/bus.png') }}",
-                scaledSize: new google.maps.Size(50, 50),
+                url: "{{ URL::asset('assets/img/icons/marker.png') }}",
+                scaledSize: new google.maps.Size(30, 30),
                 origin: new google.maps.Point(0, 0),
                 anchor: new google.maps.Point(20, 40)
             };
@@ -125,13 +125,15 @@
 
         var channel = pusher.subscribe('bus-location');
         channel.bind('new-bus-location', function(data) {
-            console.log(data);
-            const newLocation = {
-                lat: data.coordinates.latitude,
-                lng: data.coordinates.longitude
-            };
-            operatorMarker.setPosition(newLocation);
-            map.panTo(newLocation);
+            console.log(data.transport_id);
+            if(data.transport_id ==  $('#transport').val()) {
+                const newLocation = {
+                    lat: data.coordinates.latitude,
+                    lng: data.coordinates.longitude
+                };
+                operatorMarker.setPosition(newLocation);
+                map.panTo(newLocation);
+            }
         });
 
         channel.bind('pusher:subscription_succeeded', function(members) {});
@@ -140,13 +142,176 @@
         let lastTimestamp = Date.now();
 
         function createMapAndMarker(icon) {
+            const mapStyles = [{
+                    "featureType": "all",
+                    "elementType": "all",
+                    "stylers": [{
+                            "visibility": "simplified"
+                        },
+                        {
+                            "hue": "#ff0000"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "administrative",
+                    "elementType": "labels.text",
+                    "stylers": [{
+                        "color": "#eb452f"
+                    }]
+                },
+                {
+                    "featureType": "administrative.country",
+                    "elementType": "labels.text",
+                    "stylers": [{
+                        "color": "#2c2c2c"
+                    }]
+                },
+                {
+                    "featureType": "administrative.country",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{
+                        "color": "#606060"
+                    }]
+                },
+                {
+                    "featureType": "administrative.locality",
+                    "elementType": "geometry.fill",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                },
+                {
+                    "featureType": "administrative.locality",
+                    "elementType": "labels",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                },
+                {
+                    "featureType": "administrative.locality",
+                    "elementType": "labels.text",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                },
+                {
+                    "featureType": "administrative.neighborhood",
+                    "elementType": "geometry.fill",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                },
+                {
+                    "featureType": "administrative.neighborhood",
+                    "elementType": "labels.text",
+                    "stylers": [{
+                            "color": "#eb452f"
+                        },
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "administrative.neighborhood",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                },
+                {
+                    "featureType": "landscape.man_made",
+                    "elementType": "geometry.fill",
+                    "stylers": [{
+                        "color": "#fff1f1"
+                    }]
+                },
+                {
+                    "featureType": "landscape.man_made",
+                    "elementType": "labels.text",
+                    "stylers": [{
+                            "hue": "#ff0000"
+                        },
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "landscape.man_made",
+                    "elementType": "labels.icon",
+                    "stylers": [{
+                        "color": "#eb452f"
+                    }]
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "geometry.fill",
+                    "stylers": [{
+                        "color": "#ffd6d6"
+                    }]
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "labels",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "labels.text",
+                    "stylers": [{
+                        "color": "#eb452f"
+                    }]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "labels",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                },
+                {
+                    "featureType": "transit.line",
+                    "elementType": "geometry.fill",
+                    "stylers": [{
+                            "saturation": "-7"
+                        },
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "water",
+                    "elementType": "geometry.fill",
+                    "stylers": [{
+                            "visibility": "on"
+                        },
+                        {
+                            "color": "#521707"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "water",
+                    "elementType": "labels",
+                    "stylers": [{
+                        "visibility": "on"
+                    }]
+                }
+            ];
+
             map = new google.maps.Map(document.getElementById('map'), {
                 center: {
                     lat: 14.5889842,
                     lng: 120.9768261
                 },
                 zoom: 15,
-                tilt: 45
+                tilt: 45,
+                styles: mapStyles
             });
 
             operatorMarker = new google.maps.Marker({
@@ -164,7 +329,7 @@
             operatorMarker.setMap(null); // Remove the marker
 
             const busIcon = {
-                url: "{{ URL::asset('assets/img/icons/bus.png') }}",
+                url: "{{ URL::asset('assets/img/icons/marker.png') }}",
                 scaledSize: new google.maps.Size(50, 50),
                 origin: new google.maps.Point(0, 0),
                 anchor: new google.maps.Point(20, 40)
@@ -175,15 +340,25 @@
 
         function getLocalDirections() {
             const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,
+                polylineOptions: {
+                    strokeColor: '#b03717', // Customize the color of the polyline
+                    strokeWeight: 3, // Customize the stroke weight of the polyline
+                    strokeOpacity: 0.8 // Customize the opacity of the polyline
+                    // You can add more styling properties here
+                }
+            });
 
             directionsService.route({
-                    origin: "Manila City Hall, Padre Burgos Ave, Ermita, Manila, 1000 Metro Manila",
-                    destination: "Robinsons Place Manila, Pedro Gil, cor M. Adriatico St, Ermita, Manila, 1000 Metro Manila",
+                    origin: "Binondo, Manila, Metro Manila, Philippines",
+                    destination: "National Museum of Anthropology, Teodoro F. Valencia Circle, Ermita, Manila, Metro Manila, Philippines",
                     travelMode: google.maps.TravelMode.DRIVING
                 },
                 function(response, status) {
                     if (status === 'OK') {
                         // Get the route's overview path (waypoints)
+                        directionsRenderer.setDirections(response); // Display the route on the map
                         const waypoints = response.routes[0].overview_path;
                         // Animate marker movement along waypoints
                         animateMarkerMovement(waypoints);
@@ -196,17 +371,32 @@
 
         function animateMarkerMovement(waypoints) {
             let currentIndex = 0;
+            let polylines = []; // Array to store the polylines
 
             function moveMarker() {
                 if (currentIndex < waypoints.length) {
-                    const newLocation = waypoints[currentIndex];
-                    operatorMarker.setPosition(newLocation);
-                    map.panTo(newLocation);
+                    const currentLocation = waypoints[currentIndex];
+                    const nextLocation = waypoints[currentIndex + 1];
+
+                    if (nextLocation) {
+                        const rotation = google.maps.geometry.spherical.computeHeading(currentLocation, nextLocation);
+                        operatorMarker.setIcon({
+                            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                            scale: 6,
+                            fillColor: "#29477d",
+                            fillOpacity: 1,
+                            strokeWeight: 0,
+                            rotation: rotation
+                        });
+                    }
+
+                    operatorMarker.setPosition(currentLocation);
+                    // map.panTo(currentLocation);
+
                     currentIndex++;
-                    setTimeout(moveMarker, 1000); // Move to the next location every 1 second
+                    setTimeout(moveMarker, 2000); // Move to the next location every 2 seconds
                 }
             }
-
             moveMarker();
         }
 

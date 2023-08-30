@@ -12,12 +12,17 @@ use App\Models\User;
 class UserController extends Controller
 {
     public function getUser(Request $request) {
-        return Auth::user();    
+        $user = Auth::user();
+        if($user->role == 'bus_operator') {
+            $user->load('transport');
+        }
+
+        return $user;
     }
 
     public function updateProfile(Request $request) {
         $user = Auth::user();
-        
+
         $image_name = $request->username;
 
         if($request->hasFile('user_profile')) {

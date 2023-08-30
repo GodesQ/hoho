@@ -14,4 +14,8 @@ class DashboardController extends Controller
     public function testLocation() {
         return view('misc.test-location');
     }
+
+    public function testLocation2() {
+        return view('misc.test-location-2');
+    }
 }

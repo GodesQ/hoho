@@ -18,4 +18,14 @@ class TourController extends Controller
             'tours' => $tours
         ]);
     }
+
+    public function getDIYTours(Request $request) {
+        $tours = Tour::where('type', 'DIY Tour')->get();
+
+        return response([
+            'status' => TRUE,
+            'message' => 'Tours Found',
+            'tours' => $tours
+        ]);
+    }
 }

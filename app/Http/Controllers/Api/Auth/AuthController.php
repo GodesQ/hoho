@@ -30,7 +30,6 @@ class AuthController extends Controller
         }
 
         $user = null;
-        $role = 'guest';
         $token = '';
 
         // Find the user based on email or username
@@ -40,14 +39,11 @@ class AuthController extends Controller
 
         if(!$user) {
             $user = Admin::where($fieldType, $request->username)->first();
-            $role = $user->role;
+            // Load the 'transport' relationship if the role is 'bus_operator'
+            // if ($user->role === 'bus_operator') {
+            //     $user->load('transport');
+            // }
         }
-
-        // if ($request->role == 'guest') {
-        //     $user = User::where($fieldType, $request->username)->first();
-        // } elseif ($request->role == 'bus_operator') {
-        //     $user = Admin::where($fieldType, $request->username)->where('role', $request->role)->first();
-        // }
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response([
@@ -77,7 +73,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'username' => $request->username,
             'password' => Hash::make($request->password),
-            'birthdate' => $request->has('birthdate') ? Carbon::createFromFormat('Y-m-d', $request->birthdate) : null,
+            'birthdate' => $request->birthdate != null || $request->birthdate != '' ? Carbon::createFromFormat('Y-m-d', $request->birthdate) : null,
             'country_of_residence' => $request->country_of_residence,
             'is_old_user' => false,
             'is_first_time_philippines' => $request->has('is_first_time_philippines'),

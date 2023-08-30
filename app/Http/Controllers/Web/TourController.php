@@ -71,10 +71,10 @@ class TourController extends Controller
     }
 
     public function update(Request $request) {
-        $data = $request->except('_token', 'featured_image');
+        $data = $request->except('_token', 'featured_image', 'attractions_assignments_ids');
         $tour = Tour::where('id', $request->id)->firstOrFail();
-
         $update_tour = $tour->update(array_merge($data, [
+            'attractions_assignments_ids' => $request->has('attractions_assignments_ids') ? json_encode($request->attractions_assignments_ids) : null,
             'is_cancellable' => $request->has('is_cancellable'),
             'is_refundable' => $request->has('is_refundable'),
         ]));

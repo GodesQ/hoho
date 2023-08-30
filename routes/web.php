@@ -49,6 +49,8 @@ Route::get('admin/login', [AdminAuthController::class, 'login'])->name('admin.lo
 Route::post('admin/login', [AdminAuthController::class, 'saveLogin'])->name('admin.saveLogin');
 
 Route::get('test_location', [DashboardController::class, 'testLocation']);
+Route::get('test_location2', [DashboardController::class, 'testLocation2']);
+
 Route::view('user/success_verification_message', 'misc.success_verification_message')->name('user.success_verification_message');
 
 Route::get('aqwire/payment/success/{id}', [AqwireController::class, 'success']);

@@ -136,11 +136,12 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
+                                    <?php $attractions_assignment_ids = $tour->attractions_assignments_ids ? json_decode($tour->attractions_assignments_ids) : [] ?>
                                     <div class="mb-3">
-                                        <label for="attractions_assignments" class="form-label">Attractions Assignment</label>
-                                        <select name="attractions_assignments_ids" id="attractions_assignments" class="select2 form-select" multiple>
+                                        <label for="attractions_assignments_ids" class="form-label">Attractions Assignment</label>
+                                        <select name="attractions_assignments_ids[]" id="attractions_assignments_ids" class="select2 form-select" multiple>
                                             @foreach ($attractions as $attraction)
-                                                <option value="{{ $attraction->id }}">{{ $attraction->name }}</option>
+                                                <option {{ in_array($attraction->id, $attractions_assignment_ids) ? 'selected' : null }} value="{{ $attraction->id }}">{{ $attraction->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>

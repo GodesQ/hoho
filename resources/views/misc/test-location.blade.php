@@ -43,7 +43,7 @@
 
 <body>
     <div class="container-xxl">
-        <button class="btn btn-primary" id="test-btn">Test Location</button>
+        <button class="btn btn-primary" id="test-btn">Test Location for MANILA (2)</button>
     </div>
 
     <script src="{{ URL::asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
@@ -92,7 +92,6 @@
             CURRENT_LONGITUDE = INITIAL_LONGITUDE + 0.0020;
 
             let distance = calculateDistance(INITIAL_LATITUDE, INITIAL_LONGITUDE, CURRENT_LATITUDE, CURRENT_LONGITUDE);
-            console.log(distance);
 
             // Send location to Laravel backend
             fetch('{{ route('admin.transports.updateLocation') }}', {
@@ -109,7 +108,7 @@
             });
 
             // Send location every few seconds
-            setTimeout(sendLocationToServer, 4000); // Adjust the interval as needed
+            setTimeout(sendLocationToServer, 5000); // Adjust the interval as needed
         }
         // sendLocationToServer();
     </script>

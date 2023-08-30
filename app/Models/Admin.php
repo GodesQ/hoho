@@ -13,4 +13,12 @@ class Admin extends Authenticatable
     protected $table = 'admins';
     protected $fillable = ['username', 'email', 'password', 'firstname', 'lastname', 'middlename', 'age', 'birthdate', 'role', 'is_active'];
     protected $hidden = ['password'];
+
+    public function transport()
+    {
+        // Check if the role is 'bus_operator'
+        return $this->belongsTo(Transport::class, 'id', 'operator_id')->when($this->role === 'bus_operator', function ($query) {
+            $query->where('role', 'bus_operator');
+        })->select('id', 'capacity', 'operator_id', 'tour_assigned_id', 'tour_assignment_ids', 'latitude', 'longitude', 'name', 'current_location', 'next_location', 'previous_location')->with('assigned_tour');
+    }
 }

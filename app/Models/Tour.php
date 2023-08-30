@@ -36,6 +36,26 @@ class Tour extends Model
         'attractions_assignments_ids',
         'start_date_duration',
         'end_date_duration',
-        'tour_duration'
+        'tour_duration',
+        'transport_id'
     ];
+
+    protected $appends = ['attractions'];
+
+    public function getAttractionsAttribute() {
+        $attraction_ids = json_decode($this->attractions_assignments_ids, true); // Passing true as the second argument to get an associative array
+
+        if (is_array($attraction_ids) && !empty($attraction_ids)) {
+            $data = Attraction::select('id', 'name', 'address', 'latitude', 'longitude', 'featured_image')->whereIn('id', $attraction_ids)
+                ->get()
+                ->toArray();
+            if (!empty($data)) {
+                return $data;
+            }
+        }
+    }
+
+    public function transport() {
+        return $this->hasOne(Transport::class, 'id', 'transport_id')->select('id', 'route', 'capacity', 'tour_assigned_id', 'tour_assignment_ids', 'latitude', 'longitude', 'name', 'current_location', 'next_location', 'previous_location');
+    }
 }

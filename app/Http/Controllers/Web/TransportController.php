@@ -25,7 +25,7 @@ class TransportController extends Controller
                     })
                     ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
-                                    <a href="/admin/merchants/transports/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
+                                    <a href="/admin/transports/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
                                     <a href="javascript:void(0);" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                     })
@@ -54,7 +54,6 @@ class TransportController extends Controller
     public function edit(Request $request) {
         $operators = Admin::where('role', 'bus_operator')->get();
         $transport = Transport::where('id', $request->id)->firstOrFail();
-        dd($transport->tour_assignment_ids);
         $tours = Tour::get();
         return view('admin-page.transports.edit-transport', compact('transport', 'operators', 'tours'));
     }
@@ -70,11 +69,12 @@ class TransportController extends Controller
         $user_id = auth('admin')->user()->id;
 
         $coordinates = [
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude
+            'latitude' => $transport->latitude,
+            'longitude' => $transport->longitude
         ];
 
-        $event = event(new BusLocationEvent($user_id, $coordinates));
+
+        $event = event(new BusLocationEvent($user_id, $coordinates, $transport->id));
         // dd($event);
         return response([
             'status' => true,

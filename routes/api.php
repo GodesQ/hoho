@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AttractionController;
 use App\Http\Controllers\Api\MerchantController;
 use App\Http\Controllers\Api\TourController;
+use App\Http\Controllers\Api\TransportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,8 +36,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('user', [UserController::class, 'getUser']);
     Route::post('user/profile', [UserController::class, 'updateProfile']);
-    // get the current tour
+
     Route::get('today_reservation', [TourReservationController::class, 'getUserTodayReservation']);
+    Route::post('reservation/store', [TourReservationController::class, 'storeTourReservation']);
 
     Route::get('organizations', [OrganizationController::class, 'getOrganizations']);
     Route::get('organization/{id}', [OrganizationController::class, 'getOrganization']);
@@ -45,4 +47,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('merchant/{id}', [MerchantController::class, 'getMerchant']);
 
     Route::get('tours/guided', [TourController::class, 'getGuidedTours']);
+    Route::get('tours/diy', [TourController::class, 'getDIYTours']);
+
+    Route::get('transports', [TransportController::class, 'getTransports']);
+    Route::get('transport/{id}', [TransportController::class, 'getTransport']);
+    Route::post('transport/update_location/{id}', [TransportController::class, 'updateLocation']);
 });

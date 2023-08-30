@@ -16,15 +16,17 @@ class BusLocationEvent implements ShouldBroadCast
 
     public $user_id;
     public $coordinates;
+    public $transport_id;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user_id, $coordinates)
+    public function __construct($user_id, $coordinates, $transport_id)
     {
         $this->user_id = $user_id;
         $this->coordinates = $coordinates;
+        $this->transport_id = $transport_id;
     }
 
     /**

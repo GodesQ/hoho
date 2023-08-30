@@ -43,7 +43,13 @@ class BookingService
 
         $updateTransaction = $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
 
-        return redirect($responseData['paymentUrl']);
+        if( $request->is('api/*')){
+            return response([
+                'url' => $responseData['paymentUrl']
+            ]);
+        } else {
+            return redirect($responseData['paymentUrl']);
+        }
     }
 
 
