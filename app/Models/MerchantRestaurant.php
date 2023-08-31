@@ -23,6 +23,10 @@ class MerchantRestaurant extends Model
         'atmosphere',
     ];
 
+    protected $casts = [
+        'merchant_id' => 'integer'
+    ];
+
     public function merchant() {
         return $this->belongsTo(Merchant::class, 'merchant_id');
     }

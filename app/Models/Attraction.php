@@ -30,6 +30,12 @@ class Attraction extends Model
         'status',
     ];
 
+    protected $casts = [
+        'is_cancellable' => 'integer',
+        'is_refundable' => 'integer',
+        'status' => 'integer'
+    ];
+
     public function organization() {
         return $this->hasOne(Organization::class, 'id', 'organization_id');
     }

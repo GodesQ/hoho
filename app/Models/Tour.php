@@ -40,6 +40,22 @@ class Tour extends Model
         'transport_id'
     ];
 
+    protected $casts = [
+        'merchant_id' => 'tour_duration',
+        'transport_id' => 'integer',
+        'price' => 'integer',
+        'bracket_price_one' => 'integer',
+        'bracket_price_two' => 'integer',
+        'bracket_price_three' => 'integer',
+        'bracket_price_three' => 'integer',
+        'is_cancellable' => 'integer',
+        'is_refundable' => 'integer',
+        'under_age_limit' => 'integer',
+        'over_age_limit' => 'integer',
+        'tour_provider_id' => 'integer',
+        'minimum_capacity' => 'integer'
+    ];
+
     protected $appends = ['attractions'];
 
     public function getAttractionsAttribute() {

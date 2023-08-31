@@ -20,6 +20,11 @@ class Merchant extends Model
         'is_active'
     ];
 
+    protected $casts = [
+        'is_active' => 'integer',
+        'organization_id' => 'integer'
+    ];
+
     public function hotels() {
         return $this->hasMany(MerchantHotel::class, 'merchant_id');
     }

@@ -37,6 +37,18 @@ class Transport extends Model
         'is_active',
     ];
 
+    protected $casts = [
+        'capacity' => 'integer',
+        'duration' => 'integer',
+        'transport_provider_id' => 'integer',
+        'operator_id' => 'integer',
+        'tour_assigned_id' => 'integer',
+        'price' => 'integer',
+        'is_cancellable' => 'integer',
+        'is_refundable' => 'integer',
+        'is_active' => 'integer'
+    ];
+
     public function getTourAssignmentIdsAttribute($value)
     {
         return json_decode($value, true);

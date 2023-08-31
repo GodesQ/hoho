@@ -30,6 +30,11 @@ class Transaction extends Model
         'aqwire_totalAmount'
     ];
 
+    protected $casts = [
+        'transaction_by_id' => 'integer',
+        'payment_amount' => 'integer',
+    ];
+
     public function user() {
         return $this->hasOne(User::class, 'id', 'transaction_by_id');
     }

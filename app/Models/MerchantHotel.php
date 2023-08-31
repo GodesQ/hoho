@@ -21,6 +21,10 @@ class MerchantHotel extends Model
         'business_hours',
     ];
 
+    protected $casts = [
+        'merchant_id' => 'integer'
+    ];
+
     public function merchant() {
         return $this->belongsTo(Merchant::class, 'merchant_id');
     }

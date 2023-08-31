@@ -14,6 +14,10 @@ class Admin extends Authenticatable
     protected $fillable = ['username', 'email', 'password', 'firstname', 'lastname', 'middlename', 'age', 'birthdate', 'role', 'is_active'];
     protected $hidden = ['password'];
 
+    protected $casts = [
+        'age' => 'integer',
+    ];
+
     public function transport()
     {
         // Check if the role is 'bus_operator'
