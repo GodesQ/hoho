@@ -19,7 +19,7 @@ class BookingService
         $reference_no = $this->generateReferenceNo();
         $additional_charges = $this->generateAdditionalCharges();
         $totalAmount = $request->type == 'Guided' ? $this->generateGuidedTourTotalAmount($request, $additional_charges) : $this->generateDIYTourTotalAmount($request, $additional_charges);
-
+        dd($totalAmount);
         $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges);
         if (!$transaction) {
             return back()->with('fail', 'Failed to Create Transaction');
@@ -45,13 +45,13 @@ class BookingService
 
         if( $request->is('api/*')){
             return response([
+                'status' => 'paying',
                 'url' => $responseData['paymentUrl']
             ]);
         } else {
             return redirect($responseData['paymentUrl']);
         }
     }
-
 
     # HELPERS
     private function getHMACSignatureHash($text, $secret_key) {
@@ -88,20 +88,20 @@ class BookingService
     private function generateDIYTourTotalAmount($request, $additional_charges) {
         $convenience_fee = $additional_charges['Convenience Fee'] * $request->number_of_pass;
         $travel_pass = $additional_charges['Travel Pass'] * $request->number_of_pass;
-
+        // dd($convenience_fee, $travel_pass);
         $totalAmount = 0;
         if($request->ticket_pass == '1 Day Pass') {
-            $totalAmount = $request->amount + $convenience_fee + $travel_pass;
+            $totalAmount = ($request->amount * 1) + ($convenience_fee + $travel_pass);
         }
 
         if($request->ticket_pass == '2 Day Pass') {
-            $totalAmount = $request->amount + $convenience_fee + $travel_pass;
+            $totalAmount = ($request->amount * 2) + ($convenience_fee + $travel_pass);
         }
 
         if($request->ticket_pass == '3 Day Pass') {
-            $totalAmount = $request->amount + $convenience_fee + $travel_pass;
+            $totalAmount = ($request->amount * 3) + ($convenience_fee + $travel_pass);
+            dd($request->amount, $convenience_fee, $travel_pass, $totalAmount);
         }
-
         return $totalAmount;
     }
 
@@ -128,7 +128,7 @@ class BookingService
             'type' => $request->type,
             'amount' => $totalAmount,
             'reserved_user_id' => $request->reserved_user_id,
-            'passenger_ids' => json_encode($request->passenger_ids),
+            'passenger_ids' => $request->passenger_ids ? json_encode($request->passenger_ids) : json_encode([$request->reserved_user_id]),
             'reference_code' => $transaction->reference_no,
             'order_transaction_id' => $transaction->id,
             'start_date' => $trip_date,

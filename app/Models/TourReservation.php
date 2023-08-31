@@ -53,6 +53,7 @@ class TourReservation extends Model
             $data = User::select('id', 'email', 'username', 'firstname', 'lastname')->whereIn('id', $passenger_ids)
                 ->get()
                 ->toArray();
+
             if (!empty($data)) {
                 return $data;
             }

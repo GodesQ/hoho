@@ -29,22 +29,26 @@ class TransportController extends Controller
     }
 
     public function updateLocation(Request $request) {
-        $transport = Transport::where('id', $request->id)->firstOr(function () {
-            return response([
-                'status' => FALSE,
-                'message' => 'Not Found'
-            ], 404);
-        });
+        $transport = Transport::where('id', $request->id)->first();
 
-        $update_transport = $transport->update([
-            'next_location' => $request->next_location
+        $update = $transport->update([
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude
         ]);
 
-        if($update_transport) {
-            return response([
-                'status' => TRUE,
-                'message' => 'The next location updated successfully'
-            ]);
-        }
+        $user_id = Auth::user()->id;
+
+        $coordinates = [
+            'latitude' => $transport->latitude,
+            'longitude' => $transport->longitude
+        ];
+
+
+        $event = event(new BusLocationEvent($user_id, $coordinates, $transport->id));
+        // dd($event);
+        return response([
+            'status' => true,
+            'message' => 'Updated Successfully'
+        ]);
     }
 }
