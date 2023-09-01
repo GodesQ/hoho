@@ -16,6 +16,7 @@ class Admin extends Authenticatable
 
     protected $casts = [
         'age' => 'integer',
+        'is_active' => 'integer'
     ];
 
     public function transport()

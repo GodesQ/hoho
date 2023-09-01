@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Transport;
+use App\Events\BusLocationEvent;
 
 class TransportController extends Controller
 {
@@ -42,7 +43,6 @@ class TransportController extends Controller
             'latitude' => $transport->latitude,
             'longitude' => $transport->longitude
         ];
-
 
         $event = event(new BusLocationEvent($user_id, $coordinates, $transport->id));
         // dd($event);
