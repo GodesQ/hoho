@@ -31,6 +31,7 @@ class Attraction extends Model
     ];
 
     protected $casts = [
+        'organization_id' => 'integer',
         'attraction_provider' => 'integer',
         'is_cancellable' => 'integer',
         'is_refundable' => 'integer',

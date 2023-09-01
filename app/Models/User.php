@@ -56,6 +56,9 @@ class User extends Authenticatable
         'is_old_user' => 'integer',
         'is_active' => 'integer',
         'age' => 'integer',
+        'is_verify' => 'integer',
+        'is_first_time_philippines' => 'integer',
+        'is_international_tourist' => 'integer'
     ];
 
     protected $appends = ['interests', 'role'];

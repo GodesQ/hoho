@@ -53,7 +53,8 @@ class Tour extends Model
         'under_age_limit' => 'integer',
         'over_age_limit' => 'integer',
         'tour_provider_id' => 'integer',
-        'minimum_capacity' => 'integer'
+        'minimum_capacity' => 'integer',
+        'status' => 'integer'
     ];
 
     protected $appends = ['attractions'];
