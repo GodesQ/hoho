@@ -314,7 +314,7 @@
 
                     operatorMarker.setPosition(currentLocation);
                     map.panTo(currentLocation);
-                    map.setZoom(22);
+                    map.setZoom(20);
 
                     currentIndex++;
                     setTimeout(moveMarker, 2000); // Move to the next location every 2 seconds

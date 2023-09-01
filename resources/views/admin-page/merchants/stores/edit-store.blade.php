@@ -6,50 +6,66 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="fw-bold py-3 mb-4">Edit Store</h4>
-            <a href="{{ route('admin.merchants.stores.list') }}" class="btn btn-dark"><i class="bx bx-undo"></i> Back to List</a>
+            <a href="{{ route('admin.merchants.stores.list') }}" class="btn btn-dark"><i class="bx bx-undo"></i> Back to
+                List</a>
         </div>
 
         <div class="row">
             <div class="col-xl-8">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('admin.merchants.stores.update', $store->id) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('admin.merchants.stores.update', $store->id) }}" method="POST"
+                            enctype="multipart/form-data">
                             @csrf
                             <div class="row">
-                                <div class="col-lg-12"><hr> <h5><i class="bx bx-box"></i> Merchant Information</h5> <hr></div>
+                                <div class="col-lg-12">
+                                    <hr>
+                                    <h5><i class="bx bx-box"></i> Merchant Information</h5>
+                                    <hr>
+                                </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="name" class="form-label">Merchant Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" name="name" id="name" value="{{ $store->merchant->name }}" required>
+                                        <label for="name" class="form-label">Merchant Name <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="name" id="name"
+                                            value="{{ $store->merchant->name }}" required>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="code" class="form-label">Merchant Code</label>
-                                        <input type="text" class="form-control" name="code" id="code" value="{{ $store->merchant->code }}">
+                                        <input type="text" class="form-control" name="code" id="code"
+                                            value="{{ $store->merchant->code }}">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="type" class="form-label">Merchant Type <span class="text-danger">*</span></label>
+                                        <label for="type" class="form-label">Merchant Type <span
+                                                class="text-danger">*</span></label>
                                         <select name="type" id="type" class="form-select" required>
-                                            <option {{ $store->merchant->type == 'Hotel' ? 'selected' : null }} value="Hotel">Hotel</option>
-                                            <option {{ $store->merchant->type == 'Store' ? 'selected' : null }} value="Store">Store</option>
-                                            <option {{ $store->merchant->type == 'Tour Provider' ? 'selected' : null }} value="Tour Provider">Tour Provider</option>
-                                            <option {{ $store->merchant->type == 'Restaurant' ? 'selected' : null }} value="Restaurant">Restaurant</option>
+                                            <option {{ $store->merchant->type == 'Hotel' ? 'selected' : null }}
+                                                value="Hotel">Hotel</option>
+                                            <option {{ $store->merchant->type == 'Store' ? 'selected' : null }}
+                                                value="Store">Store</option>
+                                            <option {{ $store->merchant->type == 'Tour Provider' ? 'selected' : null }}
+                                                value="Tour Provider">Tour Provider</option>
+                                            <option {{ $store->merchant->type == 'Restaurant' ? 'selected' : null }}
+                                                value="Restaurant">Restaurant</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="featured_image" class="form-label">Featured Image</label>
-                                        <input type="file" class="form-control" name="featured_image" id="featured_image" value="">
+                                        <input type="file" class="form-control" name="featured_image" id="featured_image"
+                                            value="">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="nature_of_business" class="form-label">Nature of Business</label>
-                                        <input type="text" class="form-control" name="nature_of_business" id="nature_of_business" value="{{ $store->merchant->nature_of_business }}">
+                                        <input type="text" class="form-control" name="nature_of_business"
+                                            id="nature_of_business" value="{{ $store->merchant->nature_of_business }}">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -58,7 +74,9 @@
                                         <select name="organization_id" id="organization_id" class="select2 form-select">
                                             <option value="">-- SELECT ORGANIZATION --- </option>
                                             @foreach ($organizations as $organization)
-                                                <option {{ $organization->id == $store->merchant->organization_id ? 'selected' : null }} value="{{ $organization->id }}">{{ $organization->name }}</option>
+                                                <option
+                                                    {{ $organization->id == $store->merchant->organization_id ? 'selected' : null }}
+                                                    value="{{ $organization->id }}">{{ $organization->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -72,7 +90,11 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-lg-12"><hr> <h5><i class="bx bx-box"></i> Hotel Information</h5> <hr></div>
+                                <div class="col-lg-12">
+                                    <hr>
+                                    <h5><i class="bx bx-box"></i> Hotel Information</h5>
+                                    <hr>
+                                </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="interests" class="form-label">Interests</label>
@@ -84,7 +106,8 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="payment_options" class="form-label">Payment Options</label>
-                                        <input type="text" class="form-control" name="payment_options" id="payment_options" value="{{ $store->payment_options }}">
+                                        <input type="text" class="form-control" name="payment_options"
+                                            id="payment_options" value="{{ $store->payment_options }}">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -109,7 +132,7 @@
                                 </div> --}}
                             </div>
                             <hr>
-                            <button class="btn btn-primary">Save Hotel</button>
+                            <button class="btn btn-primary">Save Store</button>
                         </form>
                     </div>
                 </div>
@@ -118,10 +141,12 @@
                 <div class="card">
                     <div class="card-body">
                         <h6>Preview of Featured Image</h6>
-                        @if($store->merchant->featured_image)
-                            <img src="{{ URL::asset('/assets/img/stores/' . $store->merchant->id . '/' . $store->merchant->featured_image) }}" alt="" style="border-radius: 10px;" width="100%">
+                        @if ($store->merchant->featured_image)
+                            <img src="{{ URL::asset('/assets/img/stores/' . $store->merchant->id . '/' . $store->merchant->featured_image) }}"
+                                alt="" style="border-radius: 10px;" width="100%" id="previewImage">
                         @else
-                            <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt="" style="border-radius: 10px;" width="100%">
+                            <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt=""
+                                style="border-radius: 10px;" width="100%" id="previewImage">
                         @endif
                     </div>
                 </div>
@@ -129,3 +154,26 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        // Function to handle file selection and display preview image
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const previewImage = document.getElementById('previewImage');
+                    previewImage.src = event.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Attach the 'handleFileSelect' function to the file input's change event
+        document.getElementById('featured_image').addEventListener('change', handleFileSelect);
+    </script>
+@endpush

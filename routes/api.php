@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\AttractionController;
 use App\Http\Controllers\Api\MerchantController;
 use App\Http\Controllers\Api\TourController;
 use App\Http\Controllers\Api\TransportController;
+use App\Http\Controllers\Api\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,4 +53,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('transports', [TransportController::class, 'getTransports']);
     Route::get('transport/{id}', [TransportController::class, 'getTransport']);
     Route::post('transport/update_location/{id}', [TransportController::class, 'updateLocation']);
+
+    Route::get('carts/user', [CartController::class, 'getUserCarts']);
+    Route::get('carts/user/my_cart/{id}', [CartController::class, 'getUserCart']);
+    Route::get('cart/store', [CartController::class, 'store']);
+
+
 });

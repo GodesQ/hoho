@@ -91,6 +91,8 @@
             CURRENT_LATITUDE = INITIAL_LATITUDE + 0.0020;
             CURRENT_LONGITUDE = INITIAL_LONGITUDE + 0.0020;
 
+            console.log(CURRENT_LATITUDE, CURRENT_LONGITUDE);
+
             let distance = calculateDistance(INITIAL_LATITUDE, INITIAL_LONGITUDE, CURRENT_LATITUDE, CURRENT_LONGITUDE);
 
             // Send location to Laravel backend

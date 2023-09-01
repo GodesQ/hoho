@@ -57,7 +57,7 @@
                                         <label for="organization_id" class="form-label">Organization</label>
                                         <select name="organization_id" id="organization_id" class="select2 form-select" >
                                             @foreach ($organizations as $organization)
-                                                <option value="{{ $organization->id }}">{{ $organization->name }}</option>                                                
+                                                <option value="{{ $organization->id }}">{{ $organization->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -107,7 +107,7 @@
                                 </div> --}}
                             </div>
                             <hr>
-                            <button class="btn btn-primary">Save Hotel</button>
+                            <button class="btn btn-primary">Save Store</button>
                         </form>
                     </div>
                 </div>

@@ -19,7 +19,7 @@ class BookingService
         $reference_no = $this->generateReferenceNo();
         $additional_charges = $this->generateAdditionalCharges();
         $totalAmount = $request->type == 'Guided' ? $this->generateGuidedTourTotalAmount($request, $additional_charges) : $this->generateDIYTourTotalAmount($request, $additional_charges);
-        dd($totalAmount);
+        // dd($totalAmount);
         $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges);
         if (!$transaction) {
             return back()->with('fail', 'Failed to Create Transaction');
@@ -100,7 +100,7 @@ class BookingService
 
         if($request->ticket_pass == '3 Day Pass') {
             $totalAmount = ($request->amount * 3) + ($convenience_fee + $travel_pass);
-            dd($request->amount, $convenience_fee, $travel_pass, $totalAmount);
+            // dd($request->amount, $convenience_fee, $travel_pass, $totalAmount);
         }
         return $totalAmount;
     }
@@ -188,7 +188,7 @@ class BookingService
                 'reservationNumber' => json_encode($reservation->id),
                 'companyCode' => '1000',
                 'projectCode' => '4200',
-                'agentName' => Auth::guard('admin')->user()->username
+                'agentName' => $transaction->user->firstname . ' ' . $transaction->user->lastname
             ]
         ];
 
