@@ -41,7 +41,8 @@ class Tour extends Model
     ];
 
     protected $casts = [
-        'merchant_id' => 'tour_duration',
+        'merchant_id' => 'integer',
+        'tour_duration' => 'integer',
         'transport_id' => 'integer',
         'price' => 'integer',
         'bracket_price_one' => 'integer',
@@ -54,7 +55,8 @@ class Tour extends Model
         'over_age_limit' => 'integer',
         'tour_provider_id' => 'integer',
         'minimum_capacity' => 'integer',
-        'status' => 'integer'
+        'status' => 'integer',
+        'capacity' => 'integer'
     ];
 
     protected $appends = ['attractions'];
