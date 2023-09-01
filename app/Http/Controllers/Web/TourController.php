@@ -10,6 +10,8 @@ use App\Models\Tour;
 use App\Models\Attraction;
 
 use DataTables;
+use Carbon\Carbon;
+
 class TourController extends Controller
 {
     public function list(Request $request) {
@@ -73,8 +75,11 @@ class TourController extends Controller
     public function update(Request $request) {
         $data = $request->except('_token', 'featured_image', 'attractions_assignments_ids');
         $tour = Tour::where('id', $request->id)->firstOrFail();
+
         $update_tour = $tour->update(array_merge($data, [
             'attractions_assignments_ids' => $request->has('attractions_assignments_ids') ? json_encode($request->attractions_assignments_ids) : null,
+            'start_date_duration' => $request->has('start_date_duration') ? Carbon::create($request->start_date_duration) : null,
+            'end_date_duration' => $request->has('end_date_duration') ? Carbon::create($request->end_date_duration) : null,
             'is_cancellable' => $request->has('is_cancellable'),
             'is_refundable' => $request->has('is_refundable'),
         ]));

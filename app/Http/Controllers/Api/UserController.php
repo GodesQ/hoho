@@ -45,4 +45,19 @@ class UserController extends Controller
             'contact_no' => $request->contact_no,
         ]);
     }
+
+    public function updateInterest(Request $request) {
+        $user = Auth::user();
+
+        $update_user = $user->update([
+            'interest_ids' => json_encode($request->interest_ids)
+        ]);
+
+        if($update_user) {
+            return response([
+                'status' => TRUE,
+                'message' => 'Interest updated successfully'
+            ]);
+        }
+    }
 }

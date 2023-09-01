@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\MerchantController;
 use App\Http\Controllers\Api\TourController;
 use App\Http\Controllers\Api\TransportController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\InterestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('user', [UserController::class, 'getUser']);
     Route::post('user/profile', [UserController::class, 'updateProfile']);
+    Route::post('user/update_interest', [UserController::class, 'updateInterest']);
 
     Route::get('today_reservation', [TourReservationController::class, 'getUserTodayReservation']);
     Route::post('reservation/store', [TourReservationController::class, 'storeTourReservation']);
@@ -58,5 +60,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('carts/user/my_cart/{id}', [CartController::class, 'getUserCart']);
     Route::get('cart/store', [CartController::class, 'store']);
 
-
+    Route::get('interests', [InterestController::class, 'getInterests']);
 });
