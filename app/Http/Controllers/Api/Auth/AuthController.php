@@ -68,6 +68,8 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request) {
         $account_uid = $this->generateRandomUuid();
+
+
         $register = User::create([
             'account_uid' => $account_uid,
             'email' => $request->email,

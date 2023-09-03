@@ -24,8 +24,16 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'username' => 'required|max:30|unique:users,username',
-            'email' => 'required|email|unique:users,email',
+            'username' => [
+                'required',
+                'max:30',
+                new \App\Rules\UniqueAcrossTables('users', 'admins', 'username')
+            ],
+            'email' => [
+                'required',
+                'email',
+                new \App\Rules\UniqueAcrossTables('users', 'admins', 'email')
+            ],
             'password' => 'required|min:8',
             'confirm_password' => 'required|same:password'
         ];

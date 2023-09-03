@@ -5,107 +5,143 @@
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center">
-        <h4 class="fw-bold py-3 mb-4">View Transaction</h4>
+        <h4 class="fw-bold py-3 mb-4">Transaction Details</h4>
         <a href="{{ route('admin.transactions.list') }}" class="btn btn-dark"><i class="bx bx-undo"></i> Back to List</a>
     </div>
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('admin.transactions.edit', $transaction->id) }}" method="POST">
-                @csrf
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label for="reference_no" class="form-label">Reference No</label>
-                            <input type="text" name="reference_no" id="reference_no" value="{{ $transaction->reference_no }}" class="form-control" readonly>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
+                        <div class="col-lg-3 pt-3">
+                            <h6>Reference No: </h6>
+                        </div>
+                        <div class="col-lg-9 pt-3">
+                            <h6>{{ $transaction->reference_no }}</h6>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label for="type" class="form-label">Transaction By</label>
-                            <input type="text" name="transaction_by" id="transaction_by" value="{{ $transaction->user->email }}" class="form-control" readonly>
+                    <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
+                        <div class="col-lg-3 pt-3">
+                            <h6>Transaction By: </h6>
+                        </div>
+                        <div class="col-lg-9 pt-3">
+                            <h6>{{ $transaction->user->email }}</h6>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label for="payment_amount" class="form-label">Payment Amount</label>
-                            <input type="text" name="payment_amount" id="payment_amount" value="{{ $transaction->payment_amount }}" class="form-control" readonly>
+                    <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
+                        <div class="col-lg-3 pt-3">
+                            <h6>Status: </h6>
+                        </div>
+                        <div class="col-lg-9">
+                            @if($transaction->payment_status == 'success')
+                                <div class="badge bg-success">Success</div>
+                            @elseif($transaction->payment_status == 'cancelled')
+                                <div class="badge bg-danger">Cancelled</div>
+                            @elseif($transaction->payment_status == 'pending')
+                                <div class="badge bg-warning">Pending</div>
+                            @elseif($transaction->payment_status == 'failed')
+                                <div class="badge bg-danger">Pending</div>
+                            @elseif($transaction->payment_status == 'inc')
+                                <div class="badge bg-warning">Pending</div>
+                            @endif
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label for="aqwire_paymentMethodCode" class="form-label">Payment Type</label>
-                            <input type="text" name="aqwire_paymentMethodCode" id="aqwire_paymentMethodCode" value="{{ $transaction->aqwire_paymentMethodCode }}" class="form-control" readonly>
+                    <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
+                        <div class="col-lg-3 pt-3">
+                            <h6>Total Amount: </h6>
+                        </div>
+                        <div class="col-lg-9 pt-3">
+                            <h6>₱ {{ number_format($transaction->payment_amount, 2) }}</h6>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label for="additional_charges" class="form-label">Additional Charges</label>
-                            <textarea name="additional_charges" id="additional_charges" cols="30" rows="6" class="form-control" readonly>{{ $transaction->additional_charges }}</textarea>
+                    <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
+                        <div class="col-lg-3 pt-3">
+                            <h6>Aqwire Total Amount: </h6>
+                        </div>
+                        <div class="col-lg-9 pt-3">
+                            <h6> {{ $transaction->aqwire_totalAmount, 2 }}</h6>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label for="payment_details" class="form-label">Payment Details</label>
-                            <textarea name="payment_details" id="payment_details" cols="30" rows="6" class="form-control" readonly>{{ $transaction->payment_details }}</textarea>
+                    <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
+                        <div class="col-lg-3 pt-3">
+                            <h6>Payment Type: </h6>
+                        </div>
+                        <div class="col-lg-9 pt-3">
+                            <h6>{{ $transaction->aqwire_paymentMethodCode }}</h6>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="mb-3">
-                            <label for="" class="form-label">Payment URL</label>
-                            <input type="text" class="form-control" value="{{ $transaction->payment_url }}" class="form-control" readonly>
+                    <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
+                        <div class="col-lg-3 pt-3">
+                            <h6>Additional Charges: </h6>
+                        </div>
+                        <div class="col-lg-9 pt-3">
+                            <?php $additional_charges = json_decode($transaction->additional_charges) ?>
+                            <h6>
+                                @foreach ($additional_charges as $propertyName => $propertyValue)
+                                    <div class="my-1">{{  $propertyName . ': ' . number_format($propertyValue, 2) }}</div>
+                                @endforeach
+                            </h6>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="mb-3">
-                            <label for="aqwire_transactionId" class="form-label">Aqwire Trasaction ID</label>
-                            <input type="text" class="form-control" value="{{ $transaction->aqwire_transactionId }}" readonly>
+                    <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
+                        <div class="col-lg-3 pt-3">
+                            <h6>Payment Type: </h6>
+                        </div>
+                        <div class="col-lg-9 py-3">
+                           <textarea name="" id="" cols="30" rows="10" class="form-control" disabled>{{ $transaction->payment_details }}</textarea>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="mb-3">
-                            <label for="aqwire_referenceId" class="form-label">Aqwire Reference No</label>
-                            <input type="text" class="form-control" value="{{ $transaction->aqwire_referenceId }}" readonly>
+                    <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
+                        <div class="col-lg-3 pt-3">
+                            <h6>Payment Url: </h6>
+                        </div>
+                        <div class="col-lg-9 py-3">
+                            <a href="{{ $transaction->payment_url }}" target="_blank">{{ $transaction->payment_url }}</a>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="mb-3">
-                            <label for="" class="form-label">Order Date</label>
-                            <input type="date" class="form-control" value="{{ $transaction->order_date }}" class="form-control" readonly>
+                    <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
+                        <div class="col-lg-3 pt-3">
+                            <h6>Aqwire Trasaction ID: </h6>
+                        </div>
+                        <div class="col-lg-9 py-3">
+                            <span class="bg-dark p-2 text-white rounded" style="font-size: 12px;">{{ $transaction->aqwire_transactionId }}</span>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="mb-3">
-                            <label for="transaction_date" class="form-label">Transaction Date</label>
-                            <input type="date" class="form-control" value="{{ $transaction->transaction_date }}" readonly>
+                    <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
+                        <div class="col-lg-3 pt-3">
+                            <h6>Aqwire Reference No: </h6>
+                        </div>
+                        <div class="col-lg-9 py-3">
+                            <span class="bg-dark p-2 text-white rounded" style="font-size: 12px;">{{ $transaction->aqwire_referenceId }}</span>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="mb-3">
-                            <label for="payment_date" class="form-label">Payment Date</label>
-                            <input type="date" class="form-control" value="{{ $transaction->payment_date }}" readonly>
+                    <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
+                        <div class="col-lg-3 pt-3">
+                            <h6>Order Date: </h6>
+                        </div>
+                        <div class="col-lg-9 pt-3">
+                            <h6>{{ date_format(new DateTime($transaction->order_date), 'F d, Y') }}</h6>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label for="aqwire_totalAmount" class="form-label">Aqwire Total Amount</label>
-                            <input type="text" class="form-control" value="{{ $transaction->aqwire_totalAmount }}" readonly>
+                    <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
+                        <div class="col-lg-3 pt-3">
+                            <h6>Transaction Date: </h6>
+                        </div>
+                        <div class="col-lg-9 pt-3">
+                            <h6>{{ date_format(new DateTime($transaction->transaction_date), 'F d, Y') }}</h6>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select name="status" id="status" class="form-control" disabled>
-                                <option value="success" {{ $transaction->payment_status == 'success' ? 'selected' : null }}>Success</option>
-                                <option value="cancelled" {{ $transaction->payment_status == 'cancelled' ? 'selected' : null }}>Cancelled</option>
-                                <option value="failed" {{ $transaction->payment_status == 'failed' ? 'selected' : null }}>Failed</option>
-                                <option value="inc" {{ $transaction->payment_status == 'inc' ? 'selected' : null }}>Incomplete</option>
-                                <option value="pending" {{ $transaction->payment_status == 'pending' ? 'selected' : null }}>Pending</option>
-                            </select>
+                    <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
+                        <div class="col-lg-3 pt-3">
+                            <h6>Payment Date: </h6>
+                        </div>
+                        <div class="col-lg-9 pt-3">
+                            <h6>{{ date_format(new DateTime($transaction->payment_date), 'F d, Y') }}</h6>
                         </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
