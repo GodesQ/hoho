@@ -193,6 +193,22 @@
                         </div>
                         <div class="row">
                             <div class="col-xl-6">
+                                <h6 class="text-primary">Convenience Fee</h6>
+                            </div>
+                            <div class="col-xl-6">
+                                <h6>₱ 99.00</h6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <h6 class="text-primary">Travel Pass</h6>
+                            </div>
+                            <div class="col-xl-6">
+                                <h6>₱ 50.00</h6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-6">
                                 <h6 class="text-primary">Sub Amount</h6>
                             </div>
                             <div class="col-xl-6">

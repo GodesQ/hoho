@@ -23,6 +23,7 @@ use App\Http\Controllers\Web\InterestController;
 use App\Http\Controllers\Web\OrganizationController;
 use App\Http\Controllers\Web\RoleController;
 use App\Http\Controllers\Web\ProductCategoryController;
+use App\Http\Controllers\Web\ReferralController;
 
 use App\Http\Controllers\Web\AqwireController;
 
@@ -184,4 +185,11 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('product_categories/edit/{id}', [ProductCategoryController::class, 'edit'])->name('product_categories.edit');
     Route::post('product_categories/update/{id}', [ProductCategoryController::class, 'update'])->name('product_categories.update');
     Route::delete('product_categories/destroy', [ProductCategoryController::class, 'destroy'])->name('product_categories.destroy');
+
+    Route::get('referrals', [ReferralController::class, 'list'])->name('referrals.list');
+    Route::get('referrals/create', [ReferralController::class, 'create'])->name('referrals.create');
+    Route::post('referrals/store', [ReferralController::class, 'store'])->name('referrals.store');
+    Route::get('referrals/edit/{id}', [ReferralController::class, 'edit'])->name('referrals.edit');
+    Route::post('referrals/update/{id}', [ReferralController::class, 'update'])->name('referrals.update');
+    Route::delete('referrals/destroy', [ReferralController::class, 'destroy'])->name('referrals.destroy');
 });

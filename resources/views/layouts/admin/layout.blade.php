@@ -207,8 +207,8 @@
                             <div data-i18n="Interests">Interests</div>
                         </a>
                     </li>
-                    <li class="menu-item">
-                        <a href="#" class="menu-link">
+                    <li class="menu-item {{ preg_match('/admin\/referrals/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.referrals.list') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-gift"></i>
                             <div data-i18n="Referrals">Referrals</div>
                         </a>
