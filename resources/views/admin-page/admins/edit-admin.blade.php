@@ -13,19 +13,25 @@
         <div class="col-lg-9">
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('admin.admins.update', $admin->id) }}" method="post">
+                    <form action="{{ route('admin.admins.update', $admin->id) }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Username</label>
-                                    <input type="text" class="form-control" name="username" value="{{ $admin->username }}">
+                                    <input type="text" class="form-control" name="username" value="{{ $admin->username }}" readonly>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
                                     <input type="email" class="form-control" name="email" value="{{ $admin->email }}">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="admin_profile" class="form-label">Admin Profile</label>
+                                    <input type="file" name="admin_profile" id="admin_profile" class="form-control">
                                 </div>
                             </div>
                             <div class="col-lg-4">
@@ -78,10 +84,40 @@
         </div>
         <div class="col-lg-3">
             <div class="card">
-                <div class="card-body"></div>
+                <div class="card-body">
+                    <h6>Preview of Admin Profile</h6>
+                    @if($admin->admin_profile)
+                        <img src="{{ URL::asset('assets/img/admin_profiles/' . $admin->admin_profile) }}" alt="{{ $admin->username }}" id="previewImage" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                    @else
+                        <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                    @endif
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 @endsection
+
+@push('scripts')
+    <script>
+        // Function to handle file selection and display preview image
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const previewImage = document.getElementById('previewImage');
+                    previewImage.src = event.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Attach the 'handleFileSelect' function to the file input's change event
+        document.getElementById('admin_profile').addEventListener('change', handleFileSelect);
+    </script>
+@endpush

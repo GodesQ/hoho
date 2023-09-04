@@ -117,7 +117,7 @@
                                     <div class="form-label">DIY Ticket Pass</div>
                                     <div class="form-check form-check-inline mt-3">
                                         <input class="form-check-input diy_ticket_pass_radio" type="radio"
-                                            name="ticket_pass" id="one_day_diy_ticket_pass" value="1 Day Pass" />
+                                            name="ticket_pass" id="one_day_diy_ticket_pass" value="1 Day Pass" {{ $reservation->ticket_pass == '1 Day Pass' ? 'checked' : null }} />
                                         <label class="form-check-label" for="one_day_diy_ticket_pass"
                                             style="cursor: pointer;">
                                             <img src="https://metrohoho.s3.ap-southeast-1.amazonaws.com/tickets/1-day.png"
@@ -127,7 +127,7 @@
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input diy_ticket_pass_radio" type="radio"
-                                            name="ticket_pass" id="two_day_diy_ticket_pass" value="2 Day Pass" />
+                                            name="ticket_pass" id="two_day_diy_ticket_pass" value="2 Day Pass" {{ $reservation->ticket_pass == '2 Day Pass' ? 'checked' : null }} />
                                         <label class="form-check-label" for="two_day_diy_ticket_pass"
                                             style="cursor: pointer;">
                                             <img src="https://metrohoho.s3.ap-southeast-1.amazonaws.com/tickets/2-day.png"
@@ -137,7 +137,7 @@
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input diy_ticket_pass_radio" type="radio"
-                                            name="ticket_pass" id="three_day_diy_ticket_pass" value="3 Day Pass" />
+                                            name="ticket_pass" id="three_day_diy_ticket_pass" value="3 Day Pass" {{ $reservation->ticket_pass == '3 Day Pass' ? 'checked' : null }} />
                                         <label class="form-check-label" for="three_day_diy_ticket_pass"
                                             style="cursor: pointer;">
                                             <img src="https://metrohoho.s3.ap-southeast-1.amazonaws.com/tickets/3-day.png"

@@ -267,8 +267,13 @@
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
                                     data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
-                                        <img src="{{ URL::asset('assets/img/avatars/6.png') }}" alt
-                                            class="w-px-40 h-auto rounded-circle" />
+                                        @auth('admin')
+                                            @if(auth('admin')->user()->admin_profile)
+                                                <img src="{{ URL::asset('assets/img/admin_profiles/'. auth('admin')->user()->admin_profile) }}" alt class="w-px-40 h-auto rounded-circle" />
+                                            @else
+                                                <img src="https://philippines-hoho.ph/philippines_hoho.3b7019f3d8ced762.jpg" alt class="w-px-40 h-auto rounded-circle" />
+                                            @endif
+                                        @endauth
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
@@ -277,8 +282,13 @@
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 me-3">
                                                     <div class="avatar avatar-online">
-                                                        <img src="{{ URL::asset('assets/img/avatars/6.png') }}" alt
-                                                            class="w-px-40 h-auto rounded-circle" />
+                                                        @auth('admin')
+                                                            @if(auth('admin')->user()->admin_profile)
+                                                                <img src="{{ URL::asset('assets/img/admin_profiles/'. auth('admin')->user()->admin_profile) }}" alt class="w-px-40 h-auto rounded-circle" />
+                                                            @else
+                                                                <img src="https://philippines-hoho.ph/philippines_hoho.3b7019f3d8ced762.jpg" alt class="w-px-40 h-auto rounded-circle" />
+                                                            @endif
+                                                        @endauth
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
@@ -303,7 +313,7 @@
                                             <span class="align-middle">Settings</span>
                                         </a>
                                     </li>
-                                    <li>
+                                    {{-- <li>
                                         <a class="dropdown-item" href="#">
                                             <span class="d-flex align-items-center align-middle">
                                                 <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
@@ -312,7 +322,7 @@
                                                     class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
                                             </span>
                                         </a>
-                                    </li>
+                                    </li> --}}
                                     <li>
                                         <div class="dropdown-divider"></div>
                                     </li>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 use App\Models\Admin;
 use App\Models\Role;
@@ -48,6 +49,7 @@ class AdminController extends Controller
     public function edit(Request $request) {
         $roles = Role::get();
         $admin = Admin::where('id', $request->id)->first();
+
         return view('admin-page.admins.edit-admin', compact('admin', 'roles'));
     }
 
@@ -55,7 +57,21 @@ class AdminController extends Controller
         $data = $request->except('_token');
         $admin = Admin::where('id', $request->id)->first();
 
-        $update_admin = $admin->update($data);
+        $image_name = $admin->username;
+
+        if($request->hasFile('admin_profile')) {
+            $old_upload_image = public_path('/assets/img/admin_profiles') . $admin->admin_profile;
+            @unlink($old_upload_image);
+            $file = $request->file('admin_profile');
+            $file_name = Str::snake(Str::lower($image_name)) . '.' . $file->getClientOriginalExtension();
+            $save_file = $file->move(public_path() . '/assets/img/admin_profiles', $file_name);
+        } else {
+            $file_name = $admin->admin_profile;
+        }
+
+        $update_admin = $admin->update(array_merge($data, [
+            'admin_profile' => $file_name
+        ]));
 
         return back()->withSuccess('Admin updated successfully');
     }
