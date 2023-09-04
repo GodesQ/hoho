@@ -33,7 +33,11 @@ class User extends Authenticatable
         'interest_ids',
         'status',
         'is_old_user',
-        'is_verify'
+        'is_verify',
+        'country_of_residence',
+        'is_first_time_philippines',
+        'is_international_tourist',
+        'role'
     ];
 
     /**
@@ -61,7 +65,7 @@ class User extends Authenticatable
         'is_international_tourist' => 'integer'
     ];
 
-    protected $appends = ['interests', 'role'];
+    protected $appends = ['interests'];
 
     public function getInterestsAttribute() {
         $interest_ids = json_decode($this->interest_ids, true);
@@ -75,9 +79,5 @@ class User extends Authenticatable
                 return $data;
             }
         }
-    }
-
-    public function getRoleAttribute() {
-        return 'guest';
     }
 }

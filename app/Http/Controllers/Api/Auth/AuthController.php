@@ -79,7 +79,8 @@ class AuthController extends Controller
             'country_of_residence' => $request->country_of_residence,
             'is_old_user' => false,
             'is_first_time_philippines' => $request->has('is_first_time_philippines'),
-            'is_international_tourist' => $request->has('is_international_tourist')
+            'is_international_tourist' => $request->has('is_international_tourist'),
+            'role' => 'guest'
         ]);
 
         # details for sending email to worker

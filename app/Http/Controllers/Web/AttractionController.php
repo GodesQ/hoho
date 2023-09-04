@@ -17,9 +17,23 @@ class AttractionController extends Controller
     public function list(Request $request) {
 
         if($request->ajax()) {
-            $data = Attraction::latest('id');
+            $data = Attraction::latest('id')->with('organization');
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('organization_logo', function ($row) {
+                    if($row->organization) {
+                        if($row->organization->icon) {
+                            $path = '../../../assets/img/organizations/' . $row->organization->id . '/' . $row->organization->icon;
+                            return '<img src="' .$path. '" width="50" height="50" />';
+                        } else {
+                            $path = '../../../assets/img/' . 'default-image.jpg';
+                            return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
+                        }
+                    } else {
+                        $path = '../../../assets/img/' . 'default-image.jpg';
+                        return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
+                    }
+                })
                 ->addColumn('actions', function ($row) {
                     return '<div class="dropdown">
                                 <a href="/admin/attractions/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
@@ -34,7 +48,7 @@ class AttractionController extends Controller
 
                     }
                 })
-                ->rawColumns(['actions', 'status'])
+                ->rawColumns(['actions', 'status', 'organization_logo'])
                     ->make(true);
         }
 

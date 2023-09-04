@@ -13,6 +13,7 @@ class Cart extends Model
         'user_id',
         'tour_id',
         'trip_date',
+        'type',
         'number_of_pass',
         'ticket_pass'
     ];

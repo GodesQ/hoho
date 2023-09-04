@@ -59,7 +59,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('carts/user', [CartController::class, 'getUserCarts']);
     Route::get('carts/user/my_cart/{id}', [CartController::class, 'getUserCart']);
-    Route::get('cart/store', [CartController::class, 'store']);
+    Route::post('cart/store', [CartController::class, 'storeCart']);
+    Route::get('cart/destroy', [CartController::class, 'removeCart']);
 
     Route::get('interests', [InterestController::class, 'getInterests']);
+
+
 });

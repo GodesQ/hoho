@@ -12,28 +12,29 @@
     <div class="card">
         <div class="card-body">
             <form action="{{ route('admin.referrals.store') }}" method="post">
+                @csrf
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="mb-3">
                             <label for="referral_name" class="form-label">Referral Name</label>
-                            <input type="text" class="form-control" name="referral_name" id="referral_name">
+                            <input type="text" class="form-control" name="referral_name" required id="referral_name">
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="mb-3">
                             <label for="referral_code" class="form-label">Referral Code</label>
-                            <input type="text" class="form-control" name="referral_code" id="referral_code">
+                            <input type="text" class="form-control" name="referral_code" required id="referral_code">
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="mb-3">
                             <label for="qrcode_input" class="form-label">QrCode Base64</label>
-                            <textarea name="qrcode" id="qrcode_input" cols="30" rows="5" readonly class="form-control"></textarea>
+                            <textarea name="qrcode" id="qrcode_input" cols="30" rows="5" readonly required class="form-control"></textarea>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="mb-3">
-                            <label for="qrcode_image" class="form-label">QrCode Image</label>
+                            <label for="qrcode_image" class="form-label">New QrCode Image</label>
                             <div id="qrcode_image"></div>
                         </div>
                     </div>

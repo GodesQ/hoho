@@ -16,6 +16,7 @@
                     <thead>
                         <tr>
                             <th>Id</th>
+                            <th width="75">Organization</th>
                             <th>Name</th>
                             <th>Status</th>
                             <th>Actions</th>
@@ -43,6 +44,10 @@
                     {
                         data: 'id',
                         name: 'id',
+                    },
+                    {
+                        data: 'organization_logo',
+                        name: 'organization_logo'
                     },
                     {
                         data: 'name',

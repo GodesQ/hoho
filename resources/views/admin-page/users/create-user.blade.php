@@ -114,6 +114,25 @@
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="mb-3">
+                                        <label for="role" class="form-label">Role</label>
+                                        <div class="form-check ">
+                                            <input name="role" class="form-check-input" type="radio"
+                                                value="guest" id="roleGuest" checked />
+                                            <label class="form-check-label" for="roleGuest"> Guest </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input name="role" class="form-check-input" type="radio"
+                                                value="anonymous" id="roleAnonymous" />
+                                            <label class="form-check-label" for="roleAnonymous"> Anonymous </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="isVerify" value="1" name="is_verify" />
+                                        <label class="form-check-label" for="isVerify">Is Verify?</label>
+                                    </div>
+                                    <div class="my-3">
                                         <label for="status" class="form-label">Status</label>
                                         <div class="form-check ">
                                             <input name="status" class="form-check-input" type="radio"

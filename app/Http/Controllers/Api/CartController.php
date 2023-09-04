@@ -10,7 +10,7 @@ use App\Models\Cart;
 
 class CartController extends Controller
 {
-    public function store(Request $request) {
+    public function storeCart(Request $request) {
         $data = $request->all();
 
         $cart = Cart::create($data);
@@ -41,5 +41,17 @@ class CartController extends Controller
             'status' => TRUE,
             'cart' => $cart
         ], 200);
+    }
+
+    public function removeCart(Request $request) {
+        $cart = Cart::where('id', $request->id)->first();
+
+        if($cart) {
+            return response([
+                'status' => TRUE,
+                'message' => 'Cart deleted successfully'
+            ]);
+        }
+
     }
 }
