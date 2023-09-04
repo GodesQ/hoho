@@ -120,7 +120,7 @@
             // });
 
             // Send location every few seconds
-            setTimeout(sendLocationToServer, 5000); // Adjust the interval as needed
+            // setTimeout(sendLocationToServer, 5000); // Adjust the interval as needed
         }
         // sendLocationToServer();
     </script>
