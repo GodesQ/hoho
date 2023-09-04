@@ -45,6 +45,13 @@ class UserController extends Controller
             'country_of_residence' => $request->country_of_residence,
             'contact_no' => $request->contact_no,
         ]);
+
+        if($user_update) {
+            return response([
+                'status' => true,
+                'message' => 'User updated successfully'
+            ]);
+        }
     }
 
     public function updateInterest(Request $request) {

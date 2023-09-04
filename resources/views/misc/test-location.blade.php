@@ -85,25 +85,25 @@
 
 
             const successCallback = (position) => {
-                latitude = position.coords.latitude;
-                longitude = position.coords.longitude;
+                // latitude = position.coords.latitude;
+                // longitude = position.coords.longitude;
 
-                // Send location to Laravel backend
-                fetch('{{ route('admin.transports.updateLocation') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({
-                        id: 2,
-                        latitude: latitude,
-                        longitude: longitude
-                    })
-                });
+                // // Send location to Laravel backend
+                // fetch('{{ route('admin.transports.updateLocation') }}', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                //     },
+                //     body: JSON.stringify({
+                //         id: 2,
+                //         latitude: latitude,
+                //         longitude: longitude
+                //     })
+                // });
 
-                // Send location every few seconds
-                setTimeout(sendLocationToServer, 5000); // Adjust the interval as needed
+                // // Send location every few seconds
+                // setTimeout(sendLocationToServer, 5000); // Adjust the interval as needed
             };
 
             const errorCallback = (error) => {
@@ -112,16 +112,32 @@
 
             navigator.geolocation.watchPosition(successCallback, errorCallback);
 
-            // console.log(latitude, longitude);
-            // INITIAL_LATITUDE = CURRENT_LATITUDE;
-            // INITIAL_LONGITUDE = CURRENT_LONGITUDE;
+            INITIAL_LATITUDE = CURRENT_LATITUDE;
+            INITIAL_LONGITUDE = CURRENT_LONGITUDE;
 
-            // CURRENT_LATITUDE = INITIAL_LATITUDE + 0.0004;
-            // CURRENT_LONGITUDE = INITIAL_LONGITUDE + 0.0004;
+            CURRENT_LATITUDE = INITIAL_LATITUDE + 0.0004;
+            CURRENT_LONGITUDE = INITIAL_LONGITUDE + 0.0004;
 
-            // console.log(CURRENT_LATITUDE, CURRENT_LONGITUDE);
+            console.log(CURRENT_LATITUDE, CURRENT_LONGITUDE);
 
-            // let distance = calculateDistance(INITIAL_LATITUDE, INITIAL_LONGITUDE, CURRENT_LATITUDE, CURRENT_LONGITUDE);
+            let distance = calculateDistance(INITIAL_LATITUDE, INITIAL_LONGITUDE, CURRENT_LATITUDE, CURRENT_LONGITUDE);
+
+             // Send location to Laravel backend
+             fetch('{{ route('admin.transports.updateLocation') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        id: 2,
+                        latitude: CURRENT_LATITUDE,
+                        longitude: CURRENT_LONGITUDE
+                    })
+                });
+
+                // Send location every few seconds
+                setTimeout(sendLocationToServer, 5000); // Adjust the interval as needed
         }
         // sendLocationToServer();
     </script>

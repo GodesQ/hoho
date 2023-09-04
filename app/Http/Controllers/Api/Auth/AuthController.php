@@ -39,10 +39,10 @@ class AuthController extends Controller
 
         if(!$user) {
             $user = Admin::where($fieldType, $request->username)->first();
-            // Load the 'transport' relationship if the role is 'bus_operator'
-            // if ($user->role === 'bus_operator') {
-            //     $user->load('transport');
-            // }
+            /// Load the 'transport' relationship if the role is 'bus_operator'
+            if ($user->role === 'bus_operator') {
+                $user->load('transport');
+            }
         }
 
         if (!$user || !Hash::check($request->password, $user->password)) {

@@ -126,15 +126,20 @@
         var channel = pusher.subscribe('bus-location');
         channel.bind('new-bus-location', function(data) {
             console.log(data.transport_id);
-            if (data.transport_id == $('#transport').val()) {
+            // Convert latitude and longitude to numbers
+            const latitude = parseFloat(data.coordinates.latitude);
+            const longitude = parseFloat(data.coordinates.longitude);
+
+            if (!isNaN(latitude) && !isNaN(longitude) && data.transport_id == $('#transport').val()) {
                 const newLocation = {
-                    lat: data.coordinates.latitude,
-                    lng: data.coordinates.longitude
+                    lat: latitude,
+                    lng: longitude
                 };
                 operatorMarker.setPosition(newLocation);
                 map.panTo(newLocation);
             }
         });
+
 
         channel.bind('pusher:subscription_succeeded', function(members) {});
         channel.bind('pusher:subscription_error', function(data) {});

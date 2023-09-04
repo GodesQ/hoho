@@ -93,6 +93,11 @@
                                             max="4"></select>
                                     </div>
                                 </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+
+                                    </div>
+                                </div>
                                 <div class="col-lg-12 diy_ticket_pass">
                                     <div class="mb-3">
                                         <div class="form-label">DIY Ticket Pass</div>
@@ -315,55 +320,48 @@
             const selectedTour = tour.options[tour.selectedIndex];
             const prices = JSON.parse(selectedTour.getAttribute('data-value'));
 
-            if (guidedTourRadio.checked) {
-                if (prices && prices.length > 0) {
-                    let priceIndex = 0;
+            if (guidedTourRadio.checked && prices && prices.length > 0) {
+                let priceIndex = 0;
 
-                    if (number_of_pass.value <= 9 && number_of_pass.value >= 4) {
-                        priceIndex = 1;
-                    } else if (number_of_pass.value <= 24 && number_of_pass.value >= 10) {
-                        priceIndex = 2;
-                    } else if (number_of_pass.value >= 25) {
-                        priceIndex = 3;
-                    }
-
-                    const selectedPrice = prices[priceIndex] !== 0 && prices[priceIndex] !== null ? prices[priceIndex] :
-                        prices[0];
-
-                    sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(selectedPrice)}`;
-                    totalAmount = selectedPrice * number_of_pass.value;
-                    amount.value = totalAmount;
-                    total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
+                if (number_of_pass.value <= 9 && number_of_pass.value >= 4) {
+                    priceIndex = 1;
+                } else if (number_of_pass.value <= 24 && number_of_pass.value >= 10) {
+                    priceIndex = 2;
+                } else if (number_of_pass.value >= 25) {
+                    priceIndex = 3;
                 }
+
+                const selectedPrice = prices[priceIndex] || prices[0];
+
+                const totalAmount = selectedPrice * number_of_pass.value;
+
+                sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(selectedPrice)}`;
+                amount.value = totalAmount;
+                total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
             }
 
+
             if (diyTourRadio.checked) {
-                if (ticketPasses[0].checked) {
-                    ticket_pass_text.innerHTML = ticketPasses[0].value;
-                    sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(990)}`;
-                    totalAmount = 990 * number_of_pass.value;
-                    amount.value = totalAmount;
-                    total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
-                } else if (ticketPasses[1].checked) {
-                    ticket_pass_text.innerHTML = ticketPasses[1].value;
-                    sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(1799)}`;
-                    totalAmount = 1799 * number_of_pass.value;
-                    amount.value = totalAmount;
-                    total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
-                } else if (ticketPasses[2].checked) {
-                    ticket_pass_text.innerHTML = ticketPasses[2].value;
-                    sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(2499)}`;
-                    totalAmount = 2499 * number_of_pass.value;
+                const passPrices = [990, 1799, 2499];
+                const selectedPassIndex = [...ticketPasses].findIndex(pass => pass.checked);
+
+                if (selectedPassIndex !== -1) {
+                    const selectedPass = ticketPasses[selectedPassIndex].value;
+                    const passPrice = passPrices[selectedPassIndex];
+                    const totalAmount = passPrice * number_of_pass.value;
+
+                    ticket_pass_text.innerHTML = selectedPass;
+                    sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(passPrice)}`;
                     amount.value = totalAmount;
                     total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
                 } else {
-                    ticketPasses.innerHTML = 'N/A';
+                    ticket_pass_text.innerHTML = 'N/A';
                     sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(0)}`;
-                    totalAmount = 0 * number_of_pass.value;
-                    amount.value = totalAmount;
-                    total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
+                    amount.value = 0;
+                    total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(0)}`;
                 }
             }
+
 
         }
 

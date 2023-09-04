@@ -19,6 +19,7 @@ class TourReservationController extends Controller
     public function getUserTodayReservation(Request $request) {
         $user = Auth::user();
         $today_date = date('Y-m-d');
+        // return response($user);
         $tour_reservation = TourReservation::where('reserved_user_id', $user->id)
                             ->where('start_date', $today_date)
                             ->orWhere('end_date', $today_date)

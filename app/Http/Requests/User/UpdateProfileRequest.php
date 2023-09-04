@@ -25,7 +25,6 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'email' => 'required|email',
-            'username' => 'required',
             'firstname' => 'nullable',
             'lastname' => 'nullable',
             'birthdate' => 'nullable'

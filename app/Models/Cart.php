@@ -17,4 +17,12 @@ class Cart extends Model
         'number_of_pass',
         'ticket_pass'
     ];
+
+    public function tour() {
+        return $this->hasOne(Tour::class, 'id', 'tour_id');
+    }
+
+    public function user() {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 }
