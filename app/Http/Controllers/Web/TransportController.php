@@ -66,7 +66,7 @@ class TransportController extends Controller
             'longitude' => $request->longitude
         ]);
 
-        $user_id = auth('admin')->user()->id;
+        $user_id = null;
 
         $coordinates = [
             'latitude' => $transport->latitude,
@@ -75,6 +75,7 @@ class TransportController extends Controller
 
 
         $event = event(new BusLocationEvent($user_id, $coordinates, $transport->id));
+
         // dd($event);
         return response([
             'status' => true,

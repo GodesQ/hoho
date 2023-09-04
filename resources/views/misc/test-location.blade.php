@@ -81,33 +81,43 @@
         }
 
         function sendLocationToServer() {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                const { latitude, longitude} = position.coords;
-            });
+            let latitude, longitude;
 
-            INITIAL_LATITUDE = CURRENT_LATITUDE;
-            INITIAL_LONGITUDE = CURRENT_LONGITUDE;
 
-            CURRENT_LATITUDE = INITIAL_LATITUDE + 0.0020;
-            CURRENT_LONGITUDE = INITIAL_LONGITUDE + 0.0020;
+            const successCallback = (position) => {
+                console.log(position);
+            };
 
-            console.log(CURRENT_LATITUDE, CURRENT_LONGITUDE);
+            const errorCallback = (error) => {
+                console.log(error);
+            };
 
-            let distance = calculateDistance(INITIAL_LATITUDE, INITIAL_LONGITUDE, CURRENT_LATITUDE, CURRENT_LONGITUDE);
+            navigator.geolocation.watchPosition(successCallback, errorCallback);
 
-            // Send location to Laravel backend
-            fetch('{{ route('admin.transports.updateLocation') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({
-                    id: 2,
-                    latitude: INITIAL_LATITUDE,
-                    longitude: INITIAL_LONGITUDE
-                })
-            });
+            // console.log(latitude, longitude);
+            // INITIAL_LATITUDE = CURRENT_LATITUDE;
+            // INITIAL_LONGITUDE = CURRENT_LONGITUDE;
+
+            // CURRENT_LATITUDE = INITIAL_LATITUDE + 0.0004;
+            // CURRENT_LONGITUDE = INITIAL_LONGITUDE + 0.0004;
+
+            // console.log(CURRENT_LATITUDE, CURRENT_LONGITUDE);
+
+            // let distance = calculateDistance(INITIAL_LATITUDE, INITIAL_LONGITUDE, CURRENT_LATITUDE, CURRENT_LONGITUDE);
+
+            // // Send location to Laravel backend
+            // fetch('{{ route('admin.transports.updateLocation') }}', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            //     },
+            //     body: JSON.stringify({
+            //         id: 2,
+            //         latitude: latitude,
+            //         longitude: longitude
+            //     })
+            // });
 
             // Send location every few seconds
             setTimeout(sendLocationToServer, 5000); // Adjust the interval as needed

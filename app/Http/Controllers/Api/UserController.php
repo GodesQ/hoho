@@ -6,8 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
-
 use App\Models\User;
+
+use App\Http\Requests\User\UpdateProfileRequest;
 
 class UserController extends Controller
 {
@@ -20,7 +21,7 @@ class UserController extends Controller
         return $user;
     }
 
-    public function updateProfile(Request $request) {
+    public function updateProfile(UpdateProfileRequest $request) {
         $user = Auth::user();
 
         $image_name = $request->username;

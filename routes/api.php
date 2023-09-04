@@ -55,6 +55,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('transports', [TransportController::class, 'getTransports']);
     Route::get('transport/{id}', [TransportController::class, 'getTransport']);
     Route::post('transport/update_location/{id}', [TransportController::class, 'updateLocation']);
+    Route::post('transport/update_tracking/{id}', [TransportController::class, 'updateTracking']);
 
     Route::get('carts/user', [CartController::class, 'getUserCarts']);
     Route::get('carts/user/my_cart/{id}', [CartController::class, 'getUserCart']);

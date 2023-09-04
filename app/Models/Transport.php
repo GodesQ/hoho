@@ -35,6 +35,8 @@ class Transport extends Model
         'is_cancellable',
         'is_refundable',
         'is_active',
+        'is_tracking',
+        'current_tracking_token'
     ];
 
     protected $casts = [

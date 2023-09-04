@@ -51,4 +51,8 @@ class TransportController extends Controller
             'message' => 'Updated Successfully'
         ]);
     }
+
+    public function updateTracking(Request $request) {
+
+    }
 }

@@ -34,7 +34,7 @@
                     <div class="col-lg-6">
                         <div class="mb-3">
                             <label for="qrcode_image" class="form-label">QrCode Image</label>
-                            <div class="qrcode_image"></div>
+                            <div id="qrcode_image"></div>
                         </div>
                     </div>
                 </div>
@@ -46,3 +46,40 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        let referralCodeInput = document.querySelector('#referral_code');
+        let qrCodeImage = document.querySelector('#qrcode_image');
+        let qrCodeInput = document.querySelector('#qrcode_input');
+
+        let qrCode = null;
+
+        referralCodeInput.addEventListener('input', (e) => {
+            if(qrCode == null) {
+                qrCode = generateQRCode(e.target.value);
+            }  else {
+                if(e.target.value != '') {
+                    qrCode.makeCode(e.target.value);
+                    const base64Image = qrCodeImage.querySelector('img').src;
+                    qrCodeInput.textContent = base64Image;
+                } else {
+                    qrCode.clear()
+                    base64Output.textContent = '';
+                }
+            }
+        });
+
+        const generateQRCode = (qrContent) => {
+            return new QRCode(qrCodeImage, {
+                        text: qrContent,
+                        width: 256,
+                        height: 256,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H,
+                    });
+        }
+    </script>
+@endpush
