@@ -85,7 +85,25 @@
 
 
             const successCallback = (position) => {
-                console.log(position);
+                latitude = position.coords.latitude;
+                longitude = position.coords.longitude;
+
+                // Send location to Laravel backend
+                fetch('{{ route('admin.transports.updateLocation') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        id: 2,
+                        latitude: latitude,
+                        longitude: longitude
+                    })
+                });
+
+                // Send location every few seconds
+                setTimeout(sendLocationToServer, 5000); // Adjust the interval as needed
             };
 
             const errorCallback = (error) => {
@@ -104,23 +122,6 @@
             // console.log(CURRENT_LATITUDE, CURRENT_LONGITUDE);
 
             // let distance = calculateDistance(INITIAL_LATITUDE, INITIAL_LONGITUDE, CURRENT_LATITUDE, CURRENT_LONGITUDE);
-
-            // // Send location to Laravel backend
-            // fetch('{{ route('admin.transports.updateLocation') }}', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //         'X-CSRF-TOKEN': "{{ csrf_token() }}"
-            //     },
-            //     body: JSON.stringify({
-            //         id: 2,
-            //         latitude: latitude,
-            //         longitude: longitude
-            //     })
-            // });
-
-            // Send location every few seconds
-            // setTimeout(sendLocationToServer, 5000); // Adjust the interval as needed
         }
         // sendLocationToServer();
     </script>
