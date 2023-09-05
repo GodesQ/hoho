@@ -80,6 +80,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
     Route::post('users/update/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('users/destroy', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::get('users/update_contacts', [UserController::class, 'updateUserContacts']);
 
     Route::get('organizations', [OrganizationController::class, 'list'])->name('organizations.list');
     Route::get('organizations/create', [OrganizationController::class, 'create'])->name('organizations.create');
@@ -192,4 +193,6 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('referrals/edit/{id}', [ReferralController::class, 'edit'])->name('referrals.edit');
     Route::post('referrals/update/{id}', [ReferralController::class, 'update'])->name('referrals.update');
     Route::delete('referrals/destroy', [ReferralController::class, 'destroy'])->name('referrals.destroy');
+
+
 });

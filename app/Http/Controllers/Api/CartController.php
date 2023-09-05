@@ -25,7 +25,7 @@ class CartController extends Controller
 
     public function getUserCarts(Request $request) {
         $user = Auth::user();
-        $carts = Cart::where('user_id', $user->id)->get();
+        $carts = Cart::where('user_id', $user->id)->with('tour')->get();
 
         return response([
             'status' => TRUE,
@@ -37,10 +37,19 @@ class CartController extends Controller
         $user = Auth::user();
         $cart = Cart::where('id', $request->id)->where('user_id', $user->id)->first();
 
-        return response([
-            'status' => TRUE,
-            'cart' => $cart
-        ], 200);
+        if($cart) {
+            return response([
+                'status' => TRUE,
+                'cart' => $cart
+            ], 200);
+        } else {
+            return response([
+                'status' => TRUE,
+                'cart' => null,
+                'message' => 'Cart Not Found'
+            ], 400);
+        }
+
     }
 
     public function removeCart(Request $request) {

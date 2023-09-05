@@ -15,7 +15,8 @@ class Cart extends Model
         'trip_date',
         'type',
         'number_of_pass',
-        'ticket_pass'
+        'ticket_pass',
+        'amount'
     ];
 
     public function tour() {
