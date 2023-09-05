@@ -40,6 +40,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('user/profile', [UserController::class, 'updateProfile']);
     Route::post('user/update_interest', [UserController::class, 'updateInterest']);
 
+    Route::get('ticket_pass', [TourReservationController::class, 'getDIYReservations']);
     Route::get('today_reservation', [TourReservationController::class, 'getUserTodayReservation']);
     Route::post('reservation/store', [TourReservationController::class, 'storeTourReservation']);
 

@@ -39,10 +39,18 @@ class AuthController extends Controller
 
         if(!$user) {
             $user = Admin::where($fieldType, $request->username)->first();
-            /// Load the 'transport' relationship if the role is 'bus_operator'
-            if ($user->role === 'bus_operator') {
-                $user->load('transport');
+            if($user) {
+                /// Load the 'transport' relationship if the role is 'bus_operator'
+                if ($user->role === 'bus_operator') {
+                    $user->load('transport');
+                }
+            } else {
+                return response([
+                    'status' => false,
+                    'message' => "Invalid credentials."
+                ], 200);
             }
+
         }
 
         if (!$user || !Hash::check($request->password, $user->password)) {

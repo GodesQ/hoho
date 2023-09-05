@@ -43,4 +43,11 @@ class TourReservationController extends Controller
     public function storeTourReservation(Request $request) {
         return $this->bookingService->createBooking($request);
     }
+
+    public function getDIYReservations(Request $request) {
+        $user = Auth::user();
+        $reservations = TourReservation::latest('created_at')->where('type', 'DIY')->where('reserved_user_id', $user->id)->with('reservation_codes')->get();
+
+        return response($reservations);
+    }
 }

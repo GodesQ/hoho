@@ -15,6 +15,7 @@ use App\Models\TourReservation;
 use App\Models\User;
 use App\Models\Tour;
 use App\Models\Transaction;
+use App\Models\ReservationUserCode;
 
 use DataTables;
 use Carbon\Carbon;
@@ -77,10 +78,38 @@ class TourReservationController extends Controller
             'status' => $request->status
         ]);
 
+        if($request->status == 'approved') {
+            $number_of_pass = $reservation->number_of_pass;
+            $this->generateReservationCode($number_of_pass, $reservation);
+        }
+
         if($update_reservation) return back()->withSuccess('Reservation updated successfully');
     }
 
     public function destroy(Request $request) {
 
+    }
+
+    private function generateReservationCode($number_of_pass, $reservation) {
+        // Generate the random letter part
+        // Assuming you have str_random function available
+        $random_letters = strtoupper(Str::random(5));
+
+        for ($i = 1; $i <= $number_of_pass; $i++) {
+            // Generate the pass number with leading zeros (e.g., -001)
+            $pass_number = str_pad($i, 3, '0', STR_PAD_LEFT);
+
+            // Concatenate the parts to create the code
+            $code = "GRP{$random_letters}{$reservation->id}-{$pass_number}";
+
+            $reservation_codes_exist = ReservationUserCode::where('reservation_id', $reservation->id)->count();
+
+            if($reservation_codes_exist < $number_of_pass) {
+                $create_code = ReservationUserCode::create([
+                    'reservation_id' => $reservation->id,
+                    'code' => $code
+                ]);
+            }
+        }
     }
 }

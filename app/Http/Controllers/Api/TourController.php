@@ -22,7 +22,16 @@ class TourController extends Controller
 
     public function getDIYTours(Request $request) {
         $tours = Tour::where('type', 'DIY Tour')->get();
-        $product_categories = ProductCategory::get();
+
+        foreach ($tours as $tour) {
+            $tour->setAppends([]); // Exclude the "attractions" attribute for this instance
+        }
+
+        $product_categories = ProductCategory::select('id', 'name', 'description', 'featured_image')->get();
+
+        foreach ($product_categories as $category) {
+            $category->setAppends([]); // Exclude the "organizations" attribute for this instance
+        }
 
         return response([
             'status' => TRUE,

@@ -16,10 +16,16 @@ class ProductCategory extends Model
         'organization_ids',
     ];
 
+    protected $appendOrganizations = true;
+
     protected $appends = ['organizations'];
 
     public function getOrganizationsAttribute() {
         $organization_ids = json_decode($this->organization_ids, true);
+
+        if (!$this->appendOrganizations) {
+            return null; // or return [] depending on your preference
+        }
 
         if (is_array($organization_ids) && !empty($organization_ids)) {
             $data = Organization::whereIn('id', $organization_ids)

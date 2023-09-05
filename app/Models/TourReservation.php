@@ -46,6 +46,10 @@ class TourReservation extends Model
         return $this->hasOne(Tour::class, 'id', 'tour_id');
     }
 
+    public function reservation_codes() {
+        return $this->hasMany(ReservationUserCode::class, 'reservation_id')->select('id', 'reservation_id', 'code', 'scan_count', 'start_datetime', 'end_datetime');
+    }
+
     public function getPassengersAttribute() {
         $passenger_ids = json_decode($this->passenger_ids, true); // Passing true as the second argument to get an associative array
 

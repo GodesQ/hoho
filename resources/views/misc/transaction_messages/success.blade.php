@@ -78,7 +78,7 @@
       <div class="misc-wrapper">
         <h2 class="mb-2 mx-2">Payment Success</h2>
         <p class="mb-4 mx-2">Thank you for booking a tour in Philippine Hop On Hop Off.</p>
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-primary">Back to home</a>
+        {{-- <a href="{{ route('admin.dashboard') }}" class="btn btn-primary">Back to home</a> --}}
         <div class="mt-3">
           <img
             src="{{ URL::asset('assets/img/illustrations/payment_success.png') }}"
