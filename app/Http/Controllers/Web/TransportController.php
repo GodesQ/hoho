@@ -73,8 +73,7 @@ class TransportController extends Controller
             'longitude' => $transport->longitude
         ];
 
-
-        $event = event(new BusLocationEvent($user_id, $coordinates, $transport->id));
+        event(new BusLocationEvent($user_id, $coordinates, $transport->id));
 
         // dd($event);
         return response([

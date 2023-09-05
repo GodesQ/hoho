@@ -5,8 +5,11 @@ namespace App\Services;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use App\Models\Transaction;
 use App\Models\TourReservation;
@@ -54,14 +57,27 @@ class BookingService
     }
 
     # HELPERS
-    private function getHMACSignatureHash($text, $secret_key) {
-        $key = $secret_key;
-        $message = $text;
+    // private function getHMACSignatureHash($text, $secret_key) {
+    //     $key = $secret_key;
+    //     $message = $text;
 
-        $hex = hash_hmac('sha256', $message, $key);
-        $bin = hex2bin($hex);
+    //     $hex = hash_hmac('sha256', $message, $key);
+    //     $bin = hex2bin($hex);
 
-        return base64_encode($bin);
+    //     return base64_encode($bin);
+    // }
+
+    private function getHMACSignatureHash($text, $key)
+    {
+        $keyBytes = utf8_encode($key);
+        $textBytes = utf8_encode($text);
+
+        $hashBytes = hash_hmac('sha256', $textBytes, $keyBytes, true);
+
+        $base64Hash = base64_encode($hashBytes);
+        $base64Hash = str_replace(['+', '/'], ['-', '_'], $base64Hash);
+
+        return $base64Hash;
     }
 
     private function generateReferenceNo() {
@@ -142,23 +158,41 @@ class BookingService
     }
 
     private function sendPaymentRequest($transaction, $reservation) {
-        $client = new Client();
-        $requestModel = $this->setRequestModel($transaction, $reservation);
+        try {
+            $client = new Client();
+            $requestModel = $this->setRequestModel($transaction, $reservation);
+            $jsonPayload = json_encode($requestModel, JSON_UNESCAPED_UNICODE);
+            $authToken = $this->GetHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
 
-        $jsonPayload = json_encode($requestModel, JSON_UNESCAPED_UNICODE);
-        $authToken = $this->GetHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
+            $response = $client->post('https://payments.aqwire.io/api/v3/transactions/create', [
+                'headers' => [
+                    'accept' => 'application/json',
+                    'content-type' => 'application/json',
+                    'Qw-Merchant-Id' => env('AQWIRE_MERCHANT_CODE'),
+                    'Authorization' => 'Bearer ' . $authToken,
+                ],
+                'body' => $jsonPayload, // Set the JSON payload as the request body
+            ]);
 
-        $response = $client->post('https://payments-sandbox.aqwire.io/api/v3/transactions/create', [
-            'headers' => [
-                'accept' => 'application/json',
-                'content-type' => 'application/json',
-                'Qw-Merchant-Id' => env('AQWIRE_MERCHANT_CODE'),
-                'Authorization' => 'Bearer ' . $authToken,
-            ],
-            'body' => $jsonPayload, // Set the JSON payload as the request body
-        ]);
+            // Handle the response here
+            $statusCode = $response->getStatusCode();
+            $responseBody = $response->getBody()->getContents();
 
-        return $response;
+            return $response;
+            // Your code to process the response...
+
+        } catch (RequestException $e) {
+            // Handle exceptions related to the HTTP request
+            $statusCode = $e->getResponse()->getStatusCode();
+            $responseBody = $e->getResponse()->getBody()->getContents();
+            dd($e);
+            // Your error handling code...
+        } catch (\Exception $e) {
+            dd($e);
+            // Handle other exceptions that may occur
+            // Your error handling code...
+        }
+
     }
 
     private function setRequestModel($transaction, $reservation) {

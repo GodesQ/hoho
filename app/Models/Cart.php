@@ -19,6 +19,10 @@ class Cart extends Model
         'amount'
     ];
 
+    protected $casts = [
+        'amount' => 'double'
+    ];
+
     public function tour() {
         return $this->hasOne(Tour::class, 'id', 'tour_id');
     }

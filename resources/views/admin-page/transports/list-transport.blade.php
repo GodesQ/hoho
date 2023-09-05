@@ -125,7 +125,6 @@
 
         var channel = pusher.subscribe('bus-location');
         channel.bind('new-bus-location', function(data) {
-            console.log(data.transport_id);
             // Convert latitude and longitude to numbers
             const latitude = parseFloat(data.coordinates.latitude);
             const longitude = parseFloat(data.coordinates.longitude);
