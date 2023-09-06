@@ -109,6 +109,48 @@
                                 </div> --}}
                             </div>
                             <hr>
+                            <h4>Images</h4>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <?php $restaurant_images = $restaurant->images ? json_decode($restaurant->images) : [] ?>
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="mb-3">
+                                                <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_1" onchange="handlePreviewImage(this, 'previewImage1')">
+                                                @if(count($restaurant_images) > 0 && isset($restaurant_images[0]))
+                                                    <img src="{{ URL::asset('assets/img/restaurants/' . $restaurant->id . '/' . $restaurant_images[0]) }}" id="previewImage1" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $restaurant->id}}, '{{ $restaurant_images[0] }}')">Remove <i class="bx bx-trash"></i></button>
+                                                @else
+                                                    <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage1" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="mb-3">
+                                                <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_2" onchange="handlePreviewImage(this, 'previewImage2')">
+                                                @if(count($restaurant_images) > 0 && isset($restaurant_images[1]))
+                                                    <img src="{{ URL::asset('assets/img/restaurants/' . $restaurant->id . '/' . $restaurant_images[1]) }}" id="previewImage2" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $restaurant->id}}, '{{ $restaurant_images[1] }}')">Remove <i class="bx bx-trash"></i></button>
+                                                @else
+                                                    <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage2" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="mb-3">
+                                                <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_3" onchange="handlePreviewImage(this, 'previewImage3')">
+                                                @if(count($restaurant_images) > 0 && isset($restaurant_images[2]))
+                                                    <img src="{{ URL::asset('assets/img/restaurants/' . $restaurant->id . '/' . $restaurant_images[2]) }}" id="previewImage3" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $restaurant->id}}, '{{ $restaurant_images[2] }}')">Remove <i class="bx bx-trash"></i></button>
+                                                @else
+                                                    <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage3" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
                             <button class="btn btn-primary">Save restaurant</button>
                         </form>
                     </div>
@@ -129,3 +171,76 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        // Function to handle file selection and display preview image
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const previewImage = document.getElementById('previewImage');
+                    previewImage.src = event.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handlePreviewImage(event, previewImageId) {
+            const file = event.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const previewImage = document.getElementById(previewImageId);
+                    console.log(previewImage);
+                    previewImage.src = event.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImageBtn(id, image_path) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Remove store image",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, remove it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `{{ route('admin.merchants.restaurants.remove_image') }}`,
+                        method: "DELETE",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            id: id,
+                            image_path: image_path
+                        },
+                        success: function(response) {
+                            if (response.status) {
+                                Swal.fire('Removed!', response.message, 'success').then(
+                                    result => {
+                                        if (result.isConfirmed) {
+                                            toastr.success(response.message, 'Success');
+                                            location.reload();
+                                        }
+                                    })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+
+        // Attach the 'handleFileSelect' function to the file input's change event
+        document.getElementById('featured_image').addEventListener('change', handleFileSelect);
+    </script>
+@endpush

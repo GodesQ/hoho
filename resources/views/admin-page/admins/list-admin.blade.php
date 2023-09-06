@@ -12,7 +12,7 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive text-nowrap">
-                <table class="table table-striped data-table">
+                <table class="table   data-table">
                     <thead>
                         <tr>
                             <th>Username</th>

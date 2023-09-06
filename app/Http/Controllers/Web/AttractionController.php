@@ -106,7 +106,7 @@ class AttractionController extends Controller
     }
 
     public function update(Request $request) {
-        $data = $request->except("_token");
+        $data = $request->except("_token", "images");
         $attraction = Attraction::findOrFail($request->id);
         if($request->hasFile('featured_image')) {
             $file = $request->file('featured_image');

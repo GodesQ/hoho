@@ -63,6 +63,23 @@ class MerchantRestaurantController extends Controller
             $file_name = null;
         }
 
+        $count = 1;
+        $images = [];
+        if($request->images) {
+            foreach ($request->images as $key => $image) {
+                $image_file = $image;
+                $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $count . '.' . $image_file->getClientOriginalExtension();
+                $save_file = $image_file->move(public_path() . '/assets/img/restaurants/' . $merchant->id, $image_file_name);
+
+                array_push($images, $image_file_name);
+                $count++;
+            }
+
+            $merchant->update([
+                'images' => count($images) > 0 ? json_encode($images) : null,
+            ]);
+        }
+
         if($merchant) {
             // Second, Create Hotel Data
             $merchant_restaurant = MerchantRestaurant::create(array_merge($data, [
@@ -82,10 +99,29 @@ class MerchantRestaurantController extends Controller
     }
 
     public function update(Request $request) {
-        $data = $request->except('_token');
+        $data = $request->except('_token', 'images', 'featured_image');
         $restaurant = MerchantRestaurant::where('id', $request->id)->with('merchant')->firstOrFail();
 
         $update_restaurant = $restaurant->update($data);
+
+        $images = $restaurant->images ? json_decode($restaurant->images) : [];
+        $count = $restaurant->images ? count(json_decode($restaurant->images)) : 1;
+
+        if($request->has('images')) {
+            foreach ($request->images as $key => $image) {
+                $count++;
+                $image_file = $image;
+                $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $count . '.' . $image_file->getClientOriginalExtension();
+                $save_file = $image_file->move(public_path() . '/assets/img/restaurants/' . $restaurant->id, $image_file_name);
+
+                array_push($images, $image_file_name);
+            }
+
+
+            $update_restaurant = $restaurant->update([
+                'images' => count($images) > 0 ? json_encode($images) : $restaurant->images,
+            ]);
+        }
 
         // Save if the featured image exist in request
         if($request->hasFile('featured_image')) {
@@ -128,6 +164,31 @@ class MerchantRestaurantController extends Controller
                     'message' => 'Restaurant Deleted Successfully'
                 ]);
             }
+        }
+    }
+
+    public function removeImage(Request $request) {
+        $restaurant = MerchantRestaurant::where('id', $request->id)->first();
+        $images = json_decode($restaurant->images);
+        $image_path = $request->image_path;
+
+        if(is_array($images)) {
+            if (($key = array_search($image_path, $images)) !== false) {
+                unset($images[$key]);
+                $old_upload_image = public_path('/assets/img/restaurants/') . $restaurant->merchant->id . '/' . $image_path;
+                $remove_image = @unlink($old_upload_image);
+            }
+        }
+
+        $update = $restaurant->update([
+            'images' => json_encode(array_values($images))
+        ]);
+
+        if($update) {
+            return response([
+                'status' => TRUE,
+                'message' => 'Image successfully remove'
+            ]);
         }
     }
 }

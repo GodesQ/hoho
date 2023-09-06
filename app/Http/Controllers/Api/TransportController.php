@@ -64,10 +64,14 @@ class TransportController extends Controller
             ]);
         }
 
-        $next_location = implode('|', $request->all());
+        $next_location = [
+            'address' => $request->address,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude
+        ];
 
         $update_next_location = $transport->update([
-            'next_location' => $next_location
+            'next_location' => json_encode($next_location)
         ]);
 
         if($update_next_location) {

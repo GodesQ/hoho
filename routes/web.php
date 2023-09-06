@@ -145,6 +145,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
         Route::get('restaurants/edit/{id}', [MerchantRestaurantController::class, 'edit'])->name('restaurants.edit');
         Route::post('restaurants/update/{id}', [MerchantRestaurantController::class, 'update'])->name('restaurants.update');
         Route::delete('restaurants/destroy', [MerchantRestaurantController::class, 'destroy'])->name('restaurants.destroy');
+        Route::delete('restaurants/remove_image', [MerchantRestaurantController::class, 'removeImage'])->name('restaurants.remove_image');
 
         Route::get('tour_providers', [MerchantTourProviderController::class, 'list'])->name('tour_providers.list');
         Route::get('tour_providers/create', [MerchantTourProviderController::class, 'create'])->name('tour_providers.create');
@@ -159,6 +160,8 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
         Route::get('stores/edit/{id}', [MerchantStoreController::class, 'edit'])->name('stores.edit');
         Route::post('stores/update/{id}', [MerchantStoreController::class, 'update'])->name('stores.update');
         Route::delete('stores/destroy', [MerchantStoreController::class, 'destroy'])->name('stores.destroy');
+        Route::delete('stores/remove_image', [MerchantStoreController::class, 'removeImage'])->name('stores.remove_image');
+
     });
 
     Route::get('interests', [InterestController::class, 'list'])->name('interests.list');
