@@ -65,6 +65,8 @@ Route::get('user/verify_email', [UserAuthController::class, 'verifyEmail']);
 Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function(){
     Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('profile', [DashboardController::class, 'adminProfile'])->name('profile');
+    Route::post('profile', [DashboardController::class, 'saveProfile'])->name('profile.post');
 
     Route::get('admins', [AdminController::class, 'list'])->name('admins.list');
     Route::get('admins/create', [AdminController::class, 'create'])->name('admins.create');

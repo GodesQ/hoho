@@ -302,7 +302,7 @@
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" href="{{ route('admin.profile') }}">
                                             <i class="bx bx-user me-2"></i>
                                             <span class="align-middle">My Profile</span>
                                         </a>
@@ -372,6 +372,7 @@
     <script src="{{ URL::asset('assets/js/dashboards-analytics.js') }}"></script>
     <script src="{{ asset('assets/js/select/form-select2.js') }}"></script>
     <script src="{{ asset('assets/js/wizard-steps.js') }}"></script>
+    <script src="{{ asset('assets/js/pages-account-settings-account.js') }}"></script>
 
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
