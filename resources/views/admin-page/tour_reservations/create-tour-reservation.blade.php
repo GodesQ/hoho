@@ -93,11 +93,15 @@
                                             max="4"></select>
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                {{-- <div class="col-lg-6">
                                     <div class="mb-3">
-
+                                        <label for="referral_codes" class="form-label">Referral Code</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Referral Code" />
+                                            <button class="btn btn-primary" type="button" id="button-addon2">Verify</button>
+                                        </div>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="col-lg-12 diy_ticket_pass">
                                     <div class="mb-3">
                                         <div class="form-label">DIY Ticket Pass</div>
@@ -200,18 +204,20 @@
                                 </div>
                             </div>
                             <div class="my-3 justify-content-end d-flex">
-                                <button class="btn btn-primary">Book Reservation</button>
+                                <button class="btn btn-primary" id="book-btn">Book Reservation</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            {{-- <input type="hidden" id="referral_verified" value="1"> --}}
         </form>
     </div>
 @endsection
 
 @push('scripts')
     <script>
+
         $('.reserved_users, .registered_passengers').select2({
             placeholder: 'Select users',
             minimumInputLength: 3,
@@ -256,10 +262,10 @@
             });
         }
 
-        const guidedTourRadio = document.getElementById("guided_tour");
-        const diyTourRadio = document.getElementById("diy_tour");
-        const tourSelect = document.getElementById("tour");
-        const diyTicketPass = document.querySelector(".diy_ticket_pass");
+        let guidedTourRadio = document.getElementById("guided_tour");
+        let diyTourRadio = document.getElementById("diy_tour");
+        let tourSelect = document.getElementById("tour");
+        let diyTicketPass = document.querySelector(".diy_ticket_pass");
         let tour = document.querySelector('#tour');
         let number_of_pass = document.querySelector('#number_of_pass');
         let tour_text = document.querySelector('#tour_text');

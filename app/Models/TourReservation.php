@@ -21,7 +21,9 @@ class TourReservation extends Model
         'end_date',
         'status',
         'number_of_pass',
-        'ticket_pass'
+        'ticket_pass',
+        'payment_method',
+        'referral_code'
     ];
 
     protected $casts = [

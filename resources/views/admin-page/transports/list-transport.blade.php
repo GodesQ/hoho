@@ -92,8 +92,8 @@
 
         function initMap() {
             const busIcon = {
-                url: "{{ URL::asset('assets/img/icons/marker.png') }}",
-                scaledSize: new google.maps.Size(30, 30),
+                url: "{{ URL::asset('assets/img/icons/bus.png') }}",
+                scaledSize: new google.maps.Size(40, 40),
                 origin: new google.maps.Point(0, 0),
                 anchor: new google.maps.Point(20, 40)
             };
@@ -147,28 +147,96 @@
 
         function createMapAndMarker(icon) {
             const mapStyles = [{
-                    "featureType": "all",
+                    "featureType": "administrative",
+                    "elementType": "all",
+                    "stylers": [{
+                        "saturation": "-100"
+                    }]
+                },
+                {
+                    "featureType": "administrative.province",
+                    "elementType": "all",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                },
+                {
+                    "featureType": "landscape",
+                    "elementType": "all",
+                    "stylers": [{
+                            "saturation": -100
+                        },
+                        {
+                            "lightness": 65
+                        },
+                        {
+                            "visibility": "on"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "landscape.man_made",
                     "elementType": "geometry",
                     "stylers": [{
-                        "color": "#f5f5f5"
-                    }]
+                            "visibility": "on"
+                        },
+                        {
+                            "color": "#f2f0f3"
+                        }
+                    ]
                 },
                 {
                     "featureType": "poi",
-                    "elementType": "labels.text.fill",
+                    "elementType": "all",
                     "stylers": [{
-                        "color": "#616161"
-                    }]
+                            "saturation": -100
+                        },
+                        {
+                            "lightness": "50"
+                        },
+                        {
+                            "visibility": "off"
+                        }
+                    ]
                 },
                 {
-                    "featureType": "poi.park",
-                    "elementType": "geometry.fill",
+                    "featureType": "poi",
+                    "elementType": "geometry",
                     "stylers": [{
-                        "color": "#e6f3d6"
-                    }]
+                            "color": "#eaeaea"
+                        },
+                        {
+                            "visibility": "on"
+                        }
+                    ]
                 },
                 {
                     "featureType": "road",
+                    "elementType": "all",
+                    "stylers": [{
+                            "saturation": "-100"
+                        },
+                        {
+                            "visibility": "on"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "labels",
+                    "stylers": [{
+                        "visibility": "simplified"
+                    }]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "all",
+                    "stylers": [{
+                        "visibility": "simplified"
+                    }]
+                },
+                {
+                    "featureType": "road.highway",
                     "elementType": "geometry",
                     "stylers": [{
                         "color": "#ffffff"
@@ -176,52 +244,60 @@
                 },
                 {
                     "featureType": "road.arterial",
-                    "elementType": "labels.text.fill",
+                    "elementType": "all",
                     "stylers": [{
-                        "color": "#757575"
-                    }]
-                },
-                {
-                    "featureType": "road.highway",
-                    "elementType": "geometry",
-                    "stylers": [{
-                        "color": "#dadada"
-                    }]
-                },
-                {
-                    "featureType": "road.highway",
-                    "elementType": "labels.text.fill",
-                    "stylers": [{
-                        "color": "#616161"
+                        "lightness": "30"
                     }]
                 },
                 {
                     "featureType": "road.local",
-                    "elementType": "labels.text.fill",
+                    "elementType": "all",
                     "stylers": [{
-                        "color": "#9e9e9e"
+                        "lightness": "40"
+                    }]
+                },
+                {
+                    "featureType": "road.local",
+                    "elementType": "geometry",
+                    "stylers": [{
+                        "color": "#ffffff"
                     }]
                 },
                 {
                     "featureType": "transit",
-                    "elementType": "labels.text.fill",
+                    "elementType": "all",
                     "stylers": [{
-                        "color": "#757575"
-                    }]
+                            "saturation": -100
+                        },
+                        {
+                            "visibility": "simplified"
+                        }
+                    ]
                 },
                 {
                     "featureType": "water",
                     "elementType": "geometry",
                     "stylers": [{
-                        "color": "#c9c9c9"
-                    }]
+                            "lightness": -25
+                        },
+                        {
+                            "saturation": "100"
+                        },
+                        {
+                            "color": "#b1d6fa"
+                        }
+                    ]
                 },
                 {
                     "featureType": "water",
-                    "elementType": "labels.text.fill",
+                    "elementType": "labels",
                     "stylers": [{
-                        "color": "#9e9e9e"
-                    }]
+                            "lightness": -25
+                        },
+                        {
+                            "saturation": -100
+                        }
+                    ]
                 }
             ];
 
@@ -251,7 +327,7 @@
             operatorMarker.setMap(null); // Remove the marker
 
             const busIcon = {
-                url: "{{ URL::asset('assets/img/icons/marker.png') }}",
+                url: "{{ URL::asset('assets/img/icons/bus.png') }}",
                 scaledSize: new google.maps.Size(50, 50),
                 origin: new google.maps.Point(0, 0),
                 anchor: new google.maps.Point(20, 40)

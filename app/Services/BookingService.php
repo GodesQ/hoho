@@ -205,7 +205,7 @@ class BookingService
             'customer' => [
                 'name' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
                 'email' => $transaction->user->email,
-                'mobile' => '+639633987953',
+                'mobile' => $transaction->user->contact_no ? $transaction->user->contact_no : '000000000',
             ],
             'project' => [
                 'name' => 'Hoho Checkout Reservation',

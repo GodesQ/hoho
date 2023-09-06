@@ -54,6 +54,31 @@ class TransportController extends Controller
         ]);
     }
 
+    public function updateNextLocation(Request $request) {
+        $transport = Transport::where('id', $request->id)->first();
+
+        if(!$transport) {
+            return response([
+                'status' => FALSE,
+                'message' => 'Transport Not Foud'
+            ]);
+        }
+
+        $next_location = implode('|', $request->all());
+
+        $update_next_location = $transport->update([
+            'next_location' => $next_location
+        ]);
+
+        if($update_next_location) {
+            return response([
+                'status' => TRUE,
+                'message' => 'Next location updated successfully'
+            ]);
+        }
+
+    }
+
     public function updateTracking(Request $request) {
 
     }
