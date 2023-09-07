@@ -49,7 +49,7 @@ class AttractionController extends Controller
                     }
                 })
                 ->rawColumns(['actions', 'status', 'organization_logo'])
-                    ->make(true);
+                ->make(true);
         }
 
         return view('admin-page.attractions.list-attraction');

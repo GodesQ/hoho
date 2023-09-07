@@ -8,11 +8,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 use App\Models\Admin;
+use App\Models\Transaction;
 
 class DashboardController extends Controller
 {
     public function dashboard(Request $request) {
-        return view('admin-page.dashboard.dashboard');
+        $recent_transactions = Transaction::select('reference_no', 'id', 'transaction_by_id', 'payment_status', 'aqwire_totalAmount', 'aqwire_paymentMethodCode')->with('user')->latest()->limit(6)->get();
+        // dd($recent_transactions);
+        return view('admin-page.dashboard.dashboard', compact('recent_transactions'));
     }
 
     public function testLocation() {

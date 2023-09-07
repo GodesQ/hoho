@@ -11,7 +11,7 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="table-responsive text-nowrap">
+            <div class="table-responsive-lg text-nowrap">
                 <table class="table   data-table">
                     <thead>
                         <tr>
@@ -64,7 +64,7 @@
             let id = $(this).attr("id");
             Swal.fire({
                 title: 'Are you sure?',
-                text: "Remove hotel from list",
+                text: "Remove store from list",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',

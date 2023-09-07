@@ -57,7 +57,7 @@
                                         <label for="organizations" class="form-label">Organizations</label>
                                         <select name="organization_id" id="organization_id" class="select2 form-select" >
                                             @foreach ($organizations as $organization)
-                                                <option value="{{ $organization->id }}">{{ $organization->name }}</option>                                                
+                                                <option value="{{ $organization->id }}">{{ $organization->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -107,6 +107,32 @@
                                 </div> --}}
                             </div>
                             <hr>
+                            <h4>Images</h4>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="mb-3">
+                                                <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_1" onchange="handlePreviewImage(this, 'previewImage1')">
+                                                <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage1" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="mb-3">
+                                                <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_2" onchange="handlePreviewImage(this, 'previewImage2')">
+                                                <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage2" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="mb-3">
+                                                <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_3" onchange="handlePreviewImage(this, 'previewImage3')">
+                                                <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage3" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
                             <button class="btn btn-primary">Save Hotel</button>
                         </form>
                     </div>
@@ -135,6 +161,21 @@
 
                 reader.onload = function(event) {
                     const previewImage = document.getElementById('previewImage');
+                    previewImage.src = event.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handlePreviewImage(event, previewImageId) {
+            const file = event.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const previewImage = document.getElementById(previewImageId);
+                    console.log(previewImage);
                     previewImage.src = event.target.result;
                 };
 

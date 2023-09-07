@@ -11,8 +11,8 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="table-responsive text-nowrap">
-                <table class="table   data-table">
+            <div class="table-responsive-lg text-nowrap">
+                <table class="table data-table">
                     <thead>
                         <tr>
                             <th>Id</th>

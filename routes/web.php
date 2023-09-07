@@ -138,6 +138,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
         Route::get('hotels/edit/{id}', [MerchantHotelController::class, 'edit'])->name('hotels.edit');
         Route::post('hotels/update/{id}', [MerchantHotelController::class, 'update'])->name('hotels.update');
         Route::delete('hotels/destroy', [MerchantHotelController::class, 'destroy'])->name('hotels.destroy');
+        Route::delete('hotels/remove_image', [MerchantHotelController::class, 'removeImage'])->name('hotels.remove_image');
 
         Route::get('restaurants', [MerchantRestaurantController::class, 'list'])->name('restaurants.list');
         Route::get('restaurants/create', [MerchantRestaurantController::class, 'create'])->name('restaurants.create');

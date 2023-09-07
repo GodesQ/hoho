@@ -72,7 +72,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-lg-12"><hr> <h5><i class="bx bx-box"></i> restaurant Information</h5> <hr></div>
+                                <div class="col-lg-12"><hr> <h5><i class="bx bx-box"></i> Restaurant Information</h5> <hr></div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="interests" class="form-label">Interests</label>
@@ -118,7 +118,7 @@
                                             <div class="mb-3">
                                                 <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_1" onchange="handlePreviewImage(this, 'previewImage1')">
                                                 @if(count($restaurant_images) > 0 && isset($restaurant_images[0]))
-                                                    <img src="{{ URL::asset('assets/img/restaurants/' . $restaurant->id . '/' . $restaurant_images[0]) }}" id="previewImage1" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    <img src="{{ URL::asset('assets/img/restaurants/' . $restaurant->merchant->id . '/' . $restaurant_images[0]) }}" id="previewImage1" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                     <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $restaurant->id}}, '{{ $restaurant_images[0] }}')">Remove <i class="bx bx-trash"></i></button>
                                                 @else
                                                     <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage1" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
@@ -129,7 +129,7 @@
                                             <div class="mb-3">
                                                 <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_2" onchange="handlePreviewImage(this, 'previewImage2')">
                                                 @if(count($restaurant_images) > 0 && isset($restaurant_images[1]))
-                                                    <img src="{{ URL::asset('assets/img/restaurants/' . $restaurant->id . '/' . $restaurant_images[1]) }}" id="previewImage2" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    <img src="{{ URL::asset('assets/img/restaurants/' . $restaurant->merchant->id . '/' . $restaurant_images[1]) }}" id="previewImage2" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                     <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $restaurant->id}}, '{{ $restaurant_images[1] }}')">Remove <i class="bx bx-trash"></i></button>
                                                 @else
                                                     <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage2" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
@@ -140,7 +140,7 @@
                                             <div class="mb-3">
                                                 <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_3" onchange="handlePreviewImage(this, 'previewImage3')">
                                                 @if(count($restaurant_images) > 0 && isset($restaurant_images[2]))
-                                                    <img src="{{ URL::asset('assets/img/restaurants/' . $restaurant->id . '/' . $restaurant_images[2]) }}" id="previewImage3" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    <img src="{{ URL::asset('assets/img/restaurants/' . $restaurant->merchant->id . '/' . $restaurant_images[2]) }}" id="previewImage3" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                     <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $restaurant->id}}, '{{ $restaurant_images[2] }}')">Remove <i class="bx bx-trash"></i></button>
                                                 @else
                                                     <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage3" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
