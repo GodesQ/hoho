@@ -86,7 +86,7 @@
                     </div>
                     <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">
                         <div class="col-lg-3 pt-3">
-                            <h6>Payment Type: </h6>
+                            <h6>Payment Details: </h6>
                         </div>
                         <div class="col-lg-9 py-3">
                            <textarea name="" id="" cols="30" rows="10" class="form-control" disabled>{{ $transaction->payment_details }}</textarea>

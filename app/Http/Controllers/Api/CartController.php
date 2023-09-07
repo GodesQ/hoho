@@ -53,14 +53,21 @@ class CartController extends Controller
     }
 
     public function removeCart(Request $request) {
-        $cart = Cart::where('id', $request->id)->first();
-
+        $user = Auth::user();
+        // return response($user);
+        $cart = Cart::where('id', $request->id)->where('user_id', $user->id)->first();
         if($cart) {
+            $cart->delete();
             return response([
                 'status' => TRUE,
                 'message' => 'Cart deleted successfully'
             ]);
         }
+
+        return response([
+            'status' => FALSE,
+            'message' => 'Cart Not Found'
+        ], 400);
 
     }
 }
