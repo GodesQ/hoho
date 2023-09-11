@@ -27,7 +27,7 @@ class OrganizationController extends Controller
                     ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
                                     <a href="/admin/organizations/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="javascript:void(0);" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
+                                    <a href="javascript:void(0);" id="'.$row->id.'" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                     })
                     ->rawColumns(['actions', 'status'])
@@ -153,7 +153,30 @@ class OrganizationController extends Controller
     }
 
     public function destroy(Request $request) {
+        $organization = Organization::where('id', $request->id)->first();
 
+        // Remove all files from the directory
+        $directory = public_path('assets/img/organizations/') . $organization->id;
+        $files = glob($directory . '/*');
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                @unlink($file);
+            }
+        }
+
+        // Now try to remove the directory
+        if (is_dir($directory)) {
+            @rmdir($directory);
+        }
+
+        $delete_organization = $organization->delete();
+
+        if($delete_organization) {
+            return response([
+                'status' => true,
+                'message' => 'Organization Deleted Successfully'
+            ]);
+        }
     }
 
     public function removeImage(Request $request) {

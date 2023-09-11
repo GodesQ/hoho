@@ -26,18 +26,18 @@ class Organization extends Model
     ];
 
     public function attractions() {
-        return $this->hasMany(Attraction::class, 'organization_id');
+        return $this->hasMany(Attraction::class, 'organization_id')->where('status', 1);
     }
 
     public function stores() {
-        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Store');
+        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Store')->where('is_active', 1);
     }
 
     public function hotels() {
-        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Hotel');
+        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Hotel')->where('is_active', 1);
     }
 
     public function restaurants() {
-        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Restaurant');
+        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Restaurant')->where('is_active', 1);
     }
 }

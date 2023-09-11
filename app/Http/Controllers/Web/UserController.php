@@ -199,7 +199,7 @@ class UserController extends Controller
         //         User::create($userData);
         //     }
         // }
-
+        
         return 'User updated successfully';
 
         // $dataToUpdate = [];
