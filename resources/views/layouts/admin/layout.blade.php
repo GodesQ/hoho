@@ -195,7 +195,7 @@
                     <li class="menu-item">
                         <a href="#" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-chart"></i>
-                            <div data-i18n="Reports">Reports</div>
+                            <div data-i18n="Reports">Reports <span class="badge bg-warning" style="font-size: 8px;">Maintenance</span></div>
                         </a>
                     </li>
 
