@@ -118,18 +118,18 @@ class BookingService
         return base64_encode($bin);
     }
 
-    // private function getHMACSignatureHash($text, $key)
-    // {
-    //     $keyBytes = utf8_encode($key);
-    //     $textBytes = utf8_encode($text);
+    private function getLiveHMACSignatureHash($text, $key)
+    {
+        $keyBytes = utf8_encode($key);
+        $textBytes = utf8_encode($text);
 
-    //     $hashBytes = hash_hmac('sha256', $textBytes, $keyBytes, true);
+        $hashBytes = hash_hmac('sha256', $textBytes, $keyBytes, true);
 
-    //     $base64Hash = base64_encode($hashBytes);
-    //     $base64Hash = str_replace(['+', '/'], ['-', '_'], $base64Hash);
+        $base64Hash = base64_encode($hashBytes);
+        $base64Hash = str_replace(['+', '/'], ['-', '_'], $base64Hash);
 
-    //     return $base64Hash;
-    // }
+        return $base64Hash;
+    }
 
     private function getTotalAmountOfBookings(Request $request, $additional_charges) {
 
@@ -302,7 +302,12 @@ class BookingService
             $client = new Client();
             $requestModel = $this->setRequestModel($transaction);
             $jsonPayload = json_encode($requestModel, JSON_UNESCAPED_UNICODE);
-            $authToken = $this->GetHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
+            if(env('APP_ENVIRONMENT') == 'LIVE') {
+                $authToken = $this->getLiveHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
+
+            } else {
+                $authToken = $this->getHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
+            }
 
             $response = $client->post('https://payments-sandbox.aqwire.io/api/v3/transactions/create', [
                 'headers' => [
