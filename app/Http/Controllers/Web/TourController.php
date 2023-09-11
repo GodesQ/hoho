@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 
 use App\Models\Tour;
 use App\Models\Attraction;
+use App\Models\MerchantTourProvider;
 
 use DataTables;
 use Carbon\Carbon;
@@ -53,15 +54,17 @@ class TourController extends Controller
 
     public function create(Request $request) {
         $attractions = Attraction::get();
-        return view('admin-page.tours.create-tour', compact('attractions'));
+        $tour_providers = MerchantTourProvider::get();
+
+        return view('admin-page.tours.create-tour', compact('attractions', 'tour_providers'));
     }
 
     public function store(Request $request) {
         $data = $request->except('_token');
-        $tour = Tour::create($data, [
+        $tour = Tour::create(array_merge($data, [
             'is_cancellable' => $request->has('is_cancellable'),
             'is_refundable' => $request->has('is_refundable'),
-        ]);
+        ]));
 
         if($tour) return redirect()->route('admin.tours.edit', $tour->id)->with('success', 'Tour created successfully');
     }
@@ -69,7 +72,9 @@ class TourController extends Controller
     public function edit(Request $request) {
         $attractions = Attraction::get();
         $tour = Tour::where('id', $request->id)->firstOrFail();
-        return view('admin-page.tours.edit-tour', compact('tour', 'attractions'));
+        $tour_providers = MerchantTourProvider::get();
+
+        return view('admin-page.tours.edit-tour', compact('tour', 'attractions', 'tour_providers'));
     }
 
     public function update(Request $request) {

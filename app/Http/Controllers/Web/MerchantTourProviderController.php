@@ -73,8 +73,8 @@ class MerchantTourProviderController extends Controller
     }
 
     public function edit(Request $request) {
-        $restaurant = MerchantTourProvider::where('id', $request->id)->with('merchant')->first();
-        return view('admin-page.merchants.tour_providers.edit-tour-provider', compact('restaurant'));
+        $tour_provider = MerchantTourProvider::where('id', $request->id)->with('merchant')->first();
+        return view('admin-page.merchants.tour_providers.edit-tour-provider', compact('tour_provider'));
     }
 
     public function update(Request $request) {

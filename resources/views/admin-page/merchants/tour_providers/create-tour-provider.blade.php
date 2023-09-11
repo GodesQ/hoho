@@ -95,6 +95,12 @@
                                         <textarea name="tags" id="tags" cols="30" rows="5" class="form-control"></textarea>
                                     </div>
                                 </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="Contact Email" class="form-label">Contact Email</label>
+                                        <input type="text" name="contact_email" id="contact_email" class="form-control">
+                                    </div>
+                                </div>
                                 {{-- <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="images" class="form-label">Images</label>

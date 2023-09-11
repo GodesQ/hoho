@@ -47,8 +47,10 @@
                                     <div class="mb-3">
                                         <label for="tour_provider" class="form-label">Tour Provider</label>
                                         <select name="tour_provider_id" id="tour_provider" class="form-select">
-                                            {{-- <option value="">HoHo Manila</option>
-                                        <option value=""> Owllah Travel & Tours</option> --}}
+                                            <option value="">--- SELECT TOUR PROVIDER ---</option>
+                                            @foreach ($tour_providers as $tour_provider)
+                                                <option value="{{ $tour_provider->id }}">{{ $tour_provider->merchant->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>

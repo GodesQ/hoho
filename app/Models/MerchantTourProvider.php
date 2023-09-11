@@ -17,6 +17,7 @@ class MerchantTourProvider extends Model
         'links',
         'interests',
         'contact_number',
+        'contact_email',
         'location',
         'business_hours',
         'address',

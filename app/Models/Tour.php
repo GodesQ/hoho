@@ -77,4 +77,8 @@ class Tour extends Model
     public function transport() {
         return $this->hasOne(Transport::class, 'id', 'transport_id')->select('id', 'route', 'capacity', 'tour_assigned_id', 'tour_assignment_ids', 'latitude', 'longitude', 'name', 'current_location', 'next_location', 'previous_location');
     }
+
+    public function tour_provider() {
+        return $this->hasOne(MerchantTourProvider::class, 'id', 'tour_provider_id');
+    }
 }

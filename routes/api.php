@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\TourController;
 use App\Http\Controllers\Api\TransportController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\InterestController;
+use App\Http\Controllers\Api\ReferralController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,5 +68,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('interests', [InterestController::class, 'getInterests']);
 
-
+    Route::get('verify_referral_code/{referral_code}', [ReferralController::class, 'verifyReferralCode']);
 });

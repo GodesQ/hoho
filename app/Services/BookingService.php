@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TourProviderBookingNotification;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +15,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use App\Models\Transaction;
 use App\Models\TourReservation;
+use App\Models\Tour;
 
 use DB;
 
@@ -136,18 +139,17 @@ class BookingService
         $items_amount = [];
 
         foreach ($items as &$item) {
-            $hiddenPayment = 0;
+            // $hiddenPayment = 0;
 
-            // Check if a ticket pass exists
-            foreach ($additional_charges as $charge => $amount) {
-                $hiddenPayment += $amount;
-            }
+            // foreach ($additional_charges as $charge => $amount) {
+            //     $hiddenPayment += $amount;
+            // }
 
-            // Add hidden payments based on number_of_pass
-            $hiddenPayment *= $item['number_of_pass'];
+            // // Add hidden payments based on number_of_pass
+            // $hiddenPayment *= $item['number_of_pass'];
 
             // Add hidden payment to amount
-            $total = $item['amount'] + $hiddenPayment;
+            $total = $item['amount'];
             $items_amount[] = $total;
         }
 
@@ -158,7 +160,7 @@ class BookingService
     }
 
     private function generateReferenceNo() {
-        return date('Ym') . '_' . 'OT' . rand(10000, 1000000);
+        return date('Ym') . '-' . 'OT' . rand(10000, 1000000);
     }
 
     private function generateAdditionalCharges() {
@@ -215,6 +217,7 @@ class BookingService
 
     private function createReservation($request, $transaction, $totalAmount) {
         $trip_date = Carbon::create($request->trip_date);
+        $tour = Tour::where('id', $item['tour_id'])->first();
 
         $reservation = TourReservation::create([
             'tour_id' => $request->tour_id,
@@ -232,6 +235,22 @@ class BookingService
             'referral_code' => $request->referral_code,
         ]);
 
+        $details = [
+            'tour_provider_name' => optional($tour->tour_provider)->merchant->name,
+            'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
+            'trip_date' => $item['trip_date'],
+            'tour_name' => $tour->name
+        ];
+
+        if($tour) {
+            if($tour->tour_provider) {
+                if($tour->tour_provider->contact_email) {
+                    Mail::to('james@godesq.com')->send(new TourProviderBookingNotification($details));
+                    // Mail::to($request->email)->send(new EmailVerification($details));
+                }
+            }
+        }
+
         return $reservation;
     }
 
@@ -241,6 +260,8 @@ class BookingService
         foreach ($items as $key => $item) {
             $trip_date = Carbon::create($item['trip_date']);
             $totalAmount = $item['type'] == 'Guided' ? $this->generateGuidedTourTotalAmount($item['number_of_pass'], $item['ticket_pass'], $item['amount'], $additional_charges) : $this->generateDIYTourTotalAmount($item['number_of_pass'], $item['ticket_pass'], $item['amount'], $additional_charges);
+
+            $tour = Tour::where('id', $item['tour_id'])->first();
 
             $reservation = TourReservation::create([
                 'tour_id' => $item['tour_id'],
@@ -256,6 +277,23 @@ class BookingService
                 'number_of_pass' => $item['number_of_pass'],
                 'ticket_pass' => $item['type']  == 'DIY' ? $item['ticket_pass'] : null
             ]);
+
+
+            $details = [
+                'tour_provider_name' => optional($tour->tour_provider)->merchant->name,
+                'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
+                'trip_date' => $item['trip_date'],
+                'tour_name' => $tour->name
+            ];
+
+            if($tour) {
+                if($tour->tour_provider) {
+                    if($tour->tour_provider->contact_email) {
+                        Mail::to('james@godesq.com')->send(new TourProviderBookingNotification($details));
+                        // Mail::to($request->email)->send(new EmailVerification($details));
+                    }
+                }
+            }
         }
     }
 
