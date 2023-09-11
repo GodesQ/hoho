@@ -41,7 +41,11 @@ class TourReservationController extends Controller
     }
 
     public function storeTourReservation(Request $request) {
-        return $this->bookingService->createBooking($request);
+        return $this->bookingService->createMultipleBooking($request);
+    }
+
+    public function storeMultipleTourReservation(Request $request) {
+        return $this->bookingService->createMultipleBooking($request);
     }
 
     public function getDIYReservations(Request $request) {

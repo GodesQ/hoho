@@ -43,6 +43,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('ticket_pass', [TourReservationController::class, 'getDIYReservations']);
     Route::get('today_reservation', [TourReservationController::class, 'getUserTodayReservation']);
     Route::post('reservation/store', [TourReservationController::class, 'storeTourReservation']);
+    // Route::post('reservation/store_multiple');
 
     Route::get('organizations', [OrganizationController::class, 'getOrganizations']);
     Route::get('organization/{id}', [OrganizationController::class, 'getOrganization']);

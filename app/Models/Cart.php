@@ -20,7 +20,10 @@ class Cart extends Model
     ];
 
     protected $casts = [
-        'amount' => 'double'
+        'amount' => 'double',
+        'user_id' => 'integer',
+        'tour_id' => 'integer',
+        'number_of_pass' => 'integer'
     ];
 
     public function tour() {

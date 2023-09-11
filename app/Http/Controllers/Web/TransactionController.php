@@ -30,6 +30,8 @@ class TransactionController extends Controller
                                 return '<span class="badge bg-label-danger me-1">Failed</span>';
                             } else if($row->payment_status == 'pending') {
                                 return '<span class="badge bg-label-warning me-1">Pending</span>';
+                            } else if($row->payment_status == 'inc') {
+                                return '<span class="badge bg-label-warning me-1">Inc</span>';
                             }
                         })
                         ->addColumn('actions', function ($row) {

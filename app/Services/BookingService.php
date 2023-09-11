@@ -14,6 +14,8 @@ use Illuminate\Support\Str;
 use App\Models\Transaction;
 use App\Models\TourReservation;
 
+use DB;
+
 class BookingService
 {
     public function createBooking(Request $request)
@@ -21,7 +23,8 @@ class BookingService
         // dd($request->all());
         $reference_no = $this->generateReferenceNo();
         $additional_charges = $this->generateAdditionalCharges();
-        $totalAmount = $request->type == 'Guided' ? $this->generateGuidedTourTotalAmount($request, $additional_charges) : $this->generateDIYTourTotalAmount($request, $additional_charges);
+
+        $totalAmount = $request->type == 'Guided' ? $this->generateGuidedTourTotalAmount($request->number_of_pass, $request->ticket_pass, $request->amount, $additional_charges) : $this->generateDIYTourTotalAmount($request->number_of_pass, $request->ticket_pass, $request->amount, $additional_charges);
         // dd($totalAmount);
         $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges);
         if (!$transaction) {
@@ -56,28 +59,102 @@ class BookingService
         }
     }
 
+    public function createMultipleBooking(Request $request) {
+        return DB::transaction(function () use ($request) {
+            // Remove the line below, as it's just for testing purposes
+
+            $reference_no = $this->generateReferenceNo();
+            $additional_charges = $this->generateAdditionalCharges();
+
+            $totalAmount = $this->getTotalAmountOfBookings($request, $additional_charges);
+
+            $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges);
+
+            $reservation = $this->createMultipleReservation($request, $transaction, $additional_charges);
+
+            $response = $this->sendPaymentRequest($transaction);
+
+            if(!$response['status']) {
+                return response([
+                    'status' => FALSE,
+                    'message' => 'Failed to submit request for transaction'
+                ]);
+            }
+
+            $responseData = json_decode($response['result']->getBody(), true);
+
+            if ($responseData['status'] != 'SUCCESS') {
+                $logMessage = "An error occurred during the payment process with the following parameters: " .
+                    env('AQWIRE_MERCHANT_CODE') . " | " . env('AQWIRE_MERCHANT_CLIENTID') . " | " . env('AQWIRE_MERCHANT_SECURITY_KEY');
+                dd($logMessage);
+            }
+
+            $updateTransaction = $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+
+            if ($request->is('api/*')) {
+                return response([
+                    'status' => 'paying',
+                    'url' => $responseData['paymentUrl']
+                ]);
+            } else {
+                return redirect($responseData['paymentUrl']);
+            }
+        });
+    }
+
+
     # HELPERS
-    // private function getHMACSignatureHash($text, $secret_key) {
-    //     $key = $secret_key;
-    //     $message = $text;
 
-    //     $hex = hash_hmac('sha256', $message, $key);
-    //     $bin = hex2bin($hex);
+    private function getHMACSignatureHash($text, $secret_key) {
+        $key = $secret_key;
+        $message = $text;
 
-    //     return base64_encode($bin);
+        $hex = hash_hmac('sha256', $message, $key);
+        $bin = hex2bin($hex);
+
+        return base64_encode($bin);
+    }
+
+    // private function getHMACSignatureHash($text, $key)
+    // {
+    //     $keyBytes = utf8_encode($key);
+    //     $textBytes = utf8_encode($text);
+
+    //     $hashBytes = hash_hmac('sha256', $textBytes, $keyBytes, true);
+
+    //     $base64Hash = base64_encode($hashBytes);
+    //     $base64Hash = str_replace(['+', '/'], ['-', '_'], $base64Hash);
+
+    //     return $base64Hash;
     // }
 
-    private function getHMACSignatureHash($text, $key)
-    {
-        $keyBytes = utf8_encode($key);
-        $textBytes = utf8_encode($text);
+    private function getTotalAmountOfBookings(Request $request, $additional_charges) {
 
-        $hashBytes = hash_hmac('sha256', $textBytes, $keyBytes, true);
+        # NOTE: The amount of each booking was already been set, This function is for adding additional charges and to sum up all of the bookings for transactions.
 
-        $base64Hash = base64_encode($hashBytes);
-        $base64Hash = str_replace(['+', '/'], ['-', '_'], $base64Hash);
+        $items = json_decode($request->items, true);
+        $items_amount = [];
 
-        return $base64Hash;
+        foreach ($items as &$item) {
+            $hiddenPayment = 0;
+
+            // Check if a ticket pass exists
+            foreach ($additional_charges as $charge => $amount) {
+                $hiddenPayment += $amount;
+            }
+
+            // Add hidden payments based on number_of_pass
+            $hiddenPayment *= $item['number_of_pass'];
+
+            // Add hidden payment to amount
+            $total = $item['amount'] + $hiddenPayment;
+            $items_amount[] = $total;
+        }
+
+        // unset($item); // Unset to avoid any unintended changes
+
+        $totalAmount = array_sum($items_amount);
+        return $totalAmount;
     }
 
     private function generateReferenceNo() {
@@ -94,28 +171,28 @@ class BookingService
         return $charges;
     }
 
-    private function generateGuidedTourTotalAmount($request, $additional_charges) {
-        $convenience_fee = $additional_charges['Convenience Fee'] * $request->number_of_pass;
-        $travel_pass = $additional_charges['Travel Pass'] * $request->number_of_pass;
+    private function generateGuidedTourTotalAmount($number_of_pass, $ticket_pass, $amount, $additional_charges) {
+        $convenience_fee = $additional_charges['Convenience Fee'] * $number_of_pass;
+        $travel_pass = $additional_charges['Travel Pass'] * $number_of_pass;
 
-        return $request->amount + $convenience_fee + $travel_pass;
+        return $amount + $convenience_fee + $travel_pass;
     }
 
-    private function generateDIYTourTotalAmount($request, $additional_charges) {
-        $convenience_fee = $additional_charges['Convenience Fee'] * $request->number_of_pass;
-        $travel_pass = $additional_charges['Travel Pass'] * $request->number_of_pass;
+    private function generateDIYTourTotalAmount($number_of_pass, $ticket_pass, $amount, $additional_charges) {
+        $convenience_fee = $additional_charges['Convenience Fee'] * $number_of_pass;
+        $travel_pass = $additional_charges['Travel Pass'] * $number_of_pass;
         // dd($convenience_fee, $travel_pass);
         $totalAmount = 0;
-        if($request->ticket_pass == '1 Day Pass') {
-            $totalAmount = ($request->amount * 1) + ($convenience_fee + $travel_pass);
+        if($ticket_pass == '1 Day Pass') {
+            $totalAmount = ($amount * 1) + ($convenience_fee + $travel_pass);
         }
 
-        if($request->ticket_pass == '2 Day Pass') {
-            $totalAmount = ($request->amount * 2) + ($convenience_fee + $travel_pass);
+        if($ticket_pass == '2 Day Pass') {
+            $totalAmount = ($amount * 2) + ($convenience_fee + $travel_pass);
         }
 
-        if($request->ticket_pass == '3 Day Pass') {
-            $totalAmount = ($request->amount * 3) + ($convenience_fee + $travel_pass);
+        if($ticket_pass == '3 Day Pass') {
+            $totalAmount = ($amount * 3) + ($convenience_fee + $travel_pass);
             // dd($request->amount, $convenience_fee, $travel_pass, $totalAmount);
         }
         return $totalAmount;
@@ -148,23 +225,48 @@ class BookingService
             'reference_code' => $transaction->reference_no,
             'order_transaction_id' => $transaction->id,
             'start_date' => $trip_date,
-            'end_date' => $request->type == 'Guided' ? $trip_date->addDays(1) : $this->getDateOfDIYPass($request, $trip_date),
+            'end_date' => $request->type == 'Guided' ? $trip_date->addDays(1) : $this->getDateOfDIYPass($request->ticket_pass, $trip_date),
             'status' => 'pending',
             'number_of_pass' => $request->number_of_pass,
-            'ticket_pass' => $request->type  == 'DIY' ? $request->ticket_pass : null
+            'ticket_pass' => $request->type  == 'DIY' ? $request->ticket_pass : null,
+            'referral_code' => $request->referral_code,
         ]);
 
         return $reservation;
     }
 
-    private function sendPaymentRequest($transaction, $reservation) {
+    private function createMultipleReservation($request, $transaction, $additional_charges) {
+        $items = json_decode($request->items, true);
+
+        foreach ($items as $key => $item) {
+            $trip_date = Carbon::create($item['trip_date']);
+            $totalAmount = $item['type'] == 'Guided' ? $this->generateGuidedTourTotalAmount($item['number_of_pass'], $item['ticket_pass'], $item['amount'], $additional_charges) : $this->generateDIYTourTotalAmount($item['number_of_pass'], $item['ticket_pass'], $item['amount'], $additional_charges);
+
+            $reservation = TourReservation::create([
+                'tour_id' => $item['tour_id'],
+                'type' => $item['type'],
+                'amount' => $totalAmount,
+                'reserved_user_id' => $request->reserved_user_id,
+                'passenger_ids' => $request->has('passenger_ids') ? json_encode($request->passenger_ids) : json_encode([$request->reserved_user_id]),
+                'reference_code' => $transaction->reference_no,
+                'order_transaction_id' => $transaction->id,
+                'start_date' => $trip_date,
+                'end_date' => $item['type'] == 'Guided' ? $trip_date->addDays(1) : $this->getDateOfDIYPass($item['ticket_pass'], $trip_date),
+                'status' => 'pending',
+                'number_of_pass' => $item['number_of_pass'],
+                'ticket_pass' => $item['type']  == 'DIY' ? $item['ticket_pass'] : null
+            ]);
+        }
+    }
+
+    private function sendPaymentRequest($transaction) {
         try {
             $client = new Client();
-            $requestModel = $this->setRequestModel($transaction, $reservation);
+            $requestModel = $this->setRequestModel($transaction);
             $jsonPayload = json_encode($requestModel, JSON_UNESCAPED_UNICODE);
             $authToken = $this->GetHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
 
-            $response = $client->post('https://payments.aqwire.io/api/v3/transactions/create', [
+            $response = $client->post('https://payments-sandbox.aqwire.io/api/v3/transactions/create', [
                 'headers' => [
                     'accept' => 'application/json',
                     'content-type' => 'application/json',
@@ -178,24 +280,32 @@ class BookingService
             $statusCode = $response->getStatusCode();
             $responseBody = $response->getBody()->getContents();
 
-            return $response;
+            return [
+                'status' => TRUE,
+                'result' => $response
+            ];
             // Your code to process the response...
 
         } catch (RequestException $e) {
-            // Handle exceptions related to the HTTP request
-            $statusCode = $e->getResponse()->getStatusCode();
-            $responseBody = $e->getResponse()->getBody()->getContents();
-            dd($e);
-            // Your error handling code...
+            $errorMessage = $e->getMessage();
+            dd($errorMessage);
+            return [
+                'status' => FALSE,
+                'result' => $errorMessage
+            ];
+
         } catch (\Exception $e) {
-            dd($e);
+            return [
+                'status' => FALSE,
+                'result' => 'Failed'
+            ];
             // Handle other exceptions that may occur
             // Your error handling code...
         }
 
     }
 
-    private function setRequestModel($transaction, $reservation) {
+    private function setRequestModel($transaction) {
         $model = [
             'uniqueId' => $transaction->reference_no,
             'currency' => 'PHP',
@@ -205,7 +315,7 @@ class BookingService
             'customer' => [
                 'name' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
                 'email' => $transaction->user->email,
-                'mobile' => $transaction->user->contact_no ? $transaction->user->contact_no : '000000000',
+                'mobile' => $transaction->user->contact_no ? '+' . $transaction->user->contact_no : '+639633987953',
             ],
             'project' => [
                 'name' => 'Hoho Checkout Reservation',
@@ -219,7 +329,7 @@ class BookingService
             ],
             'note' => 'Test Payment',
             'metadata' => [
-                'reservationNumber' => json_encode($reservation->id),
+                'reservationNumber' => '0',
                 'companyCode' => '1000',
                 'projectCode' => '4200',
                 'agentName' => $transaction->user->firstname . ' ' . $transaction->user->lastname
@@ -241,17 +351,15 @@ class BookingService
         return $update_transaction;
     }
 
-    private function getDateOfDIYPass($request, $trip_date) {
-        if($request->ticket_pass == '1 Day Pass') {
+    private function getDateOfDIYPass($ticket_pass, $trip_date) {
+        if($ticket_pass == '1 Day Pass') {
             $date = $trip_date->addDays(1);
-        }
-
-        if($request->ticket_pass == '2 Day Pass') {
+        } else if($ticket_pass == '2 Day Pass') {
             $date = $trip_date->addDays(2);
-        }
-
-        if($request->ticket_pass == '3 Day Pass') {
+        } else if($ticket_pass == '3 Day Pass') {
             $date = $trip_date->addDays(3);
+        } else {
+            $date = $trip_date->addDays(1);
         }
 
         return $date;

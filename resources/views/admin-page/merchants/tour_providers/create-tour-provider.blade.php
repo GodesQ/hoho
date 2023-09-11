@@ -33,9 +33,9 @@
                                     <div class="mb-3">
                                         <label for="type" class="form-label">Merchant Type <span class="text-danger">*</span></label>
                                         <select name="type" id="type" class="form-select" required>
-                                            <option value="Hotel">Hotel</option>
-                                            <option value="Store">Store</option>
                                             <option value="Tour Provider">Tour Provider</option>
+                                            <option value="Store">Store</option>
+                                            <option value="Hotel">Hotel</option>
                                             <option value="Restaurant">Restaurant</option>
                                         </select>
                                     </div>
