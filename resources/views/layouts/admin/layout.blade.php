@@ -163,7 +163,7 @@
                     <li class="menu-item">
                         <a href="#" class="menu-link">
                             <i class='menu-icon tf-icons bx bx-body'></i>
-                            <div data-i18n="Activities">Activities</div>
+                            <div data-i18n="Activities">Activities <span class="badge bg-warning" style="font-size: 8px;">Maintenance</span></div>
                         </a>
                     </li>
 
@@ -231,7 +231,7 @@
                     <li class="menu-item">
                         <a href="#" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-user-check"></i>
-                            <div data-i18n="Permissions">Permissions</div>
+                            <div data-i18n="Permissions">Permissions <span class="badge bg-warning" style="font-size: 8px;">Maintenance</span></div>
                         </a>
                     </li>
                 </ul>

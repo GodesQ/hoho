@@ -26,4 +26,6 @@ class ReferralController extends Controller
             'referral' => $referral
         ]);
     }
+
+
 }

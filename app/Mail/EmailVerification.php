@@ -18,7 +18,6 @@ class EmailVerification extends Mailable
      */
     public function __construct($details)
     {
-        //
         $this->details = $details;
     }
 
