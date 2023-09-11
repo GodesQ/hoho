@@ -48,13 +48,13 @@
                                 value="{{ $user->username }}" placeholder="john.doe@example.com" />
                         </div>
                         <div class="mb-3 col-md-6">
-                            <label for="firstName" class="form-label">First Name</label>
-                            <input class="form-control" type="text" id="firstName" name="firstName"
+                            <label for="firstname" class="form-label">First Name</label>
+                            <input class="form-control" type="text" id="firstname" name="firstname"
                                 value="{{ $user->firstname }}" autofocus />
                         </div>
                         <div class="mb-3 col-md-6">
-                            <label for="lastName" class="form-label">Last Name</label>
-                            <input class="form-control" type="text" name="lastName" id="lastName"
+                            <label for="lastname" class="form-label">Last Name</label>
+                            <input class="form-control" type="text" name="lastname" id="lastname"
                                 value="{{ $user->lastname }}" />
                         </div>
 

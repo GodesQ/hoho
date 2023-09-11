@@ -370,7 +370,7 @@ class BookingService
                 'cancel' => env('AQWIRE_TEST_CANCEL_URL') . $transaction->id,
                 'callback' => env('AQWIRE_TEST_CALLBACK_URL') . $transaction->id
             ],
-            'note' => 'Test Payment',
+            'note' => 'Checkout for Tour Reservation',
             'metadata' => [
                 'reservationNumber' => '0',
                 'companyCode' => '1000',
