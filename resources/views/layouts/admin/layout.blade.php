@@ -225,6 +225,12 @@
                             <div data-i18n="Referrals">Referrals</div>
                         </a>
                     </li>
+                    <li class="menu-item {{ preg_match('/admin\/promo_codes/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.promo_codes.list') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-gift"></i>
+                            <div data-i18n="Promo Codes">Promo Codes</div>
+                        </a>
+                    </li>
                     <li class="menu-item {{ preg_match('/admin\/product_categories/', Request::path()) ? 'active' : null }}">
                         <a href="{{ route('admin.product_categories.list') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-box"></i>

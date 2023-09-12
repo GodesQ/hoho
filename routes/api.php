@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\TransportController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\InterestController;
 use App\Http\Controllers\Api\ReferralController;
+use App\Http\Controllers\Api\PromoCodeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 
+Route::get('promocodes', [PromoCodeController::class, 'getPromoCodes']);
+Route::get('promocodes/verify/{code}', [PromoCodeController::class, 'checkValidPromoCode']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
@@ -42,6 +45,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('user/update_interest', [UserController::class, 'updateInterest']);
     Route::delete('user/delete', [UserController::class, 'destroyAccount']);
 
+    Route::get('user/reservations', [TourReservationController::class, 'getUserReservations']);
     Route::get('ticket_pass', [TourReservationController::class, 'getDIYReservations']);
     Route::get('today_reservation', [TourReservationController::class, 'getUserTodayReservation']);
     Route::post('reservation/store', [TourReservationController::class, 'storeTourReservation']);

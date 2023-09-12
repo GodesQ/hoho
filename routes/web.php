@@ -25,6 +25,7 @@ use App\Http\Controllers\Web\RoleController;
 use App\Http\Controllers\Web\ProductCategoryController;
 use App\Http\Controllers\Web\ReferralController;
 use App\Http\Controllers\Web\DataReportController;
+use App\Http\Controllers\Web\PromoCodeController;
 
 use App\Http\Controllers\Web\AqwireController;
 
@@ -200,6 +201,13 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('referrals/edit/{id}', [ReferralController::class, 'edit'])->name('referrals.edit');
     Route::post('referrals/update/{id}', [ReferralController::class, 'update'])->name('referrals.update');
     Route::delete('referrals/destroy', [ReferralController::class, 'destroy'])->name('referrals.destroy');
+
+    Route::get('promo_codes', [PromoCodeController::class, 'list'])->name('promo_codes.list');
+    Route::get('promo_codes/create', [PromoCodeController::class, 'create'])->name('promo_codes.create');
+    Route::post('promo_codes/store', [PromoCodeController::class, 'store'])->name('promo_codes.store');
+    Route::get('promo_codes/edit/{id}', [PromoCodeController::class, 'edit'])->name('promo_codes.edit');
+    Route::post('promo_codes/update/{id}', [PromoCodeController::class, 'update'])->name('promo_codes.update');
+    Route::delete('promo_codes/destroy', [PromoCodeController::class, 'destroy'])->name('promo_codes.destroy');
 
     Route::prefix('reports')->as('reports.')->group(function () {
         Route::get('user_demographics', [DataReportController::class, 'user_demographics'])->name('user_demographics');
