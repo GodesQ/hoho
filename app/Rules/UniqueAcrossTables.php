@@ -3,6 +3,7 @@
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
+use DB;
 
 class UniqueAcrossTables implements Rule
 {
