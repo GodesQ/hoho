@@ -24,6 +24,7 @@ use App\Http\Controllers\Web\OrganizationController;
 use App\Http\Controllers\Web\RoleController;
 use App\Http\Controllers\Web\ProductCategoryController;
 use App\Http\Controllers\Web\ReferralController;
+use App\Http\Controllers\Web\DataReportController;
 
 use App\Http\Controllers\Web\AqwireController;
 
@@ -200,5 +201,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::post('referrals/update/{id}', [ReferralController::class, 'update'])->name('referrals.update');
     Route::delete('referrals/destroy', [ReferralController::class, 'destroy'])->name('referrals.destroy');
 
-
+    Route::prefix('reports')->as('reports.')->group(function () {
+        Route::get('user_demographics', [DataReportController::class, 'user_demographics'])->name('user_demographics');
+    });
 });

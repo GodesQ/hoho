@@ -33,13 +33,13 @@ class TourReservationController extends Controller
             return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('reserved_user', function($row) {
-                        return $row->user->email;
+                        return optional($row->user)->email ? optional($row->user)->email : 'Deleted User';
                     })
                     ->addColumn('type', function($row) {
-                        return $row->tour->type;
+                        return optional($row->tour)->type;
                     })
                     ->addColumn('tour', function($row) {
-                        return $row->tour->name;
+                        return optional($row->tour)->name;
                     })
                     ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">

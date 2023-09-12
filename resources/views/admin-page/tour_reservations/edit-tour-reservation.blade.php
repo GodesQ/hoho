@@ -75,7 +75,7 @@
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="reserved_user" class="form-label">Reserved User</label>
-                                    <input type="text" class="form-control" name="reserved_user" id="reserved_user" value="{{ optional($reservation->user)->email }}" disabled>
+                                    <input type="text" class="form-control" name="reserved_user" id="reserved_user" value="{{ optional($reservation->user)->email ? optional($reservation->user)->email : 'Deleted User' }}" disabled>
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -104,8 +104,10 @@
                                 <div class="mb-3">
                                     <?php
                                         $emails = [];
-                                        foreach ($reservation->passengers as $key => $passenger) {
-                                            array_push($emails , $passenger['email']);
+                                        if(is_array($reservation->passengers)) {
+                                            foreach ($reservation->passengers as $key => $passenger) {
+                                                array_push($emails , $passenger['email']);
+                                            }
                                         }
                                     ?>
                                     <label for="number_of_pass" class="form-label">Passengers</label>

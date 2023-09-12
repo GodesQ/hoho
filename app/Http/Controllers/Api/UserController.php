@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -67,5 +68,20 @@ class UserController extends Controller
                 'message' => 'Interest updated successfully'
             ]);
         }
+    }
+
+    public function destroyAccount(Request $request) {
+       $user = Auth::user();
+
+       $delete_tokens = $user->tokens()->delete();
+
+       $delete_user = $user->delete();
+
+       if($delete_tokens && $delete_user) {
+            return response([
+                'status' => TRUE,
+                'message' => 'Delete Account Successfully'
+            ]);
+       }
     }
 }

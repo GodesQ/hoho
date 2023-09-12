@@ -70,4 +70,21 @@ class CartController extends Controller
         ], 400);
 
     }
+
+    public function removeAllUserCart(Request $request) {
+        $user = Auth::user();
+        $delete_carts = Cart::where('user_id', $user->id)->with('tour')->delete();
+
+        if($delete_carts) {
+            return response([
+                'status' => TRUE,
+                'message' => 'User carts successfully removed'
+            ]);
+        }
+
+        return response([
+            'status' => FALSE,
+            'message' => 'User carts failed to removed'
+        ]);
+    }
 }
