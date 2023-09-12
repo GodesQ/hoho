@@ -135,7 +135,12 @@ class BookingService
 
         # NOTE: The amount of each booking was already been set, This function is for adding additional charges and to sum up all of the bookings for transactions.
 
-        $items = json_decode($request->items, true);
+        if(is_array($request->items)) {
+            $items = $request->items;
+        } else {
+            $items = json_decode($request->items, true);
+        }
+
         $items_amount = [];
 
         foreach ($items as &$item) {
@@ -255,7 +260,11 @@ class BookingService
     }
 
     private function createMultipleReservation($request, $transaction, $additional_charges) {
-        $items = json_decode($request->items, true);
+        if(is_array($request->items)) {
+            $items = $request->items;
+        } else {
+            $items = json_decode($request->items, true);
+        }
 
         foreach ($items as $key => $item) {
             $trip_date = Carbon::create($item['trip_date']);

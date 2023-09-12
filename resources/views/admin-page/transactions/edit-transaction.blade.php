@@ -26,7 +26,7 @@
                             <h6>Transaction By: </h6>
                         </div>
                         <div class="col-lg-9 pt-3">
-                            <h6>{{ $transaction->user->email }}</h6>
+                            <h6>{{ optional($transaction->user)->email ? optional($transaction->user)->email : 'Deleted User' }}</h6>
                         </div>
                     </div>
                     <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">

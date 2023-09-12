@@ -192,11 +192,23 @@
                             <div data-i18n="Booking Transactions">Booking Transactions</div>
                         </a>
                     </li>
-                    <li class="menu-item">
-                        <a href="#" class="menu-link">
+                    <li class="menu-item {{ preg_match('/admin\/reports/', Request::path()) ? 'active open' : null }}">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons bx bx-chart"></i>
-                            <div data-i18n="Reports">Reports <span class="badge bg-warning" style="font-size: 8px;">Maintenance</span></div>
+                            <div data-i18n="Reports">Reports</div>
                         </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a href="#" class="menu-link">
+                                    <div data-i18n="Sales Report">Sales Report</div>
+                                </a>
+                            </li>
+                            <li class="menu-item {{ preg_match('/admin\/reports/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.reports.user_demographics') }}" class="menu-link">
+                                    <div data-i18n="Users Demographics">Users Demographics</div>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
                     <!-- Others -->

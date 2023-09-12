@@ -40,6 +40,10 @@ class TourReservationController extends Controller
         ]);
     }
 
+    public function checkAllUserFutureReservation(Request $request) {
+
+    }
+
     public function storeTourReservation(Request $request) {
         return $this->bookingService->createMultipleBooking($request);
     }

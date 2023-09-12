@@ -40,6 +40,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('user', [UserController::class, 'getUser']);
     Route::post('user/profile', [UserController::class, 'updateProfile']);
     Route::post('user/update_interest', [UserController::class, 'updateInterest']);
+    Route::delete('user/delete', [UserController::class, 'destroyAccount']);
 
     Route::get('ticket_pass', [TourReservationController::class, 'getDIYReservations']);
     Route::get('today_reservation', [TourReservationController::class, 'getUserTodayReservation']);
@@ -65,6 +66,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('carts/user/my_cart/{id}', [CartController::class, 'getUserCart']);
     Route::post('cart/store', [CartController::class, 'storeCart']);
     Route::delete('cart/destroy/{id}', [CartController::class, 'removeCart']);
+    Route::delete('cart/destroy_all/user', [CartController::class, 'removeAllUserCart']);
 
     Route::get('interests', [InterestController::class, 'getInterests']);
 
