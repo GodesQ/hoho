@@ -18,6 +18,7 @@ use App\Models\Transaction;
 use App\Models\ReservationUserCode;
 
 use DataTables;
+use DB;
 use Carbon\Carbon;
 
 class TourReservationController extends Controller
@@ -29,7 +30,32 @@ class TourReservationController extends Controller
 
     public function list(Request $request) {
         if($request->ajax()) {
-            $data = TourReservation::latest()->with('user', 'tour');
+            $data = TourReservation::latest()
+                                    ->when(!empty($request->get('search')), function ($query) use ($request) {
+                                        $searchQuery = $request->get('search');
+                                        $query->whereHas('user', function ($userQuery) use ($searchQuery) {
+                                                $userQuery->where('email', 'LIKE', '%' . $searchQuery . '%')
+                                                ->orWhere('firstname', 'LIKE', '%' . $searchQuery . '%')
+                                                ->orWhere('lastname', 'LIKE', '%' . $searchQuery . '%')
+                                                ->orWhere(DB::raw("concat(firstname, ' ', lastname)"), 'LIKE', '%' . $searchQuery . '%');
+                                        });
+                                    })
+                                    ->when(!empty($request->get('status')), function($query) use ($request) {
+                                        $statusQuery = $request->get('status');
+                                        $query->where('status', $statusQuery);
+                                    })
+                                    ->when(!empty($request->get('type')), function($query) use ($request) {
+                                        $typeQuery = $request->get('type');
+                                        $query->whereHas('tour', function ($tourQuery) use ($typeQuery) {
+                                            $tourQuery->where('type', $typeQuery);
+                                        });
+                                    })
+                                    ->when(!empty($request->get('trip_date')), function($query) use ($request) {
+                                        $tripDateQuery = $request->get('trip_date');
+                                        $query->where('start_date', $tripDateQuery);
+                                    })
+                                    ->with('user', 'tour');
+
             return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('reserved_user', function($row) {

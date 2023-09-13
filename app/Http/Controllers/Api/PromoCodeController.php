@@ -19,10 +19,19 @@ class PromoCodeController extends Controller
     }
 
     public function checkValidPromoCode(Request $request) {
-        $promocode = PromoCode::where('code', $request->code)->exists();
+        $promocode = PromoCode::select('id', 'name', 'code', 'description', 'is_need_requirement')->where('code', $request->code)->first();
+
+        if($promocode) {
+            return response([
+                'is_promocode_exist' => TRUE,
+                'promocode' => $promocode
+            ]); 
+        }
 
         return response([
-            'is_promocode_exist' => $promocode
+            'is_promocode_exist' => FALSE,
+            'promocode' => null
         ]); 
+        
     }
 }
