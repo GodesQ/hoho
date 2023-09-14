@@ -46,7 +46,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('user/delete', [UserController::class, 'destroyAccount']);
 
     Route::get('user/reservations', [TourReservationController::class, 'getUserReservations']);
-    Route::get('ticket_pass', [TourReservationController::class, 'getDIYReservations']);
+    Route::get('ticket_pass', [TourReservationController::class, 'getDIYTicketPassReservations']);
     Route::get('today_reservation', [TourReservationController::class, 'getUserTodayReservation']);
     Route::post('reservation/store', [TourReservationController::class, 'storeTourReservation']);
     // Route::post('reservation/store_multiple');
@@ -73,6 +73,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('cart/destroy_all/user', [CartController::class, 'removeAllUserCart']);
 
     Route::get('interests', [InterestController::class, 'getInterests']);
+
+    Route::get('reservation_codes/verify/{reservation_id}/{code}', [TourReservationController::class, 'verifyReservationCodes']);
 
     Route::get('verify_referral_code/{referral_code}', [ReferralController::class, 'verifyReferralCode']);
 });

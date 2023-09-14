@@ -201,6 +201,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('referrals/edit/{id}', [ReferralController::class, 'edit'])->name('referrals.edit');
     Route::post('referrals/update/{id}', [ReferralController::class, 'update'])->name('referrals.update');
     Route::delete('referrals/destroy', [ReferralController::class, 'destroy'])->name('referrals.destroy');
+    Route::get('referrals/generate_csv', [ReferralController::class, 'generateCSV'])->name('referrals.generate_csv');
 
     Route::get('promo_codes', [PromoCodeController::class, 'list'])->name('promo_codes.list');
     Route::get('promo_codes/create', [PromoCodeController::class, 'create'])->name('promo_codes.create');

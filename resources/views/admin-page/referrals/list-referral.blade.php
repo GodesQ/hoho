@@ -6,7 +6,10 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center">
         <h4 class="fw-bold py-3 mb-4">Referrals List</h4>
-        <a href="{{ route('admin.referrals.create') }}" class="btn btn-primary">Add Referral <i class="bx bx-plus"></i></a>
+        <div>
+            <a href="{{ route('admin.referrals.create') }}" class="btn btn-primary">Add Referral <i class="bx bx-plus"></i></a>
+            <a href="#" class="btn btn-dark" onclick="downloadCSV()">Download CSV <i class="bx bx-download"></i></a>
+        </div>
     </div>
 
     <div class="card">
@@ -89,6 +92,28 @@
                 }
             })
         });
+
+        function downloadCSV() {
+            $.ajax({
+                url: '{{ route("admin.referrals.generate_csv") }}', // Replace with your actual route URL
+                method: 'GET',
+                xhrFields: {
+                    responseType: 'blob' // Set the response type to blob
+                },
+                success: function(data, status, xhr) {
+                    const url = window.URL.createObjectURL(data);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'referral_data.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
 
         loadTable();
     </script>

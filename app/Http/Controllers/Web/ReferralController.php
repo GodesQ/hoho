@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Referral;
+use App\Models\TourReservation;
 
 use DataTables;
+use DB;
 
 class ReferralController extends Controller
 {
@@ -65,6 +67,28 @@ class ReferralController extends Controller
             'status' => TRUE,
             'message' => 'Referral deleted successfully'
         ]);
+    }
+
+    public function generateCSV(Request $request) {
+        $referralCodesWithCounts = TourReservation::select('referral_code', DB::raw('count(*) as total_reservations'))
+                                    ->where('status', 'approved')
+                                    ->OrWhere('status', 'done')
+                                    ->groupBy('referral_code')
+                                    ->get();
+
+        $csvData = "Referral Code,Total Reservations\n"; // Header row
+
+        foreach ($referralCodesWithCounts as $referral) {
+            $exists = Referral::where('referral_code', $referral->referral_code)->exists();
+
+            if ($exists) {
+                $csvData .= "{$referral->referral_code},{$referral->total_reservations}\n";
+            }
+        }
+
+        return response($csvData)
+        ->header('Content-Type', 'text/csv')
+        ->header('Content-Disposition', 'attachment; filename="referral_data.csv"');
 
     }
 }

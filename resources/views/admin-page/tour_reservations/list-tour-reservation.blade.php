@@ -25,9 +25,10 @@
                     </div>
                 </div>
                 <div class="col-lg-3">
-                    <div class="form-group">
-                        <label for="" class="form-label">Trip Date</label>
+                    <label for="" class="form-label">Trip Date</label>
+                    <div class="input-group">
                         <input type="date" name="" id="trip_date" class="form-control">
+                        <button class="btn btn-primary" type="button" id="button-clear" onclick="onClearTripDate()">Clear <i class="bx bx-x"></i></button>
                     </div>
                 </div>
                 <div class="col-lg-3">
@@ -37,7 +38,7 @@
                             <option value="">All</option>
                             <option value="Guided Tour">Guided Tour</option>
                             <option value="DIY Tour">DIY Tour</option>
-                        </select>                    
+                        </select>
                     </div>
                 </div>
 
@@ -51,6 +52,7 @@
                 <table class="table data-table">
                     <thead>
                         <tr>
+                            <th>Trip Date</th>
                             <th>Reserved User</th>
                             <th>Type</th>
                             <th>Tour</th>
@@ -84,6 +86,10 @@
                     }
                 },
                 columns: [
+                    {
+                        data: 'start_date',
+                        name: 'start_date'
+                    },
                     {
                         data: 'reserved_user',
                         name: 'reserved_user'
@@ -125,6 +131,13 @@
                 table.draw();
             }
         });
+
+        function onClearTripDate() {
+            $('#trip_date').val('');
+            if(table) {
+                table.draw();
+            }
+        }
 
         loadTable();
     </script>
