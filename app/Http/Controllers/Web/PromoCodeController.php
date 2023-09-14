@@ -44,7 +44,8 @@ class PromoCodeController extends Controller
     public function store(Request $request) {
         $data = $request->except('_token');
         $promocode = PromoCode::create(array_merge($data, [
-            'is_need_requirement' => $request->has('is_need_requirement')
+            'is_need_requirement' => $request->has('is_need_requirement'),
+            'is_need_approval' => $request->has('is_need_approval')
         ]));
 
         if($promocode) return redirect()->route('admin.promo_codes.edit', $promocode->id)->withSuccess('PromoCode Created Successfully');
@@ -60,9 +61,10 @@ class PromoCodeController extends Controller
         $promocode = PromoCode::where('id', $request->id)->firstOrFail();
 
         $update_promocode = $promocode->update(array_merge($data, [
-            'is_need_requirement' => $request->has('is_need_requirement')
+            'is_need_requirement' => $request->has('is_need_requirement'),
+            'is_need_approval' => $request->has('is_need_approval')
         ]));
-        
+
         if($update_promocode) return back()->withSuccess('PromoCode Updated Successfully');
     }
 

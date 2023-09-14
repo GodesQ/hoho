@@ -71,7 +71,7 @@
                 <div class="app-brand demo">
                     <a href="{{ route('admin.dashboard') }}" class="app-brand-link">
                         <span class="app-brand-logo demo">
-                            <img src="https://philippines-hoho.ph/philippines_hoho.3b7019f3d8ced762.jpg"
+                            <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
                                 style="width:35px; border-radius: 5px;" alt="">
                         </span>
                         <span class="app-brand-text demo menu-text fw-bolder ms-2">Menu</span>
@@ -289,7 +289,7 @@
                                             @if(auth('admin')->user()->admin_profile)
                                                 <img src="{{ URL::asset('assets/img/admin_profiles/'. auth('admin')->user()->admin_profile) }}" alt class="w-px-40 h-auto rounded-circle" />
                                             @else
-                                                <img src="https://philippines-hoho.ph/philippines_hoho.3b7019f3d8ced762.jpg" alt class="w-px-40 h-auto rounded-circle" />
+                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg" alt class="w-px-40 h-auto rounded-circle" />
                                             @endif
                                         @endauth
                                     </div>
@@ -304,7 +304,7 @@
                                                             @if(auth('admin')->user()->admin_profile)
                                                                 <img src="{{ URL::asset('assets/img/admin_profiles/'. auth('admin')->user()->admin_profile) }}" alt class="w-px-40 h-auto rounded-circle" />
                                                             @else
-                                                                <img src="https://philippines-hoho.ph/philippines_hoho.3b7019f3d8ced762.jpg" alt class="w-px-40 h-auto rounded-circle" />
+                                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg" alt class="w-px-40 h-auto rounded-circle" />
                                                             @endif
                                                         @endauth
                                                     </div>

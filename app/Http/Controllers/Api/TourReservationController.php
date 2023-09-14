@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Models\TourReservation;
 use App\Services\BookingService;
 
+use Carbon\Carbon;
+
 class TourReservationController extends Controller
 {
     public function __construct(BookingService $bookingService)
@@ -54,7 +56,7 @@ class TourReservationController extends Controller
 
     public function getDIYTicketPassReservations(Request $request) {
         $user = Auth::user();
-        $reservations = TourReservation::latest('created_at')->where('type', 'DIY')->where('reserved_user_id', $user->id)->with('reservation_codes')->get();
+        $reservations = TourReservation::latest('created_at')->where('status', 'approved')->where('type', 'DIY')->where('reserved_user_id', $user->id)->with('reservation_codes')->get();
 
         return response($reservations);
     }
@@ -84,9 +86,9 @@ class TourReservationController extends Controller
             ]);
         }
 
-        $code_exists = $tour_reservation->reservation_codes()->where('code', $request->code)->exists();
+        $qrcode = $tour_reservation->reservation_codes()->where('code', $request->code)->first();
 
-        if(!$code_exists) {
+        if(!$qrcode) {
             return response([
                 'status' => FALSE,
                 'message' => 'Failed! Invalid QR Code',
@@ -102,12 +104,17 @@ class TourReservationController extends Controller
             ]);
         }
 
+        $qrcode->update([
+            'scan_count' => $qrcode->scan_count + 1,
+            'start_datetime' => Carbon::now(),
+            'end_datetime' => Carbon::now()->addDay()
+        ]);
+
         return response([
             'status' => TRUE,
-            'message' => 'Success! You can now ride the bus.',
+            'message' => 'Success! You can now ride the HOHO bus.',
         ]);
     }
-
 
     # HELPERS
     public function getDatesInRange($start_date, $end_date) {

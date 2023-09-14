@@ -41,8 +41,8 @@ class BookingService
             return back()->with('fail', 'Failed to Create Reservation');
         }
 
-        $response = $this->sendPaymentRequest($transaction, $reservation);
-        $responseData = json_decode($response->getBody(), true);
+        $response = $this->sendPaymentRequest($transaction);
+        $responseData = json_decode($response['result']->getBody(), true);
 
         if ($responseData['status'] != 'SUCCESS') {
             $logMessage = "An error occurred during the payment process with the following parameters: " .
@@ -144,17 +144,17 @@ class BookingService
         $items_amount = [];
 
         foreach ($items as &$item) {
-            // $hiddenPayment = 0;
+            $hiddenPayment = 0;
 
-            // foreach ($additional_charges as $charge => $amount) {
-            //     $hiddenPayment += $amount;
-            // }
+            foreach ($additional_charges as $charge => $amount) {
+                $hiddenPayment += $amount;
+            }
 
-            // // Add hidden payments based on number_of_pass
-            // $hiddenPayment *= $item['number_of_pass'];
+            // Add hidden payments based on number_of_pass
+            $hiddenPayment *= $item['number_of_pass'];
 
             // Add hidden payment to amount
-            $total = $item['amount'];
+            $total = $item['amount'] + $hiddenPayment;
             $items_amount[] = $total;
         }
 
@@ -222,7 +222,7 @@ class BookingService
 
     private function createReservation($request, $transaction, $totalAmount) {
         $trip_date = Carbon::create($request->trip_date);
-        $tour = Tour::where('id', $item['tour_id'])->first();
+        $tour = Tour::where('id', $request->tour_id)->first();
 
         $reservation = TourReservation::create([
             'tour_id' => $request->tour_id,
@@ -241,15 +241,15 @@ class BookingService
         ]);
 
         $details = [
-            'tour_provider_name' => optional($tour->tour_provider)->merchant->name,
+            'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
             'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
-            'trip_date' => $item['trip_date'],
+            'trip_date' => $request->trip_date,
             'tour_name' => $tour->name
         ];
 
         if($tour) {
             if($tour->tour_provider) {
-                if($tour->tour_provider->contact_email) {
+                if(optional($tour->tour_provider)->contact_email) {
                     Mail::to('james@godesq.com')->send(new TourProviderBookingNotification($details));
                     // Mail::to($request->email)->send(new EmailVerification($details));
                 }
@@ -313,7 +313,6 @@ class BookingService
             $jsonPayload = json_encode($requestModel, JSON_UNESCAPED_UNICODE);
             if(env('APP_ENVIRONMENT') == 'LIVE') {
                 $authToken = $this->getLiveHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
-
             } else {
                 $authToken = $this->getHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
             }
@@ -331,6 +330,7 @@ class BookingService
             // Handle the response here
             $statusCode = $response->getStatusCode();
             $responseBody = $response->getBody()->getContents();
+            // dd($response);
 
             return [
                 'status' => TRUE,
@@ -340,13 +340,14 @@ class BookingService
 
         } catch (RequestException $e) {
             $errorMessage = $e->getMessage();
-            dd($errorMessage);
+            dd($e);
             return [
                 'status' => FALSE,
                 'result' => $errorMessage
             ];
 
         } catch (\Exception $e) {
+            dd($e);
             return [
                 'status' => FALSE,
                 'result' => 'Failed'

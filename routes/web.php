@@ -58,8 +58,10 @@ Route::view('user/success_verification_message', 'misc.success_verification_mess
 
 Route::get('aqwire/payment/success/{id}', [AqwireController::class, 'success']);
 Route::get('aqwire/payment/view_success', [AqwireController::class, 'viewSuccess']);
+
 Route::get('aqwire/payment/cancel/{id}', [AqwireController::class, 'cancel']);
 Route::get('aqwire/payment/view_cancel', [AqwireController::class, 'viewCancel']);
+
 Route::post('aqwire/payment/callback/{id}', [AqwireController::class, 'callback']);
 
 Route::get('user/verify_email', [UserAuthController::class, 'verifyEmail']);

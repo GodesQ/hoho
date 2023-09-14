@@ -3,6 +3,15 @@
 @section('title', 'Philippine Hop On Hop Off - Edit Promo Codes')
 
 @section('content')
+<style>
+    .discount-con {
+        display: none !important;
+    }
+
+    .discount-con.active {
+        display: block !important;
+    }
+</style>
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center">
         <h4 class="fw-bold py-3 mb-4">Edit Promo Codes</h4>
@@ -33,9 +42,39 @@
                         </div>
                     </div>
                     <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Promo Type</label>
+                            <select name="type" id="promo_type" class="form-select">
+                                <option value="">-- SELECT PROMO TYPE --</option>
+                                <option value="discount" {{ $promocode->type == 'discount' ? 'selected' : null }}>Discount</option>
+                                <option value="free" {{ $promocode->type == 'free' ? 'selected' : null }}>Free</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 discount-con active">
+                        <div class="form-group mb-3">
+                            <label for="discount_type" class="form-label">Discount Type</label>
+                            <select name="discount_type" id="discount_type" class="form-select">
+                                <option value="">-- SELECT DISCOUNT TYPE --</option>
+                                <option value="percentage" {{ $promocode->discount_type == 'percentage' ? 'selected' : null }}>Percentage</option>
+                                <option value="amount" {{ $promocode->discount_type == 'amount' ? 'selected' : null }}>Amount</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 discount-con active">
+                        <div class="form-group mb-3">
+                            <label for="discount_amount" class="form-label">Discount Amount</label>
+                            <input type="text" class="form-control" id="discount_amount" name="discount_amount" value="{{ $promocode->discount_amount }}">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
                         <div class="form-check form-switch mt-2">
                             <input class="form-check-input" type="checkbox" id="isNeedRequirment" name="is_need_requirement" {{ $promocode->is_need_requirement ? 'checked' : null }} />
                             <label class="form-check-label" for="isNeedRequirment">Need Requirment?</label>
+                        </div>
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input" type="checkbox" id="isNeedApproval" name="is_need_approval" {{ $promocode->is_need_approval ? 'checked' : null }} />
+                            <label class="form-check-label" for="isNeedApproval">Need Approval?</label>
                         </div>
                     </div>
                 </div>
@@ -46,3 +85,25 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $('#promo_type').on('change', function(e) {
+            showDiscountFields(e.target.value);
+        });
+
+        function showDiscountFields(promo_type) {
+            if(promo_type == 'discount') {
+                $('.discount-con').addClass('active');
+            } else {
+                $('.discount-con').removeClass('active');
+            }
+        }
+
+        window.addEventListener('load', function() {
+            showDiscountFields($('#promo_type').val());
+
+        });
+
+    </script>
+@endpush
