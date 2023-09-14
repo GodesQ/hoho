@@ -10,6 +10,8 @@ use App\Models\TourReservation;
 use App\Services\BookingService;
 
 use Carbon\Carbon;
+use Image;
+use thiagoalessio\TesseractOCR\TesseractOCR;
 
 class TourReservationController extends Controller
 {
@@ -42,11 +44,26 @@ class TourReservationController extends Controller
         ]);
     }
 
-    public function checkAllUserFutureReservation(Request $request) {
+    public function getAllUserFutureDateReservations(Request $request) {
+        dd($request->all());
+        $user = Auth::user();
+        dd($user);
+        $today = date('Y-m-d');
+        $tour_reservations = TourReservation::select('start_date', 'end_date')
+                                            ->where('reserved_user_id', $user->id)
+                                            ->where('start_date', '>=', $today)
+                                            ->get();
 
+        return response($tour_reservations);
     }
 
     public function storeTourReservation(Request $request) {
+
+        // $image = Image::make($imagePath);
+        // dd($image);
+
+        // $text = (new TesseractOCR($imagePath))->run();
+
         return $this->bookingService->createMultipleBooking($request);
     }
 

@@ -37,6 +37,7 @@ Route::post('register', [AuthController::class, 'register']);
 Route::get('promocodes', [PromoCodeController::class, 'getPromoCodes']);
 Route::get('promocodes/verify/{code}', [PromoCodeController::class, 'checkValidPromoCode']);
 
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
@@ -46,6 +47,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('user/delete', [UserController::class, 'destroyAccount']);
 
     Route::get('user/reservations', [TourReservationController::class, 'getUserReservations']);
+    Route::get('user/future_reservations_dates', [TourReservationController::class, 'getAllUserFutureDateReservations']);
     Route::get('ticket_pass', [TourReservationController::class, 'getDIYTicketPassReservations']);
     Route::get('today_reservation', [TourReservationController::class, 'getUserTodayReservation']);
     Route::post('reservation/store', [TourReservationController::class, 'storeTourReservation']);

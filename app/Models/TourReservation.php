@@ -23,7 +23,9 @@ class TourReservation extends Model
         'number_of_pass',
         'ticket_pass',
         'payment_method',
-        'referral_code'
+        'referral_code',
+        'promo_code',
+        'requirement_file_path'
     ];
 
     protected $casts = [

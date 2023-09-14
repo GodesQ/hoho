@@ -75,6 +75,23 @@ class BookingService
 
             $reservation = $this->createMultipleReservation($request, $transaction, $additional_charges);
 
+            if($request->has('promo_code')) {
+                if($request->promo_code == 'SPECIALDISCHOHO' || $request->promo_code == 'MANILEÑOSHOHO') {
+                    if($request->has('requirement')) {
+
+                        $transaction->update([
+                            'status' => 'success'
+                        ]);
+
+                        return response([
+                            'status' => 'success',
+                            'message' => 'Your Book s has been successfully processed. Please wait for confirmation of your booking by tour operator. Thankyou.',
+                            'url' => null
+                        ]);
+                    }
+                }
+            }
+
             $response = $this->sendPaymentRequest($transaction);
 
             if(!$response['status']) {
