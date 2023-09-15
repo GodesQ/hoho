@@ -57,5 +57,10 @@ class TransactionController extends Controller
 
     }
 
+    public function print(Request $request) {
+        $transaction = Transaction::where('id', $request->id)->first();
+        return view('admin-page.transactions.print-transaction', compact('transaction'));
+    }
+
 
 }

@@ -189,6 +189,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('transactions/edit/{id}', [TransactionController::class, 'edit'])->name('transactions.edit');
     Route::post('transactions/update/{id}', [TransactionController::class, 'update'])->name('transactions.update');
     Route::delete('transactions/destroy', [TransactionController::class, 'destroy'])->name('transactions.destroy');
+    Route::get('transactions/print/{id}', [TransactionController::class, 'print'])->name('transactions.print');
 
     Route::get('product_categories', [ProductCategoryController::class, 'list'])->name('product_categories.list');
     Route::get('product_categories/create', [ProductCategoryController::class, 'create'])->name('product_categories.create');

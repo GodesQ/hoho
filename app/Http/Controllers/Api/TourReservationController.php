@@ -10,8 +10,6 @@ use App\Models\TourReservation;
 use App\Services\BookingService;
 
 use Carbon\Carbon;
-use Image;
-use thiagoalessio\TesseractOCR\TesseractOCR;
 
 class TourReservationController extends Controller
 {
