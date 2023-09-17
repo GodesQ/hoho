@@ -81,8 +81,40 @@
                     </div>
                     <div class="mt-2">
                         <button type="submit" class="btn btn-primary me-2">Save changes</button>
-                        <button type="reset" class="btn btn-outline-secondary">Cancel</button>
                     </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <h5 class="card-header">Change Password</h5>
+            <div class="card-body">
+                <form action="{{ route('admin.change_password.post') }}" method="post">
+                    @csrf
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="old_password" class="form-label">Old Password</label>
+                                <input type="password" name="old_password" class="form-control">
+                                <span class="text-danger danger">@error('old_password'){{ $message }}@enderror</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="new_password" class="form-label">New Password</label>
+                                <input type="password" name="new_password" class="form-control">
+                                <span class="text-danger danger">@error('new_password'){{ $message }}@enderror</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">Password Confirmation</label>
+                                <input type="password" name="confirm_password" class="form-control">
+                                <span class="text-danger danger">@error('confirm_password'){{ $message }}@enderror</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary">Save New Password</button>
                 </form>
             </div>
         </div>

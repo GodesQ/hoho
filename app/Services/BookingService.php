@@ -289,6 +289,14 @@ class BookingService
 
             $tour = Tour::where('id', $item['tour_id'])->first();
 
+            if($request->has('requirement')) {
+                $file = $request->file('requirement');
+                $file_name = Str::random(7) . '.' . $file->getClientOriginalExtension();
+                $save_file = $file->move(public_path() . '/assets/img/tour_reservations/requirements', $file_name);
+            } else {
+                $file_name = null;
+            }
+
             $reservation = TourReservation::create([
                 'tour_id' => $item['tour_id'],
                 'type' => $item['type'],
@@ -301,7 +309,10 @@ class BookingService
                 'end_date' => $item['type'] == 'Guided' ? $trip_date->addDays(1) : $this->getDateOfDIYPass($item['ticket_pass'], $trip_date),
                 'status' => 'pending',
                 'number_of_pass' => $item['number_of_pass'],
-                'ticket_pass' => $item['type']  == 'DIY' ? $item['ticket_pass'] : null
+                'ticket_pass' => $item['type']  == 'DIY' ? $item['ticket_pass'] : null,
+                'promo_code' => $request->promo_code,
+                'requirement_file_path' => $file_name,
+                'discount_amount' => isset($item['discount']) ? $item['discount'] : null
             ]);
 
 

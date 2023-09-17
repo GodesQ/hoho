@@ -89,6 +89,26 @@ class ReferralController extends Controller
         return response($csvData)
         ->header('Content-Type', 'text/csv')
         ->header('Content-Disposition', 'attachment; filename="referral_data.csv"');
+    }
 
+    public function getReservationsByRefCode(Request $request) {
+        $reservations = TourReservation::where('referral_code', $request->code)->with('tour', 'user', 'referral')->latest()->get();
+
+        return DataTables::of($reservations)
+                ->addIndexColumn()
+                ->addColumn('tour_name', function($row) {
+                    return optional($row->tour)->name;
+                })
+                ->addColumn('reserved_user_name', function($row) {
+                    return optional($row->user)->firstname . ' ' . optional($row->user)->lastname;
+                })
+                ->addColumn('amount', function($row) {
+                    return number_format($row->amount, 2);
+                })
+                ->addColumn('total_commision', function($row) {
+                    $commission_percentage = optional($row->referral)->commision / 100;
+                    return number_format($row->amount * $commission_percentage, 2);
+                })
+                ->make(true);
     }
 }

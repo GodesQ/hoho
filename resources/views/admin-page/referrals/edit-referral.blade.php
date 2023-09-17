@@ -1,13 +1,43 @@
 @extends('layouts.admin.layout')
 
-@section('title', 'Hop On Hop Off - Edit Referral')
+@section('title', 'Hop On Hop Off - Referral')
 
 @section('content')
+<style>
+    button.dt-button {
+            background: #233446 !important;
+            border-radius: 5px !important;
+            color: white !important;
+        }
+</style>
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center">
         <h4 class="fw-bold py-3 mb-4">Edit Referral</h4>
         <a href="{{ route('admin.referrals.list') }}" class="btn btn-dark"><i class="bx bx-undo"></i> Back to List</a>
     </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-12 table-responsive-xl">
+                    <table class="table referral-table">
+                        <thead>
+                            <tr>
+                                <th>Tour</th>
+                                <th>Reserved User</th>
+                                <th>Amount</th>
+                                <th>Total Commision</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="col-lg-6">
+                    <div id="referalChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
 
     <div class="card">
         <div class="card-body">
@@ -34,6 +64,22 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="mb-3">
+                            <label for="commision" class="form-label">Commision</label>
+                            <div class="input-group">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  placeholder="Commision Percentage"
+                                  aria-label="Commision Percentage"
+                                  name="commision"
+                                  value="{{ $referral->commision }}"
+                                />
+                                <span class="input-group-text" id="basic-addon13">%</span>
+                              </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="mb-3">
                             <label for="qrcode_image" class="form-label">QrCode Image</label>
                             <div id="qrcode_image"></div>
                         </div>
@@ -51,6 +97,43 @@
 @push('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
+
+        function loadTable() {
+            let table = $('.referral-table').DataTable({
+                processing: true,
+                pageLength: 5,
+                responsive: true,
+                serverSide: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    'csv', 'excel', 'pdf', 'print',
+                ],
+                ajax: {
+                    url: "{{ route('admin.referrals.tour_reservations.list', ['code' => $referral->referral_code]) }}"
+                },
+                columns: [
+                    {
+                        data: 'tour_name',
+                        name: 'tour_name',
+                    },
+                    {
+                        data: 'reserved_user_name',
+                        name: 'reserved_user_name'
+                    },
+                    {
+                        data: 'amount',
+                        name: 'amount'
+                    },
+                    {
+                        data: 'total_commision',
+                        name: 'total_commision'
+                    },
+                ]
+            });
+        }
+
+        loadTable();
+
         document.addEventListener('DOMContentLoaded', () => {
             const referralCodeInput = document.querySelector('#referral_code');
             const qrCodeImage = document.querySelector('#qrcode_image');

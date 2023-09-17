@@ -199,24 +199,26 @@ class UserController extends Controller
         //         User::create($userData);
         //     }
         // }
+
+        $users = User::select('id', 'contact_no', 'birthdate', 'firstname', 'lastname', 'middlename')->get();
+
+        foreach ($users as $user) {
+            // // Remove spaces from contact_no if it has a value
+            // if ($user->contact_no) {
+            //     $user->contact_no = str_replace(' ', '', $user->contact_no);
+            // }
         
+            // // Calculate age using birthdate
+            // if ($user->birthdate) {
+            //     $user->age = now()->diff($user->birthdate)->y;
+            // }
+        
+            // Save the updated user model
+            // $user->save();
+        }
+
         return 'User updated successfully';
 
-        // $dataToUpdate = [];
-        // foreach (json_decode($jsonData, true) as $entry) {
-        //     $mobileNumber = json_decode($entry['MobileNumber'], 2);
-        //     if (isset($mobileNumber['number'])) {
-        //         $number = preg_replace('/\s+/', '', $mobileNumber['number']);
-        //         $dataToUpdate[$entry['Email']] = $mobileNumber['countryCode'] . $number;
-        //     }
-        // }
-
-        // // dd($dataToUpdate);
-
-        // foreach ($dataToUpdate as $email => $contactNo) {
-        //     User::where('email', $email)->update(['contact_no' => $contactNo]);
-        // }
-
-        // return 'User contacts updated successfully';
+        
     }
 }

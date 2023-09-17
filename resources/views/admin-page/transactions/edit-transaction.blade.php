@@ -8,7 +8,9 @@
         <h4 class="fw-bold py-3 mb-4">Transaction Details</h4>
         <div>
             <a href="{{ route('admin.transactions.list') }}" class="btn btn-dark"><i class="bx bx-undo"></i> Back to List</a>
-            <a href="{{ route('admin.transactions.print', $transaction->id) }}" target="_blank" class="btn btn-dark"><i class="bx bx-print"></i> Print</a>
+            @if($transaction->payment_status == 'success')
+                <a href="{{ route('admin.transactions.print', $transaction->id) }}" target="_blank" class="btn btn-dark"><i class="bx bx-print"></i> Print</a>
+            @endif
         </div>
     </div>
 

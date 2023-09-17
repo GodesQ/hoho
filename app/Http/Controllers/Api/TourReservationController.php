@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 use App\Models\TourReservation;
+use App\Models\Cart;
+
 use App\Services\BookingService;
 
 use Carbon\Carbon;
@@ -43,31 +45,42 @@ class TourReservationController extends Controller
     }
 
     public function getAllUserFutureDateReservations(Request $request) {
-        dd($request->all());
         $user = Auth::user();
-        dd($user);
-        $today = date('Y-m-d');
-        $tour_reservations = TourReservation::select('start_date', 'end_date')
-                                            ->where('reserved_user_id', $user->id)
-                                            ->where('start_date', '>=', $today)
-                                            ->get();
+        // Get disabled dates from Tour Reservation
+        $tourReservations = TourReservation::where('reserved_user_id', $user->id)->get();
 
-        return response($tour_reservations);
+        $disabledDates = [];
+
+        foreach ($tourReservations as $reservation) {
+            $startDate = $reservation->start_date;
+            $endDate = $reservation->end_date;
+
+            $datesInRange = \Carbon\CarbonPeriod::create($startDate, $endDate);
+
+            foreach ($datesInRange as $date) {
+                $disabledDates[$date->format('Y-m-d')] = true;
+            }
+        }
+
+        // Get disabled dates from Cart
+        $cartDates = Cart::where('user_id', $user->id)->pluck('trip_date')->toArray();
+
+        foreach ($cartDates as $date) {
+            $disabledDates[$date] = true;
+        }
+
+        // Convert the keys back to a simple array
+        $disabledDates = array_keys($disabledDates);
+
+        return response([
+            'status' => TRUE,
+            'disabled_dates' => $disabledDates
+        ]);
     }
 
     public function storeTourReservation(Request $request) {
-
-        // $image = Image::make($imagePath);
-        // dd($image);
-
-        // $text = (new TesseractOCR($imagePath))->run();
-
         return $this->bookingService->createMultipleBooking($request);
     }
-
-    // public function storeMultipleTourReservation(Request $request) {
-    //     return $this->bookingService->createMultipleBooking($request);
-    // }
 
     public function getDIYTicketPassReservations(Request $request) {
         $user = Auth::user();

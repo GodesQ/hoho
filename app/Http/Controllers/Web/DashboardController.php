@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+
+use App\Http\Requests\User\ChangeUserPasswordRequest;
 
 use App\Models\Admin;
 use App\Models\Transaction;
@@ -55,6 +58,20 @@ class DashboardController extends Controller
 
         if($update_admin) {
             return back()->withSuccess('Profile updated successfully');
+        }
+    }
+
+    public function changePassword(ChangeUserPasswordRequest $request) {
+        $user = Auth::user();
+
+        if(!Hash::check($request->old_password, $user->password)) return back()->with('fail', 'Your old password is incorrect. Please Try Again.');
+
+        $update_user = $user->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        if($update_user) {
+            return back()->withSuccess('Your Password Updated Successfully.');
         }
     }
 }

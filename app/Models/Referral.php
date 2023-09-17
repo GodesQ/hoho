@@ -14,10 +14,12 @@ class Referral extends Model
         'referral_name',
         'referral_code',
         'merchant_id',
-        'qrcode'
+        'qrcode',
+        'commision'
     ];
 
     protected $casts = [
-        'merchant_id' => 'integer'
+        'merchant_id' => 'integer',
+        'commision' => 'integer'
     ];
 }

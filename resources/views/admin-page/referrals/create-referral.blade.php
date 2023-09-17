@@ -34,6 +34,21 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="mb-3">
+                            <label for="commision" class="form-label">Commision</label>
+                            <div class="input-group">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  placeholder="Commision Percentage"
+                                  aria-label="Commision Percentage"
+                                  name="commision"
+                                />
+                                <span class="input-group-text" id="basic-addon13">%</span>
+                              </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="mb-3">
                             <label for="qrcode_image" class="form-label">New QrCode Image</label>
                             <div id="qrcode_image"></div>
                         </div>

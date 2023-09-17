@@ -71,6 +71,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('profile', [DashboardController::class, 'adminProfile'])->name('profile');
     Route::post('profile', [DashboardController::class, 'saveProfile'])->name('profile.post');
+    Route::post('change_password', [DashboardController::class, 'changePassword'])->name('change_password.post');
 
     Route::get('admins', [AdminController::class, 'list'])->name('admins.list');
     Route::get('admins/create', [AdminController::class, 'create'])->name('admins.create');
@@ -205,6 +206,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::post('referrals/update/{id}', [ReferralController::class, 'update'])->name('referrals.update');
     Route::delete('referrals/destroy', [ReferralController::class, 'destroy'])->name('referrals.destroy');
     Route::get('referrals/generate_csv', [ReferralController::class, 'generateCSV'])->name('referrals.generate_csv');
+    Route::get('referrals/tour_reservations/{code}', [ReferralController::class, 'getReservationsByRefCode'])->name('referrals.tour_reservations.list');
 
     Route::get('promo_codes', [PromoCodeController::class, 'list'])->name('promo_codes.list');
     Route::get('promo_codes/create', [PromoCodeController::class, 'create'])->name('promo_codes.create');
@@ -215,5 +217,13 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
 
     Route::prefix('reports')->as('reports.')->group(function () {
         Route::get('user_demographics', [DataReportController::class, 'user_demographics'])->name('user_demographics');
+        Route::get('sales_report', [DataReportController::class, 'sales_report'])->name('sales_report');
+
+        Route::get('get_profit', [DataReportController::class, 'getCurrentMonthProfit'])->name('get_profit');
+        Route::get('get_top_selling_tours', [DataReportController::class, 'getTopSellingTours'])->name('get_top_selling_tours');
+        Route::get('get_total_bookings_per_type', [DataReportController::class, 'getTotalBookingsPerType'])->name('get_total_bookings_per_type');
+        Route::get('get_overall_sales', [DataReportController::class, 'getSalesData'])->name('get_overall_sales');
+        Route::get('get_transaction_status_data', [DataReportController::class, 'getTransactionStatusData'])->name('get_transaction_status_data');
+
     });
 });

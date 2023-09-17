@@ -25,7 +25,8 @@ class TourReservation extends Model
         'payment_method',
         'referral_code',
         'promo_code',
-        'requirement_file_path'
+        'requirement_file_path',
+        'discount_amount'
     ];
 
     protected $casts = [
@@ -33,7 +34,8 @@ class TourReservation extends Model
         'amount' => 'double',
         'number_of_pass' => 'integer',
         'order_transaction_id' => 'integer',
-        'reserved_user_id' => 'integer'
+        'reserved_user_id' => 'integer',
+        'discount_amount' => 'double'
     ];
 
     protected $appends = ['passengers'];
@@ -52,6 +54,10 @@ class TourReservation extends Model
 
     public function reservation_codes() {
         return $this->hasMany(ReservationUserCode::class, 'reservation_id')->select('id', 'reservation_id', 'code', 'scan_count', 'start_datetime', 'end_datetime');
+    }
+
+    public function referral() {
+        return $this->hasOne(Referral::class, 'referral_code', 'referral_code');
     }
 
     public function getPassengersAttribute() {

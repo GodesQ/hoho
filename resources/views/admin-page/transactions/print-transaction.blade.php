@@ -10,7 +10,7 @@
             font-family: Arial, Helvetica, sans-serif;
         }
         @page {
-            margin: 5rem 0;
+            margin: 5rem 4rem;
         }
         .main-container {
             width: 760px;
@@ -24,8 +24,8 @@
         .header-container div h4 {
             line-height: 5px;
         }
-        .body-container {
-
+        .body-container table tbody td {
+            border-top: 1px solid gray !important;
         }
     </style>
 </head>
@@ -42,9 +42,66 @@
                 </div>
             </div>
             <div class="body-container">
-                <table width="100%"></table>
+                <table width="100%" cellpadding="0" cellspacing="0">
+                    <tbody>
+                        <tr>
+                            <td colspan="2">
+                                <h3 style="font-size: 40px; line-height: 15px;">Payment Summary</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>User Account Number: </h4>
+                            </td>
+                            <td style="text-align: right;">
+                                {{ optional($transaction->user)->account_uid }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>Paymemt Method: </h4>
+                            </td>
+                            <td style="text-align: right;">
+                                {{ $transaction->aqwire_paymentMethodCode }}
+                            </td>
+                        </tr>
+                        <?php $additional_charges = json_decode($transaction->additional_charges) ?>
+                        @foreach ($additional_charges as $propertyName => $propertyValue)
+                            <tr>
+                                <td>
+                                    <h4>{{ $propertyName }}: </h4>
+                                </td>
+                                <td style="text-align: right;">
+                                    ₱ {{ number_format($propertyValue, 2) }}
+                                </td>
+                            </tr>
+                        @endforeach
+                        <tr>
+                            <td>
+                                <h4>Total Amount: </h4>
+                            </td>
+                            <td style="text-align: right;">
+                                ₱ {{ number_format($transaction->payment_amount, 2) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3>Total Amount Paid to Payment Gateway: </h3>
+                            </td>
+                            <td style="text-align: right;">
+                                <h3>{{ $transaction->aqwire_totalAmount }}</h3>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </center>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.print();
+        })
+    </script>
 </body>
 </html>
