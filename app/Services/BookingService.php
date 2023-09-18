@@ -283,7 +283,7 @@ class BookingService
             $items = json_decode($request->items, true);
         }
 
-        dd($request->file('requirement'));
+        // dd($request->file('requirement'));
 
         foreach ($items as $key => $item) {
             $trip_date = Carbon::create($item['trip_date']);
@@ -291,13 +291,7 @@ class BookingService
 
             $tour = Tour::where('id', $item['tour_id'])->first();
 
-            if($request->has('requirement')  && $request->file('requirement')->isValid()) {
-                $file = $request->file('requirement');
-                $file_name = Str::random(7) . '.' . $file->getClientOriginalExtension();
-                $save_file = $file->move(public_path() . '/assets/img/tour_reservations/requirements', $file_name);
-            } else {
-                $file_name = null;
-            }
+            
 
             $reservation = TourReservation::create([
                 'tour_id' => $item['tour_id'],
@@ -313,9 +307,17 @@ class BookingService
                 'number_of_pass' => $item['number_of_pass'],
                 'ticket_pass' => $item['type']  == 'DIY' ? $item['ticket_pass'] : null,
                 'promo_code' => $request->promo_code,
-                'requirement_file_path' => $file_name,
+                'requirement_file_path' => null,
                 'discount_amount' => isset($item['discount']) ? $item['discount'] : null
             ]);
+
+            if($request->has('requirement')  && $request->file('requirement')->isValid()) {
+                $file = $request->file('requirement');
+                $file_name = Str::random(7) . '.' . $file->getClientOriginalExtension();
+                $save_file = $file->move(public_path() . '/assets/img/tour_reservations/requirements/' . $reservation->id, $file_name);
+            } else {
+                $file_name = null;
+            }
 
 
             $details = [
@@ -325,14 +327,14 @@ class BookingService
                 'tour_name' => $tour->name
             ];
 
-            if($tour) {
-                if($tour->tour_provider) {
-                    if($tour->tour_provider->contact_email) {
-                        Mail::to('james@godesq.com')->send(new TourProviderBookingNotification($details));
-                        // Mail::to($request->email)->send(new EmailVerification($details));
-                    }
-                }
-            }
+            // if($tour) {
+            //     if($tour->tour_provider) {
+            //         if($tour->tour_provider->contact_email) {
+            //             Mail::to('james@godesq.com')->send(new TourProviderBookingNotification($details));
+            //             // Mail::to($request->email)->send(new EmailVerification($details));
+            //         }
+            //     }
+            // }
         }
     }   
 
