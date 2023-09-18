@@ -283,6 +283,8 @@ class BookingService
             $items = json_decode($request->items, true);
         }
 
+        dd($request->file('requirement'));
+
         foreach ($items as $key => $item) {
             $trip_date = Carbon::create($item['trip_date']);
             $totalAmount = $item['type'] == 'Guided' ? $this->generateGuidedTourTotalAmount($item['number_of_pass'], $item['ticket_pass'], $item['amount'], $additional_charges) : $this->generateDIYTourTotalAmount($item['number_of_pass'], $item['ticket_pass'], $item['amount'], $additional_charges);
