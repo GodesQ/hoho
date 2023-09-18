@@ -257,18 +257,20 @@ class BookingService
             'referral_code' => $request->referral_code,
         ]);
 
-        $details = [
-            'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
-            'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
-            'trip_date' => $request->trip_date,
-            'tour_name' => $tour->name
-        ];
-
-        if($tour) {
-            if($tour->tour_provider) {
-                if(optional($tour->tour_provider)->contact_email) {
-                    Mail::to('james@godesq.com')->send(new TourProviderBookingNotification($details));
-                    // Mail::to($request->email)->send(new EmailVerification($details));
+        if(env('APP_ENVIRONMENT') == 'LIVE') {
+            $details = [
+                'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
+                'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
+                'trip_date' => $request->trip_date,
+                'tour_name' => $tour->name
+            ];
+    
+            if($tour) {
+                if($tour->tour_provider) {
+                    if(optional($tour->tour_provider)->contact_email) {
+                        Mail::to(optional($tour->tour_provider)->contact_email)->send(new TourProviderBookingNotification($details));
+                        // Mail::to($request->email)->send(new EmailVerification($details));
+                    }
                 }
             }
         }
