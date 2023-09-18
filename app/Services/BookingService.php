@@ -289,7 +289,7 @@ class BookingService
 
             $tour = Tour::where('id', $item['tour_id'])->first();
 
-            if($request->has('requirement')) {
+            if($request->has('requirement')  && $request->file('requirement')->isValid()) {
                 $file = $request->file('requirement');
                 $file_name = Str::random(7) . '.' . $file->getClientOriginalExtension();
                 $save_file = $file->move(public_path() . '/assets/img/tour_reservations/requirements', $file_name);
