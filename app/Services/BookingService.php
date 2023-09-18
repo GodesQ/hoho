@@ -332,7 +332,7 @@ class BookingService
                 }
             }
         }
-    }
+    }   
 
     private function sendPaymentRequest($transaction) {
         try {
@@ -345,7 +345,7 @@ class BookingService
                 $authToken = $this->getHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
             }
 
-            $response = $client->post('https://payments-sandbox.aqwire.io/api/v3/transactions/create', [
+            $response = $client->post('https://payments.aqwire.io/api/v3/transactions/create', [
                 'headers' => [
                     'accept' => 'application/json',
                     'content-type' => 'application/json',
