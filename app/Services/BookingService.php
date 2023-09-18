@@ -422,9 +422,9 @@ class BookingService
             ],
             'note' => 'Checkout for Tour Reservation',
             'metadata' => [
-                'reservationNumber' => '0',
-                'companyCode' => '1000',
-                'projectCode' => '4200',
+                'Convenience Fee' => '99.00',
+                'Travel Pass' => '50',
+                'Amount' => number_format($transaction->payment_amount, 2),
                 'agentName' => $transaction->user->firstname . ' ' . $transaction->user->lastname
             ]
         ];
