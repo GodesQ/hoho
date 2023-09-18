@@ -150,7 +150,7 @@ class UserController extends Controller
 
     public function updateUserContacts(Request $request)
     {
-        $jsonData = '[]';
+        $jsonData = '';
 
         // $userData = json_decode($jsonData, true);
         // // dd($userData);
