@@ -422,8 +422,8 @@ class BookingService
             ],
             'note' => 'Checkout for Tour Reservation',
             'metadata' => [
-                'Convenience Fee' => '99.00',
-                'Travel Pass' => '50',
+                'Convenience Fee' => '99.00' . ' ' . 'Per Pax',
+                'Travel Pass' => '50.00' . ' ' . 'Per Pax',
                 'Amount' => number_format($transaction->payment_amount, 2),
                 'agentName' => $transaction->user->firstname . ' ' . $transaction->user->lastname
             ]
