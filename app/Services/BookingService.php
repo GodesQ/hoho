@@ -50,7 +50,7 @@ class BookingService
             dd($logMessage);
         }
 
-        $updateTransaction = $this->updateTransactionAfterPayment($transaction, $respoznseData, $additional_charges);
+        $updateTransaction = $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
 
         if( $request->is('api/*')){
             return response([

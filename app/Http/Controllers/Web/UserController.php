@@ -150,7 +150,7 @@ class UserController extends Controller
 
     public function updateUserContacts(Request $request)
     {
-        $jsonData = '';
+        $jsonData = '[]';
 
         // $userData = json_decode($jsonData, true);
         // // dd($userData);
@@ -203,18 +203,18 @@ class UserController extends Controller
         $users = User::select('id', 'contact_no', 'birthdate', 'firstname', 'lastname', 'middlename')->get();
 
         foreach ($users as $user) {
-            // // Remove spaces from contact_no if it has a value
-            // if ($user->contact_no) {
-            //     $user->contact_no = str_replace(' ', '', $user->contact_no);
-            // }
+            // Remove spaces from contact_no if it has a value
+            if ($user->contact_no) {
+                $user->contact_no = str_replace(' ', '', $user->contact_no);
+            }
         
-            // // Calculate age using birthdate
-            // if ($user->birthdate) {
-            //     $user->age = now()->diff($user->birthdate)->y;
-            // }
+            // Calculate age using birthdate
+            if ($user->birthdate) {
+                $user->age = now()->diff($user->birthdate)->y;
+            }
         
             // Save the updated user model
-            // $user->save();
+            $user->save();
         }
 
         return 'User updated successfully';
