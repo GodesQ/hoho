@@ -186,6 +186,7 @@
                                     <h6>₱ 50.00</h6>
                                 </div>
                             </div>
+                            <hr>
                             <div class="row">
                                 <div class="col-xl-6">
                                     <h6 class="text-primary">Sub Amount</h6>
@@ -194,7 +195,22 @@
                                     <h6 id="sub_amount_text">₱ 0.00</h6>
                                 </div>
                             </div>
-                            <hr>
+                            <div class="row">
+                                <div class="col-xl-6">
+                                    <h6 class="text-primary">Total Convenience Fee (99 / pax) </h6>
+                                </div>
+                                <div class="col-xl-6">
+                                    <h6 id="total_convenience_fee_text">₱ 0.00</h6>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-6">
+                                    <h6 class="text-primary">Total Travel Pass Fee (50 / pax) </h6>
+                                </div>
+                                <div class="col-xl-6">
+                                    <h6 id="total_travel_pass_text">₱ 0.00</h6>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-xl-6">
                                     <h6 class="text-primary">Total Amount</h6>
@@ -274,6 +290,8 @@
         let tour_text = document.querySelector('#tour_text');
         let total_amount_text = document.querySelector('#total_amount_text');
         let sub_amount_text = document.querySelector('#sub_amount_text');
+        let total_convenience_fee_text = document.querySelector('#total_convenience_fee_text');
+        let total_travel_pass_text = document.querySelector('#total_travel_pass_text');
         let ticketPassTextContainer = document.querySelector('.ticket_pass_text_container');
         let ticketPassText = document.querySelector('#ticket_pass_text');
         let amount = document.querySelector('#amount');
@@ -329,6 +347,14 @@
             const selectedTour = tour.options[tour.selectedIndex];
             const prices = JSON.parse(selectedTour.getAttribute('data-value'));
 
+            // computeTotalAdditionalFees(number_of_pass.value, total_convenience_fee_text, total_travel_pass_text);
+
+            const totalConvenienceFee = 99 * number_of_pass.value;
+            const totalTravelPassFee = 50 * number_of_pass.value;
+
+            total_convenience_fee_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(totalConvenienceFee)}`;
+            total_travel_pass_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(totalTravelPassFee)}`;
+
             if (guidedTourRadio.checked && prices && prices.length > 0) {
                 let priceIndex = 0;
 
@@ -342,10 +368,15 @@
 
                 const selectedPrice = prices[priceIndex] || prices[0];
 
-                const totalAmount = selectedPrice * number_of_pass.value;
+                const subAmount = selectedPrice * number_of_pass.value;
+                const totalAmount = subAmount + totalConvenienceFee + totalTravelPassFee;
 
-                sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(selectedPrice)}`;
-                amount.value = totalAmount;
+                sub_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(subAmount)}`;
+
+                // only store the sub amount because the convenience and travel pass will be computed in backend
+                amount.value = subAmount;
+
+                // dispay total amount including total convenience and travel pass
                 total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
             }
 
@@ -356,20 +387,35 @@
 
                 if (selectedPassIndex !== -1) {
                     const selectedPass = ticketPasses[selectedPassIndex].value;
-                    const passPrice = passPrices[selectedPassIndex];
-                    const totalAmount = passPrice * number_of_pass.value;
 
-                    ticket_pass_text.innerHTML = selectedPass;
-                    sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(passPrice)}`;
-                    amount.value = totalAmount;
+                    const passPrice = passPrices[selectedPassIndex];
+                    const subAmount = passPrice * number_of_pass.value;
+                    const totalAmount = subAmount + totalConvenienceFee + totalTravelPassFee;
+
+                    ticket_pass_text.textContent = selectedPass;
+                    sub_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(subAmount)}`;
+
+                    // only store the sub amount because the convenience and travel pass will be computed in backend
+                    amount.value = subAmount;
+
+                    // dispay total amount including total convenience and travel pass
                     total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
                 } else {
-                    ticket_pass_text.innerHTML = 'N/A';
-                    sub_amount_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(0)}`;
+                    ticket_pass_text.textContent = 'N/A';
+                    sub_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(0)}`;
                     amount.value = 0;
                     total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(0)}`;
                 }
             }
+
+        }
+
+        function computeTotalAdditionalFees(number_of_pass, total_convenience_fee_text, total_travel_pass_text) {
+            const totalConvenienceFee = 99 * number_of_pass;
+            const totalTravelPassFee = 50 * number_of_pass;
+
+            total_convenience_fee_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(totalConvenienceFee)}`;
+            total_travel_pass_text.innerHTML = `₱ ${addCommasToNumberWithDecimal(totalTravelPassFee)}`;
 
         }
 
