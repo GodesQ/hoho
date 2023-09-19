@@ -159,7 +159,7 @@
                                     <h6 class="text-primary">Pax</h6>
                                 </div>
                                 <div class="col-xl-6">
-                                    <h6 id="pax_text">4 Pax</h6>
+                                    <h6 id="pax_text">3 Pax</h6>
                                 </div>
                             </div>
                             <div class="row ticket_pass_text_container">
@@ -231,14 +231,17 @@
             }
         });
 
-        var select = document.getElementById("number_of_pass");
-
-        for (var i = 4; i <= 100; i++) {
-            var option = document.createElement("option");
-            option.value = i;
-            option.text = i + " Pax";
-            select.appendChild(option);
+        function populateNumberOfPass() {
+            let select = document.getElementById("number_of_pass");
+            for (var i = 3; i <= 100; i++) {
+                var option = document.createElement("option");
+                option.value = i;
+                option.text = i + " Pax";
+                select.appendChild(option);
+            }
         }
+
+        populateNumberOfPass();
 
         function fetchAndPopulateTours(route, placeholder, tours) {
             $.ajax({
@@ -368,9 +371,7 @@
                 }
             }
 
-
         }
-
 
         function addCommasToNumberWithDecimal(number) {
             var parts = number.toString().split(".");

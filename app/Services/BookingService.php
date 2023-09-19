@@ -264,7 +264,7 @@ class BookingService
                 'trip_date' => $request->trip_date,
                 'tour_name' => $tour->name
             ];
-    
+
             if($tour) {
                 if($tour->tour_provider) {
                     if(optional($tour->tour_provider)->contact_email) {
@@ -293,7 +293,7 @@ class BookingService
 
             $tour = Tour::where('id', $item['tour_id'])->first();
 
-            
+
 
             $reservation = TourReservation::create([
                 'tour_id' => $item['tour_id'],
@@ -329,32 +329,30 @@ class BookingService
                 'tour_name' => $tour->name
             ];
 
-            // if($tour) {
-            //     if($tour->tour_provider) {
-            //         if($tour->tour_provider->contact_email) {
-            //             Mail::to('james@godesq.com')->send(new TourProviderBookingNotification($details));
-            //             // Mail::to($request->email)->send(new EmailVerification($details));
-            //         }
-            //     }
-            // }
+            if($tour) {
+                if($tour->tour_provider) {
+                    if($tour->tour_provider->contact_email) {
+                        Mail::to('james@godesq.com')->send(new TourProviderBookingNotification($details));
+                        // Mail::to($request->email)->send(new EmailVerification($details));
+                    }
+                }
+            }
         }
-    }   
+    }
 
     private function sendPaymentRequest($transaction) {
         try {
             $client = new Client();
             $requestModel = $this->setRequestModel($transaction);
             $jsonPayload = json_encode($requestModel, JSON_UNESCAPED_UNICODE);
-            if(env('APP_ENVIRONMENT') == 'LIVE') {
-                $authToken = $this->getLiveHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
-            } else {
-                $authToken = $this->getHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
-            }
+
 
             if(env('APP_ENVIRONMENT') == 'LIVE') {
                 $url_create = 'https://payments.aqwire.io/api/v3/transactions/create';
+                $authToken = $this->getLiveHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
             } else{
                 $url_create = 'https://payments-sandbox.aqwire.io/api/v3/transactions/create';
+                $authToken = $this->getHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
             }
 
             $response = $client->post($url_create, [
