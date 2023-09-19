@@ -159,7 +159,7 @@
                                     <h6 class="text-primary">Pax</h6>
                                 </div>
                                 <div class="col-xl-6">
-                                    <h6 id="pax_text">3 Pax</h6>
+                                    <h6 id="pax_text">1 Pax</h6>
                                 </div>
                             </div>
                             <div class="row ticket_pass_text_container">
