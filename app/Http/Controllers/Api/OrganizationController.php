@@ -18,8 +18,8 @@ class OrganizationController extends Controller
     }
 
     public function getOrganization(Request $request) {
-        $organization = Organization::where('id', $request->id)->with('attractions', 'stores', 'hotels', 'restaurants')->first();
-        
+        $organization = Organization::where('id', $request->id)->with('attractions', 'stores', 'hotels', 'restaurants', 'tour')->first();
+
         if($organization) {
             return response([
                 'status' => TRUE,

@@ -32,33 +32,38 @@ class AuthController extends Controller
         $user = null;
         $token = '';
 
-        // Find the user based on email or username
+        # Find the user based on email or username
         $fieldType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         $user = User::where($fieldType, $request->username)->first();
 
+        # if it is not user then try to search in admin table
         if(!$user) {
             $user = Admin::where($fieldType, $request->username)->first();
             if($user) {
-                /// Load the 'transport' relationship if the role is 'bus_operator'
+                # Load the 'transport' relationship if the role is 'bus_operator'
                 if ($user->role === 'bus_operator') {
                     $user->load('transport');
                 }
             } else {
                 return response([
                     'status' => false,
+                    'is_old_user' => FALSE,
                     'message' => "Invalid credentials."
                 ], 200);
             }
-
         }
+
+
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response([
                 'status' => false,
-                'message' => "Invalid credentials."
+                'is_old_user' => $user && $user->is_old_user,
+                'message' => $user && $user->is_old_user ? 'This is an old user. Please change password' : 'Invalid credentials.'
             ], 200);
         }
+        
 
         if($user->role == 'guest') {
             if(!$user->is_verify) {

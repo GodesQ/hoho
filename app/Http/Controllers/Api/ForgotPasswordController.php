@@ -4,6 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
+
+use App\Mail\ResetPasswordMail;
+
+use App\Models\ForgotPasswordToken;
 
 class ForgotPasswordController extends Controller
 {
@@ -14,15 +21,22 @@ class ForgotPasswordController extends Controller
 
         $token = $this->generateToken();
 
-        $create = ForgotPassword::create([
+        $create = ForgotPasswordToken::create([
             'email' => $request->email,
             'token' => $token
         ]);
 
         $send_mail = Mail::to($request->email)->send(new ResetPasswordMail($request->email, $token));
 
-        if($create) {
-            return redirect()->route('user.forgot_password.message');
-        }
+        return response([
+            'status' => TRUE,
+            'message' => 'Successfully Sent! Please check your email for the link of reset password'
+        ]);
+
+    }
+
+    private function generateToken() {
+        $token = Str::random(10);
+        return $token;
     }
 }

@@ -40,4 +40,8 @@ class Organization extends Model
     public function restaurants() {
         return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Restaurant')->where('is_active', 1);
     }
+
+    public function tour() {
+        return $this->belongsTo(Tour::class, 'id', 'organization_id');
+    }
 }

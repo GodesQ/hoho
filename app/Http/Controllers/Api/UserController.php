@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 use Illuminate\Http\Request;
@@ -83,5 +84,26 @@ class UserController extends Controller
                 'message' => 'Delete Account Successfully'
             ]);
        }
+    }
+
+    public function changePassword(Request $request) {
+        $validator = \Validator::make($request->all(), [
+            'username' => ['required', 'exists:user,username'],
+            'new_password' => ['required', 'min:8'],
+            'confirm_password' => ['required', 'same:new_password']
+        ]);
+
+        $user_password =  User::where('username', $request->username)->update([
+            'password' => Hash::make($request->new_password),
+            'is_old_user' => FALSE,
+        ]);
+
+        if($user_password) {
+            return response([
+                'status' => TRUE, 
+                'message' => 'Change Password Successfully'
+            ]);
+        }
+
     }
 }

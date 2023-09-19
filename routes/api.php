@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\InterestController;
 use App\Http\Controllers\Api\ReferralController;
 use App\Http\Controllers\Api\PromoCodeController;
+use App\Http\Controllers\Api\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,9 @@ Route::post('register', [AuthController::class, 'register']);
 Route::get('promocodes', [PromoCodeController::class, 'getPromoCodes']);
 Route::get('promocodes/verify/{code}', [PromoCodeController::class, 'checkValidPromoCode']);
 
+Route::post('user/post_forgot_password', [ForgotPasswordController::class, 'post_forgot_password']);
+
+Route::post('user/change_password', [UserController::class, 'changePassword']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
