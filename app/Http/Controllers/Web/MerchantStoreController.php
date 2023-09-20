@@ -1643,7 +1643,7 @@ class MerchantStoreController extends Controller
                 $street = isset($merchantData['PermanentAddress']['street']) ? $merchantData['PermanentAddress']['street'] . ', ' : null;
                 $district = isset($merchantData['PermanentAddress']['district']) ? $merchantData['PermanentAddress']['district'] . ', ' : null;
                 $city = isset($merchantData['PermanentAddress']['city']) ? $merchantData['PermanentAddress']['city'] . ', ' : null;
-                $country = isset($merchantData['PermanentAddress']['country']) ? $merchantData['PermanentAddress']['country'] . ', ' : null;
+                $country = isset($merchantData['PermanentAddress']['country']) ? $merchantData['PermanentAddress']['country'] : null;
 
                 $complete_address = $street . $district . $city . $country;
 
