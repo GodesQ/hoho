@@ -323,7 +323,7 @@ class BookingService
 
 
             $details = [
-                'tour_provider_name' => optional($tour->tour_provider)->merchant->name,
+                'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
                 'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
                 'trip_date' => $item['trip_date'],
                 'tour_name' => $tour->name
