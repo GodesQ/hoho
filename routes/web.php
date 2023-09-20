@@ -126,6 +126,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::post('attractions/update/{id}', [AttractionController::class, 'update'])->name('attractions.update');
     Route::delete('attractions/destroy', [AttractionController::class, 'destroy'])->name('attractions.destroy');
     Route::delete('attractions/remove_image', [AttractionController::class, 'removeImage'])->name('attractions.remove_image');
+    Route::get('attractions/update_attractions', [AttractionController::class, 'update_attractions']);
 
     Route::get('merchants', [MerchantController::class, 'list'])->name('merchants.list');
     Route::get('merchants/create', [MerchantController::class, 'create'])->name('merchants.create');
