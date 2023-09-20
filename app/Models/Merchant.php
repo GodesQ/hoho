@@ -17,6 +17,9 @@ class Merchant extends Model
         'organization_id',
         'code',
         'description',
+        'address',
+        'latitude',
+        'longitude',
         'is_active'
     ];
 

@@ -17,6 +17,7 @@ class MerchantHotel extends Model
         'links',
         'interests',
         'contact_email',
+        'contact_number',
         'location',
         'business_hours',
     ];
