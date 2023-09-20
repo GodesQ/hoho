@@ -81,6 +81,28 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="address" class="form-label">Address</label>
+                                        <input type="text" class="form-control" name="address" id="address" value="{{ $store->merchant->address }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label action="latitude" class="form-label">Latitude</label>
+                                                <input type="text" class="form-control" name="latitude" id="latitude" value="{{ $store->merchant->latitude }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label action="longitude" class="form-label">longitude</label>
+                                                <input type="text" class="form-control" name="longitude" id="longitude" value="{{ $store->merchant->longitude }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <label for="description" class="form-label">Description</label>
@@ -108,6 +130,18 @@
                                         <label for="payment_options" class="form-label">Payment Options</label>
                                         <input type="text" class="form-control" name="payment_options"
                                             id="payment_options" value="{{ $store->payment_options }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="contact_number" class="form-label">Contact Number</label>
+                                        <input type="text" name="contact_number" id="contact_number" class="form-control" value="{{ $store->contact_number }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="contact_email" class="form-label">Contact Email</label>
+                                        <input type="text" name="contact_email" id="contact_email" class="form-control" value="{{ $store->contact_email }}">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
