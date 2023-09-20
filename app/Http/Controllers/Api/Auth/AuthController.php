@@ -48,7 +48,7 @@ class AuthController extends Controller
             } else {
                 return response([
                     'status' => false,
-                    'is_old_user' => FALSE,
+                    'is_old_user' => 0,
                     'message' => "Invalid credentials."
                 ], 200);
             }
@@ -59,7 +59,7 @@ class AuthController extends Controller
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response([
                 'status' => false,
-                'is_old_user' => $user && $user->is_old_user,
+                'is_old_user' => $user && $user->is_old_user ? 1 : 0,
                 'message' => $user && $user->is_old_user ? 'This is an old user. Please change password' : 'Invalid credentials.'
             ], 200);
         }
