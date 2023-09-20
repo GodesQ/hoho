@@ -2046,7 +2046,7 @@ class MerchantRestaurantController extends Controller
                         $restaurant = MerchantRestaurant::where('merchant_id', $merchant->id)->first();
                         if($restaurant) {
         
-                            $operatingHours = "Monday : Closed\nTuesday : 9:00 am - 8:00 PM\nWednesday : 9:00 am - 8:00 PM\nThursday : 9:00 am - 8:00 PM\nFriday : 9:00 am - 8:00 PM\nSaturday : 9:00 am - 8:00 PM\nSunday : 9:00 am - 8:00 PM";
+                            $operatingHours = "Monday : Closed\nTuesday : 9:00 AM - 8:00 PM\nWednesday : 9:00 AM - 8:00 PM\nThursday : 9:00 AM - 8:00 PM\nFriday : 9:00 AM - 8:00 PM\nSaturday : 9:00 AM - 8:00 PM\nSunday : 9:00 AM - 8:00 PM";
                     
                             // Additional conditions for Operating Hours
                             if (isset($attractionData['OperatingHours']['isOpenOnHolidays'])) {
