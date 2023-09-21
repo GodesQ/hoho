@@ -33,7 +33,11 @@ class Merchant extends Model
     }
 
     public function stores() {
-        return $this->hasMany(MerchantHotel::class, 'merchant_id');
+        return $this->hasMany(MerchantStore::class, 'merchant_id');
+    }
+
+    public function store_info() {
+        return $this->hasOne(MerchantStore::class, 'merchant_id');
     }
 
 }

@@ -11,14 +11,14 @@ class OrganizationController extends Controller
 {
     public function getOrganizations(Request $request) {
         $organizations = Organization::get();
-        return response([   
+        return response([
             'status' => TRUE,
-           'organizations' => $organizations 
+           'organizations' => $organizations
         ]);
     }
 
     public function getOrganization(Request $request) {
-        $organization = Organization::where('id', $request->id)->with('attractions', 'stores', 'hotels', 'restaurants', 'tour')->first();
+        $organization = Organization::where('id', $request->id)->with('attractions', 'stores.store_info', 'hotels', 'restaurants', 'tour')->first();
 
         if($organization) {
             return response([
@@ -31,6 +31,6 @@ class OrganizationController extends Controller
             'status' => FALSE,
             'organization' => 'Not Found'
         ], 404);
-        
+
     }
 }
