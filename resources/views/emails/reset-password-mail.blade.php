@@ -185,7 +185,7 @@
                         <td bgcolor="#f4f4f4" align="center"
                             style="padding: 0px 30px 30px 30px; color: #666666; font-family: 'Google Sans', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;">
                             <br>
-                            <p style="margin: 0;">Powered by: <a. href="#" target="_blank"
+                            <p style="margin: 0;">Powered by: <a. href="https://philippines-hoho.ph/" target="_blank"
                                     style="color: #6f0d00; font-weight: 700;"><strong>HOP ON HOP OFF APP</strong></a>
                             </p>
                         </td>

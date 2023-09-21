@@ -113,10 +113,10 @@ class TourReservationController extends Controller
 
             if($reservation->user) {
                 $what = $reservation->type == 'DIY' ? (
-                                "$reservation->ticket_pass x $reservation->number_of_pass (Valid for 24 hours from first tap)"
+                                $reservation->ticket_pass . " x " . $reservation->number_of_pass . " pax " . "(Valid for 24 hours from first tap)"
                             )
                             : (
-                                "1 Guided Tour $reservation->tour->name x $reservation->number_of_pass"
+                                "1 Guided Tour " . '"' . $reservation->tour->name . '"' . ' x ' . $reservation->number_of_pass . ' pax'
                             );
 
                 $trip_date = new \DateTime($reservation->trip_date);

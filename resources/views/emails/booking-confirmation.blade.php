@@ -147,7 +147,7 @@
                                                             please go to MANAGE BOOKING or contact our customer service
                                                             hotline.
                                                         @endif
-                                                        <br>
+                                                        <br><br>
                                                         <b>DISCLAIMER:</b> Please understand that the purpose of this
                                                         appointment confirmation is to secure a passenger slot in
                                                         advance. It DOES NOT GUARANTEE that you will be able to be
@@ -155,10 +155,10 @@
                                                         have to prioritize regulating the number of visitors for
                                                         everyone’s safety. Rest assured, we are doing our best to
                                                         accommodate and serve all our passengers.
-                                                        <br>
+                                                        <br><br>
                                                         <b>Please take note of the following reminders before your
                                                             schedule:</b>
-                                                        <br>
+                                                        <br><br>
                                                         1. Download the Philippines Hop-On Hop-Off app and log in
                                                         details where the day pass was purchased
                                                         <br>
@@ -224,7 +224,7 @@
                         <td bgcolor="#f4f4f4" align="center"
                             style="padding: 0px 30px 30px 30px; color: #666666; font-family: 'Google Sans', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;">
                             <br>
-                            <p style="margin: 0;">Powered by: <a href="https://meritaclinic.ph/" target="_blank"
+                            <p style="margin: 0;">Powered by: <a href="https://philippines-hoho.ph/" target="_blank"
                                     style="color: #6f0d00; font-weight: 700;"><strong>Philippine Hop On Hop
                                         Off</strong></a>.</p>
                         </td>
