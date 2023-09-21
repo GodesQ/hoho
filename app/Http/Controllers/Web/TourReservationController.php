@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 use GuzzleHttp\Client;
@@ -16,6 +17,8 @@ use App\Models\User;
 use App\Models\Tour;
 use App\Models\Transaction;
 use App\Models\ReservationUserCode;
+
+use App\Mail\BookingConfirmationMail;
 
 use DataTables;
 use DB;
@@ -98,7 +101,7 @@ class TourReservationController extends Controller
     }
 
     public function update(Request $request) {
-        $reservation = TourReservation::where('id', $request->id)->first();
+        $reservation = TourReservation::where('id', $request->id)->with('user')->first();
 
         $update_reservation = $reservation->update([
             'status' => $request->status
@@ -107,6 +110,30 @@ class TourReservationController extends Controller
         if($request->status == 'approved') {
             $number_of_pass = $reservation->number_of_pass;
             $this->generateReservationCode($number_of_pass, $reservation);
+
+            if($reservation->user) {
+                $what = $reservation->type == 'DIY' ? (
+                                "$reservation->ticket_pass x $reservation->number_of_pass (Valid for 24 hours from first tap)"
+                            )
+                            : (
+                                "1 Guided Tour $reservation->tour->name x $reservation->number_of_pass"
+                            );
+
+                $trip_date = new \DateTime($reservation->trip_date);
+                $when = $date->format('l, F j, Y');
+
+
+                $details = [
+                    'name' => $reservation->user->firstname . ' ' . $reservation->user->lastname,
+                    'what' => $what,
+                    'when' => $when,
+                    'where' => 'Robinson’s Manila',
+                    'type' => $reservation->type
+                ];
+
+                Mail::to(optional($reservation->user)->email)->send(new BookingConfirmationMail($details));
+            }
+
         }
 
         if($update_reservation) return back()->withSuccess('Reservation updated successfully');

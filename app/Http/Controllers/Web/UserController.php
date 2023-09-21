@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 use App\Models\User;
+use App\Models\Admin;
 use App\Models\Interest;
 
 use DataTables;
@@ -148,6 +149,13 @@ class UserController extends Controller
         return $uuid;
     }
 
+    private function customCheckPassword($providedPassword, $storedHash, $storedSalt, $iterationCount) {
+        $hashedPassword = hash_pbkdf2('sha1', $providedPassword, $storedSalt, $iterationCount, 64); // Adjust the length (64) as needed
+
+        hash_equals($hashedPassword, $storedHash);
+
+    }
+
     public function updateUserContacts(Request $request)
     {
         $jsonData = '';
@@ -207,18 +215,18 @@ class UserController extends Controller
             if ($user->contact_no) {
                 $user->contact_no = str_replace(' ', '', $user->contact_no);
             }
-        
+
             // Calculate age using birthdate
             if ($user->birthdate) {
                 $user->age = now()->diff($user->birthdate)->y;
             }
-        
+
             // Save the updated user model
             $user->save();
         }
 
         return 'User updated successfully';
 
-        
+
     }
 }
