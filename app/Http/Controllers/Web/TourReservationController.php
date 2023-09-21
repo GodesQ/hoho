@@ -120,7 +120,7 @@ class TourReservationController extends Controller
                             );
 
                 $trip_date = new \DateTime($reservation->trip_date);
-                $when = $date->format('l, F j, Y');
+                $when = $trip_date->format('l, F j, Y');
 
 
                 $details = [
