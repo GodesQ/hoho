@@ -77,12 +77,12 @@ class AttractionController extends Controller
             $file_name = $attraction->featured_image;
         }
 
-        $count = 1;
         $images = [];
         if($request->images) {
             foreach ($request->images as $key => $image) {
+                $uniqueId = Str::random(5);
                 $image_file = $image;
-                $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $count . '.' . $image_file->getClientOriginalExtension();
+                $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $uniqueId . '.' . $image_file->getClientOriginalExtension();
                 $save_file = $image_file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $image_file_name);
 
                 array_push($images, $image_file_name);
@@ -117,13 +117,12 @@ class AttractionController extends Controller
         }
 
         $images = $attraction->images ? json_decode($attraction->images) : [];
-        $count = $attraction->images ? count(json_decode($attraction->images)) : 1;
 
         if($request->has('images')) {
             foreach ($request->images as $key => $image) {
-                $count++;
+                $uniqueId = Str::random(5);
                 $image_file = $image;
-                $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $count . '.' . $image_file->getClientOriginalExtension();
+                $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $uniqueId . '.' . $image_file->getClientOriginalExtension();
                 $save_file = $image_file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $image_file_name);
 
                 array_push($images, $image_file_name);
@@ -167,7 +166,7 @@ class AttractionController extends Controller
             if (($key = array_search($image_path, $images)) !== false) {
                 unset($images[$key]);
                 $old_upload_image = public_path('/assets/img/attractions/') . $attraction->id . '/' . $image_path;
-                $remove_image = @unlink($old_upload_image); 
+                $remove_image = @unlink($old_upload_image);
             }
         }
 
@@ -845,7 +844,7 @@ $arrayVar = [
     ],
     [
         "Name" => "The RCBC Plaza",
-        "Description" => "The RCBC Plaza is the biggest and most modern office development in the Philippines today. It has become a landmark and symbol of growth in Makati City and it continues to play a role in shaping the Philippine economy by providing state-of-the-art and world class facilities. 
+        "Description" => "The RCBC Plaza is the biggest and most modern office development in the Philippines today. It has become a landmark and symbol of growth in Makati City and it continues to play a role in shaping the Philippine economy by providing state-of-the-art and world class facilities.
 
 The building also houses the Yuchengco Museum, which features the contemporary and historic fine art collection of Ambassador Alfonso T. Yuchengco.
 
@@ -1563,7 +1562,7 @@ After the war, it was bought by cosmetics manufacturer Michael Goldenberg. The m
     ],
     [
         "Name" => "Legaspi Bas Relief",
-        "Description" => "In the same street as the Museo is the Bas Relief of Landing of Don Miguel Lopez de Legazpi and Naming of Makati. 
+        "Description" => "In the same street as the Museo is the Bas Relief of Landing of Don Miguel Lopez de Legazpi and Naming of Makati.
 
 In 1571, Don Miguel Lopez de Legazpi in one of his expeditions saw a settlement near the riverbanks. He then asked the natives the name of the place, due to language barrier the native replied “Makati na! Kumakati na!” referring to the ebbing tide of the river.",
         "Address" => [
@@ -1809,7 +1808,7 @@ Across Museo ng Makati is Makati Poblacion Park, an urban linear park along the 
     ],
     [
         "Name" => "Poblacion",
-        "Description" => "A few steps down Century City is Poblacion, Makati. It\'s is a vibrant and diverse district known for its lively nightlife, trendy restaurants, and street art. This goes to show that Makati is known, not just as a business district, but also as a lively and dynamic spot. 
+        "Description" => "A few steps down Century City is Poblacion, Makati. It\'s is a vibrant and diverse district known for its lively nightlife, trendy restaurants, and street art. This goes to show that Makati is known, not just as a business district, but also as a lively and dynamic spot.
 
 Whether you plan to explore this party of the city in the morning or at night, best prepare a couple of hours or more, especially when the fun does not seem to end!",
         "Address" => [
@@ -2637,7 +2636,7 @@ Whether you plan to explore this party of the city in the morning or at night, b
             $attraction->youtube_id = isset($attractionData['Metadata']['youTubeVideoId']) ? $attractionData['Metadata']['youTubeVideoId'] : null;
 
             $operatingHours = "Monday : Closed\nTuesday : 9:00 am - 8:00 PM\nWednesday : 9:00 am - 8:00 PM\nThursday : 9:00 am - 8:00 PM\nFriday : 9:00 am - 8:00 PM\nSaturday : 9:00 am - 8:00 PM\nSunday : 9:00 am - 8:00 PM";
-            
+
             // Additional conditions for Operating Hours
             if (isset($attractionData['OperatingHours']['isOpenOnHolidays'])) {
                 $operatingHours .= "\n\nOpen On Holidays: Yes";
