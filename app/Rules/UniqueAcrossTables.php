@@ -50,6 +50,6 @@ class UniqueAcrossTables implements Rule
      */
     public function message()
     {
-        return 'The :attribute is not unique in both tables.';
+        return 'The :attribute is already existed.';
     }
 }
