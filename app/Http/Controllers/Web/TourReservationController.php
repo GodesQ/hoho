@@ -128,7 +128,8 @@ class TourReservationController extends Controller
                     'what' => $what,
                     'when' => $when,
                     'where' => 'Robinson’s Manila',
-                    'type' => $reservation->type
+                    'type' => $reservation->type,
+                    'tour_name' => optional($reservation->tour)->name
                 ];
 
                 Mail::to(optional($reservation->user)->email)->send(new BookingConfirmationMail($details));
