@@ -40,4 +40,12 @@ class Merchant extends Model
         return $this->hasOne(MerchantStore::class, 'merchant_id');
     }
 
+    public function restaurant_info() {
+        return $this->hasOne(MerchantRestaurant::class, 'merchant_id');
+    }
+
+    public function hotel_info() {
+        return $this->hasOne(MerchantHotel::class, 'merchant_id');
+    }
+
 }
