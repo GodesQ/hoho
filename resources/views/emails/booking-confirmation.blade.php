@@ -94,7 +94,7 @@
                     <tr>
                         <td bgcolor="#ffffff" align="center" valign="top"
                             style="padding: 20px 20px 0px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Google Sans', Helvetica, Arial, sans-serif; font-size: 3px; font-weight: 400; letter-spacing: 4px; line-height: 48px;">
-                            <img src="https://philippines-hoho.ph/philippines_hoho.3b7019f3d8ced762.jpg" width="125"
+                            <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg" width="125"
                                 height="120" style="display: block; border: 0px;" />
                             <h1 style="font-size: 30px; font-weight: 800; margin-bottom: 0;">SLOT RESERVED <br>
                                 {{ $details['name'] }}</h1>
