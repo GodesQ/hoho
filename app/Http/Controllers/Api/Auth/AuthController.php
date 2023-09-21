@@ -48,7 +48,11 @@ class AuthController extends Controller
             } else {
                 return response([
                     'status' => false,
-                    'is_old_user' => 0,
+                    'user' => (
+                        [
+                            'is_old_user' => 0
+                        ]
+                    ),
                     'message' => "Invalid credentials."
                 ], 200);
             }
@@ -59,11 +63,19 @@ class AuthController extends Controller
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response([
                 'status' => false,
-                'is_old_user' => $user && $user->is_old_user ? 1 : 0,
+                'user' => $user && $user->is_old_user ? (
+                    [
+                        'is_old_user' => 1
+                    ]
+                ) : (
+                    [
+                        'is_old_user' => 0
+                    ]
+                ),
                 'message' => $user && $user->is_old_user ? 'This is an old user. Please change password' : 'Invalid credentials.'
             ], 200);
         }
-        
+
 
         if($user->role == 'guest') {
             if(!$user->is_verify) {
@@ -72,7 +84,7 @@ class AuthController extends Controller
                     'message' => "Please Verify First Your Email Verification"
                 ], 200);
             }
-        } 
+        }
 
         $token = $user->createToken("API TOKEN")->plainTextToken;
 
@@ -119,7 +131,7 @@ class AuthController extends Controller
             return response([
                 'status' => TRUE,
                 'message' => 'User registered successfully'
-            ]); 
+            ]);
         }
     }
 
