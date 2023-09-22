@@ -18,6 +18,7 @@
                             <thead>
                                 <tr>
                                     <th>Reference No</th>
+                                    <th>User</th>
                                     <th>Payment Amount</th>
                                     <th>Status</th>
                                     <th>Payment Method</th>
@@ -48,6 +49,10 @@
                     {
                         data: 'reference_no',
                         name: 'reference_no'
+                    },
+                    {
+                        data: 'user',
+                        name: 'user'
                     },
                     {
                         data: 'payment_amount',

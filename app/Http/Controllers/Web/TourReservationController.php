@@ -12,6 +12,8 @@ use Illuminate\Support\Str;
 use GuzzleHttp\Client;
 use App\Services\BookingService;
 
+use App\Enum\ReservationStatusEnum;
+
 use App\Models\TourReservation;
 use App\Models\User;
 use App\Models\Tour;
@@ -33,7 +35,7 @@ class TourReservationController extends Controller
 
     public function list(Request $request) {
         if($request->ajax()) {
-            $data = TourReservation::latest()
+            $data = TourReservation::with('user', 'tour')->latest()
                                     ->when(!empty($request->get('search')), function ($query) use ($request) {
                                         $searchQuery = $request->get('search');
                                         $query->whereHas('user', function ($userQuery) use ($searchQuery) {
@@ -56,8 +58,7 @@ class TourReservationController extends Controller
                                     ->when(!empty($request->get('trip_date')), function($query) use ($request) {
                                         $tripDateQuery = $request->get('trip_date');
                                         $query->where('start_date', $tripDateQuery);
-                                    })
-                                    ->with('user', 'tour');
+                                    });
 
             return DataTables::of($data)
                     ->addIndexColumn()
@@ -91,7 +92,6 @@ class TourReservationController extends Controller
     }
 
     public function store(Request $request) {
-        // dd($request->all());
         return $this->bookingService->createBooking($request);
     }
 
@@ -121,7 +121,6 @@ class TourReservationController extends Controller
 
                 $trip_date = new \DateTime($reservation->trip_date);
                 $when = $trip_date->format('l, F j, Y');
-
 
                 $details = [
                     'name' => $reservation->user->firstname . ' ' . $reservation->user->lastname,

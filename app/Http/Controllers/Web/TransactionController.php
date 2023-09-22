@@ -18,6 +18,13 @@ class TransactionController extends Controller
             if($request->ajax()) {
                 return DataTables::of($data)
                         ->addIndexColumn()
+                        ->addColumn('user', function($row) {
+                            if($row->user) {
+                                return $row->user->firstname . ' ' . $row->user->lastname;
+                            } else {
+                                return 'HOHO User';
+                            }
+                        })
                         ->addColumn('payment_amount', function($row) {
                             return '₱ ' . number_format($row->payment_amount, 2);
                         })
