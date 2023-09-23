@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\EmailVerification;
+
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Interest;
@@ -226,7 +229,20 @@ class UserController extends Controller
         }
 
         return 'User updated successfully';
+    }
+    
+    public function resend_email(Request $request) {
+        # details for sending email to worker
+        $details = [
+            'title' => 'Verification email from HOHO',
+            'email' => $request->email,
+            'username' => $request->username,
+        ];
 
+        // SEND EMAIL FOR VERIFICATION
+        Mail::to($request->email)->send(new EmailVerification($details));
 
+        
+        return back()->withSuccess('Resend Verification Email');
     }
 }

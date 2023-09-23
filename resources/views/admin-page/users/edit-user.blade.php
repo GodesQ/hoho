@@ -156,6 +156,7 @@
                             </div>
                             <hr>
                             <button type="submit" class="btn btn-primary">Save User</button>
+                            <a href="{{ route('admin.users.resend_email', ['username' => $user->username, 'email' => $user->email]) }}" class="btn btn-primary">Resend Verification</a>
                         </form>
                     </div>
                 </div>

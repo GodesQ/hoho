@@ -93,6 +93,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::post('users/update/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('users/destroy', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('users/update_contacts', [UserController::class, 'updateUserContacts']);
+    Route::get('users/resend_email/{username}/{email}', [UserController::class, 'resend_email'])->name('users.resend_email');
 
     Route::get('organizations', [OrganizationController::class, 'list'])->name('organizations.list');
     Route::get('organizations/create', [OrganizationController::class, 'create'])->name('organizations.create');
