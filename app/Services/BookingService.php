@@ -406,7 +406,7 @@ class BookingService
             'customer' => [
                 'name' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
                 'email' => $transaction->user->email,
-                'mobile' => $transaction->user->contact_no ? '+' . $transaction->user->contact_no : '+639633987953',
+                'mobile' => $transaction->user->contact_no ? '+639212345678' : '+639212345678',
             ],
             'project' => [
                 'name' => 'Hoho Checkout Reservation',
