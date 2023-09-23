@@ -111,6 +111,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'birthdate' => $request->birthdate != null || $request->birthdate != '' ? Carbon::createFromFormat('Y-m-d', $request->birthdate) : null,
             'country_of_residence' => $request->country_of_residence,
+            'contact_no' => $request->has('contact_no') ? $request->contact_no : null,
             'is_old_user' => false,
             'is_first_time_philippines' => $request->has('is_first_time_philippines'),
             'is_international_tourist' => $request->has('is_international_tourist'),
