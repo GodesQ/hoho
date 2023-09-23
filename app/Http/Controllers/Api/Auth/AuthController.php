@@ -77,14 +77,14 @@ class AuthController extends Controller
         }
 
 
-        if($user->role == 'guest') {
-            if(!$user->is_verify) {
-                return response([
-                    'status' => false,
-                    'message' => "Please Verify First Your Email Verification"
-                ], 200);
-            }
-        }
+        // if($user->role == 'guest') {
+        //     if(!$user->is_verify) {
+        //         return response([
+        //             'status' => false,
+        //             'message' => "Please Verify First Your Email Verification"
+        //         ], 200);
+        //     }
+        // }
 
         $token = $user->createToken("API TOKEN")->plainTextToken;
 
