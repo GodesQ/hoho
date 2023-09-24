@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 use App\Models\TourReservation;
 use App\Models\Cart;
+use App\Models\User;
 
 use App\Services\BookingService;
 
@@ -79,6 +80,22 @@ class TourReservationController extends Controller
     }
 
     public function storeTourReservation(Request $request) {
+        $user = User::where('id', $request->reserved_user_id)->first();
+
+        if(!$user->firstname || !$user->lastname) {
+            return response([
+                'status' => FALSE,
+                'message' => 'Please complete your name before continue to checkout'
+            ]);
+        }
+
+        if(!$user->contact_no) {
+            return response([
+                'status' => FALSE,
+                'message' => "Please provide a contact number to continue"
+            ]);
+        }
+
         return $this->bookingService->createMultipleBooking($request);
     }
 

@@ -232,6 +232,7 @@ class UserController extends Controller
     }
     
     public function resend_email(Request $request) {
+        
         # details for sending email to worker
         $details = [
             'title' => 'Verification email from HOHO',
