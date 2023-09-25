@@ -30,4 +30,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'aqwire' => [
+        'merchant_code' => env('AQWIRE_MERCHANT_CODE'),
+        'client_id' => env('AQWIRE_MERCHANT_CLIENTID'),
+        'secret_key' => env('AQWIRE_MERCHANT_SECURITY_KEY')
+    ]
+
 ];

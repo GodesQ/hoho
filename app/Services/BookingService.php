@@ -46,7 +46,7 @@ class BookingService
 
         if ($responseData['status'] != 'SUCCESS') {
             $logMessage = "An error occurred during the payment process with the following parameters: " .
-                env('AQWIRE_MERCHANT_CODE') . " | " . env('AQWIRE_MERCHANT_CLIENTID') . " | " . env('AQWIRE_MERCHANT_SECURITY_KEY');
+                config('services.aqwire.merchant_code') . " | " . config('services.aqwire.client_id') . " | " . config('services.aqwire.secret_key');
             dd($logMessage);
         }
 
@@ -105,7 +105,7 @@ class BookingService
 
             if ($responseData['status'] != 'SUCCESS') {
                 $logMessage = "An error occurred during the payment process with the following parameters: " .
-                    env('AQWIRE_MERCHANT_CODE') . " | " . env('AQWIRE_MERCHANT_CLIENTID') . " | " . env('AQWIRE_MERCHANT_SECURITY_KEY');
+                    config('services.aqwire.merchant_code') . " | " . config('services.aqwire.client_id') . " | " . config('services.aqwire.secret_key');
                 dd($logMessage);
             }
 
@@ -293,8 +293,6 @@ class BookingService
 
             $tour = Tour::where('id', $item['tour_id'])->first();
 
-
-
             $reservation = TourReservation::create([
                 'tour_id' => $item['tour_id'],
                 'type' => $item['type'],
@@ -320,7 +318,6 @@ class BookingService
             } else {
                 $file_name = null;
             }
-
 
             $details = [
                 'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
@@ -349,17 +346,17 @@ class BookingService
 
             if(env('APP_ENVIRONMENT') == 'LIVE') {
                 $url_create = 'https://payments.aqwire.io/api/v3/transactions/create';
-                $authToken = $this->getLiveHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
+                $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
             } else{
                 $url_create = 'https://payments-sandbox.aqwire.io/api/v3/transactions/create';
-                $authToken = $this->getHMACSignatureHash(env('AQWIRE_MERCHANT_CODE') . ':' . env('AQWIRE_MERCHANT_CLIENTID'), env('AQWIRE_MERCHANT_SECURITY_KEY'));
+                $authToken = $this->getHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
             }
 
             $response = $client->post($url_create, [
                 'headers' => [
                     'accept' => 'application/json',
                     'content-type' => 'application/json',
-                    'Qw-Merchant-Id' => env('AQWIRE_MERCHANT_CODE'),
+                    'Qw-Merchant-Id' => config('services.aqwire.merchant_code'),
                     'Authorization' => 'Bearer ' . $authToken,
                 ],
                 'body' => $jsonPayload, // Set the JSON payload as the request body

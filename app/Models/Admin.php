@@ -26,4 +26,10 @@ class Admin extends Authenticatable
             $query->where('role', 'bus_operator');
         })->select('id', 'capacity', 'operator_id', 'tour_assigned_id', 'tour_assignment_ids', 'latitude', 'longitude', 'name', 'current_location', 'next_location', 'previous_location')->with('assigned_tour');
     }
+
+    public function tour_provider() {
+        return $this->belongsTo(MerchantTourProvider::class, 'id', 'account_id')->when($this->role === 'tour_operator_admin', function ($query) {
+            $query->where('role', 'tour_operator_admin');
+        })->with('merchant');
+    }
 }
