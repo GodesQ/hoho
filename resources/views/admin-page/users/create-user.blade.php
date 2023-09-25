@@ -3,6 +3,23 @@
 @section('title', 'Hop On Hop Off - Add User')
 
 @section('content')
+    <style>
+        .input-group {
+                display: flex;
+                align-items: center;
+            }
+
+        .input-group select {
+            width: 35%;
+            padding: 0.5000rem 0.875rem;
+            font-size: 0.9375rem;
+            color: #697a8d;
+            background: #fff;
+            border-radius: 0.375rem 0 0 0.375rem;
+            border: 1px solid #d9dee3;
+            line-height: 1.53;
+        }
+    </style>
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="fw-bold py-3 mb-4">Create User</h4>
@@ -98,8 +115,13 @@
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label for="contact_no" class="form-label">Contact Number</label>
-                                        <input type="text" class="form-control" name="contact_no" id="contact_no"
-                                            placeholder="Ex. 09123215342">
+                                        <div class="input-group">
+                                            <select id="countryCode" name="countryCode"></select>
+                                            <input type="text" class="form-control" name="contact_no" id="contact_no"
+                                            placeholder="Ex. 9123215342" value="">
+                                        </div>
+                                        {{-- <input type="text" class="form-control" name="contact_no" id="contact_no"
+                                            placeholder="Ex. 09123215342"> --}}
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -132,6 +154,10 @@
                                         <input class="form-check-input" type="checkbox" id="isVerify" value="1" name="is_verify" />
                                         <label class="form-check-label" for="isVerify">Is Verify?</label>
                                     </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="isOldUser" value="1" name="is_old_user" />
+                                        <label class="form-check-label" for="isOldUser">Is Old User?</label>
+                                    </div>
                                     <div class="my-3">
                                         <label for="status" class="form-label">Status</label>
                                         <div class="form-check ">
@@ -162,3 +188,23 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        const selectElement = document.getElementById('countryCode');
+
+        fetch("{{ URL::asset('assets/data/phonecountrycodes.json') }}")
+        .then(response => response.json())
+        .then(data => {
+            for (const [countryAB, countryCode] of Object.entries(data)) {
+                const option = document.createElement('option');
+                option.value = countryCode;
+                option.text = `${countryAB} (${countryCode})`;
+                if (countryCode == "63") {
+                    option.selected = true;
+                }
+                selectElement.add(option);
+            }
+        })
+    </script>
+@endpush

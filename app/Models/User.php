@@ -34,6 +34,7 @@ class User extends Authenticatable
         'status',
         'is_old_user',
         'is_verify',
+        'countryCode',
         'country_of_residence',
         'is_first_time_philippines',
         'is_international_tourist',

@@ -107,6 +107,8 @@ class UserController extends Controller
 
         $update_user = $user->update(
             array_merge($request->all(), [
+                'is_verify' => $request->has('is_verify') ? true : false,
+                'is_old_user' => $request->has('is_old_user') ? true : false,
                 'interest_ids' => $request->has('interest_ids') ? json_encode($request->interest_ids) : null,
             ]),
         );
@@ -211,7 +213,13 @@ class UserController extends Controller
         //     }
         // }
 
-        $users = User::select('id', 'contact_no', 'birthdate', 'firstname', 'lastname', 'middlename')->get();
+
+
+        $users = User::select('id', 'contact_no', 'birthdate', 'firstname', 'lastname', 'middlename')
+                        ->where('firstname', 'NULL')
+                        ->where('lastname', 'NULL')
+                        ->where('middlename', 'NULL')
+                        ->get();
 
         foreach ($users as $user) {
             // Remove spaces from contact_no if it has a value
@@ -224,15 +232,19 @@ class UserController extends Controller
                 $user->age = now()->diff($user->birthdate)->y;
             }
 
+            $user->firstname = null;
+            $user->lastname = null;
+            $user->middlename = null;
+
             // Save the updated user model
             $user->save();
         }
 
         return 'User updated successfully';
     }
-    
+
     public function resend_email(Request $request) {
-        
+
         # details for sending email to worker
         $details = [
             'title' => 'Verification email from HOHO',
@@ -243,7 +255,7 @@ class UserController extends Controller
         // SEND EMAIL FOR VERIFICATION
         Mail::to($request->email)->send(new EmailVerification($details));
 
-        
+
         return back()->withSuccess('Resend Verification Email');
     }
 }
