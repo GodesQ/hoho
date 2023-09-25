@@ -20,6 +20,7 @@
                             <th>Email</th>
                             <th>Contact No</th>
                             <th>Status</th>
+                            <th>Email Verified?</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -60,6 +61,10 @@
                     {
                         data: 'status',
                         name: 'status'
+                    },
+                    {
+                        data: 'email_verify',
+                        name: 'email_verify'
                     },
                     {
                         data: 'actions',

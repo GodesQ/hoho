@@ -33,6 +33,13 @@ class UserController extends Controller
                         return '<span class="badge bg-label-warning me-1">In Active</span>';
                     }
                 })
+                ->addColumn('email_verify', function ($row) {
+                    if ($row->is_verify) {
+                        return '<span class="badge bg-label-success me-1">Yes</span>';
+                    } else {
+                        return '<span class="badge bg-label-warning me-1">No</span>';
+                    }
+                })
                 ->addColumn('actions', function ($row) {
                     return '<div class="dropdown">
                                     <a href="/admin/users/edit/' .
@@ -43,7 +50,7 @@ class UserController extends Controller
                         '"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                 })
-                ->rawColumns(['status', 'username', 'actions'])
+                ->rawColumns(['status', 'username', 'email_verify', 'actions'])
                 ->make(true);
         }
 
