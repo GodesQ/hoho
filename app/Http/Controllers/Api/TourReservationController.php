@@ -84,14 +84,14 @@ class TourReservationController extends Controller
 
         if(!$user->firstname || !$user->lastname) {
             return response([
-                'status' => FALSE,
+                'status' => 'failed',
                 'message' => 'Please complete your name before continue to checkout'
             ]);
         }
 
         if(!$user->contact_no) {
             return response([
-                'status' => FALSE,
+                'status' => 'failed',
                 'message' => "Please provide a contact number to continue"
             ]);
         }
