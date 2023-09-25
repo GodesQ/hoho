@@ -45,8 +45,11 @@ class DataReportController extends Controller
         ->with('tour')
         ->get();
 
+        $total_orders = TourReservation::where('status', 'approved')->count();
+
         return response([
             'status' => TRUE,
+            'total_orders' => $total_orders,
             'top_selling_tours' => $topSellingTours
         ]);
     }

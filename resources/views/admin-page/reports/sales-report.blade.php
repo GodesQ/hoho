@@ -34,7 +34,7 @@
                     <div class="card-header d-flex align-items-center justify-content-between pb-0">
                         <div class="card-title mb-0">
                             <h5 class="m-0 me-2">Top Selling Tours</h5>
-                            <small class="text-muted">42.82k Total Sales</small>
+                            {{-- <small class="text-muted">42.82k Total Sales</small> --}}
                         </div>
                         <div class="dropdown">
                             <button class="btn p-0" type="button" id="orederStatistics" data-bs-toggle="dropdown"
@@ -51,7 +51,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div class="d-flex flex-column align-items-center gap-1">
-                                <h2 class="mb-2">8,258</h2>
+                                <h2 class="mb-2" id="total-orders">0</h2>
                                 <span>Total Orders</span>
                             </div>
                             <div id="topSellingToursChart"></div>
@@ -121,6 +121,7 @@
             fetch("{{ route('admin.reports.get_top_selling_tours') }}")
                 .then(response => response.json())
                 .then(data => {
+                    $('#total-orders').text(data.total_orders);
                     displayTopSellingTours(data);
                     setTopSellingToursChart(data);
                 })
