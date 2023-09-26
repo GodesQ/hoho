@@ -101,8 +101,22 @@ class AuthController extends Controller
 
 
     public function register(RegisterRequest $request) {
+        
         $account_uid = $this->generateRandomUuid();
 
+        $contactNo = $request->contact_no;
+
+        // Check if the value is a JSON string
+        if (is_string($contactNo) && is_array(json_decode($contactNo, true)) && (json_last_error() == JSON_ERROR_NONE)) {
+            // return 'Is Json Object';
+            $data = json_decode($contactNo, true);
+            $countryCode = $data['countryCode'];
+            $number = $data['number'];
+            $contactNo = $number;
+        } else {
+            // return 'Is Normal String';
+            $contactNo = $request->input('contact_no');
+        }
 
         $register = User::create([
             'account_uid' => $account_uid,
@@ -111,7 +125,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'birthdate' => $request->birthdate != null || $request->birthdate != '' ? Carbon::createFromFormat('Y-m-d', $request->birthdate) : null,
             'country_of_residence' => $request->country_of_residence,
-            'contact_no' => $request->has('contact_no') ? $request->contact_no : null,
+            'contact_no' => $contactNo,
             'is_old_user' => false,
             'is_first_time_philippines' => $request->has('is_first_time_philippines'),
             'is_international_tourist' => $request->has('is_international_tourist'),

@@ -34,6 +34,7 @@ class RegisterRequest extends FormRequest
                 'email',
                 new \App\Rules\UniqueAcrossTables('users', 'admins', 'email')
             ],
+            'contact_no' => 'required',
             'password' => 'required|min:8',
             'confirm_password' => 'required|same:password'
         ];
