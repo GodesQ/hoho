@@ -38,6 +38,20 @@ class UserController extends Controller
             $file_name = $user->user_profile;
         }
 
+        $contactNo = $request->contact_no;
+
+        // Check if the value is a JSON string
+        if (is_string($contactNo) && is_array(json_decode($contactNo, true)) && (json_last_error() == JSON_ERROR_NONE)) {
+            // return 'Is Json Object';
+            $data = json_decode($contactNo, true);
+            $countryCode = $data['countryCode'];
+            $number = $data['number'];
+            $contactNo = $number;
+        } else {
+            // return 'Is Normal String';
+            $contactNo = $request->input('contact_no');
+        }
+
         $user_update = $user->update([
             'email' => $request->email,
             'user_profile' => $file_name,
@@ -45,7 +59,7 @@ class UserController extends Controller
             'lastname' => $request->lastname,
             'birthdate' => $request->birthdate,
             'country_of_residence' => $request->country_of_residence,
-            'contact_no' => $request->contact_no,
+            'contact_no' => $contactNo,
         ]);
 
         if($user_update) {
