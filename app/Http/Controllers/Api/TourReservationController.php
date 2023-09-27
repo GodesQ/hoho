@@ -23,6 +23,7 @@ class TourReservationController extends Controller
 
     public function getUserTodayReservation(Request $request) {
         $user = Auth::user();
+        dd($user);
         $today_date = date('Y-m-d');
         // return response($user);
         $tour_reservation = TourReservation::where('reserved_user_id', $user->id)
@@ -32,6 +33,7 @@ class TourReservationController extends Controller
                             ->with('tour', 'tour.transport')
                             ->first();
 
+        // dd($tour_reservation);
         if($tour_reservation) {
             return response([
                 'status' => TRUE,
