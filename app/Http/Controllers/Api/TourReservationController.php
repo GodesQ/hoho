@@ -26,6 +26,7 @@ class TourReservationController extends Controller
         $today_date = date('Y-m-d');
         // return response($user);
         $tour_reservation = TourReservation::where('reserved_user_id', $user->id)
+                            ->where('status', 'approved')
                             ->where('start_date', $today_date)
                             ->orWhere('end_date', $today_date)
                             ->with('tour', 'tour.transport')
