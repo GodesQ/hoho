@@ -4,37 +4,41 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
-use GuzzleHttp\Client;
 use App\Services\BookingService;
-
-use App\Enum\ReservationStatusEnum;
+use App\Services\TourReservationService;
 
 use App\Models\TourReservation;
-use App\Models\User;
 use App\Models\Tour;
-use App\Models\Transaction;
 use App\Models\ReservationUserCode;
 
 use App\Mail\BookingConfirmationMail;
 
-use DataTables;
+use Yajra\DataTables\DataTables;
 use DB;
-use Carbon\Carbon;
 
 class TourReservationController extends Controller
-{
-    public function __construct(BookingService $bookingService)
+{   
+    protected $tourReservationService;
+    protected $bookingService;
+    
+    public function __construct(BookingService $bookingService, TourReservationService $tourReservationService)
     {
         $this->bookingService = $bookingService;
+        $this->tourReservationService = $tourReservationService;
     }
 
     public function list(Request $request) {
         if($request->ajax()) {
+            $user = Auth::guard('admin')->user();
+            
+            // if($user->role == 'tour_provider') {
+            //     return $this->tourReservationService->getTourProviderReservationsList($request);
+            // }
+            
             $data = TourReservation::with('user', 'tour')->latest()
                                     ->when(!empty($request->get('search')), function ($query) use ($request) {
                                         $searchQuery = $request->get('search');

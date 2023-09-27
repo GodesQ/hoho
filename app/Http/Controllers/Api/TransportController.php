@@ -80,7 +80,34 @@ class TransportController extends Controller
                 'message' => 'Next location updated successfully'
             ]);
         }
+    }
 
+    public function updateCurrentLocation(Request $request) {
+        $transport = Transport::where('id', $request->id)->first();
+
+        if(!$transport) {
+            return response([
+                'status' => FALSE,
+                'message' => 'Transport Not Foud'
+            ]);
+        }
+
+        $current_location = [
+            'address' => $request->address,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude
+        ];
+
+        $update_current_location = $transport->update([
+            'current_location' => json_encode($current_location)
+        ]);
+
+        if($update_current_location) {
+            return response([
+                'status' => TRUE,
+                'message' => 'Current location updated successfully'
+            ]);
+        }
     }
 
     public function updateTracking(Request $request) {

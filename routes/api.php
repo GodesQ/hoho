@@ -70,6 +70,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('transport/{id}', [TransportController::class, 'getTransport']);
     Route::post('transport/update_location/{id}', [TransportController::class, 'updateLocation']);
     Route::post('transport/update_next_location/{id}', [TransportController::class, 'updateNextLocation']);
+    Route::post('transport/update_current_location/{id}', [TransportController::class, 'updateCurrentLocation']);
     Route::post('transport/update_tracking/{id}', [TransportController::class, 'updateTracking']);
 
     Route::get('carts/user', [CartController::class, 'getUserCarts']);

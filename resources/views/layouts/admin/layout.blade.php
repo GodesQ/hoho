@@ -9,8 +9,10 @@
     <meta property="fb:app_id" content="514817087155790" />
     <meta property="og:title" content="Guest Partner Dashboard" />
     <meta property="og:description" content="The official LGU / Merchant dashboard for Guest PH." />
-    <meta property="og:image" content="http://guest-app-main.s3.ap-southeast-1.amazonaws.com/Web/guest-brand-logo.jpg" />
-    <meta property="og:image:secure_url" content="https://guest-app-main.s3.ap-southeast-1.amazonaws.com/Web/guest-brand-logo.jpg" />
+    <meta property="og:image"
+        content="http://guest-app-main.s3.ap-southeast-1.amazonaws.com/Web/guest-brand-logo.jpg" />
+    <meta property="og:image:secure_url"
+        content="https://guest-app-main.s3.ap-southeast-1.amazonaws.com/Web/guest-brand-logo.jpg" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -26,7 +28,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
         rel="stylesheet" />
 
     <!-- Icons. Uncomment required icon fonts -->
@@ -98,161 +100,269 @@
                     <li class="menu-header small text-uppercase">
                         <span class="menu-header-text">Accounts</span>
                     </li>
-                    <li class="menu-item {{ preg_match('/admin\/users/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.users.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-user-circle"></i>
-                            <div data-i18n="Guests">Guests</div>
-                        </a>
-                    </li>
-                    <li class="menu-item {{ preg_match('/admin\/organizations/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.organizations.list') }}" class="menu-link">
-                            <i class='bx bx-globe menu-icon'></i>
-                            <div data-i18n="Organizations">Organizations</div>
-                        </a>
-                    </li>
-                    <li class="menu-item {{ preg_match('/admin\/admins/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.admins.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-user-circle"></i>
-                            <div data-i18n="Admins">Admins</div>
-                        </a>
-                    </li>
-                    <li class="menu-item {{ preg_match('/admin\/merchants/', Request::path()) ? 'active open' : null }}">
+
+                    @auth('admin')
+                        @can('view_users_list')
+                            <li class="menu-item {{ preg_match('/admin\/users/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.users.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-user-circle"></i>
+                                    <div data-i18n="Guests">Guests</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
+
+                    @auth('admin')
+                        @can('view_organizations_list')
+                            <li
+                                class="menu-item {{ preg_match('/admin\/organizations/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.organizations.list') }}" class="menu-link">
+                                    <i class='bx bx-globe menu-icon'></i>
+                                    <div data-i18n="Organizations">Organizations</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
+
+                    @auth('admin')
+                        @can('view_admins_list')
+                            <li class="menu-item {{ preg_match('/admin\/admins/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.admins.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-user-circle"></i>
+                                    <div data-i18n="Admins">Admins</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
+
+                    <li
+                        class="menu-item {{ preg_match('/admin\/merchants/', Request::path()) ? 'active open' : null }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons bx bx-cube-alt"></i>
                             <div data-i18n="Merchants">Merchants</div>
                         </a>
                         <ul class="menu-sub">
-                            <li class="menu-item {{ preg_match('/admin\/merchants\/stores/', Request::path()) ? 'active' : null }}">
-                                <a href="{{ route('admin.merchants.stores.list') }}" class="menu-link">
-                                    <div data-i18n="Stores">Stores</div>
-                                </a>
-                            </li>
-                            <li class="menu-item {{ preg_match('/admin\/merchants\/restaurants/', Request::path()) ? 'active' : null }}">
-                                <a href="{{ route('admin.merchants.restaurants.list') }}" class="menu-link">
-                                    <div data-i18n="Restaurants">Restaurants</div>
-                                </a>
-                            </li>
-                            <li class="menu-item {{ preg_match('/admin\/merchants\/hotels/', Request::path()) ? 'active' : null }}">
-                                <a href="{{ route('admin.merchants.hotels.list') }}" class="menu-link">
-                                    <div data-i18n="Hotels">Hotels</div>
-                                </a>
-                            </li>
-                            <li class="menu-item {{ preg_match('/admin\/merchants\/tour_providers/', Request::path()) ? 'active' : null }}">
-                                <a href="{{ route('admin.merchants.tour_providers.list') }}" class="menu-link">
-                                    <div data-i18n="Tour Providers">Tour Providers</div>
-                                </a>
-                            </li>
+                            @auth('admin')
+                                @can('view_merchant_stores_list')
+                                    <li
+                                        class="menu-item {{ preg_match('/admin\/merchants\/stores/', Request::path()) ? 'active' : null }}">
+                                        <a href="{{ route('admin.merchants.stores.list') }}" class="menu-link">
+                                            <div data-i18n="Stores">Stores</div>
+                                        </a>
+                                    </li>
+                                @endcan
+                            @endauth
+
+                            @auth('admin')
+                                @can('view_merchant_restaurants_list')
+                                    <li
+                                        class="menu-item {{ preg_match('/admin\/merchants\/restaurants/', Request::path()) ? 'active' : null }}">
+                                        <a href="{{ route('admin.merchants.restaurants.list') }}" class="menu-link">
+                                            <div data-i18n="Restaurants">Restaurants</div>
+                                        </a>
+                                    </li>
+                                @endcan
+                            @endauth
+
+                            @auth('admin')
+                                @can('view_merchant_hotels_list')
+                                    <li
+                                        class="menu-item {{ preg_match('/admin\/merchants\/hotels/', Request::path()) ? 'active' : null }}">
+                                        <a href="{{ route('admin.merchants.hotels.list') }}" class="menu-link">
+                                            <div data-i18n="Hotels">Hotels</div>
+                                        </a>
+                                    </li>
+                                @endcan
+                            @endauth
+
+                            @auth('admin')
+                                @can('view_merchant_tour_providers_list')
+                                    <li
+                                        class="menu-item {{ preg_match('/admin\/merchants\/tour_providers/', Request::path()) ? 'active' : null }}">
+                                        <a href="{{ route('admin.merchants.tour_providers.list') }}" class="menu-link">
+                                            <div data-i18n="Tour Providers">Tour Providers</div>
+                                        </a>
+                                    </li>
+                                @endcan
+                            @endauth
+
                         </ul>
                     </li>
                     <!-- Components -->
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Tours</span></li>
-                    <!-- Tours -->
-                    <li class="menu-item {{ preg_match('/admin\/tours/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.tours.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-dock-top"></i>
-                            <div data-i18n="Tours">Tours</div>
-                        </a>
-                    </li>
-                    <!-- Attractions -->
-                    <li class="menu-item {{ preg_match('/admin\/attractions/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.attractions.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-dock-bottom"></i>
-                            <div data-i18n="Attractions">Attractions</div>
-                        </a>
-                    </li>
 
-                    <li class="menu-item">
+                    @auth('admin')
+                        @can('view_tours_list')
+                            <!-- Tours -->
+                            <li class="menu-item {{ preg_match('/admin\/tours/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.tours.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                                    <div data-i18n="Tours">Tours</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
+
+                    @auth('admin')
+                        @can('view_attractions_list')
+                            <!-- Attractions -->
+                            <li class="menu-item {{ preg_match('/admin\/attractions/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.attractions.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-dock-bottom"></i>
+                                    <div data-i18n="Attractions">Attractions</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
+
+                    {{-- <li class="menu-item">
                         <a href="#" class="menu-link">
                             <i class='menu-icon tf-icons bx bx-body'></i>
-                            <div data-i18n="Activities">Activities <span class="badge bg-warning" style="font-size: 8px;">Maintenance</span></div>
+                            <div data-i18n="Activities">Activities <span class="badge bg-warning"
+                                    style="font-size: 8px;">Maintenance</span></div>
                         </a>
-                    </li>
+                    </li> --}}
 
-                    <!-- Transports -->
-                    <li class="menu-item {{ preg_match('/admin\/transports/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.transports.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-bus"></i>
-                            <div data-i18n="Transports">Transports</div>
-                        </a>
-                    </li>
+                    @auth('admin')
+                        @can('view_transports_list')
+                            <!-- Transports -->
+                            <li class="menu-item {{ preg_match('/admin\/transports/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.transports.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-bus"></i>
+                                    <div data-i18n="Transports">Transports</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
 
-                    <li class="menu-item {{ preg_match('/admin\/tour_reservations/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.tour_reservations.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-file"></i>
-                            <div data-i18n="Tour Reservations">Tour Reservations</div>
-                        </a>
-                    </li>
+                    @auth('admin')
+                        @can('view_tour_reservations_list')
+                            <li
+                                class="menu-item {{ preg_match('/admin\/tour_reservations/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.tour_reservations.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-file"></i>
+                                    <div data-i18n="Tour Reservations">Tour Reservations</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
 
                     <!-- Transactions -->
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Transactions &
                             Reports</span></li>
                     <!-- Forms -->
-                    <li class="menu-item {{ preg_match('/admin\/transactions/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.transactions.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-money"></i>
-                            <div data-i18n="Booking Transactions">Booking Transactions</div>
-                        </a>
-                    </li>
-                    <li class="menu-item {{ preg_match('/admin\/reports/', Request::path()) ? 'active open' : null }}">
+
+                    @auth('admin')
+                        @can('view_transactions_list')
+                            <li
+                                class="menu-item {{ preg_match('/admin\/transactions/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.transactions.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-money"></i>
+                                    <div data-i18n="Booking Transactions">Booking Transactions</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
+
+                    <li
+                        class="menu-item {{ preg_match('/admin\/reports/', Request::path()) ? 'active open' : null }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons bx bx-chart"></i>
                             <div data-i18n="Reports">Reports</div>
                         </a>
                         <ul class="menu-sub">
-                            <li class="menu-item {{ preg_match('/admin\/reports\/sales_report/', Request::path()) ? 'active' : null }}">
-                                <a href="{{ route('admin.reports.sales_report') }}" class="menu-link">
-                                    <div data-i18n="Sales Report">Sales Report</div>
-                                </a>
-                            </li>
-                            <li class="menu-item {{ preg_match('/admin\/reports/', Request::path()) ? 'active' : null }}">
+                            @auth('admin')
+                                @can('view_sales_report')
+                                    <li
+                                        class="menu-item {{ preg_match('/admin\/reports\/sales_report/', Request::path()) ? 'active' : null }}">
+                                        <a href="{{ route('admin.reports.sales_report') }}" class="menu-link">
+                                            <div data-i18n="Sales Report">Sales Report</div>
+                                        </a>
+                                    </li>
+                                @endcan
+                            @endauth
+                            {{-- <li
+                                class="menu-item {{ preg_match('/admin\/reports/', Request::path()) ? 'active' : null }}">
                                 <a href="{{ route('admin.reports.user_demographics') }}" class="menu-link">
                                     <div data-i18n="Users Demographics">Users Demographics</div>
                                 </a>
-                            </li>
+                            </li> --}}
                         </ul>
                     </li>
 
                     <!-- Others -->
                     <li class="menu-header small text-uppercase"><span class="menu-header-text">Others</span></li>
-                    <li class="menu-item {{ preg_match('/admin\/interests/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.interests.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-bulb"></i>
-                            <div data-i18n="Interests">Interests</div>
-                        </a>
-                    </li>
-                    <li class="menu-item {{ preg_match('/admin\/referrals/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.referrals.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-gift"></i>
-                            <div data-i18n="Referrals">Referrals</div>
-                        </a>
-                    </li>
-                    <li class="menu-item {{ preg_match('/admin\/promo_codes/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.promo_codes.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-gift"></i>
-                            <div data-i18n="Promo Codes">Promo Codes</div>
-                        </a>
-                    </li>
-                    <li class="menu-item {{ preg_match('/admin\/product_categories/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.product_categories.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-box"></i>
-                            <div data-i18n="Product Categories">Product Categories</div>
-                        </a>
-                    </li>
+                    @auth('admin')
+                        @can('view_interests_list')
+                            <li class="menu-item {{ preg_match('/admin\/interests/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.interests.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-bulb"></i>
+                                    <div data-i18n="Interests">Interests</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
+
+                    @auth('admin')
+                        @can('view_referrals_list')
+                            <li class="menu-item {{ preg_match('/admin\/referrals/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.referrals.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-gift"></i>
+                                    <div data-i18n="Referrals">Referrals</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
+
+                    @auth('admin')
+                        @can('view_promo_codes_list')
+                            <li class="menu-item {{ preg_match('/admin\/promo_codes/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.promo_codes.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-gift"></i>
+                                    <div data-i18n="Promo Codes">Promo Codes</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
+
+                    @auth('admin')
+                        @can('view_promo_codes_list')
+                            <li
+                                class="menu-item {{ preg_match('/admin\/product_categories/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.product_categories.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-box"></i>
+                                    <div data-i18n="Product Categories">Product Categories</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
+
 
                     <!-- Roles & Permissions -->
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Roles & Permissions</span></li>
-                    <li class="menu-item {{ preg_match('/admin\/roles/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.roles.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-user-check"></i>
-                            <div data-i18n="Roles">Roles</div>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="#" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-user-check"></i>
-                            <div data-i18n="Permissions">Permissions <span class="badge bg-warning" style="font-size: 8px;">Maintenance</span></div>
-                        </a>
-                    </li>
+                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Roles &
+                            Permissions</span></li>
+                    @auth('admin')
+                        @can('view_roles_list')
+                            <li class="menu-item {{ preg_match('/admin\/roles/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.roles.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-user-check"></i>
+                                    <div data-i18n="Roles">Roles</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
+
+                    @auth('admin')
+                        @can('view_permissions_list')
+                            <li class="menu-item {{ preg_match('/admin\/permissions/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.permissions.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-user-check"></i>
+                                    <div data-i18n="Permissions">Permissions</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
+                    
                 </ul>
             </aside>
             {{-- Menu --}}
@@ -287,10 +397,12 @@
                                     data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
                                         @auth('admin')
-                                            @if(auth('admin')->user()->admin_profile)
-                                                <img src="{{ URL::asset('assets/img/admin_profiles/'. auth('admin')->user()->admin_profile) }}" alt class="w-px-40 h-auto rounded-circle" />
+                                            @if (auth('admin')->user()->admin_profile)
+                                                <img src="{{ URL::asset('assets/img/admin_profiles/' . auth('admin')->user()->admin_profile) }}"
+                                                    alt class="w-px-40 h-auto rounded-circle" />
                                             @else
-                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg" alt class="w-px-40 h-auto rounded-circle" />
+                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                    alt class="w-px-40 h-auto rounded-circle" />
                                             @endif
                                         @endauth
                                     </div>
@@ -302,16 +414,19 @@
                                                 <div class="flex-shrink-0 me-3">
                                                     <div class="avatar avatar-online">
                                                         @auth('admin')
-                                                            @if(auth('admin')->user()->admin_profile)
-                                                                <img src="{{ URL::asset('assets/img/admin_profiles/'. auth('admin')->user()->admin_profile) }}" alt class="w-px-40 h-auto rounded-circle" />
+                                                            @if (auth('admin')->user()->admin_profile)
+                                                                <img src="{{ URL::asset('assets/img/admin_profiles/' . auth('admin')->user()->admin_profile) }}"
+                                                                    alt class="w-px-40 h-auto rounded-circle" />
                                                             @else
-                                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg" alt class="w-px-40 h-auto rounded-circle" />
+                                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                                    alt class="w-px-40 h-auto rounded-circle" />
                                                             @endif
                                                         @endauth
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <span class="fw-semibold d-block">{{ Auth::guard('admin')->user()->username }}</span>
+                                                    <span
+                                                        class="fw-semibold d-block">{{ Auth::guard('admin')->user()->username }}</span>
                                                     <small class="text-muted">Admin</small>
                                                 </div>
                                             </div>
@@ -345,7 +460,8 @@
                                     <li>
                                         <div class="dropdown-divider"></div>
                                     </li>
-                                    <li onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <li
+                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                         <a class="dropdown-item" href="#">
                                             <i class="bx bx-power-off me-2"></i>
                                             <span class="align-middle">Log Out</span>

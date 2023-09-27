@@ -42,13 +42,17 @@
 </head>
 
 <body>
+    <!-- Content -->
+
     <div class="container-xxl">
         <div class="authentication-wrapper authentication-basic container-p-y">
             <div class="authentication-inner">
+                <!-- Register Card -->
                 <div class="card">
                     <div class="card-body">
+                        <!-- Logo -->
                         <div class="app-brand justify-content-center">
-                            <a href="" class="app-brand-link gap-2">
+                            <a href="#" class="app-brand-link gap-2">
                                 <span class="app-brand-logo demo">
                                     <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-1024x1024.jpg"
                                         style="width: 50px; border-radius: 5px;" alt="">
@@ -57,65 +61,84 @@
                                     style="text-transform: capitalize;">Hop On Hop Off</span>
                             </a>
                         </div>
-                        <h4 class="mb-2">Welcome to HOHO PH! 👋</h4>
-                        <p class="mb-4">Please sign-in to your account.</p>
+                        <!-- /Logo -->
+                        <h4 class="mb-2">Register here! 🚀</h4>
+                        <p class="mb-4"></p>
 
-                        @if(Session::get('fail'))
-                            <div class="alert alert-danger">{{ Session::get('fail') }}</div>
-                        @endif
-
-                        <form id="formAuthentication" class="mb-3" action="{{ route('admin.saveLogin') }}"
-                            method="POST">
+                        <form id="formAuthentication" class="mb-3" action="{{ route('admin.saveRegister') }}" method="POST">
                             @csrf
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email or Username</label>
-                                <input type="text" class="form-control" id="email" name="username"
-                                    placeholder="Enter your email or username" autofocus />
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username"
+                                    placeholder="Enter your username" autofocus />
+                                <span class="danger text-danger">@error('username'){{ $message }}@enderror</span>
+
                             </div>
-                            <div class="mt-1 mb-3 danger text-danger">
-                                @error('username')
-                                    {{ $message }}
-                                @enderror
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="text" class="form-control" id="email" name="email"
+                                    placeholder="Enter your email" />
+                                <span class="danger text-danger">@error('email'){{ $message }}@enderror</span>
                             </div>
                             <div class="mb-3 form-password-toggle">
-                                <div class="d-flex justify-content-between">
-                                    <label class="form-label" for="password">Password</label>
-                                    <a href="#">
-                                        <small>Forgot Password?</small>
-                                    </a>
-                                </div>
+                                <label class="form-label" for="password">Password</label>
                                 <div class="input-group input-group-merge">
                                     <input type="password" id="password" class="form-control" name="password"
-                                        placeholder="***********" aria-describedby="password" />
+                                        placeholder="*************"
+                                        aria-describedby="password" />
                                     <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                                 </div>
+                                <span class="danger text-danger">@error('password'){{ $message }}@enderror</span>
                             </div>
-                            <div class="mt-1 mb-3 danger text-danger">
-                                @error('password')
-                                    {{ $message }}
-                                @enderror
+                            <div class="mb-3 form-password-toggle">
+                                <label class="form-label" for="confirm-password">Confirm Password</label>
+                                <div class="input-group input-group-merge">
+                                    <input type="password" id="confirm-password" class="form-control" name="confirm_password"
+                                        placeholder="************"
+                                        aria-describedby="password" />
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                </div>
+                                <span class="danger text-danger">@error('confirm_password'){{ $message }}@enderror</span>
                             </div>
+                            <div class="mb-3 form-password-toggle">
+                                <label class="form-label" for="role">Role</label>
+                                <select name="role" id="role" class="form-select">
+                                    <option value="">--- SELECT ROLE ---</option>
+                                    <option value="merchant_store_admin">Store Admin</option>
+                                    <option value="merchant_restaurant_admin">Restaurant Admin</option>
+                                    <option value="merchant_hotel_admin">Hotel Admin</option>
+                                    <option value="tour_operator_admin">Tour Provider Admin</option>
+                                </select>
+                                <span class="danger text-danger">@error('role'){{ $message }}@enderror</span>
+                            </div>
+
                             <div class="mb-3">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="remember-me" />
-                                    <label class="form-check-label" for="remember-me"> Remember Me </label>
+                                    <input class="form-check-input" type="checkbox" id="terms-conditions"
+                                        name="terms" />
+                                    <label class="form-check-label" for="terms-conditions">
+                                        I agree to
+                                        <a href="javascript:void(0);">privacy policy & terms</a>
+                                    </label>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
-                            </div>
+                            <button class="btn btn-primary d-grid w-100">Sign up</button>
                         </form>
-                        {{-- <p class="text-center">
-                            <span>New on our platform?</span>
-                            <a href="auth-register-basic.html">
-                                <span>Create an account</span>
+
+                        <p class="text-center">
+                            <span>Already have an account?</span>
+                            <a href="auth-login-basic.html">
+                                <span>Sign in instead</span>
                             </a>
-                        </p> --}}
+                        </p>
                     </div>
                 </div>
+                <!-- Register Card -->
             </div>
         </div>
     </div>
+
+    <!-- / Content -->
 
     <script src="{{ URL::asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
     <script src="{{ URL::asset('assets/vendor/libs/popper/popper.js') }}"></script>

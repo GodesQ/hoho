@@ -1,10 +1,9 @@
 <?php
 namespace Enum;
 
-enum TransactionStatusEnum:string
-{
-    case SUCCESS = 'success';
-    case PENDING = 'pending';
-    case INCOMPLETE = 'inc';
-    case CANCELLED = 'cancelled';
+class TransactionStatusEnum{
+    const SUCCESS = 'success';
+    const PENDING = 'pending';
+    const INCOMPLETE = 'inc';
+    const CANCELLED = 'cancelled';
 }

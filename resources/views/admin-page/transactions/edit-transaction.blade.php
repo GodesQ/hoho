@@ -65,7 +65,7 @@
                             <h6>Aqwire Total Amount: </h6>
                         </div>
                         <div class="col-lg-9 pt-3">
-                            <h6> {{ $transaction->aqwire_totalAmount, 2 }}</h6>
+                            <h6> {{ $transaction->aqwire_totalAmount }}</h6>
                         </div>
                     </div>
                     <div class="row align-items-center" style="border-bottom: 1px dashed lightgray;">

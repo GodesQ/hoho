@@ -1,10 +1,10 @@
 <?php
 namespace Enum;
 
-enum ReservationStatusEnum:string
+class ReservationStatusEnum
 {
-    case APPROVED = 'approved';
-    case DONE = 'done';
-    case CANCELLED = 'cancelled';
-    case PENDING = 'pending';
+    const SUCCESS = 'success';
+    const PENDING = 'pending';
+    const INCOMPLETE = 'inc';
+    const CANCELLED = 'cancelled';
 }

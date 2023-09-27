@@ -22,6 +22,7 @@ use App\Http\Controllers\Web\MerchantTourProviderController;
 use App\Http\Controllers\Web\InterestController;
 use App\Http\Controllers\Web\OrganizationController;
 use App\Http\Controllers\Web\RoleController;
+use App\Http\Controllers\Web\PermissionController;
 use App\Http\Controllers\Web\ProductCategoryController;
 use App\Http\Controllers\Web\ReferralController;
 use App\Http\Controllers\Web\DataReportController;
@@ -51,6 +52,11 @@ Route::get('/', function () {
 
 Route::get('admin/login', [AdminAuthController::class, 'login'])->name('admin.login');
 Route::post('admin/login', [AdminAuthController::class, 'saveLogin'])->name('admin.saveLogin');
+
+Route::get('register', [AdminAuthController::class, 'register'])->name('admin.register');
+Route::post('register', [AdminAuthController::class, 'saveRegister'])->name('admin.saveRegister');
+
+Route::get('merchant_form/{type}', [MerchantController::class, 'merchant_form'])->name('merchant_form');
 
 Route::get('test_location', [DashboardController::class, 'testLocation']);
 Route::get('test_location2', [DashboardController::class, 'testLocation2']);
@@ -192,6 +198,13 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('roles/edit/{id}', [RoleController::class, 'edit'])->name('roles.edit');
     Route::post('roles/update/{id}', [RoleController::class, 'update'])->name('roles.update');
     Route::delete('roles/destroy', [RoleController::class, 'destroy'])->name('roles.destroy');
+
+    Route::get('permissions', [PermissionController::class, 'list'])->name('permissions.list');
+    Route::get('permissions/create', [PermissionController::class, 'create'])->name('permissions.create');
+    Route::post('permissions/store', [PermissionController::class, 'store'])->name('permissions.store');
+    Route::get('permissions/edit/{id}', [PermissionController::class, 'edit'])->name('permissions.edit');
+    Route::post('permissions/update/{id}', [PermissionController::class, 'update'])->name('permissions.update');
+    Route::delete('permissions/destroy', [PermissionController::class, 'destroy'])->name('permissions.destroy');
 
     Route::get('transactions', [TransactionController::class, 'list'])->name('transactions.list');
     Route::get('transactions/create', [TransactionController::class, 'create'])->name('transactions.create');

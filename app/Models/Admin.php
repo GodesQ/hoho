@@ -11,7 +11,23 @@ class Admin extends Authenticatable
 {
     use HasFactory, HasApiTokens;
     protected $table = 'admins';
-    protected $fillable = ['username', 'email', 'admin_profile', 'password', 'firstname', 'lastname', 'middlename', 'age', 'birthdate', 'contact_no', 'address', 'role', 'is_active'];
+    protected $fillable = [
+        'username', 
+        'email', 
+        'admin_profile', 
+        'password', 
+        'firstname', 
+        'lastname', 
+        'middlename', 
+        'age', 
+        'birthdate', 
+        'contact_no', 
+        'address',
+        'role', 
+        'is_active', 
+        'is_merchant', 
+        'merchant_data_id'
+    ];
     protected $hidden = ['password'];
 
     protected $casts = [
@@ -27,7 +43,8 @@ class Admin extends Authenticatable
         })->select('id', 'capacity', 'operator_id', 'tour_assigned_id', 'tour_assignment_ids', 'latitude', 'longitude', 'name', 'current_location', 'next_location', 'previous_location')->with('assigned_tour');
     }
 
-    public function tour_provider() {
+    public function tour_provider()
+    {
         return $this->belongsTo(MerchantTourProvider::class, 'id', 'account_id')->when($this->role === 'tour_operator_admin', function ($query) {
             $query->where('role', 'tour_operator_admin');
         })->with('merchant');

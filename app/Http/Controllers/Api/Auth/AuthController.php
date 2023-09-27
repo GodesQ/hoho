@@ -97,7 +97,7 @@ class AuthController extends Controller
     public function dash(Request $request) {
         $user = Auth::user();
         return response()->json($user, 200);
-    }
+    }   
 
 
     public function register(RegisterRequest $request) {
@@ -115,7 +115,8 @@ class AuthController extends Controller
             $contactNo = $number;
         } else {
             // return 'Is Normal String';
-            $contactNo = $request->input('contact_no');
+            $countryCode = null;
+            $contactNo = trim($request->input('contact_no'));
         }
 
         $register = User::create([
@@ -126,6 +127,7 @@ class AuthController extends Controller
             'birthdate' => $request->birthdate != null || $request->birthdate != '' ? Carbon::createFromFormat('Y-m-d', $request->birthdate) : null,
             'country_of_residence' => $request->country_of_residence,
             'contact_no' => $contactNo,
+            'countryCode' => $countryCode,
             'is_old_user' => false,
             'is_first_time_philippines' => $request->has('is_first_time_philippines'),
             'is_international_tourist' => $request->has('is_international_tourist'),
