@@ -14,7 +14,7 @@
                     @if ($user->admin_profile)
                         <img src="{{ URL::asset('assets/img/admin_profiles/' . $user->admin_profile) }}" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
                     @else
-                        <img src="https://philippines-hoho.ph/philippines_hoho.3b7019f3d8ced762.jpg" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+                        <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg" alt="user-avatar" class="d-block rounded" height="100" width="100" style="object-fit: cover;" id="uploadedAvatar" />
                     @endif
 
                     <div class="button-wrapper">
