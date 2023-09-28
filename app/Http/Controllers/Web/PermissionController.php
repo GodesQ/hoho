@@ -23,6 +23,10 @@ class PermissionController extends Controller
                         $output = '';
                         foreach ($roles as $key => $role) {
                            $output .= "<div class='badge bg-primary m-1'>$role</div>";
+                           if($key == 2) {
+                                $output .= "<div class='badge bg-primary m-1'>Other Roles...</div>";
+                                break;
+                           }
                         }
                         return $output;
                     })
@@ -34,7 +38,7 @@ class PermissionController extends Controller
                     })
                     ->rawColumns(['roles', 'actions'])
                     ->make(true);
-        } 
+        }
 
         return view('admin-page.permissions.list-permission');
     }

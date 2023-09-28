@@ -21,7 +21,8 @@
                     <div class="d-flex align-items-end row">
                         <div class="col-sm-6">
                             <div class="card-body">
-                                <h5 class="card-title text-primary">Good Morning, Admin! 🎉</h5>
+                                <h5 class="card-title text-primary">Good Morning,
+                                    {{ ucwords(str_replace('_', ' ', Auth::guard('admin')->user()->role)) }}! 🎉</h5>
                                 <p class="mb-4">
                                     Welcome to your Hop On Hop Off Travel Dashboard.
                                     Here's your overview regarding tour reservations
@@ -171,15 +172,20 @@
                                 <li class="d-flex mb-4 pb-1">
                                     <div class="avatar flex-shrink-0 me-3">
                                         @if ($recent_transaction->payment_status == 'success')
-                                            <img src="{{ URL::asset('assets/img/icons/unicons/transaction-success.png') }}" alt="User" class="rounded" />
+                                            <img src="{{ URL::asset('assets/img/icons/unicons/transaction-success.png') }}"
+                                                alt="User" class="rounded" />
                                         @else
-                                            <img src="{{ URL::asset('assets/img/icons/unicons/transaction-warning.png') }}" alt="User" class="rounded" />
+                                            <img src="{{ URL::asset('assets/img/icons/unicons/transaction-warning.png') }}"
+                                                alt="User" class="rounded" />
                                         @endif
                                     </div>
                                     <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                         <div class="me-2">
-                                            <small class="text-muted d-block mb-1">{{ $recent_transaction->aqwire_paymentMethodCode ? $recent_transaction->aqwire_paymentMethodCode : 'Payment Method Not Set' }}</small>
-                                            <h6 class="mb-0"><a href="{{ route('admin.transactions.edit', $recent_transaction->id) }}">{{ $recent_transaction->reference_no }}</a></h6>
+                                            <small
+                                                class="text-muted d-block mb-1">{{ $recent_transaction->aqwire_paymentMethodCode ? $recent_transaction->aqwire_paymentMethodCode : 'Payment Method Not Set' }}</small>
+                                            <h6 class="mb-0"><a
+                                                    href="{{ route('admin.transactions.edit', $recent_transaction->id) }}">{{ $recent_transaction->reference_no }}</a>
+                                            </h6>
                                         </div>
                                         <div class="user-progress d-flex align-items-center gap-1">
                                             <h6 class="mb-0">{{ $recent_transaction->aqwire_totalAmount }}</h6>

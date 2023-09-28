@@ -97,9 +97,11 @@
                         </a>
                     </li>
 
-                    <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text">Accounts</span>
-                    </li>
+                    @canany(['view_users_list', 'view_organizations_list', 'view_admins_list'])
+                        <li class="menu-header small text-uppercase">
+                            <span class="menu-header-text">Accounts</span>
+                        </li>
+                    @endcanany
 
                     @auth('admin')
                         @can('view_users_list')
@@ -137,10 +139,16 @@
 
                     <li
                         class="menu-item {{ preg_match('/admin\/merchants/', Request::path()) ? 'active open' : null }}">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-                            <div data-i18n="Merchants">Merchants</div>
-                        </a>
+                        @auth('admin')
+                            @canany(['view_merchant_stores_list', 'view_merchant_restaurants_list',
+                                'view_merchant_hotels_list', 'view_merchant_tour_providers_list'])
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <i class="menu-icon tf-icons bx bx-cube-alt"></i>
+                                    <div data-i18n="Merchants">Merchants</div>
+                                </a>
+                            @endcanany
+                        @endauth
+
                         <ul class="menu-sub">
                             @auth('admin')
                                 @can('view_merchant_stores_list')
@@ -188,8 +196,14 @@
 
                         </ul>
                     </li>
-                    <!-- Components -->
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Tours</span></li>
+
+                    @auth('admin')
+                        @canany(['view_tours_list', 'view_attractions_list', 'view_transports_list',
+                            'view_tour_reservations_list'])
+                            <li class="menu-header small text-uppercase"><span class="menu-header-text">Tours</span></li>
+                        @endcanany
+                    @endauth
+
 
                     @auth('admin')
                         @can('view_tours_list')
@@ -215,14 +229,6 @@
                         @endcan
                     @endauth
 
-                    {{-- <li class="menu-item">
-                        <a href="#" class="menu-link">
-                            <i class='menu-icon tf-icons bx bx-body'></i>
-                            <div data-i18n="Activities">Activities <span class="badge bg-warning"
-                                    style="font-size: 8px;">Maintenance</span></div>
-                        </a>
-                    </li> --}}
-
                     @auth('admin')
                         @can('view_transports_list')
                             <!-- Transports -->
@@ -247,10 +253,12 @@
                         @endcan
                     @endauth
 
-                    <!-- Transactions -->
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Transactions &
-                            Reports</span></li>
-                    <!-- Forms -->
+                    @auth('admin')
+                        @canany(['view_transactions_list', 'view_sales_report'])
+                            <li class="menu-header small text-uppercase"><span class="menu-header-text">Transactions &
+                                    Reports</span></li>
+                        @endcanany
+                    @endauth
 
                     @auth('admin')
                         @can('view_transactions_list')
@@ -266,10 +274,16 @@
 
                     <li
                         class="menu-item {{ preg_match('/admin\/reports/', Request::path()) ? 'active open' : null }}">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-chart"></i>
-                            <div data-i18n="Reports">Reports</div>
-                        </a>
+                        @auth('admin')
+                            @canany(['view_sales_report'])
+                                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                    <i class="menu-icon tf-icons bx bx-chart"></i>
+                                    <div data-i18n="Reports">Reports</div>
+                                </a>
+                            @endcanany
+                        @endauth
+
+
                         <ul class="menu-sub">
                             @auth('admin')
                                 @can('view_sales_report')
@@ -290,8 +304,15 @@
                         </ul>
                     </li>
 
-                    <!-- Others -->
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Others</span></li>
+
+                    @auth('admin')
+                        @canany(['view_interests_list', 'view_referrals_list', 'view_promo_codes_list',
+                            'view_product_categories_list'])
+                            <li class="menu-header small text-uppercase"><span class="menu-header-text">Others</span></li>
+                        @endcanany
+                    @endauth
+
+
                     @auth('admin')
                         @can('view_interests_list')
                             <li class="menu-item {{ preg_match('/admin\/interests/', Request::path()) ? 'active' : null }}">
@@ -326,7 +347,7 @@
                     @endauth
 
                     @auth('admin')
-                        @can('view_promo_codes_list')
+                        @can('view_product_categories_list')
                             <li
                                 class="menu-item {{ preg_match('/admin\/product_categories/', Request::path()) ? 'active' : null }}">
                                 <a href="{{ route('admin.product_categories.list') }}" class="menu-link">
@@ -339,8 +360,13 @@
 
 
                     <!-- Roles & Permissions -->
-                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Roles &
-                            Permissions</span></li>
+                    @auth('admin')
+                        @canany(['view_roles_list', 'view_permissions_list'])
+                            <li class="menu-header small text-uppercase"><span class="menu-header-text">Roles &
+                                    Permissions</span></li>
+                        @endcanany
+                    @endauth
+
                     @auth('admin')
                         @can('view_roles_list')
                             <li class="menu-item {{ preg_match('/admin\/roles/', Request::path()) ? 'active' : null }}">
@@ -362,7 +388,42 @@
                             </li>
                         @endcan
                     @endauth
-                    
+
+                    @auth('admin')
+                        @canany(['view_merchant_form'])
+                            <li class="menu-header small text-uppercase"><span class="menu-header-text">My Merchant</span></li>
+                        @endcanany
+                    @endauth
+
+                    @auth('admin')
+                        @can('view_merchant_form')
+                            <?php
+                                if(auth('admin')->user()->role == 'merchant_store_admin' || auth('admin')->user()->role == 'merchant_store_employee') {
+                                    $type = 'store';
+                                }
+
+                                if(auth('admin')->user()->role == 'merchant_restaurant_admin' || auth('admin')->user()->role == 'merchant_restaurant_employee') {
+                                    $type = 'restaurant';
+                                }
+
+                                if(auth('admin')->user()->role == 'merchant_hotel_admin' || auth('admin')->user()->role == 'merchant_hotel_employee') {
+                                    $type = 'hotel';
+                                }
+
+                                if(auth('admin')->user()->role == 'tour_operator_admin' || auth('admin')->user()->role == 'tour_operator_employee') {
+                                    $type = 'tour_provider';
+                                }
+                            ?>
+
+                                <li class="menu-item {{ preg_match('/merchant_form/', Request::path()) ? 'active' : null }}">
+                                    <a href="{{ route('merchant_form', $type) }}" class="menu-link">
+                                        <i class="menu-icon tf-icons bx bx-user"></i>
+                                        <div data-i18n="Merchant Profile">Merchant Profile</div>
+                                    </a>
+                                </li>
+                        @endcan
+                    @endauth
+
                 </ul>
             </aside>
             {{-- Menu --}}
@@ -427,7 +488,8 @@
                                                 <div class="flex-grow-1">
                                                     <span
                                                         class="fw-semibold d-block">{{ Auth::guard('admin')->user()->username }}</span>
-                                                    <small class="text-muted">Admin</small>
+                                                    <small
+                                                        class="text-muted">{{ ucwords(str_replace('_', ' ', Auth::guard('admin')->user()->role)) }}</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -441,22 +503,6 @@
                                             <span class="align-middle">My Profile</span>
                                         </a>
                                     </li>
-                                    {{-- <li>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="bx bx-cog me-2"></i>
-                                            <span class="align-middle">Settings</span>
-                                        </a>
-                                    </li> --}}
-                                    {{-- <li>
-                                        <a class="dropdown-item" href="#">
-                                            <span class="d-flex align-items-center align-middle">
-                                                <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
-                                                <span class="flex-grow-1 align-middle">Billing</span>
-                                                <span
-                                                    class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
-                                            </span>
-                                        </a>
-                                    </li> --}}
                                     <li>
                                         <div class="dropdown-divider"></div>
                                     </li>

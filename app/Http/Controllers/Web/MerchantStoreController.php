@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,11 +13,26 @@ use App\Models\Merchant;
 use App\Models\Organization;
 use App\Models\Interest;
 
-use DataTables;
+use App\Services\MerchantStoreService;
+
+use Yajra\DataTables\DataTables;
 use DB;
 
 class MerchantStoreController extends Controller
 {
+    protected $merchantStoreService;
+
+    public function __construct(MerchantStoreService $merchantStoreService)
+    {
+        $this->merchantStoreService = $merchantStoreService;
+    }
+
+    /**
+     * Retrieves a list of merchant stores and returns it as a DataTables response.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Contracts\View\View
+     */
     public function list(Request $request) {
         if($request->ajax()) {
             $data = MerchantStore::latest()->with('merchant');
@@ -41,56 +57,56 @@ class MerchantStoreController extends Controller
         return view('admin-page.merchants.stores.list-store');
     }
 
+    /**
+     * Create a new store.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function create(Request $request) {
         $organizations = Organization::get();
         $interests = Interest::get();
         return view('admin-page.merchants.stores.create-store', compact('organizations', 'interests'));
     }
 
+    /**
+     * Store a new merchant store based on the given request.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request) {
-        return DB::transaction(function () use ($request) {
-            $data = $request->except('_token', 'featured_image', 'images');
-            $merchant = Merchant::create($data);
-            $file_name = null;
+        $result = $this->merchantStoreService->CreateMerchantStore($request);
 
-            if ($request->hasFile('featured_image')) {
-                $file = $request->file('featured_image');
-                $name = Str::snake(Str::lower($request->name));
-                $file_name = $name . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path() . '/assets/img/stores/' . $merchant->id, $file_name);
+        // Checks if the 'status' key in the $result array is truthy.
+        if ($result['status']) {
+            $previousUrl = \URL::previous();
+            $previousPath = parse_url($previousUrl, PHP_URL_PATH);
 
-                $merchant->update([
-                    'featured_image' => $file_name,
-                ]);
-            }
+            if ($previousPath === '/merchant_form/store') {
+                $admin = Auth::guard('admin')->user();
 
-            $images = [];
-
-            if ($request->has('images')) {
-                foreach ($request->file('images') as $count => $image) {
-                    $uniqueId = Str::random(5);
-                    $path_folder = 'stores/' . $merchant->id . '/';
-                    $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $uniqueId . '.' . $image->getClientOriginalExtension();
-                    Storage::disk('public')->putFileAs($path_folder, $image, $image_file_name);
-                    $images[] = $image_file_name;
+                if($admin->is_merchant) {
+                    $admin->update([
+                        'merchant_data_id' =>  $result['merchant_store']->id
+                    ]);
                 }
+
+                return redirect()->route('admin.dashboard')->withSuccess('Merchant Store Created Successfully');
             }
 
-            $merchant_store_data = array_merge($data, [
-                'merchant_id' => $merchant->id,
-                'images' => count($images) > 0 ? json_encode($images) : null,
-            ]);
+            return redirect()->route('admin.merchants.stores.edit', $result['merchant_store']->id)->withSuccess('Merchant Store created successfully');
+        }
 
-            $merchant_store = MerchantStore::create($merchant_store_data);
-
-            if ($merchant_store) {
-                return redirect()->route('admin.merchants.stores.edit', $merchant_store->id)->withSuccess('Store created successfully');
-            }
-
-            return redirect()->route('admin.merchants.stores.list')->with('fail', 'Store failed to add');
-        });
+        return back()->with('fail', 'Merchant Store Failed to Create');
     }
 
+    /**
+     * Edit the merchant store based on the given request.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function edit(Request $request) {
         $organizations = Organization::get();
         $store = MerchantStore::where('id', $request->id)->with('merchant')->first();
@@ -98,49 +114,13 @@ class MerchantStoreController extends Controller
     }
 
     public function update(Request $request) {
-        $data = $request->except('_token', 'images', 'featured_image');
-        $store = MerchantStore::where('id', $request->id)->with('merchant')->firstOrFail();
+        $result = $this->merchantStoreService->UpdateMerchantStore($request);
 
-        $update_store = $store->update($data);
-
-        $images = $store->images ? json_decode($store->images) : [];
-
-        if($request->has('images')) {
-            foreach ($request->images as $key => $image) {
-                $uniqueId = Str::random(5);
-                $image_file = $image;
-                $path_folder = 'stores/' . $store->merchant->id . '/';
-                $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $uniqueId . '.' . $image_file->getClientOriginalExtension();
-                $save_file = Storage::disk('public')->putFileAs($path_folder, $image, $image_file_name);
-                $images[] = $image_file_name;
-            }
-
-            $update_store = $store->update([
-                'images' => count($images) > 0 ? json_encode($images) : $store->images,
-            ]);
+        if($result['status']) {
+            return back()->with('success', 'Merchant Store Updated Successfully');
         }
 
-        // Save if the featured image exist in request
-        if($request->hasFile('featured_image')) {
-            $file = $request->file('featured_image');
-            $name = Str::snake(Str::lower($request->name));
-            $file_name = $name . '.' . $file->getClientOriginalExtension();
-            $old_upload_image = public_path('assets/img/stores/') . $store->merchant->id . '/' . $store->merchant->featured_image;
-
-            if($old_upload_image) {
-                $remove_image = @unlink($old_upload_image);
-            }
-
-            $save_file = $file->move(public_path() . '/assets/img/stores/' . $store->merchant->id, $file_name);
-        } else {
-            $file_name = $store->merchant->featured_image;
-        }
-
-        $update_merchant = $store->merchant->update(array_merge($data, ['featured_image' => $file_name]));
-
-        if($update_store && $update_merchant) {
-            return back()->with('success', 'Store updated successfully');
-        }
+        return back()->with('fail', 'Merchant Store Failed to Update');
     }
 
     public function destroy(Request $request) {

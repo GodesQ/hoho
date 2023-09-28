@@ -12,20 +12,20 @@ class Admin extends Authenticatable
     use HasFactory, HasApiTokens;
     protected $table = 'admins';
     protected $fillable = [
-        'username', 
-        'email', 
-        'admin_profile', 
-        'password', 
-        'firstname', 
-        'lastname', 
-        'middlename', 
-        'age', 
-        'birthdate', 
-        'contact_no', 
+        'username',
+        'email',
+        'admin_profile',
+        'password',
+        'firstname',
+        'lastname',
+        'middlename',
+        'age',
+        'birthdate',
+        'contact_no',
         'address',
-        'role', 
-        'is_active', 
-        'is_merchant', 
+        'role',
+        'is_active',
+        'is_merchant',
         'merchant_data_id'
     ];
     protected $hidden = ['password'];
@@ -38,15 +38,33 @@ class Admin extends Authenticatable
     public function transport()
     {
         // Check if the role is 'bus_operator'
-        return $this->belongsTo(Transport::class, 'id', 'operator_id')->when($this->role === 'bus_operator', function ($query) {
+        return $this->hasOne(Transport::class, 'id', 'operator_id')->when($this->role === 'bus_operator', function ($query) {
             $query->where('role', 'bus_operator');
         })->select('id', 'capacity', 'operator_id', 'tour_assigned_id', 'tour_assignment_ids', 'latitude', 'longitude', 'name', 'current_location', 'next_location', 'previous_location')->with('assigned_tour');
     }
 
     public function tour_provider()
     {
-        return $this->belongsTo(MerchantTourProvider::class, 'id', 'account_id')->when($this->role === 'tour_operator_admin', function ($query) {
-            $query->where('role', 'tour_operator_admin');
+        return $this->hasOne(MerchantTourProvider::class, 'id', 'merchant_data_id')->when(in_array($this->role, ['tour_operator_admin', 'tour_operator_employee']), function ($query) {
+            $query->whereIn('role', ['tour_operator_admin', 'tour_operator_employee']);
+        })->with('merchant');
+    }
+
+    public function merchant_store() {
+        return $this->hasOne(MerchantStore::class, 'id', 'merchant_data_id')->when(in_array($this->role, ['merchant_store_admin', 'merchant_store_employee']), function ($query) {
+            $query->whereIn('role', ['merchant_store_admin', 'merchant_store_employee']);
+        })->with('merchant');
+    }
+
+    public function merchant_hotel() {
+        return $this->hasOne(MerchantHotel::class, 'id', 'merchant_data_id')->when(in_array($this->role, ['merchant_hotel_admin', 'merchant_hotel_employee']), function ($query) {
+            $query->whereIn('role', ['merchant_hotel_admin', 'merchant_hotel_employee']);
+        })->with('merchant');
+    }
+
+    public function merchant_restaurant() {
+        return $this->hasOne(MerchantRestaurant::class, 'id', 'merchant_data_id')->when(in_array($this->role, ['merchant_restaurant_admin', 'merchant_restaurant_employee']), function ($query) {
+            $query->whereIn('role', ['merchant_restaurant_admin', 'merchant_restaurant_employee']);
         })->with('merchant');
     }
 }

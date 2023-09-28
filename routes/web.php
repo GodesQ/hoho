@@ -56,8 +56,6 @@ Route::post('admin/login', [AdminAuthController::class, 'saveLogin'])->name('adm
 Route::get('register', [AdminAuthController::class, 'register'])->name('admin.register');
 Route::post('register', [AdminAuthController::class, 'saveRegister'])->name('admin.saveRegister');
 
-Route::get('merchant_form/{type}', [MerchantController::class, 'merchant_form'])->name('merchant_form');
-
 Route::get('test_location', [DashboardController::class, 'testLocation']);
 Route::get('test_location2', [DashboardController::class, 'testLocation2']);
 
@@ -76,6 +74,8 @@ Route::get('user/verify_email', [UserAuthController::class, 'verifyEmail']);
 Route::get('user/reset_password_form', [ForgotPasswordController::class, 'resetPasswordForm'])->name('user.reset_password_form');
 Route::post('user/reset_password_form', [ForgotPasswordController::class, 'postResetPasswordForm'])->name('user.post_reset_password_form');
 Route::view('user/reset_password_success', 'misc.success-reset-password-message')->name('user.reset_password_success');
+
+Route::get('merchant_form/{type}', [MerchantController::class, 'merchant_form'])->name('merchant_form')->middleware('auth:admin');
 
 Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function(){
     Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
@@ -135,6 +135,13 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::delete('attractions/remove_image', [AttractionController::class, 'removeImage'])->name('attractions.remove_image');
     Route::get('attractions/update_attractions', [AttractionController::class, 'update_attractions']);
 
+    Route::get('tour_reservations', [TourReservationController::class, 'list'])->name('tour_reservations.list');
+    Route::get('tour_reservations/create', [TourReservationController::class, 'create'])->name('tour_reservations.create');
+    Route::post('tour_reservations/store', [TourReservationController::class, 'store'])->name('tour_reservations.store');
+    Route::get('tour_reservations/edit/{id}', [TourReservationController::class, 'edit'])->name('tour_reservations.edit');
+    Route::post('tour_reservations/update/{id}', [TourReservationController::class, 'update'])->name('tour_reservations.update');
+    Route::delete('tour_reservations/destroy', [TourReservationController::class, 'destroy'])->name('tour_reservations.destroy');
+
     Route::get('merchants', [MerchantController::class, 'list'])->name('merchants.list');
     Route::get('merchants/create', [MerchantController::class, 'create'])->name('merchants.create');
     Route::post('merchants/store', [MerchantController::class, 'store'])->name('merchants.store');
@@ -142,12 +149,6 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::post('merchants/update/{id}', [MerchantController::class, 'update'])->name('merchants.update');
     Route::delete('merchants/destroy', [MerchantController::class, 'destroy'])->name('merchants.destroy');
 
-    Route::get('tour_reservations', [TourReservationController::class, 'list'])->name('tour_reservations.list');
-    Route::get('tour_reservations/create', [TourReservationController::class, 'create'])->name('tour_reservations.create');
-    Route::post('tour_reservations/store', [TourReservationController::class, 'store'])->name('tour_reservations.store');
-    Route::get('tour_reservations/edit/{id}', [TourReservationController::class, 'edit'])->name('tour_reservations.edit');
-    Route::post('tour_reservations/update/{id}', [TourReservationController::class, 'update'])->name('tour_reservations.update');
-    Route::delete('tour_reservations/destroy', [TourReservationController::class, 'destroy'])->name('tour_reservations.destroy');
 
     Route::prefix('merchants')->as('merchants.')->group(function () {
         Route::get('hotels', [MerchantHotelController::class, 'list'])->name('hotels.list');
@@ -182,7 +183,6 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
         Route::delete('stores/destroy', [MerchantStoreController::class, 'destroy'])->name('stores.destroy');
         Route::delete('stores/remove_image', [MerchantStoreController::class, 'removeImage'])->name('stores.remove_image');
         Route::get('stores/update_stores', [MerchantStoreController::class, 'update_stores'])->name('merchants.update_stores');
-
     });
 
     Route::get('interests', [InterestController::class, 'list'])->name('interests.list');

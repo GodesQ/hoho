@@ -65,10 +65,13 @@ class AdminAuthController extends Controller
 
             switch ($role) {
                 case 'merchant_hotel_admin':
+                    return redirect()->route('merchant_form', 'hotel')->withSuccess('Register Successfully. Please fill out all these fields to continue.');
                 case 'merchant_store_admin':
+                    return redirect()->route('merchant_form', 'store')->withSuccess('Register Successfully. Please fill out all these fields to continue.');
                 case 'merchant_restaurant_admin':
+                    return redirect()->route('merchant_form', 'restaurant')->withSuccess('Register Successfully. Please fill out all these fields to continue.');
                 case 'tour_operator_admin':
-                    return redirect()->route('merchant_form', str_replace('merchant_', '', $role))->withSuccess('Register Successfully. Please fill out all these fields to continue.');
+                    return redirect()->route('merchant_form', 'tour_provider')->withSuccess('Register Successfully. Please fill out all these fields to continue.');
 
                 default:
                     return redirect()->route('merchant_form', '')->withSuccess('Register Successfully. Please fill out all these fields to continue.');
@@ -112,7 +115,7 @@ class AdminAuthController extends Controller
         }
 
         if ($merchant_data) {
-            return view('admin-page.dashboard.dashboard')->withSuccess('Login Successfully');
+            return redirect()->route('admin.dashboard')->with('success', 'Login Successfully');
         } else {
             return redirect()->route('merchant_form', $type)->withSuccess('Login Successfully. Please complete this form to continue.');
         }

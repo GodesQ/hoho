@@ -12,7 +12,7 @@
 
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive-lg text-nowrap">
+                <div class="table-responsive text-nowrap">
                     <table class="table data-table">
                         <thead>
                             <tr>
@@ -47,7 +47,6 @@
                     },
                     {
                         data: 'permission_name',
-                        name: 'permission_name,'
                     },
                     {
                         data: 'roles',

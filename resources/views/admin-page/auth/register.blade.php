@@ -57,7 +57,7 @@
                                     <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-1024x1024.jpg"
                                         style="width: 50px; border-radius: 5px;" alt="">
                                 </span>
-                                <span class="app-brand-text demo text-body fw-bolder"
+                                <span class="app-brand-text demo text-body fw-bold"
                                     style="text-transform: capitalize;">Hop On Hop Off</span>
                             </a>
                         </div>
@@ -65,40 +65,56 @@
                         <h4 class="mb-2">Register here! 🚀</h4>
                         <p class="mb-4"></p>
 
-                        <form id="formAuthentication" class="mb-3" action="{{ route('admin.saveRegister') }}" method="POST">
+                        <form id="formAuthentication" class="mb-3" action="{{ route('admin.saveRegister') }}"
+                            method="POST">
                             @csrf
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="username" name="username"
-                                    placeholder="Enter your username" autofocus />
-                                <span class="danger text-danger">@error('username'){{ $message }}@enderror</span>
+                                    placeholder="Enter your username" autofocus value="{{ old('username') }}" />
+                                <span class="danger text-danger">
+                                    @error('username')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
 
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="text" class="form-control" id="email" name="email"
-                                    placeholder="Enter your email" />
-                                <span class="danger text-danger">@error('email'){{ $message }}@enderror</span>
+                                    placeholder="Enter your email" value="{{ old('username') }}" />
+                                <span class="danger text-danger">
+                                    @error('email')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
                             </div>
                             <div class="mb-3 form-password-toggle">
                                 <label class="form-label" for="password">Password</label>
                                 <div class="input-group input-group-merge">
                                     <input type="password" id="password" class="form-control" name="password"
-                                        placeholder="*************"
-                                        aria-describedby="password" />
+                                        placeholder="*************" aria-describedby="password" />
                                     <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                                 </div>
-                                <span class="danger text-danger">@error('password'){{ $message }}@enderror</span>
+                                <span class="danger text-danger">
+                                    @error('password')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
                             </div>
                             <div class="mb-3 form-password-toggle">
                                 <label class="form-label" for="confirm-password">Confirm Password</label>
                                 <div class="input-group input-group-merge">
-                                    <input type="password" id="confirm-password" class="form-control" name="confirm_password"
-                                        placeholder="************"
+                                    <input type="password" id="confirm-password" class="form-control"
+                                        name="confirm_password" placeholder="************"
                                         aria-describedby="password" />
                                     <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                                 </div>
-                                <span class="danger text-danger">@error('confirm_password'){{ $message }}@enderror</span>
+                                <span class="danger text-danger">
+                                    @error('confirm_password')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
                             </div>
                             <div class="mb-3 form-password-toggle">
                                 <label class="form-label" for="role">Role</label>
@@ -109,7 +125,11 @@
                                     <option value="merchant_hotel_admin">Hotel Admin</option>
                                     <option value="tour_operator_admin">Tour Provider Admin</option>
                                 </select>
-                                <span class="danger text-danger">@error('role'){{ $message }}@enderror</span>
+                                <span class="danger text-danger">
+                                    @error('role')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
                             </div>
 
                             <div class="mb-3">
@@ -118,7 +138,9 @@
                                         name="terms" />
                                     <label class="form-check-label" for="terms-conditions">
                                         I agree to
-                                        <a href="javascript:void(0);">privacy policy & terms</a>
+                                        <a href="https://philippines-hoho.ph/privacy-policy/">Privacy Policy</a> & <a
+                                            href="https://philippines-hoho.ph/terms-and-conditions/">Terms
+                                            Condition</a>
                                     </label>
                                 </div>
                             </div>
