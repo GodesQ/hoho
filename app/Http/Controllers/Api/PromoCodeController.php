@@ -10,7 +10,9 @@ use App\Models\PromoCode;
 class PromoCodeController extends Controller
 {
     public function getPromoCodes(Request $request) {
-        $promocodes = PromoCode::select('id', 'name', 'code', 'description', 'is_need_requirement', 'type', 'is_need_approval', 'discount_amount', 'discount_type')->where('is_need_requirement', 1)->get();
+        $promocodes = PromoCode::select('id', 'name', 'code', 'description', 'is_need_requirement', 'type', 'is_need_approval', 'discount_amount', 'discount_type')
+            ->where('name', 'SENIOR/PWD/STUDENT')
+            ->get();
 
         return response([
             'status' => TRUE,
