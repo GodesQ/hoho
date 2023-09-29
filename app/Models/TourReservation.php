@@ -12,6 +12,9 @@ class TourReservation extends Model
     protected $fillable = [
         'tour_id',
         'type',
+        'total_additional_charges',
+        'discount',
+        'sub_amount',
         'amount',
         'reserved_user_id',
         'passenger_ids',
@@ -31,6 +34,9 @@ class TourReservation extends Model
 
     protected $casts = [
         'tour_id' => 'integer',
+        'total_additional_charges' => 'double',
+        'discount' => 'double',
+        'sub_amount' => 'double',
         'amount' => 'double',
         'number_of_pass' => 'integer',
         'order_transaction_id' => 'integer',

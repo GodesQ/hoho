@@ -13,6 +13,10 @@ class Transaction extends Model
         'reference_no',
         'or_no',
         'transaction_by_id',
+        'sub_amount',
+        'total_additional_charges',
+        'total_discount',
+        'transaction_type',
         'payment_amount',
         'type',
         'additional_charges',
@@ -33,6 +37,9 @@ class Transaction extends Model
     protected $casts = [
         'transaction_by_id' => 'integer',
         'payment_amount' => 'integer',
+        'sub_amount' => 'double',
+        'total_additional_charges' => 'double',
+        'total_discount' => 'double',
     ];
 
     public function user() {

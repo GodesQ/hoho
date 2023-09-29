@@ -27,14 +27,22 @@ class BookingService
         $reference_no = $this->generateReferenceNo();
         $additional_charges = $this->generateAdditionalCharges();
 
-        $totalAmount = $request->type == 'Guided' ? $this->generateGuidedTourTotalAmount($request->number_of_pass, $request->ticket_pass, $request->amount, $additional_charges) : $this->generateDIYTourTotalAmount($request->number_of_pass, $request->ticket_pass, $request->amount, $additional_charges);
-        // dd($totalAmount);
-        $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges);
+        $subAmount = intval($request->amount) ?? 0;
+
+        $totalOfDiscount = (intval($request->amount) - intval($request->amount));
+
+        $totalOfAdditionalCharges = $this->getTotalOfAdditionalCharges($request->number_of_pass, $additional_charges);
+
+        $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
+
+        $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
+
         if (!$transaction) {
             return back()->with('fail', 'Failed to Create Transaction');
         }
 
-        $reservation = $this->createReservation($request, $transaction, $totalAmount);
+        $reservation = $this->createReservation($request, $transaction, $totalAmount, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
+
         if (!$reservation || !$transaction) {
             $reservation->delete();
             $transaction->delete();
@@ -70,55 +78,63 @@ class BookingService
             $reference_no = $this->generateReferenceNo();
             $additional_charges = $this->generateAdditionalCharges();
 
-            $totalAmount = $this->getTotalAmountOfBookings($request, $additional_charges);
+            $items = json_decode($request->items, true);
 
-            $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges);
+            $subAmount = 0;
+            $totalOfDiscount = 0;
+            $totalOfAdditionalCharges = 0;
 
-            $reservation = $this->createMultipleReservation($request, $transaction, $additional_charges);
+            /**
+             * Calculates the subAmount, totalOfDiscount, and totalOfAdditionalCharges by iterating over the items
+             */
+            foreach ($items as $key => $item) {
+                $subAmount += intval($item['amount']) ?? 0;
 
-            if ($request->has('promo_code')) {
-                if ($request->promo_code == 'SPECIALDISCHOHO' || $request->promo_code == 'MANILEÑOSHOHO') {
-                    if ($request->has('requirement')) {
+                $totalOfDiscount += (intval($item['amount']) - (intval($item['discounted_amount']) ?? 0));
 
-                        $transaction->update([
-                            'status' => 'success'
-                        ]);
+                $totalOfAdditionalCharges += $this->getTotalOfAdditionalCharges($item['number_of_pass'], $additional_charges);
+            }
 
-                        return response([
-                            'status' => 'success',
-                            'message' => 'Your Book s has been successfully processed. Please wait for confirmation of your booking by tour operator. Thankyou.',
-                            'url' => null
-                        ]);
-                    }
+            if (config('services.checkout.type') == "HPP") {
+                $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
+
+                // return response([
+                //     'subAmount' => $subAmount,
+                //     'total_discount' => $totalOfDiscount,
+                //     'total_additional_charges' => $totalOfAdditionalCharges,
+                //     'total_amount' => $totalAmount
+                // ]);
+
+                $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
+
+                $this->createMultipleReservation($request, $transaction, $additional_charges);
+
+                $response = $this->sendPaymentRequest($transaction);
+
+                if (!$response['status']) {
+                    return response([
+                        'status' => FALSE,
+                        'message' => 'Failed to submit request for transaction'
+                    ]);
                 }
-            }
+                $responseData = json_decode($response['result']->getBody(), true);
 
-            $response = $this->sendPaymentRequest($transaction);
+                if ($responseData['status'] != 'SUCCESS') {
+                    $logMessage = "An error occurred during the payment process with the following parameters: " .
+                        config('services.aqwire.merchant_code') . " | " . config('services.aqwire.client_id') . " | " . config('services.aqwire.secret_key');
+                    dd($logMessage);
+                }
 
-            if (!$response['status']) {
-                return response([
-                    'status' => FALSE,
-                    'message' => 'Failed to submit request for transaction'
-                ]);
-            }
+                $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
 
-            $responseData = json_decode($response['result']->getBody(), true);
-
-            if ($responseData['status'] != 'SUCCESS') {
-                $logMessage = "An error occurred during the payment process with the following parameters: " .
-                    config('services.aqwire.merchant_code') . " | " . config('services.aqwire.client_id') . " | " . config('services.aqwire.secret_key');
-                dd($logMessage);
-            }
-
-            $updateTransaction = $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
-
-            if ($request->is('api/*')) {
-                return response([
-                    'status' => 'paying',
-                    'url' => $responseData['paymentUrl']
-                ]);
-            } else {
-                return redirect($responseData['paymentUrl']);
+                if ($request->is('api/*')) {
+                    return response([
+                        'status' => 'paying',
+                        'url' => $responseData['paymentUrl']
+                    ]);
+                } else {
+                    return redirect($responseData['paymentUrl']);
+                }
             }
         });
     }
@@ -150,43 +166,15 @@ class BookingService
         return $base64Hash;
     }
 
-    private function getTotalAmountOfBookings(Request $request, $additional_charges)
+    private function getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount)
     {
-
-        # NOTE: The amount of each booking was already been set, This function is for adding additional charges and to sum up all of the bookings for transactions.
-
-        if (is_array($request->items)) {
-            $items = $request->items;
-        } else {
-            $items = json_decode($request->items, true);
-        }
-
-        $items_amount = [];
-
-        foreach ($items as &$item) {
-            $hiddenPayment = 0;
-
-            foreach ($additional_charges as $charge => $amount) {
-                $hiddenPayment += $amount;
-            }
-
-            // Add hidden payments based on number_of_pass
-            $hiddenPayment *= $item['number_of_pass'];
-
-            // Add hidden payment to amount
-            $total = $item['amount'] + $hiddenPayment;
-            $items_amount[] = $total;
-        }
-
-        // unset($item); // Unset to avoid any unintended changes
-
-        $totalAmount = array_sum($items_amount);
-        return $totalAmount;
+        # NOTE: The amount of each booking was already been set, This function is for additional charges, discounted amount to sum up all of the bookings for transactions.
+        return ($subAmount - $totalOfDiscount) + $totalOfAdditionalCharges;
     }
 
     private function generateReferenceNo()
     {
-        return date('Ym') . '-' . 'OT' . rand(10000, 1000000);
+        return date('Ym') . '-' . 'OT' . rand(100000, 10000000);
     }
 
     private function generateAdditionalCharges()
@@ -200,40 +188,23 @@ class BookingService
         return $charges;
     }
 
-    private function generateGuidedTourTotalAmount($number_of_pass, $ticket_pass, $amount, $additional_charges)
+    private function getTotalOfAdditionalCharges($number_of_pass, $additional_charges)
     {
         $convenience_fee = $additional_charges['Convenience Fee'] * $number_of_pass;
         $travel_pass = $additional_charges['Travel Pass'] * $number_of_pass;
 
-        return $amount + $convenience_fee + $travel_pass;
+        return $convenience_fee + $travel_pass;
     }
 
-    private function generateDIYTourTotalAmount($number_of_pass, $ticket_pass, $amount, $additional_charges)
-    {
-        $convenience_fee = $additional_charges['Convenience Fee'] * $number_of_pass;
-        $travel_pass = $additional_charges['Travel Pass'] * $number_of_pass;
-        // dd($convenience_fee, $travel_pass);
-        $totalAmount = 0;
-        if ($ticket_pass == '1 Day Pass') {
-            $totalAmount = ($amount * 1) + ($convenience_fee + $travel_pass);
-        }
-
-        if ($ticket_pass == '2 Day Pass') {
-            $totalAmount = ($amount * 2) + ($convenience_fee + $travel_pass);
-        }
-
-        if ($ticket_pass == '3 Day Pass') {
-            $totalAmount = ($amount * 3) + ($convenience_fee + $travel_pass);
-            // dd($request->amount, $convenience_fee, $travel_pass, $totalAmount);
-        }
-        return $totalAmount;
-    }
-
-    private function createTransaction($request, $reference_no, $totalAmount, $additional_charges)
+    private function createTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
     {
         $transaction = Transaction::create([
             'reference_no' => $reference_no,
             'transaction_by_id' => $request->reserved_user_id,
+            'sub_amount' => $subAmount ?? $totalAmount,
+            'total_additional_charges' => $totalOfAdditionalCharges ?? 0,
+            'total_discount' => $totalOfDiscount ?? 0,
+            'transaction_type' => 'book_tour',
             'payment_amount' => $totalAmount,
             'additional_charges' => json_encode($additional_charges),
             'payment_status' => 'pending',
@@ -245,7 +216,7 @@ class BookingService
         return $transaction;
     }
 
-    private function createReservation($request, $transaction, $totalAmount)
+    private function createReservation($request, $transaction, $totalAmount, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
     {
         $trip_date = Carbon::create($request->trip_date);
         $tour = Tour::where('id', $request->tour_id)->first();
@@ -253,6 +224,9 @@ class BookingService
         $reservation = TourReservation::create([
             'tour_id' => $request->tour_id,
             'type' => $request->type,
+            'total_additional_charges' => $totalOfAdditionalCharges,
+            'discount' => $totalOfDiscount,
+            'sub_amount' => $subAmount,
             'amount' => $totalAmount,
             'reserved_user_id' => $request->reserved_user_id,
             'passenger_ids' => $request->passenger_ids ? json_encode($request->passenger_ids) : json_encode([$request->reserved_user_id]),
@@ -295,17 +269,25 @@ class BookingService
             $items = json_decode($request->items, true);
         }
 
-        // dd($request->file('requirement'));
-
         foreach ($items as $key => $item) {
             $trip_date = Carbon::create($item['trip_date']);
-            $totalAmount = $item['type'] == 'Guided' ? $this->generateGuidedTourTotalAmount($item['number_of_pass'], $item['ticket_pass'], $item['amount'], $additional_charges) : $this->generateDIYTourTotalAmount($item['number_of_pass'], $item['ticket_pass'], $item['amount'], $additional_charges);
 
             $tour = Tour::where('id', $item['tour_id'])->first();
+
+            $subAmount = intval($item['amount']) ?? 0;
+
+            $totalOfDiscount = (intval($item['amount']) - (intval($item['discounted_amount']) ?? 0));
+
+            $totalOfAdditionalCharges = $this->getTotalOfAdditionalCharges($item['number_of_pass'], $additional_charges);
+
+            $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
 
             $reservation = TourReservation::create([
                 'tour_id' => $item['tour_id'],
                 'type' => $item['type'],
+                'total_additional_charges' => $totalOfAdditionalCharges,
+                'discount' => $totalOfDiscount,
+                'sub_amount' => $subAmount,
                 'amount' => $totalAmount,
                 'reserved_user_id' => $request->reserved_user_id,
                 'passenger_ids' => $request->has('passenger_ids') ? json_encode($request->passenger_ids) : json_encode([$request->reserved_user_id]),
@@ -318,7 +300,7 @@ class BookingService
                 'ticket_pass' => $item['type'] == 'DIY' ? $item['ticket_pass'] : null,
                 'promo_code' => $request->promo_code,
                 'requirement_file_path' => null,
-                'discount_amount' => isset($item['discount']) ? $item['discount'] : null
+                'discount_amount' => $subAmount - $totalOfDiscount
             ]);
 
             if ($request->has('requirement') && $request->file('requirement')->isValid()) {
@@ -328,6 +310,10 @@ class BookingService
             } else {
                 $file_name = null;
             }
+
+            $reservation->update([
+                'requirement_file_path' => $file_name
+            ]);
 
             $details = [
                 'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,

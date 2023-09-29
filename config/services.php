@@ -34,6 +34,10 @@ return [
         'merchant_code' => env('AQWIRE_MERCHANT_CODE'),
         'client_id' => env('AQWIRE_MERCHANT_CLIENTID'),
         'secret_key' => env('AQWIRE_MERCHANT_SECURITY_KEY')
+    ],
+
+    'checkout' => [
+        'type' => "HPP",
     ]
 
 ];
