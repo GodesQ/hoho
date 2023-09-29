@@ -42,12 +42,25 @@
                                 <div class="badge bg-success">{{ $reservation->status }}</div>
                             @elseif ($reservation->status == 'cancelled')
                                 <div class="badge bg-danger">{{ $reservation->status }}</div>
+                            @elseif ($reservation->status == 'failed')
+                                <div class="badge bg-danger">{{ $reservation->status }}</div>
                             @elseif ($reservation->status == 'pending')
                                 <div class="badge bg-primary">{{ $reservation->status }}</div>
                             @endif
                         </div>
                         <hr>
                         <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="" class="form-label">Reservation Status</label>
+                                    <select name="status" id="status" class="form-select">
+                                        <option value="pending" {{ $reservation->status == 'pending' ? 'selected' : null }}>Pending</option>
+                                        <option value="approved" {{ $reservation->status == 'approved' ? 'selected' : null }}>Approved</option>
+                                        <option value="cancelled" {{ $reservation->status == 'cancelled' ? 'selected' : null }}>Cancelled</option>
+                                        <option value="done" {{ $reservation->status == 'done' ? 'selected' : null }}>Done</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <div class="form-check form-check-inline mt-3">
@@ -149,17 +162,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
-                                <div class="mb-3">
-                                    <label for="" class="form-label">Status</label>
-                                    <select name="status" id="status" class="form-select">
-                                        <option value="pending" {{ $reservation->status == 'pending' ? 'selected' : null }}>Pending</option>
-                                        <option value="approved" {{ $reservation->status == 'approved' ? 'selected' : null }}>Approved</option>
-                                        <option value="cancelled" {{ $reservation->status == 'cancelled' ? 'selected' : null }}>Cancelled</option>
-                                        <option value="done" {{ $reservation->status == 'done' ? 'selected' : null }}>Done</option>
-                                    </select>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -185,7 +187,7 @@
                                 <h6 id="pax_text">{{ $reservation->number_of_pass }} Pax</h6>
                             </div>
                         </div>
-                        <div class="row ticket_pass_text_container">
+                        <div class="row ticket_pass_text_container {{ $reservation->type == 'DIY' ? 'active' : '' }}">
                             <div class="col-xl-6">
                                 <h6 class="text-primary">Ticket Pass</h6>
                             </div>
@@ -195,37 +197,31 @@
                         </div>
                         <div class="row">
                             <div class="col-xl-6">
-                                <h6 class="text-primary">Convenience Fee</h6>
-                            </div>
-                            <div class="col-xl-6">
-                                <h6>₱ 99.00</h6>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xl-6">
-                                <h6 class="text-primary">Travel Pass</h6>
-                            </div>
-                            <div class="col-xl-6">
-                                <h6>₱ 50.00</h6>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xl-6">
                                 <h6 class="text-primary">Sub Amount</h6>
                             </div>
                             <div class="col-xl-6">
                                 <h6 id="sub_amount_text">₱
-                                    <?php
-                                        $price = 0;
-                                        if($reservation->number_of_pass <= 9 || $reservation->number_of_pass >= 4) {
-                                            $price = optional($reservation->tour)->bracket_price_one;
-                                        } else if($reservation->number_of_pass <= 24 || $reservation->number_of_pass >= 10) {
-                                            $price = optional($reservation->tour)->bracket_price_two;
-                                        } else if($reservation->number_of_pass >= 25) {
-                                            $price = optional($reservation->tour)->bracket_price_three;
-                                        }
-                                    ?>
-                                    {{ number_format($price) }}
+                                    {{ number_format($reservation->sub_amount, 2) }}
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <h6 class="text-primary">Discount</h6>
+                            </div>
+                            <div class="col-xl-6">
+                                <h6 id="sub_amount_text">₱
+                                    {{ number_format($reservation->discount, 2) }}
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <h6 class="text-primary">Total of Additional Fees</h6>
+                            </div>
+                            <div class="col-xl-6">
+                                <h6 id="sub_amount_text">₱
+                                    {{ number_format($reservation->total_additional_charges, 2) }}
                                 </h6>
                             </div>
                         </div>
@@ -235,7 +231,26 @@
                                 <h6 class="text-primary">Total Amount</h6>
                             </div>
                             <div class="col-xl-6">
-                                <h6 id="total_amount_text">₱ {{ number_format($reservation->amount) }}</h6>
+                                <h6 id="total_amount_text">₱ {{ number_format($reservation->amount, 2) }}</h6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <h6 class="text-primary">Transaction Status</h6>
+                            </div>
+                            <div class="col-xl-6">
+                                    @if(optional($reservation->transaction)->payment_status == 'success')
+                                        <div class="badge bg-success">Success</div>
+                                    @elseif(optional($reservation->transaction)->payment_status == 'cancelled')
+                                        <div class="badge bg-danger">Cancelled</div>
+                                    @elseif(optional($reservation->transaction)->payment_status == 'pending')
+                                        <div class="badge bg-warning">Pending</div>
+                                    @elseif(optional($reservation->transaction)->payment_status == 'failed')
+                                        <div class="badge bg-danger">Pending</div>
+                                    @elseif(optional($reservation->transaction)->payment_status == 'inc')
+                                        <div class="badge bg-warning">Incompleted</div>
+                                    @endif
+                                    {{-- {{ $reservation->transaction->payment_status }} --}}
                             </div>
                         </div>
                         <div class="my-3 justify-content-end d-flex">

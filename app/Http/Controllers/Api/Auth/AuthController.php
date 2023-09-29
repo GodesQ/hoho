@@ -108,7 +108,6 @@ class AuthController extends Controller
 
         // Check if the value is a JSON string
         if (is_string($contactNo) && is_array(json_decode($contactNo, true)) && (json_last_error() == JSON_ERROR_NONE)) {
-            // return 'Is Json Object';
             $data = json_decode($contactNo, true);
             $countryCode = $data['countryCode'];
             $number = $data['number'];
@@ -127,7 +126,7 @@ class AuthController extends Controller
             'birthdate' => $request->birthdate != null || $request->birthdate != '' ? Carbon::createFromFormat('Y-m-d', $request->birthdate) : null,
             'country_of_residence' => $request->country_of_residence,
             'contact_no' => $contactNo,
-            'countryCode' => $countryCode,
+            'countryCode' => preg_replace("/[^0-9]/", "", $countryCode),
             'is_old_user' => false,
             'is_first_time_philippines' => $request->has('is_first_time_philippines'),
             'is_international_tourist' => $request->has('is_international_tourist'),

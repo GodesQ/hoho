@@ -48,7 +48,7 @@
                             @elseif($transaction->payment_status == 'failed')
                                 <div class="badge bg-danger">Pending</div>
                             @elseif($transaction->payment_status == 'inc')
-                                <div class="badge bg-warning">Pending</div>
+                                <div class="badge bg-warning">Incompleted</div>
                             @endif
                         </div>
                     </div>

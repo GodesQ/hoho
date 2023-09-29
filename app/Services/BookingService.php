@@ -94,7 +94,7 @@ class BookingService
             foreach ($items as $key => $item) {
                 $subAmount += intval($item['amount']) ?? 0;
 
-                $totalOfDiscount += (intval($item['amount']) - (intval($item['discounted_amount']) ?? 0));
+                $totalOfDiscount += (intval($item['amount']) - (intval($item['discounted_amount']) ?? intval($item['amount'])));
 
                 $totalOfAdditionalCharges += $this->getTotalOfAdditionalCharges($item['number_of_pass'], $additional_charges);
             }
@@ -213,8 +213,8 @@ class BookingService
             'additional_charges' => json_encode($additional_charges),
             'payment_status' => 'pending',
             'resolution_status' => 'pending',
-            'order_date' => date('d-m-y'),
-            'transaction_date' => date('d-m-y'),
+            'order_date' => Carbon::now(),
+            'transaction_date' => Carbon::now(),
         ]);
 
         return $transaction;
@@ -280,7 +280,7 @@ class BookingService
 
             $subAmount = intval($item['amount']) ?? 0;
 
-            $totalOfDiscount = (intval($item['amount']) - (intval($item['discounted_amount']) ?? 0));
+            $totalOfDiscount = (intval($item['amount']) - (intval($item['discounted_amount']) ?? intval($item['amount'])));
 
             $totalOfAdditionalCharges = $this->getTotalOfAdditionalCharges($item['number_of_pass'], $additional_charges);
 

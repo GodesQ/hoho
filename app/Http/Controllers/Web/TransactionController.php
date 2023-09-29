@@ -55,7 +55,7 @@ class TransactionController extends Controller
     }
 
     public function edit(Request $request) {
-        $transaction = Transaction::where('id', $request->id)->with('user')->first();
+        $transaction = Transaction::where('id', $request->id)->with('user')->firstOrFail();
         return view('admin-page.transactions.edit-transaction', compact('transaction'));
     }
 
@@ -64,7 +64,7 @@ class TransactionController extends Controller
     }
 
     public function print(Request $request) {
-        $transaction = Transaction::where('id', $request->id)->first();
+        $transaction = Transaction::where('id', $request->id)->firstOrFail();
         return view('admin-page.transactions.print-transaction', compact('transaction'));
     }
 

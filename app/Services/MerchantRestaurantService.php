@@ -10,7 +10,6 @@ use App\Models\Merchant;
 use App\Models\MerchantRestaurant;
 
 use DB;
-
 class MerchantRestaurantService
 {
     public function CreateMerchantRestaurant(Request $request)
