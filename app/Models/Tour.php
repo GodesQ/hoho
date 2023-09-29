@@ -48,7 +48,6 @@ class Tour extends Model
         'bracket_price_one' => 'integer',
         'bracket_price_two' => 'integer',
         'bracket_price_three' => 'integer',
-        'bracket_price_three' => 'integer',
         'is_cancellable' => 'integer',
         'is_refundable' => 'integer',
         'under_age_limit' => 'integer',

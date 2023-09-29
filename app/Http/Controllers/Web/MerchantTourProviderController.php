@@ -4,15 +4,24 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 use App\Models\MerchantTourProvider;
 use App\Models\Merchant;
 
+use App\Services\MerchantTourProviderService;
+
 use DataTables;
 
 class MerchantTourProviderController extends Controller
-{
+{   
+    protected $merchantTourProviderService;
+
+    public function __construct(MerchantTourProviderService $merchantTourProviderService) {
+        $this->merchantTourProviderService = $merchantTourProviderService;
+    }
+
     public function list(Request $request) {
         if($request->ajax()) {
             $data = MerchantTourProvider::latest()->with('merchant');
@@ -41,35 +50,26 @@ class MerchantTourProviderController extends Controller
     }
 
     public function store(Request $request) {
-        $data = $request->except('_token', 'featured_image');
+        $result = $this->merchantTourProviderService->CreateMerchantTourProvider($request);
 
-        // First, Create a merchant
-        $merchant = Merchant::create($data);
+        if($result['status']) {
+            $previousUrl = \URL::previous();
+            $previousPath = parse_url($previousUrl, PHP_URL_PATH);
 
-        // Save if the featured image exist in request
-        if($request->hasFile('featured_image')) {
-            $file = $request->file('featured_image');
-            $name = Str::snake(Str::lower($request->name));
-            $file_name = $name . '.' . $file->getClientOriginalExtension();
-            $save_file = $file->move(public_path() . '/assets/img/tour_providers/' . $merchant->id, $file_name);
+            if ($previousPath === '/merchant_form/tour_provider') {
+                $admin = Auth::guard('admin')->user();
 
-            $merchant->update([
-                'featured_image' => $file_name
-            ]);
-        } else {
-            $file_name = null;
+                if($admin->is_merchant) {
+                    $admin->update([
+                        'merchant_data_id' =>  $result['merchant_tour_provider']->id
+                    ]);
+                }
+
+                return redirect()->route('admin.dashboard')->withSuccess('Merchant Tour Provider Created Successfully');
+            }
+
+            return redirect()->route('admin.merchants.tour_provider.edit', $result['merchant_tour_provider']->id)->withSuccess('Merchant Tour Provider Created Successfully');
         }
-
-        if($merchant) {
-            // Second, Create Hotel Data
-            $merchant_tour_provider = MerchantTourProvider::create(array_merge($data, [
-                'merchant_id' => $merchant->id
-            ]));
-
-            if($merchant_tour_provider) return redirect()->route('admin.merchants.tour_providers.edit', $merchant_tour_provider->id)->withSuccess('Tour Provider created successfully');
-        }
-
-        return redirect()->route('admin.merchants.tour_providers.list')->with('fail', 'Tour Provider failed to add');
     }
 
     public function edit(Request $request) {
@@ -78,31 +78,13 @@ class MerchantTourProviderController extends Controller
     }
 
     public function update(Request $request) {
-        $data = $request->except('_token');
-        $tour_provider = MerchantTourProvider::where('id', $request->id)->with('merchant')->firstOrFail();
+        $result = $this->merchantTourProviderService->UpdateMerchantTourProvider($request);
 
-        $update_tour_provider = $tour_provider->update($data);
-
-        // Save if the featured image exist in request
-        if($request->hasFile('featured_image')) {
-            $file = $request->file('featured_image');
-            $name = Str::snake(Str::lower($request->name));
-            $file_name = $name . '.' . $file->getClientOriginalExtension();
-
-            $old_upload_image = public_path('assets/img/tour_providers/') . $tour_provider->merchant->id . '/' . $tour_provider->merchant->featured_image;
-            if($old_upload_image) {
-                $remove_image = @unlink($old_upload_image);
-            }
-            $save_file = $file->move(public_path() . '/assets/img/tour_providers/' . $tour_provider->merchant->id, $file_name);
-        } else {
-            $file_name = $tour_provider->merchant->featured_image;
-        }
-
-        $update_merchant = $tour_provider->merchant->update(array_merge($data, ['featured_image' => $file_name]));
-
-        if($update_tour_provider && $update_merchant) {
+        if($result['status']) {
             return back()->with('success', 'Tour Provider updated successfully');
         }
+
+        return back()->with('fail', 'Tour Provider Failed to Update');
     }
 
     public function destroy(Request $request) {

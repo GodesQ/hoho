@@ -4,39 +4,36 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 use App\Models\Tour;
 use App\Models\Attraction;
 use App\Models\MerchantTourProvider;
 
+use App\Services\TourService;
+
 use DataTables;
 use Carbon\Carbon;
 
 class TourController extends Controller
 {
+    protected $tourService;
+
+    public function __construct(TourService $tourService) {
+        $this->tourService = $tourService;
+    }
+
     public function list(Request $request) {
 
         if($request->ajax()) {
-            $data = Tour::latest('id');
-            return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('actions', function ($row) {
-                        return '<div class="dropdown">
-                                    <a href="/admin/tours/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="javascript:void(0);" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
-                                </div>';
-                    })
-                    ->addColumn('status', function($row) {
-                        if($row->status) {
-                            return '<div class="badge bg-label-success">Active</div>';
-                        } else {
-                            return '<div class="badge bg-label-warning">InActive</div>';
+            $admin =  Auth::guard('admin')->user();
 
-                        }
-                    })
-                    ->rawColumns(['actions', 'status'])
-                    ->make(true);
+            if(in_array($admin->role, ['tour_operator_admin', 'tour_operator_employee'])) {
+                return $this->tourService->RetrieveTourProviderToursList($request);
+            } 
+
+            return $this->tourService->RetrieveAllToursList($request);
         }
 
         return view('admin-page.tours.list-tour');
@@ -54,17 +51,39 @@ class TourController extends Controller
 
     public function create(Request $request) {
         $attractions = Attraction::get();
-        $tour_providers = MerchantTourProvider::get();
+        $admin =  Auth::guard('admin')->user();
+
+        if(in_array($admin->role, ['tour_operator_admin', 'tour_operator_employee'])) {
+            $tour_providers = MerchantTourProvider::where('id', $admin->merchant_data_id)->get();
+        } else {
+            MerchantTourProvider::get();
+        }
 
         return view('admin-page.tours.create-tour', compact('attractions', 'tour_providers'));
     }
 
     public function store(Request $request) {
-        $data = $request->except('_token');
+        $data = $request->except('_token', 'featured_image');
+
         $tour = Tour::create(array_merge($data, [
+            'attractions_assignments_ids' => $request->has('attractions_assignments_ids') ? json_encode($request->attractions_assignments_ids) : null,
             'is_cancellable' => $request->has('is_cancellable'),
             'is_refundable' => $request->has('is_refundable'),
         ]));
+
+        if($request->hasFile('featured_image')) {
+            $file = $request->file('featured_image');
+            $outputString = str_replace(array(":", ";"), " ", $request->name);
+
+            $name = Str::snake(Str::lower($outputString));
+            $featured_file_name = $name . '.' . $file->getClientOriginalExtension();
+
+            $file->move(public_path() . '/assets/img/tours/' . $tour->id, $featured_file_name);
+
+            $tour->update([
+                'featured_image' => $featured_file_name
+            ]);
+        }
 
         if($tour) return redirect()->route('admin.tours.edit', $tour->id)->with('success', 'Tour created successfully');
     }
@@ -115,7 +134,14 @@ class TourController extends Controller
     public function destroy(Request $request) {
         $tour = Tour::findOrFail($request->id);
 
+        $upload_image = public_path('assets/img/tours/') . $tour->id . '/' . $tour->featured_image;
+
+        if($upload_image) {
+             @unlink($upload_image);
+        }
+
         $remove = $tour->delete();
+
         if($remove) {
             return response([
                 'status' => true,

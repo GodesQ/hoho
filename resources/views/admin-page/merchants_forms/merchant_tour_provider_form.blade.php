@@ -24,13 +24,13 @@
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="name" class="form-label">Merchant Name <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" name="name" id="name" value="" required>
+                                                <input type="text" class="form-control" name="name" id="name" value="{{ $admin->tour_provider->merchant->name ?? null }}" required>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="code" class="form-label">Merchant Code</label>
-                                                <input type="text" class="form-control" name="code" id="code" value="">
+                                                <input type="text" class="form-control" name="code" id="code" value="{{ $admin->tour_provider->merchant->code ?? null }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -38,9 +38,6 @@
                                                 <label for="type" class="form-label">Merchant Type <span class="text-danger">*</span></label>
                                                 <select name="type" id="type" class="form-select" required>
                                                     <option value="Tour Provider">Tour Provider</option>
-                                                    <option value="Store">Store</option>
-                                                    <option value="Hotel">Hotel</option>
-                                                    <option value="Restaurant">Restaurant</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -53,7 +50,7 @@
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="nature_of_business" class="form-label">Nature of Business</label>
-                                                <input type="text" class="form-control" name="nature_of_business" id="nature_of_business" value="">
+                                                <input type="text" class="form-control" name="nature_of_business" id="nature_of_business" value="{{ $admin->tour_provider->merchant->nature_of_business ?? null }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -67,14 +64,14 @@
                                         <div class="col-lg-12">
                                             <div class="mb-3">
                                                 <label for="description" class="form-label">Description</label>
-                                                <textarea name="description" id="description" cols="30" rows="5" class="form-control"></textarea>
+                                                <textarea name="description" id="description" cols="30" rows="5" class="form-control">{{ $admin->tour_provider->merchant->description ?? null }}</textarea>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <hr>
-                                            <h4> Restaurant Information</h4>
+                                            <h4> Tour Provider Information</h4>
                                             <hr>
                                         </div>
                                         <div class="col-lg-6">
@@ -88,25 +85,25 @@
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="payment_options" class="form-label">Payment Options</label>
-                                                <input type="text" class="form-control" name="payment_options" id="payment_options" value="">
+                                                <input type="text" class="form-control" name="payment_options" id="payment_options" value="{{ $admin->tour_provider->payment_options ?? null }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="business_hours" class="form-label">Business Hours</label>
-                                                <textarea name="business_hours" id="business_hours" cols="30" rows="5" class="form-control"></textarea>
+                                                <textarea name="business_hours" id="business_hours" cols="30" rows="5" class="form-control">{{ $admin->tour_provider->business_hours ?? null }}</textarea>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="tags" class="form-label">Tags</label>
-                                                <textarea name="tags" id="tags" cols="30" rows="5" class="form-control"></textarea>
+                                                <textarea name="tags" id="tags" cols="30" rows="5" class="form-control">{{ $admin->tour_provider->tags ?? null }}</textarea>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="Contact Email" class="form-label">Contact Email</label>
-                                                <input type="text" name="contact_email" id="contact_email" class="form-control">
+                                                <input type="text" name="contact_email" id="contact_email" class="form-control" value="{{ $admin->tour_provider->contact_email ?? null }}">
                                             </div>
                                         </div>
                                     </div>

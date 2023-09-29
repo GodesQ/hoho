@@ -33,56 +33,13 @@ class TourReservationController extends Controller
 
     public function list(Request $request) {
         if($request->ajax()) {
-            $user = Auth::guard('admin')->user();
+            $admin = Auth::guard('admin')->user();
             
-            // if($user->role == 'tour_provider') {
-            //     return $this->tourReservationService->getTourProviderReservationsList($request);
-            // }
+            if(in_array($admin->role, ['tour_operator_admin', 'tour_operator_employee'])) {
+                return $this->tourReservationService->RetrieveTourProviderReservationsList($request);
+            } 
             
-            $data = TourReservation::with('user', 'tour')->latest()
-                                    ->when(!empty($request->get('search')), function ($query) use ($request) {
-                                        $searchQuery = $request->get('search');
-                                        $query->whereHas('user', function ($userQuery) use ($searchQuery) {
-                                                $userQuery->where('email', 'LIKE', '%' . $searchQuery . '%')
-                                                ->orWhere('firstname', 'LIKE', '%' . $searchQuery . '%')
-                                                ->orWhere('lastname', 'LIKE', '%' . $searchQuery . '%')
-                                                ->orWhere(DB::raw("concat(firstname, ' ', lastname)"), 'LIKE', '%' . $searchQuery . '%');
-                                        });
-                                    })
-                                    ->when(!empty($request->get('status')), function($query) use ($request) {
-                                        $statusQuery = $request->get('status');
-                                        $query->where('status', $statusQuery);
-                                    })
-                                    ->when(!empty($request->get('type')), function($query) use ($request) {
-                                        $typeQuery = $request->get('type');
-                                        $query->whereHas('tour', function ($tourQuery) use ($typeQuery) {
-                                            $tourQuery->where('type', $typeQuery);
-                                        });
-                                    })
-                                    ->when(!empty($request->get('trip_date')), function($query) use ($request) {
-                                        $tripDateQuery = $request->get('trip_date');
-                                        $query->where('start_date', $tripDateQuery);
-                                    });
-
-            return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('reserved_user', function($row) {
-                        return optional($row->user)->email ? optional($row->user)->email : 'Deleted User';
-                    })
-                    ->addColumn('type', function($row) {
-                        return optional($row->tour)->type;
-                    })
-                    ->addColumn('tour', function($row) {
-                        return optional($row->tour)->name;
-                    })
-                    ->addColumn('actions', function ($row) {
-                        return '<div class="dropdown">
-                                    <a href="/admin/tour_reservations/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <button type="button" disabled class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
-                                </div>';
-                    })
-                    ->rawColumns(['actions'])
-                    ->make(true);
+            return $this->tourReservationService->RetrieveAllTourReservationsList($request);
         }
 
         return view('admin-page.tour_reservations.list-tour-reservation');
@@ -92,6 +49,7 @@ class TourReservationController extends Controller
         $diy_tours = Tour::where('type', 'DIY Tour')->get();
         $guided_tours = Tour::where('type', 'Guided Tour')->limit(50)->get();
         $tours = Tour::get();
+        
         return view('admin-page.tour_reservations.create-tour-reservation', compact('diy_tours', 'guided_tours', 'tours'));
     }
 

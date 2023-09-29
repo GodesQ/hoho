@@ -10,10 +10,10 @@
         </div>
 
         <div class="row">
-            <div class="col-xl">
+            <div class="col-xl-8">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('admin.tours.store') }}" method="POST">
+                        <form action="{{ route('admin.tours.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
                                 <div class="col-lg-6">
@@ -89,26 +89,26 @@
                                     <div class="row">
                                         <div class="col-lg-3">
                                             <div class="mb-3">
-                                                <label for="price" class="form-label">Default Price</label>
-                                                <input type="number" class="form-control" name="price" id="price">
+                                                <label for="price" class="form-label">Default Price <span class="text-danger">*</span></label>
+                                                <input type="number" class="form-control" name="price" id="price" required>
                                             </div>
                                         </div>
                                         <div class="col-lg-3">
                                             <div class="mb-3">
-                                                <label for="bracket_price_one" class="form-label">Bracket Price (Min of 4)</label>
-                                                <input type="number" class="form-control" name="bracket_price_one" id="bracket_price_one">
+                                                <label for="bracket_price_one" class="form-label">Bracket Price (Min of 4) <span class="text-danger">*</span></label>
+                                                <input type="number" class="form-control" name="bracket_price_one" id="bracket_price_one" required>
                                             </div>
                                         </div>
                                         <div class="col-lg-3">
                                             <div class="mb-3">
-                                                <label for="bracket_price_two" class="form-label">Bracket Price (Min of 10)</label>
-                                                <input type="number" class="form-control" name="bracket_price_two" id="bracket_price_two">
+                                                <label for="bracket_price_two" class="form-label">Bracket Price (Min of 10) <span class="text-danger">*</span></label>
+                                                <input type="number" class="form-control" name="bracket_price_two" id="bracket_price_two" required>
                                             </div>
                                         </div>
                                         <div class="col-lg-3">
                                             <div class="mb-3">
-                                                <label for="bracket_price_three" class="form-label">Bracket Price (Min of 25)</label>
-                                                <input type="number" class="form-control" name="bracket_price_three" id="bracket_price_three">
+                                                <label for="bracket_price_three" class="form-label">Bracket Price (Min of 25) <span class="text-danger">*</span></label>
+                                                <input type="number" class="form-control" name="bracket_price_three" id="bracket_price_three" required>
                                             </div>
                                         </div>
                                     </div>
@@ -116,7 +116,7 @@
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <label for="attractions_assignments" class="form-label">Attractions Assignment</label>
-                                        <select name="attractions_assignments_ids" id="attractions_assignments" class="select2 form-select" multiple>
+                                        <select name="attractions_assignments_ids[]" id="attractions_assignments" class="select2 form-select" multiple>
                                             @foreach ($attractions as $attraction)
                                                 <option value="{{ $attraction->id }}">{{ $attraction->name }}</option>
                                             @endforeach
@@ -185,6 +185,84 @@
                     </div>
                 </div>
             </div>
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>Preview of Featured Image</h6>
+                        <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt="Default Image"
+                        style="border-radius: 10px !important;" id="previewImage" width="100%">
+                    </div>
+                </div>
+                
+            </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        // const dateInput = $('#date_duration');
+        // const startDateInput = $('input[name="start_date_duration"]');
+        // const endDateInput = $('input[name="end_date_duration"]');
+        // const totalDurationInput = $('#total_duration');
+        // const previewImage = document.getElementById('previewImage');
+
+        // function formatDate(format_date) {
+        //     const t = new Date(format_date);
+        //     const date = ('0' + t.getDate()).slice(-2);
+        //     const month = ('0' + (t.getMonth() + 1)).slice(-2);
+        //     const year = t.getFullYear();
+        //     const fullDate = `${month}/${date}/${year}`;
+        //     return fullDate;
+        // }
+
+        // const getDateArray = (start_date, end_date) => {
+        //     var arr = [];
+        //     while (start_date <= end_date) {
+        //         arr.push(new Date(start_date));
+        //         start_date.setDate(start_date.getDate() + 1);
+        //     }
+        //     return arr;
+        // }
+
+        // function updateDateRange(startDate, endDate) {
+        //     dateInput.val(startDate && endDate ? formatDate(startDate) + ' - ' + formatDate(endDate) : '');
+        //     startDateInput.val(startDate ? formatDate(startDate) : '');
+        //     endDateInput.val(endDate ? formatDate(endDate) : '');
+        //     totalDurationInput.val(getDateArray(new Date(startDate.format('MM/DD/YYYY')),  new Date(endDate.format('MM/DD/YYYY'))).length);
+        // }
+
+        // dateInput.daterangepicker({
+        //     autoUpdateInput: false,
+        //     minDate: new Date(),
+        //     locale: {
+        //         cancelLabel: 'Clear'
+        //     },
+        // }).val(startDateInput && endDateInput ? formatDate(startDateInput.val()) + ' - ' + formatDate(endDateInput.val()) : '');
+
+        // dateInput.on('apply.daterangepicker', function(ev, picker) {
+        //     updateDateRange(picker.startDate, picker.endDate);
+        // });
+
+        // dateInput.on('cancel.daterangepicker', function() {
+        //     updateDateRange(null, null);
+        // });
+
+        const featuredImageInput = document.getElementById('featured_image');
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    previewImage.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        featuredImageInput.addEventListener('change', handleFileSelect);
+    });
+</script>
+@endpush
