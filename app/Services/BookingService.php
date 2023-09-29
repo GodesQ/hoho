@@ -78,7 +78,11 @@ class BookingService
             $reference_no = $this->generateReferenceNo();
             $additional_charges = $this->generateAdditionalCharges();
 
-            $items = json_decode($request->items, true);
+            if (is_string($request->items) && is_array(json_decode($request->items, true)) && (json_last_error() == JSON_ERROR_NONE)) {
+                $items = json_decode($request->items, true);
+            } else {
+                $items = $request->items;
+            }
 
             $subAmount = 0;
             $totalOfDiscount = 0;
