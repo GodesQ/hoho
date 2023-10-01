@@ -114,6 +114,7 @@ class AdminAuthController extends Controller
                 break;
         }
 
+
         if ($merchant_data) {
             return redirect()->route('admin.dashboard')->with('success', 'Login Successfully');
         } else {

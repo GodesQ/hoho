@@ -77,6 +77,15 @@
                                 <span class="input-group-text" id="basic-addon13">%</span>
                               </div>
                         </div>
+                        <div class="mb-3">
+                            <label for="merchant_id" class="form-label">Merchant</label>
+                            <select name="merchant_id" id="merchant_id" class="select2" {{ auth('admin')->user()->is_merchant ? 'disabled' : null }}>
+                                <option value="">--- SELECT MERCHANT ---</option>
+                                @foreach ($merchants as $merchant)
+                                    <option {{ $merchant->id == $referral->merchant_id ? 'selected' : null }} value="{{ $merchant->id }}">{{ $merchant->name }} ({{ $merchant->type }})</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="mb-3">

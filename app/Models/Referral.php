@@ -22,4 +22,5 @@ class Referral extends Model
         'merchant_id' => 'integer',
         'commision' => 'integer'
     ];
+
 }

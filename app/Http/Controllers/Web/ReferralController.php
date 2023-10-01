@@ -3,35 +3,52 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 use App\Models\Referral;
 use App\Models\TourReservation;
+use App\Models\Merchant;
+
+use App\Services\ReferralService;
 
 use DataTables;
 use DB;
 
 class ReferralController extends Controller
-{
+{   
+    protected $referralService;
+
+    public function __construct(ReferralService $referralService) {
+        $this->referralService = $referralService;
+    }
+
     public function list(Request $request) {
         if($request->ajax()) {
-            $data = Referral::latest();
-            return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('actions', function ($row) {
-                        return '<div class="dropdown">
-                                    <a href="/admin/referrals/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
-                                </div>';
-                    })
-                    ->rawColumns(['actions'])
-                    ->make(true);
+            $current_user = Auth::guard('admin')->user();
+            if($current_user->is_merchant) {
+                return $this->referralService->RetrieveMerchantReferralsList($request);
+            } else {
+                return $this->referralService->RetrieveAllReferralsList($request);
+            }
+            // $data = Referral::latest();
+            // return DataTables::of($data)
+            //         ->addIndexColumn()
+            //         ->addColumn('actions', function ($row) {
+            //             return '<div class="dropdown">
+            //                         <a href="/admin/referrals/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
+            //                         <a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
+            //                     </div>';
+            //         })
+            //         ->rawColumns(['actions'])
+            //         ->make(true);
         }
 
         return view('admin-page.referrals.list-referral');
     }
 
     public function create(Request $request) {
+        $merchants = Merchant::where('type', '!=', 'tour_provider')->get();
         return view('admin-page.referrals.create-referral');
     }
 
@@ -45,8 +62,9 @@ class ReferralController extends Controller
 
     public function edit(Request $request) {
         $referral = Referral::where('id', $request->id)->firstOrFail();
+        $merchants = Merchant::where('type', '!=', 'tour_provider')->get();
 
-        return view('admin-page.referrals.edit-referral', compact('referral'));
+        return view('admin-page.referrals.edit-referral', compact('referral', 'merchants'));
     }
 
     public function update(Request $request) {

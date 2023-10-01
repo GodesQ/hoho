@@ -44,27 +44,35 @@ class Admin extends Authenticatable
     }
 
     public function tour_provider()
+    {   
+        return $this->hasOne(MerchantTourProvider::class, 'id', 'merchant_data_id')->with('merchant');
+    }
+
+    public function merchant_store()
+    {   
+        return $this->hasOne(MerchantStore::class, 'id', 'merchant_data_id')->with('merchant');
+    }
+
+    public function merchant_hotel()
+    {   
+        return $this->hasOne(MerchantHotel::class, 'id', 'merchant_data_id')->with('merchant');
+    }
+    public function merchant_restaurant()
+    {   
+        return $this->hasOne(MerchantRestaurant::class, 'id', 'merchant_data_id')->with('merchant');
+    }
+
+    public function merchant_data()
     {
-        return $this->hasOne(MerchantTourProvider::class, 'id', 'merchant_data_id')->when(in_array($this->role, ['tour_operator_admin', 'tour_operator_employee']), function ($query) {
-            $query->whereIn('role', ['tour_operator_admin', 'tour_operator_employee']);
-        })->with('merchant');
-    }
 
-    public function merchant_store() {
-        return $this->hasOne(MerchantStore::class, 'id', 'merchant_data_id')->when(in_array($this->role, ['merchant_store_admin', 'merchant_store_employee']), function ($query) {
-            $query->whereIn('role', ['merchant_store_admin', 'merchant_store_employee']);
-        })->with('merchant');
-    }
-
-    public function merchant_hotel() {
-        return $this->hasOne(MerchantHotel::class, 'id', 'merchant_data_id')->when(in_array($this->role, ['merchant_hotel_admin', 'merchant_hotel_employee']), function ($query) {
-            $query->whereIn('role', ['merchant_hotel_admin', 'merchant_hotel_employee']);
-        })->with('merchant');
-    }
-
-    public function merchant_restaurant() {
-        return $this->hasOne(MerchantRestaurant::class, 'id', 'merchant_data_id')->when(in_array($this->role, ['merchant_restaurant_admin', 'merchant_restaurant_employee']), function ($query) {
-            $query->whereIn('role', ['merchant_restaurant_admin', 'merchant_restaurant_employee']);
-        })->with('merchant');
+        if ($this->merchant_hotel) {
+            return $this->merchant_hotel;
+        } else if ($this->merchant_restaurant) {
+            return $this->merchant_restaurant;
+        } else if ($this->merchant_store) {
+            return $this->merchant_store;
+        } else {
+            return null;
+        }
     }
 }

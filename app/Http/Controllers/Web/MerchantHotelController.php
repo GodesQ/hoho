@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -11,11 +12,19 @@ use App\Models\MerchantHotel;
 use App\Models\Merchant;
 use App\Models\Organization;
 
+use App\Services\MerchantHotelService;
+
 use DataTables;
 use DB;
 
 class MerchantHotelController extends Controller
 {
+
+    protected $merchantHotelService;
+    public function __construct(MerchantHotelService $merchantHotelService) {
+        $this->merchantHotelService = $merchantHotelService;
+    }
+
     public function list(Request $request) {
 
         if($request->ajax()) {
@@ -47,47 +56,26 @@ class MerchantHotelController extends Controller
     }
 
     public function store(Request $request) {
-        return DB::transaction(function () use ($request) {
-            $data = $request->except('_token', 'featured_image', 'images');
-            $merchant = Merchant::create($data);
-            $file_name = null;
-            $path_folder = 'hotels/' . $merchant->id . '/';
+        $result = $this->merchantHotelService->CreateMerchantHotel($request);
+        
+        if ($result['status'] && $result['merchant'] && $result['merchant_hotel']) {
+            $previousUrl = \URL::previous();
+            $previousPath = parse_url($previousUrl, PHP_URL_PATH);
 
-            if ($request->hasFile('featured_image')) {
-                $file = $request->file('featured_image');
-                $name = Str::snake(Str::lower($request->name));
-                $file_name = $name . '.' . $file->getClientOriginalExtension();
-                Storage::disk('public')->putFileAs($path_folder, $file, $file_name);
+            if ($previousPath === '/merchant_form/hotel') {
+                $admin = Auth::guard('admin')->user();
 
-                $merchant->update([
-                    'featured_image' => $file_name,
-                ]);
-            }
-
-            $images = [];
-
-            if ($request->has('images')) {
-                foreach ($request->file('images') as $count => $image) {
-                    $uniqueId = Str::random(5);
-                    $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $uniqueId . '.' . $image->getClientOriginalExtension();
-                    Storage::disk('public')->putFileAs($path_folder, $image, $image_file_name);
-                    $images[] = $image_file_name;
+                if($admin->is_merchant) {
+                    $admin->update([
+                        'merchant_data_id' =>  $result['merchant_hotel']->id
+                    ]);
                 }
+
+                return redirect()->route('admin.dashboard')->withSuccess('Merchant Hotel Created Successfully');
             }
 
-            $merchant_hotel_data = array_merge($data, [
-                'merchant_id' => $merchant->id,
-                'images' => count($images) > 0 ? json_encode($images) : null,
-            ]);
-
-            $merchant_hotel = Merchanthotel::create($merchant_hotel_data);
-
-            if ($merchant_hotel) {
-                return redirect()->route('admin.merchants.hotels.edit', $merchant_hotel->id)->withSuccess('Hotel created successfully');
-            }
-
-            return redirect()->route('admin.merchants.hotels.list')->with('fail', 'Hotel failed to add');
-        });
+            return redirect()->route('admin.merchants.hotels.edit', $result['merchant_hotel']->id)->withSuccess('Merchant Hotel Created Successfully');
+        }
     }
 
     public function edit(Request $request) {
@@ -97,50 +85,14 @@ class MerchantHotelController extends Controller
     }
 
     public function update(Request $request) {
-        $data = $request->except('_token');
-        $hotel = MerchantHotel::where('id', $request->id)->with('merchant')->firstOrFail();
-        $update_hotel = $hotel->update($data);
-        $images = $hotel->images ? json_decode($hotel->images) : [];
+        $result = $this->merchantHotelService->UpdateMerchantHotel($request);
 
-        $path_folder = 'hotels/' . $hotel->merchant->id . '/';
-
-        if($request->has('images')) {
-            foreach ($request->images as $key => $image) {
-                $uniqueId = Str::random(5);
-                $image_file = $image;
-                $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $uniqueId . '.' . $image_file->getClientOriginalExtension();
-                $save_file = Storage::disk('public')->putFileAs($path_folder, $image, $image_file_name);
-                $images[] = $image_file_name;
-            }
-
-            $update_hotel = $hotel->update([
-                'images' => count($images) > 0 ? json_encode($images) : $hotel->images,
-            ]);
+        if($result['status']) {
+            return back()->with('success', 'Merchant Restaurant Updated Successfully');
         }
 
-        // Save if the featured image exist in request
-        if($request->hasFile('featured_image')) {
-            $file = $request->file('featured_image');
-            $name = Str::snake(Str::lower($request->name));
-            $file_name = $name . '.' . $file->getClientOriginalExtension();
+        return back()->with('fail', 'Merchant Restaurant Failed to Update');
 
-            $old_upload_image = public_path('assets/img/hotels/') . $hotel->merchant->id . '/' . $hotel->merchant->featured_image;
-
-            if($old_upload_image) {
-                $remove_image = @unlink($old_upload_image);
-            }
-
-            $save_file = Storage::disk('public')->putFileAs($path_folder, $file, $file_name);
-
-        } else {
-            $file_name = $hotel->merchant->featured_image;
-        }
-
-        $update_merchant = $hotel->merchant->update(array_merge($data, ['featured_image' => $file_name]));
-
-        if($update_hotel && $update_merchant) {
-            return back()->with('success', 'Hotel updated successfully');
-        }
     }
 
     public function destroy(Request $request) {
