@@ -50,13 +50,22 @@ class BookingService
         }
 
         $response = $this->sendPaymentRequest($transaction);
+
+        if (!$response['status'] || !$response['status'] == 'FAIL') {
+            $reservation->delete();
+            $transaction->delete();
+
+            return back()->with('fail', 'Invalid Transaction');
+        }
+
         $responseData = json_decode($response['result']->getBody(), true);
 
-        if ($responseData['status'] != 'SUCCESS') {
-            $logMessage = "An error occurred during the payment process with the following parameters: " .
-                config('services.aqwire.merchant_code') . " | " . config('services.aqwire.client_id') . " | " . config('services.aqwire.secret_key');
-            dd($logMessage);
-        }
+        // if ($responseData['status'] != 'SUCCESS') {
+        //     $reservation->delete();
+        //     $transaction->delete();
+        //     $logMessage = "An error occurred during the payment process";
+        //     return back()->with('fail', $logMessage);
+        // }
 
         $updateTransaction = $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
 
@@ -115,12 +124,14 @@ class BookingService
 
                 $response = $this->sendPaymentRequest($transaction);
 
-                if (!$response['status']) {
+                if (!$response['status'] || !$response['status'] == 'FAIL') {
                     return response([
                         'status' => FALSE,
-                        'message' => 'Failed to submit request for transaction'
+                        'message' => 'Failed to submit request for transaction',
+                        'data' => $response['result']['data']
                     ]);
                 }
+
                 $responseData = json_decode($response['result']->getBody(), true);
 
                 if ($responseData['status'] != 'SUCCESS') {
@@ -183,7 +194,6 @@ class BookingService
 
     private function generateAdditionalCharges()
     {
-
         $charges = [
             'Convenience Fee' => 99,
             'Travel Pass' => 50,
@@ -329,8 +339,11 @@ class BookingService
             if ($tour) {
                 if ($tour->tour_provider) {
                     if ($tour->tour_provider->contact_email) {
-                        Mail::to('james@godesq.com')->send(new TourProviderBookingNotification($details));
-                        // Mail::to($request->email)->send(new EmailVerification($details));
+                        if(env('APP_ENVIRONMENT') == 'LIVE') {
+                            Mail::to($tour->tour_provider->contact_email)->send(new TourProviderBookingNotification($details));
+                        } else {
+                            Mail::to('james@godesq.com')->send(new TourProviderBookingNotification($details));
+                        }
                     }
                 }
             }
@@ -340,10 +353,8 @@ class BookingService
     private function sendPaymentRequest($transaction)
     {
         try {
-            $client = new Client();
             $requestModel = $this->setRequestModel($transaction);
             $jsonPayload = json_encode($requestModel, JSON_UNESCAPED_UNICODE);
-
 
             if (env('APP_ENVIRONMENT') == 'LIVE') {
                 $url_create = 'https://payments.aqwire.io/api/v3/transactions/create';
@@ -353,21 +364,23 @@ class BookingService
                 $authToken = $this->getHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
             }
 
-            $response = $client->post($url_create, [
-                'headers' => [
-                    'accept' => 'application/json',
-                    'content-type' => 'application/json',
-                    'Qw-Merchant-Id' => config('services.aqwire.merchant_code'),
-                    'Authorization' => 'Bearer ' . $authToken,
-                ],
-                'body' => $jsonPayload,
-                // Set the JSON payload as the request body
-            ]);
+            $response = Http::withHeaders([
+                'accept' => 'application/json',
+                'content-type' => 'application/json',
+                'Qw-Merchant-Id' => config('services.aqwire.merchant_code'),
+                'Authorization' => 'Bearer ' . $authToken,
+            ])->post($url_create, $requestModel);
 
-            // Handle the response here
+                // Handle the response here
             $statusCode = $response->getStatusCode();
-            $responseBody = $response->getBody()->getContents();
-            // dd($response);
+            $responseContent = $response->getBody()->getContents();
+
+            if($statusCode == 400) {
+                return [
+                    'status' => FALSE,
+                    'result' => json_decode($responseContent)
+                ];
+            }
 
             return [
                 'status' => TRUE,
@@ -377,14 +390,15 @@ class BookingService
 
         } catch (RequestException $e) {
             $errorMessage = $e->getMessage();
-            dd($e);
+            dd($e, 'Test');
+
             return [
                 'status' => FALSE,
                 'result' => $errorMessage
             ];
 
         } catch (\Exception $e) {
-            dd($e);
+            dd($e, 'Test');
             return [
                 'status' => FALSE,
                 'result' => 'Failed'
@@ -404,9 +418,9 @@ class BookingService
             'amount' => $transaction->payment_amount,
             'description' => 'Payment for Hoho Reservation',
             'customer' => [
-                'name' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
-                'email' => $transaction->user->email,
-                'mobile' => $transaction->user->contact_no ? '+639212345678' : '+639212345678',
+                'name' => optional($transaction->user)->firstname . ' ' . optional($transaction->user)->lastname,
+                'email' => optional($transaction->user)->email,
+                'mobile' => optional($transaction->user)->contact_no ? "+" . optional($transaction->user)->contact_no : '+639212345678',
             ],
             'project' => [
                 'name' => 'Hoho Checkout Reservation',
