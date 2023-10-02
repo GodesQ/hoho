@@ -31,7 +31,7 @@ class ReferralService
         $merchant_data = $merchant->merchant_data();
         // dd($merchant_data->merchant_id);
 
-        $data = Referral::where('merchant_id', $merchant_data->merchant_id)->latest();
+        $data = Referral::where('merchant_id', $merchant_data->merchant_id ?? 0)->latest();
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('actions', function ($row) {
