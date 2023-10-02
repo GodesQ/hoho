@@ -11,7 +11,6 @@ use App\Events\BusLocationEvent;
 
 class TransportController extends Controller
 {
-
     public function getTransports(Request $request) {
         $transports = Transport::get();
         return response($transports);

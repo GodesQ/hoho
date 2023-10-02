@@ -49,7 +49,7 @@ class ReferralController extends Controller
 
     public function create(Request $request) {
         $merchants = Merchant::where('type', '!=', 'tour_provider')->get();
-        return view('admin-page.referrals.create-referral');
+        return view('admin-page.referrals.create-referral', compact('merchants'));
     }
 
     public function store(Request $request) {

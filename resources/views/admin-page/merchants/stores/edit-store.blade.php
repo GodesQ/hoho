@@ -84,7 +84,8 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="address" class="form-label">Address</label>
-                                        <input type="text" class="form-control" name="address" id="address" value="{{ $store->merchant->address }}">
+                                        <input type="text" class="form-control" name="address" id="address"
+                                            value="{{ $store->merchant->address }}">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -92,13 +93,15 @@
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label action="latitude" class="form-label">Latitude</label>
-                                                <input type="text" class="form-control" name="latitude" id="latitude" value="{{ $store->merchant->latitude }}">
+                                                <input type="text" class="form-control" name="latitude" id="latitude"
+                                                    value="{{ $store->merchant->latitude }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label action="longitude" class="form-label">longitude</label>
-                                                <input type="text" class="form-control" name="longitude" id="longitude" value="{{ $store->merchant->longitude }}">
+                                                <input type="text" class="form-control" name="longitude" id="longitude"
+                                                    value="{{ $store->merchant->longitude }}">
                                             </div>
                                         </div>
                                     </div>
@@ -135,13 +138,15 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="contact_number" class="form-label">Contact Number</label>
-                                        <input type="text" name="contact_number" id="contact_number" class="form-control" value="{{ $store->contact_number }}">
+                                        <input type="text" name="contact_number" id="contact_number"
+                                            class="form-control" value="{{ $store->contact_number }}">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="contact_email" class="form-label">Contact Email</label>
-                                        <input type="text" name="contact_email" id="contact_email" class="form-control" value="{{ $store->contact_email }}">
+                                        <input type="text" name="contact_email" id="contact_email"
+                                            class="form-control" value="{{ $store->contact_email }}">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -169,38 +174,71 @@
                             <h4>Images</h4>
                             <div class="row">
                                 <div class="col-lg-12">
-                                    <?php $store_images = $store->images ? json_decode($store->images) : [] ?>
+                                    <?php $store_images = $store->images ? json_decode($store->images) : []; ?>
                                     <div class="row">
                                         <div class="col-lg-4">
                                             <div class="mb-3">
-                                                @if(count($store_images) > 0 && isset($store_images[0]))
-                                                    <img src="{{ URL::asset('assets/img/stores/' . $store->merchant->id . '/' . $store_images[0]) }}" id="previewImage1" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
-                                                    <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $store->id}}, '{{ $store_images[0] }}')">Remove <i class="bx bx-trash"></i></button>
+                                                @if (count($store_images) > 0 && isset($store_images[0]))
+                                                    <img src="{{ URL::asset('assets/img/stores/' . $store->merchant->id . '/' . $store_images[0]) }}"
+                                                        id="previewImage1" alt="Default Image" width="100%"
+                                                        height="200px"
+                                                        style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    <button type="button"
+                                                        style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
+                                                        class="btn btn-primary"
+                                                        onclick="removeImageBtn({{ $store->id }}, '{{ $store_images[0] }}')">Remove
+                                                        <i class="bx bx-trash"></i></button>
                                                 @else
-                                                    <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_1" onchange="handlePreviewImage(this, 'previewImage1')">
-                                                    <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage1" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                                    <input type="file" class="form-control mb-2 image-input"
+                                                        accept="image/*" name="images[]" id="image_1"
+                                                        onchange="handlePreviewImage(this, 'previewImage1')">
+                                                    <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
+                                                        id="previewImage1" alt="Default Image" width="100%"
+                                                        height="200px" style="border-radius: 10px; object-fit: cover;">
                                                 @endif
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
                                             <div class="mb-3">
-                                                @if(count($store_images) > 0 && isset($store_images[1]))
-                                                    <img src="{{ URL::asset('assets/img/stores/' . $store->merchant->id . '/' . $store_images[1]) }}" id="previewImage2" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
-                                                    <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $store->id}}, '{{ $store_images[1] }}')">Remove <i class="bx bx-trash"></i></button>
+                                                @if (count($store_images) > 0 && isset($store_images[1]))
+                                                    <img src="{{ URL::asset('assets/img/stores/' . $store->merchant->id . '/' . $store_images[1]) }}"
+                                                        id="previewImage2" alt="Default Image" width="100%"
+                                                        height="200px"
+                                                        style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    <button type="button"
+                                                        style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
+                                                        class="btn btn-primary"
+                                                        onclick="removeImageBtn({{ $store->id }}, '{{ $store_images[1] }}')">Remove
+                                                        <i class="bx bx-trash"></i></button>
                                                 @else
-                                                    <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_2" onchange="handlePreviewImage(this, 'previewImage2')">
-                                                    <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage2" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                                    <input type="file" class="form-control mb-2 image-input"
+                                                        accept="image/*" name="images[]" id="image_2"
+                                                        onchange="handlePreviewImage(this, 'previewImage2')">
+                                                    <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
+                                                        id="previewImage2" alt="Default Image" width="100%"
+                                                        height="200px" style="border-radius: 10px; object-fit: cover;">
                                                 @endif
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
                                             <div class="mb-3">
-                                                @if(count($store_images) > 0 && isset($store_images[2]))
-                                                    <img src="{{ URL::asset('assets/img/stores/' . $store->merchant->id . '/' . $store_images[2]) }}" id="previewImage3" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
-                                                    <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $store->id}}, '{{ $store_images[2] }}')">Remove <i class="bx bx-trash"></i></button>
+                                                @if (count($store_images) > 0 && isset($store_images[2]))
+                                                    <img src="{{ URL::asset('assets/img/stores/' . $store->merchant->id . '/' . $store_images[2]) }}"
+                                                        id="previewImage3" alt="Default Image" width="100%"
+                                                        height="200px"
+                                                        style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    <button type="button"
+                                                        style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
+                                                        class="btn btn-primary"
+                                                        onclick="removeImageBtn({{ $store->id }}, '{{ $store_images[2] }}')">Remove
+                                                        <i class="bx bx-trash"></i></button>
                                                 @else
-                                                    <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_3" onchange="handlePreviewImage(this, 'previewImage3')">
-                                                    <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage3" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                                    <input type="file" class="form-control mb-2 image-input"
+                                                        accept="image/*" name="images[]" id="image_3"
+                                                        onchange="handlePreviewImage(this, 'previewImage3')">
+                                                    <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
+                                                        id="previewImage3" alt="Default Image" width="100%"
+                                                        height="200px" style="border-radius: 10px; object-fit: cover;">
                                                 @endif
                                             </div>
                                         </div>
@@ -301,5 +339,40 @@
 
         // Attach the 'handleFileSelect' function to the file input's change event
         document.getElementById('featured_image').addEventListener('change', handleFileSelect);
+    </script>
+
+    <script>
+        let address = document.querySelector('#address');
+        let latitude = document.querySelector('#latitude');
+        let longitude = document.querySelector('#longitude');
+
+        function initMap() {
+            // for search
+            let searchBox = new google.maps.places.SearchBox(address);
+
+            google.maps.event.addListener(searchBox, 'places_changed', function() {
+                var places = searchBox.getPlaces(),
+                    bounds = new google.maps.LatLngBounds(),
+                    i, place, lat, long, resultArray, address = places[0].formatted_address;
+                lat = places[0].geometry.location.lat()
+                long = places[0].geometry.location.lng();
+                latitude.value = lat;
+                longitude.value = long;
+                resultArray = places[0].address_components;
+            });
+        }
+
+        $(document).ready(function() {
+            $('#address').keydown(function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        });
+    </script>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initMap">
     </script>
 @endpush

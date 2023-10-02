@@ -49,33 +49,30 @@ class BookingService
             return back()->with('fail', 'Failed to Create Reservation');
         }
 
-        $response = $this->sendPaymentRequest($transaction);
-
-        if (!$response['status'] || !$response['status'] == 'FAIL') {
-            $reservation->delete();
-            $transaction->delete();
-
-            return back()->with('fail', 'Invalid Transaction');
-        }
-
-        $responseData = json_decode($response['result']->getBody(), true);
-
-        // if ($responseData['status'] != 'SUCCESS') {
-        //     $reservation->delete();
-        //     $transaction->delete();
-        //     $logMessage = "An error occurred during the payment process";
-        //     return back()->with('fail', $logMessage);
-        // }
-
-        $updateTransaction = $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
-
-        if ($request->is('api/*')) {
-            return response([
-                'status' => 'paying',
-                'url' => $responseData['paymentUrl']
-            ]);
+        if($request->payment_method == 'cash_payment') {
+            return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Reservation Successfully');
         } else {
-            return redirect($responseData['paymentUrl']);
+            $response = $this->sendPaymentRequest($transaction);
+
+            if (!$response['status'] || !$response['status'] == 'FAIL') {
+                $reservation->delete();
+                $transaction->delete();
+
+                return back()->with('fail', 'Invalid Transaction');
+            }
+
+            $responseData = json_decode($response['result']->getBody(), true);
+
+            $updateTransaction = $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+
+            if ($request->is('api/*')) {
+                return response([
+                    'status' => 'paying',
+                    'url' => $responseData['paymentUrl']
+                ]);
+            } else {
+                return redirect($responseData['paymentUrl']);
+            }
         }
     }
 
@@ -251,6 +248,7 @@ class BookingService
             'status' => 'pending',
             'number_of_pass' => $request->number_of_pass,
             'ticket_pass' => $request->type == 'DIY' ? $request->ticket_pass : null,
+            'payment_method' => $request->payment_method,
             'referral_code' => $request->referral_code,
         ]);
 

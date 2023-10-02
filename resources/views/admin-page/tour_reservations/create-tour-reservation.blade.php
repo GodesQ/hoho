@@ -219,6 +219,24 @@
                                     <h6 id="total_amount_text">₱ 0.00</h6>
                                 </div>
                             </div>
+                            <hr>
+                            <div class="mb-3">
+                                <h6>What is your Payment Method?</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="cash_payment"
+                                        value="cash_payment" required checked />
+                                    <label class="form-check-label" for="cash_payment">
+                                        Cash
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="payment_gateway"
+                                        value="payment_gateway" required />
+                                    <label class="form-check-label" for="payment_gateway">
+                                        Payment Gateway
+                                    </label>
+                                </div>
+                            </div>
                             <div class="my-3 justify-content-end d-flex">
                                 <button class="btn btn-primary" id="book-btn">Book Reservation</button>
                             </div>

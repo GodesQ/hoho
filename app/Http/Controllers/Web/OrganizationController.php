@@ -8,20 +8,20 @@ use Illuminate\Support\Str;
 
 use App\Models\Organization;
 
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 class OrganizationController extends Controller
 {
     public function list(Request $request) {
         if($request->ajax()) {
-            $data = Organization::latest();
+            $data = Organization::get();
             return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('status', function($row) {
                         if($row->is_active) {
                             return '<span class="badge bg-label-success me-1">Active</span>';
                         } else {
-                            return '<span class="badge bg-label-warning me-1">In Active</span>';
+                            return '<span class="badge bg-label-warning me-1">Inactive</span>';
                         }
                     })
                     ->addColumn('actions', function ($row) {

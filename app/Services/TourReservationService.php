@@ -2,34 +2,17 @@
 
 namespace App\Services;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
-
-use GuzzleHttp\Client;
-use App\Services\BookingService;
-
-use App\Enum\ReservationStatusEnum;
-
 use App\Models\TourReservation;
-use App\Models\User;
-use App\Models\Tour;
-use App\Models\Transaction;
-use App\Models\ReservationUserCode;
-
-use App\Mail\BookingConfirmationMail;
-
-use Yajra\DataTables\DataTables;
 use DB;
-use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\DataTables;
 
 class TourReservationService
 {
-    public function RetrieveAllTourReservationsList($request)
+    public function RetrieveAllTourReservationsList(Request $request)
     {
-        $data = TourReservation::with('user', 'tour')->latest()
+        $data = TourReservation::with('user', 'tour')
             ->when(!empty($request->get('search')), function ($query) use ($request) {
                 $searchQuery = $request->get('search');
                 $query->whereHas('user', function ($userQuery) use ($searchQuery) {
@@ -54,14 +37,14 @@ class TourReservationService
                 $query->where('start_date', $tripDateQuery);
             });
 
-            return $this->generateDataTable($data, $request);
+            return $this->_generateDataTable($data, $request);
     }
 
-    public function RetrieveTourProviderReservationsList($request)
+    public function RetrieveTourProviderReservationsList(Request $request)
     {
         $admin = Auth::guard('admin')->user();
 
-        $data = TourReservation::with('user', 'tour')->latest()
+        $data = TourReservation::with('user', 'tour')
             ->whereHas('tour', function ($query) use ($admin) {
                 return $query->where('tour_provider_id', $admin->merchant_data_id);
             })
@@ -89,10 +72,12 @@ class TourReservationService
                 $query->where('start_date', $tripDateQuery);
             });
 
-            return $this->generateDataTable($data, $request);
+            return $this->_generateDataTable($data, $request);
     }
 
-    private function generateDataTable($data, $request)
+    #HELPER FUNCTIONS
+ 
+    private function _generateDataTable($data, $request)
     {
         return DataTables::of($data)
             ->addIndexColumn()
@@ -100,10 +85,10 @@ class TourReservationService
                 return optional($row->user)->email ? optional($row->user)->email : 'Deleted User';
             })
             ->addColumn('type', function ($row) {
-                return optional($row->tour)->type;
+                return optional($row->tour)->type ?? 'Deleted Tour';
             })
             ->addColumn('tour', function ($row) {
-                return optional($row->tour)->name;
+                return optional($row->tour)->name ?? "Deleted Tour";
             })
             ->addColumn('actions', function ($row) {
                 return '<div class="dropdown">

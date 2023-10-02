@@ -35,7 +35,7 @@ class AdminAuthController extends Controller
             if ($admin->is_merchant) {
                 return $this->checkAdminRoleForMerchant($admin);
             } else {
-                return redirect()->route('admin.dashboard')->with('success', 'Login Successfully');
+                return redirect()->route('admin.dashboard')->with('success', 'Login Successful');
             }
 
         } else {

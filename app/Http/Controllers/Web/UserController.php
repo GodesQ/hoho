@@ -13,24 +13,22 @@ use App\Models\User;
 use App\Models\Admin;
 use App\Models\Interest;
 
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
 {
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::latest('created_at');
+            $data = User::get();
+            
             return DataTables::of($data)
                 ->addIndexColumn()
-                // ->addColumn('username', function($row) {
-                //     return '<a href="/admin/users/edit/' .$row->id. '">'. $row->username .'</a>';
-                // })
                 ->addColumn('status', function ($row) {
                     if ($row->status == 'active') {
                         return '<span class="badge bg-label-success me-1">Active</span>';
                     } else {
-                        return '<span class="badge bg-label-warning me-1">In Active</span>';
+                        return '<span class="badge bg-label-warning me-1">Inactive</span>';
                     }
                 })
                 ->addColumn('email_verify', function ($row) {

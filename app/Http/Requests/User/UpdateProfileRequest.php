@@ -24,7 +24,11 @@ class UpdateProfileRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email',
+            'email' => [
+                'required',
+                'email',
+                new \App\Rules\UniqueAcrossTables('users', 'admins', 'email')
+            ],
             'firstname' => 'nullable',
             'lastname' => 'nullable',
             'birthdate' => 'nullable'

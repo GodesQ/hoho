@@ -35,7 +35,9 @@ class MerchantStoreController extends Controller
      */
     public function list(Request $request) {
         if($request->ajax()) {
-            $data = MerchantStore::latest()->with('merchant');
+            // dd($request->all());
+            $data = MerchantStore::with('merchant');
+            
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {

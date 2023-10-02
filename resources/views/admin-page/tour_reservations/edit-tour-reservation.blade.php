@@ -82,7 +82,7 @@
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="tour" class="form-label">Tour</label>
-                                    <input type="text" class="form-control" name="tour" value="{{ optional($reservation->tour)->name }}" disabled>
+                                    <input type="text" class="form-control" name="tour" value="{{ optional($reservation->tour)->name ?? 'Deleted Tour' }}" disabled>
                                 </div>
                             </div>
                             <div class="col-lg-6">

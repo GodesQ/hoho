@@ -10,13 +10,13 @@ use Illuminate\Support\Str;
 use App\Models\Admin;
 use App\Models\Role;
 
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 class AdminController extends Controller
 {
     public function list(Request $request) {
         if($request->ajax()) {
-            $data = Admin::latest();
+            $data = Admin::get();
             return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('actions', function ($row) {
