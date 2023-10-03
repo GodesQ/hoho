@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\InterestController;
 use App\Http\Controllers\Api\ReferralController;
 use App\Http\Controllers\Api\PromoCodeController;
 use App\Http\Controllers\Api\ForgotPasswordController;
+use App\Http\Controllers\Api\TicketPassController;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,6 +79,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('cart/store', [CartController::class, 'storeCart']);
     Route::delete('cart/destroy/{id}', [CartController::class, 'removeCart']);
     Route::delete('cart/destroy_all/user', [CartController::class, 'removeAllUserCart']);
+
+    Route::get('ticket_passes', [TicketPassController::class, 'getTicketPasses']);
 
     Route::get('interests', [InterestController::class, 'getInterests']);
 
