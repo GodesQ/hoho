@@ -56,7 +56,7 @@ class TourController extends Controller
         if(in_array($admin->role, ['tour_operator_admin', 'tour_operator_employee'])) {
             $tour_providers = MerchantTourProvider::where('id', $admin->merchant_data_id)->get();
         } else {
-            MerchantTourProvider::get();
+            $tour_providers = MerchantTourProvider::get();
         }
 
         return view('admin-page.tours.create-tour', compact('attractions', 'tour_providers'));
