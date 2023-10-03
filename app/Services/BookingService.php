@@ -408,7 +408,7 @@ class BookingService
     }
 
     private function setRequestModel($transaction)
-    {
+    {   
         $model = [
             'uniqueId' => $transaction->reference_no,
             'currency' => 'PHP',

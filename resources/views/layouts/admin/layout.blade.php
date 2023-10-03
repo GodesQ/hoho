@@ -241,6 +241,13 @@
                         @endcan
                     @endauth
 
+                    <li class="menu-item {{ preg_match('/admin\/ticket_passes/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.ticket_passes.list') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-box"></i>
+                            <div data-i18n="Ticket Passes">Ticket Passes</div>
+                        </a>
+                    </li>
+
                     @auth('admin')
                         @can('view_tour_reservations_list')
                             <li

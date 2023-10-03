@@ -9,6 +9,7 @@ use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\AdminController;
 use App\Http\Controllers\Web\TourController;
+use App\Http\Controllers\Web\TicketPassController;
 use App\Http\Controllers\Web\TourReservationController;
 use App\Http\Controllers\Web\TransactionController;
 use App\Http\Controllers\Web\TransportController;
@@ -236,6 +237,14 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('promo_codes/edit/{id}', [PromoCodeController::class, 'edit'])->name('promo_codes.edit');
     Route::post('promo_codes/update/{id}', [PromoCodeController::class, 'update'])->name('promo_codes.update');
     Route::delete('promo_codes/destroy', [PromoCodeController::class, 'destroy'])->name('promo_codes.destroy');
+
+    Route::get('ticket_passes', [TicketPassController::class, 'list'])->name('ticket_passes.list');
+    Route::get('ticket_passes/create', [TicketPassController::class, 'create'])->name('ticket_passes.create');
+    Route::post('ticket_passes/store', [TicketPassController::class, 'store'])->name('ticket_passes.store');
+    Route::get('ticket_passes/edit/{id}', [TicketPassController::class, 'edit'])->name('ticket_passes.edit');
+    Route::post('ticket_passes/update/{id}', [TicketPassController::class, 'update'])->name('ticket_passes.update');
+    Route::delete('ticket_passes/destroy', [TicketPassController::class, 'destroy'])->name('ticket_passes.destroy');
+
 
     Route::prefix('reports')->as('reports.')->group(function () {
         Route::get('user_demographics', [DataReportController::class, 'user_demographics'])->name('user_demographics');
