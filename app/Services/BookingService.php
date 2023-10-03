@@ -193,7 +193,7 @@ class BookingService
     {
         $charges = [
             'Convenience Fee' => 99,
-            'Travel Pass' => 50,
+            // 'Travel Pass' => 50,
         ];
 
         return $charges;
@@ -202,7 +202,8 @@ class BookingService
     private function getTotalOfAdditionalCharges($number_of_pass, $additional_charges)
     {
         $convenience_fee = $additional_charges['Convenience Fee'] * $number_of_pass;
-        $travel_pass = $additional_charges['Travel Pass'] * $number_of_pass;
+        // $travel_pass = $additional_charges['Travel Pass'] * $number_of_pass;
+        $travel_pass = ($additional_charges['Travel Pass'] ?? 0) * $number_of_pass;
 
         return $convenience_fee + $travel_pass;
     }
