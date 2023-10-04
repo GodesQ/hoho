@@ -53,7 +53,7 @@ class UserController extends Controller
         }
 
         $user_update = $user->update([
-            'email' => $request->email,
+            // 'email' => $request->email,
             'user_profile' => $file_name,
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,

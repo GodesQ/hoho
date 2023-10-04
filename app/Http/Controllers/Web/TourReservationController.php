@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use App\Services\BookingService;
 use App\Services\TourReservationService;
 
+use App\Models\User;
 use App\Models\TourReservation;
 use App\Models\Tour;
 use App\Models\ReservationUserCode;
@@ -54,6 +55,22 @@ class TourReservationController extends Controller
     }
 
     public function store(Request $request) {
+        $user = User::where('id', $request->reserved_user_id)->first();
+
+        if(!$user->firstname || !$user->lastname) {
+            return response([
+                'status' => 'failed',
+                'message' => 'Please complete your name before continue to checkout'
+            ]);
+        }
+
+        if(!$user->contact_no) {
+            return response([
+                'status' => 'failed',
+                'message' => "Please provide a contact number to continue"
+            ]);
+        }
+        
         return $this->bookingService->createBooking($request);
     }
 

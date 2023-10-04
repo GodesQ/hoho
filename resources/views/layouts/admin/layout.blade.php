@@ -241,12 +241,16 @@
                         @endcan
                     @endauth
 
+                    @auth('admin')
+                        @can('view_ticket_passes_list')
                     <li class="menu-item {{ preg_match('/admin\/ticket_passes/', Request::path()) ? 'active' : null }}">
                         <a href="{{ route('admin.ticket_passes.list') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-box"></i>
                             <div data-i18n="Ticket Passes">Ticket Passes</div>
                         </a>
                     </li>
+                        @endcan
+                    @endauth
 
                     @auth('admin')
                         @can('view_tour_reservations_list')
@@ -574,6 +578,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     {{-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initMap"></script> --}}
 
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>

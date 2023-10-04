@@ -389,7 +389,7 @@ class BookingService
 
         } catch (RequestException $e) {
             $errorMessage = $e->getMessage();
-            dd($e, 'Test');
+            dd($e);
 
             return [
                 'status' => FALSE,
@@ -397,7 +397,7 @@ class BookingService
             ];
 
         } catch (\Exception $e) {
-            dd($e, 'Test');
+            dd($e);
             return [
                 'status' => FALSE,
                 'result' => 'Failed'

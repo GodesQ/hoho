@@ -75,7 +75,7 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="trip_date" class="form-label">Trip Date</label>
-                                        <input type="date" class="form-control" name="trip_date" id="trip_date" required>
+                                        <input type="text" readonly placeholder="Select a Trip Date" class="form-control" name="trip_date" id="trip_date" required>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -223,15 +223,15 @@
                             <div class="mb-3">
                                 <h6>What is your Payment Method?</h6>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="payment_method" id="cash_payment"
-                                        value="cash_payment" required checked />
+                                    <input class="form-check-input" type="radio" name="payment_method"
+                                        id="cash_payment" value="cash_payment" required checked />
                                     <label class="form-check-label" for="cash_payment">
                                         Cash
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="payment_method" id="payment_gateway"
-                                        value="payment_gateway" required />
+                                    <input class="form-check-input" type="radio" name="payment_method"
+                                        id="payment_gateway" value="payment_gateway" required />
                                     <label class="form-check-label" for="payment_gateway">
                                         Payment Gateway
                                     </label>
@@ -250,7 +250,24 @@
 @endsection
 
 @push('scripts')
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
     <script>
+        $(function() {
+            
+            if(["super_admin", "admin"].includes("{{ auth('admin')->user()->role }}")) {
+                var dateToday = new Date();
+            } else {
+                var dateToday = new Date();
+                dateToday.setDate(dateToday.getDate() + 5); // Add 5 days
+            }
+
+            $("#trip_date").datepicker({
+                minDate: dateToday,
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'yy-mm-dd'
+            });
+        });
 
         $('.reserved_users, .registered_passengers').select2({
             placeholder: 'Select users',
