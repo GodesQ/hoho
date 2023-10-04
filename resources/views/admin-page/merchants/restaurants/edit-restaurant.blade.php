@@ -124,7 +124,10 @@
                                     <div class="mb-3">
                                         <label for="interests" class="form-label">Interests</label>
                                         <select name="interests[]" id="interests" class="form-select select2" multiple>
-                                            <option value=""></option>
+                                            <?php $selected_interests = $restaurant->interests ? json_decode($restaurant->interests) : [] ?>
+                                            @foreach ($interests as $interest)
+                                                <option {{ in_array($interest->id, $selected_interests) ? 'selected' : null }} value="{{ $interest->id }}">{{ $interest->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>

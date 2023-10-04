@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\MerchantRestaurant;
 use App\Models\Merchant;
 use App\Models\Organization;
+use App\Models\Interest;
 
 use Yajra\DataTables\DataTables;
 use DB;
@@ -52,7 +53,8 @@ class MerchantRestaurantController extends Controller
     public function create(Request $request)
     {
         $organizations = Organization::get();
-        return view('admin-page.merchants.restaurants.create-restaurant', compact('organizations'));
+        $interests = Interest::get();
+        return view('admin-page.merchants.restaurants.create-restaurant', compact('organizations', 'interests'));
     }
 
     public function store(Request $request)
@@ -84,7 +86,9 @@ class MerchantRestaurantController extends Controller
     {
         $organizations = Organization::get();
         $restaurant = MerchantRestaurant::where('id', $request->id)->with('merchant')->first();
-        return view('admin-page.merchants.restaurants.edit-restaurant', compact('restaurant', 'organizations'));
+        $interests = Interest::get();
+
+        return view('admin-page.merchants.restaurants.edit-restaurant', compact('restaurant', 'organizations', 'interests'));
     }
 
     public function update(Request $request)

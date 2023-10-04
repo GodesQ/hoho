@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\MerchantHotel;
 use App\Models\Merchant;
 use App\Models\Organization;
+use App\Models\Interest;
 
 use App\Services\MerchantHotelService;
 
@@ -52,7 +53,8 @@ class MerchantHotelController extends Controller
 
     public function create(Request $request) {
         $organizations = Organization::get();
-        return view('admin-page.merchants.hotels.create-hotel', compact('organizations'));
+        $interests = Interest::get();
+        return view('admin-page.merchants.hotels.create-hotel', compact('organizations', 'interests'));
     }
 
     public function store(Request $request) {

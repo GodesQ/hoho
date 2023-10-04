@@ -112,7 +112,9 @@ class MerchantStoreController extends Controller
     public function edit(Request $request) {
         $organizations = Organization::get();
         $store = MerchantStore::where('id', $request->id)->with('merchant')->first();
-        return view('admin-page.merchants.stores.edit-store', compact('store', 'organizations'));
+        $interests = Interest::get();
+
+        return view('admin-page.merchants.stores.edit-store', compact('store', 'organizations', 'interests'));
     }
 
     public function update(Request $request) {

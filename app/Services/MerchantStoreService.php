@@ -55,6 +55,7 @@ class MerchantStoreService {
             $merchant_store_data = array_merge($data, [
                 'merchant_id' => $merchant->id,
                 'images' => count($images) > 0 ? json_encode($images) : null,
+                'interests' => $request->has('interests') ? json_encode($request->interests) : null
             ]);
 
             $merchant_store = MerchantStore::create($merchant_store_data);
@@ -81,7 +82,9 @@ class MerchantStoreService {
             $data = $request->except('_token', 'images', 'featured_image');
             $store = MerchantStore::where('id', $request->id)->with('merchant')->firstOrFail();
 
-            $update_store = $store->update($data);
+            $update_store = $store->update(array_merge($data, [
+                'interests' => $request->has('interests') ? json_encode($request->interests) : null
+            ]));
 
             $images = $store->images ? json_decode($store->images) : [];
 

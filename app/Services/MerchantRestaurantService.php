@@ -45,6 +45,7 @@ class MerchantRestaurantService
             $merchant_restaurant_data = array_merge($data, [
                 'merchant_id' => $merchant->id,
                 'images' => count($images) > 0 ? json_encode($images) : null,
+                'interests' => $request->has('interests') ? json_encode($request->interests) : null
             ]);
 
             $merchant_restaurant = MerchantRestaurant::create($merchant_restaurant_data);
@@ -72,7 +73,9 @@ class MerchantRestaurantService
             $data = $request->except('_token', 'images', 'featured_image');
             $restaurant = MerchantRestaurant::where('id', $request->id)->with('merchant')->firstOrFail();
 
-            $update_restaurant = $restaurant->update($data);
+            $update_restaurant = $restaurant->update(array_merge($data, [
+                'interests' => $request->has('interests') ? json_encode($request->interests) : null
+            ]));
 
             $images = $restaurant->images ? json_decode($restaurant->images) : [];
 

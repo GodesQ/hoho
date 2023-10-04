@@ -46,6 +46,7 @@ class MerchantHotelService
             $merchant_hotel_data = array_merge($data, [
                 'merchant_id' => $merchant->id,
                 'images' => count($images) > 0 ? json_encode($images) : null,
+                'interests' => $request->has('interests') ? json_encode($request->interests) : null
             ]);
 
             $merchant_hotel = MerchantHotel::create($merchant_hotel_data);
@@ -73,7 +74,9 @@ class MerchantHotelService
 
             $hotel = MerchantHotel::where('id', $request->id)->with('merchant')->firstOrFail();
 
-            $update_hotel = $hotel->update($data);
+            $update_hotel = $hotel->update(array_merge($data, [
+                'interests' => $request->has('interests') ? json_encode($request->interests) : null
+            ]));
 
             $images = $hotel->images ? json_decode($hotel->images) : [];
 

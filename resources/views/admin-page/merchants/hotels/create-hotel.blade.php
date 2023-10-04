@@ -75,7 +75,9 @@
                                     <div class="mb-3">
                                         <label for="interests" class="form-label">Interests</label>
                                         <select name="interests[]" id="interests" class="form-select select2" multiple>
-                                            <option value=""></option>
+                                            @foreach ($interests as $interest)
+                                                <option value="{{ $interest->id }}">{{ $interest->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
