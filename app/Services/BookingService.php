@@ -125,7 +125,7 @@ class BookingService
                     return response([
                         'status' => FALSE,
                         'message' => 'Failed to submit request for transaction',
-                        'data' => $response['result']['data']
+                        'data' => $response['result']->data
                     ]);
                 }
 

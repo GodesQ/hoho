@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\TourReservation;
 use App\Models\Tour;
 use App\Models\ReservationUserCode;
+use App\Models\TicketPass;
 
 use App\Mail\BookingConfirmationMail;
 
@@ -48,29 +49,24 @@ class TourReservationController extends Controller
 
     public function create(Request $request) {
         $diy_tours = Tour::where('type', 'DIY Tour')->get();
-        $guided_tours = Tour::where('type', 'Guided Tour')->limit(50)->get();
+        $guided_tours = Tour::where('type', 'Guided Tour')->get();
         $tours = Tour::get();
+        $ticket_passes = TicketPass::get();
         
-        return view('admin-page.tour_reservations.create-tour-reservation', compact('diy_tours', 'guided_tours', 'tours'));
+        return view('admin-page.tour_reservations.create-tour-reservation', compact('diy_tours', 'guided_tours', 'tours', 'ticket_passes'));
     }
 
     public function store(Request $request) {
         $user = User::where('id', $request->reserved_user_id)->first();
 
         if(!$user->firstname || !$user->lastname) {
-            return response([
-                'status' => 'failed',
-                'message' => 'Please complete your name before continue to checkout'
-            ]);
+            return back()->with('fail', 'Please complete your name before continue to checkout');
         }
 
         if(!$user->contact_no) {
-            return response([
-                'status' => 'failed',
-                'message' => "Please provide a contact number to continue"
-            ]);
+            return back()->with('fail', 'Please provide a contact number to continue');
         }
-        
+
         return $this->bookingService->createBooking($request);
     }
 

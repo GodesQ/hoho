@@ -105,17 +105,19 @@
                                 <div class="col-lg-12 diy_ticket_pass">
                                     <div class="mb-3">
                                         <div class="form-label">DIY Ticket Pass</div>
-                                        <div class="form-check form-check-inline mt-3">
-                                            <input class="form-check-input diy_ticket_pass_radio" type="radio"
-                                                name="ticket_pass" id="one_day_diy_ticket_pass" value="1 Day Pass" />
-                                            <label class="form-check-label" for="one_day_diy_ticket_pass"
-                                                style="cursor: pointer;">
-                                                <img src="https://metrohoho.s3.ap-southeast-1.amazonaws.com/tickets/1-day.png"
-                                                    alt="1 Day Ticket Pass" width="120px">
-                                                <h6 class="text-center my-2">₱ 990.00</h6>
-                                            </label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
+                                        @foreach ($ticket_passes as $ticket_pass)
+                                            <div class="form-check form-check-inline mt-3">
+                                                <input class="form-check-input diy_ticket_pass_radio" type="radio"
+                                                    name="ticket_pass" id="{{ $ticket_pass->name }}" value="{{ $ticket_pass->name }}" data-amount="{{ $ticket_pass->price }}" />
+                                                <label class="form-check-label" for="{{ $ticket_pass->name }}"
+                                                    style="cursor: pointer;">
+                                                    <img src="{{ URL::asset('assets/img/ticket_passes/' . $ticket_pass->ticket_image) }}"
+                                                        alt="1 Day Ticket Pass" width="120px">
+                                                    <h6 class="text-center my-2">₱ {{ number_format($ticket_pass->price, 2) }}</h6>
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                        {{-- <div class="form-check form-check-inline">
                                             <input class="form-check-input diy_ticket_pass_radio" type="radio"
                                                 name="ticket_pass" id="two_day_diy_ticket_pass" value="2 Day Pass" />
                                             <label class="form-check-label" for="two_day_diy_ticket_pass"
@@ -134,7 +136,7 @@
                                                     alt="3 Day Ticket Pass" width="120px">
                                                 <h6 class="text-center my-2">₱ 2499.00</h6>
                                             </label>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
                             </div>
@@ -348,7 +350,7 @@
             }
         });
 
-        $('#one_day_diy_ticket_pass, #two_day_diy_ticket_pass, #three_day_diy_ticket_pass').on('change', function(e) {
+        $('.diy_ticket_pass_radio').on('change', function(e) {
             computeTotalAmount();
         });
 
@@ -371,11 +373,7 @@
         })
 
         function computeTotalAmount() {
-            const ticketPasses = [
-                document.querySelector('#one_day_diy_ticket_pass'),
-                document.querySelector('#two_day_diy_ticket_pass'),
-                document.querySelector('#three_day_diy_ticket_pass')
-            ];
+            const ticketPasses = document.querySelectorAll('.diy_ticket_pass_radio');
 
             let totalAmount = 0;
 
@@ -418,22 +416,21 @@
 
             if (diyTourRadio.checked) {
                 const passPrices = [990, 1799, 2499];
-                const selectedPassIndex = [...ticketPasses].findIndex(pass => pass.checked);
+                const selectedPassBtn = [...ticketPasses].find(pass => pass.checked);
+                
+                if(selectedPassBtn) {
+                    const selectedPassValue = selectedPassBtn.value;
 
-                if (selectedPassIndex !== -1) {
-                    const selectedPass = ticketPasses[selectedPassIndex].value;
-
-                    const passPrice = passPrices[selectedPassIndex];
+                    const passPrice = selectedPassBtn.getAttribute('data-amount');
                     const subAmount = passPrice * number_of_pass.value;
                     const totalAmount = subAmount + totalConvenienceFee;
 
-                    ticket_pass_text.textContent = selectedPass;
+                    ticket_pass_text.textContent = selectedPassValue;
                     sub_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(subAmount)}`;
 
                     // only store the sub amount because the convenience and travel pass will be computed in backend
                     amount.value = subAmount;
 
-                    // dispay total amount including total convenience and travel pass
                     total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
                 } else {
                     ticket_pass_text.textContent = 'N/A';
@@ -441,6 +438,7 @@
                     amount.value = 0;
                     total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(0)}`;
                 }
+
             }
 
         }
