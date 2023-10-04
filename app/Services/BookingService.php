@@ -78,6 +78,26 @@ class BookingService
 
             Mail::to($transaction->user->email)->send(new PaymentRequestMail($payment_request_details));
 
+            $tour = Tour::where('id', $request->tour_id)->first();
+
+            if (env('APP_ENVIRONMENT') == 'LIVE') {
+                $details = [
+                    'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
+                    'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
+                    'trip_date' => $request->trip_date,
+                    'tour_name' => $tour->name
+                ];
+    
+                if ($tour) {
+                    if ($tour->tour_provider) {
+                        if (optional($tour->tour_provider)->contact_email) {
+                            Mail::to(optional($tour->tour_provider)->contact_email)->send(new TourProviderBookingNotification($details));
+                            // Mail::to($request->email)->send(new EmailVerification($details));
+                        }
+                    }
+                }
+            }
+
             if ($request->is('api/*')) {
                 return response([
                     'status' => 'paying',
@@ -145,6 +165,14 @@ class BookingService
                 }
 
                 $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+
+                if (is_array($request->items)) {
+                    $items = $request->items;
+                } else {
+                    $items = json_decode($request->items, true);
+                }
+
+                $this->sendMultipleBookingNotification($items, $transaction);
 
                 $payment_request_details = [
                     'transaction_by' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
@@ -249,7 +277,6 @@ class BookingService
     private function createReservation($request, $transaction, $totalAmount, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
     {
         $trip_date = Carbon::create($request->trip_date);
-        $tour = Tour::where('id', $request->tour_id)->first();
 
         $reservation = TourReservation::create([
             'tour_id' => $request->tour_id,
@@ -271,24 +298,6 @@ class BookingService
             'referral_code' => $request->referral_code,
         ]);
 
-        if (env('APP_ENVIRONMENT') == 'LIVE') {
-            $details = [
-                'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
-                'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
-                'trip_date' => $request->trip_date,
-                'tour_name' => $tour->name
-            ];
-
-            if ($tour) {
-                if ($tour->tour_provider) {
-                    if (optional($tour->tour_provider)->contact_email) {
-                        Mail::to(optional($tour->tour_provider)->contact_email)->send(new TourProviderBookingNotification($details));
-                        // Mail::to($request->email)->send(new EmailVerification($details));
-                    }
-                }
-            }
-        }
-
         return $reservation;
     }
 
@@ -302,8 +311,6 @@ class BookingService
 
         foreach ($items as $key => $item) {
             $trip_date = Carbon::create($item['trip_date']);
-
-            $tour = Tour::where('id', $item['tour_id'])->first();
 
             $subAmount = intval($item['amount']) ?? 0;
 
@@ -345,6 +352,13 @@ class BookingService
             $reservation->update([
                 'requirement_file_path' => $file_name
             ]);
+        }
+    }
+
+    private function sendMultipleBookingNotification($items, $transaction) {
+        foreach ($items as $key => $item) {
+
+            $tour = Tour::where('id', $item['tour_id'])->first();
 
             $details = [
                 'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
@@ -365,6 +379,7 @@ class BookingService
                 }
             }
         }
+        
     }
 
     private function sendPaymentRequest($transaction)
