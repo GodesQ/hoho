@@ -24,88 +24,91 @@ class BookingService
 {
     public function createBooking(Request $request)
     {
-        // dd($request->all());
-        $reference_no = $this->generateReferenceNo();
-        $additional_charges = $this->generateAdditionalCharges();
+        try {
+            $reference_no = $this->generateReferenceNo();
+            $additional_charges = $this->generateAdditionalCharges();
 
-        $subAmount = intval($request->amount) ?? 0;
+            $subAmount = intval($request->amount) ?? 0;
 
-        $totalOfDiscount = (intval($request->amount) - intval($request->amount));
+            $totalOfDiscount = (intval($request->amount) - intval($request->amount));
 
-        $totalOfAdditionalCharges = $this->getTotalOfAdditionalCharges($request->number_of_pass, $additional_charges);
+            $totalOfAdditionalCharges = $this->getTotalOfAdditionalCharges($request->number_of_pass, $additional_charges);
 
-        $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
+            $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
 
-        $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
+            $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
 
-        if (!$transaction) {
-            return back()->with('fail', 'Failed to Create Transaction');
-        }
-
-        $reservation = $this->createReservation($request, $transaction, $totalAmount, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
-
-        if (!$reservation || !$transaction) {
-            $reservation->delete();
-            $transaction->delete();
-            return back()->with('fail', 'Failed to Create Reservation');
-        }
-
-
-        if($request->payment_method == 'cash_payment') {
-            return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Reservation Successfully');
-        } else {
-            $response = $this->sendPaymentRequest($transaction);
-
-            if (!$response['status'] || !$response['status'] == 'FAIL') {
-                $reservation->delete();
-                $transaction->delete();
-
-                return back()->with('fail', 'Invalid Transaction');
+            if (!$transaction) {
+                return back()->with('fail', 'Failed to Create Transaction');
             }
 
-            $responseData = json_decode($response['result']->getBody(), true);
+            $reservation = $this->createReservation($request, $transaction, $totalAmount, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
 
-            $updateTransaction = $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+            if (!$reservation || !$transaction) {
+                $reservation->delete();
+                $transaction->delete();
+                return back()->with('fail', 'Failed to Create Reservation');
+            }
 
-            $payment_request_details = [
-                'transaction_by' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
-                'reference_no' => $transaction->reference_no,
-                'total_additional_charges' => $transaction->total_additional_charges,
-                'sub_amount' => $transaction->sub_amount,
-                'total_amount' => $transaction->payment_amount,
-                'payment_url' => $responseData['paymentUrl']
-            ];
 
-            Mail::to($transaction->user->email)->send(new PaymentRequestMail($payment_request_details));
+            if ($request->payment_method == 'cash_payment') {
+                return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Reservation Successfully');
+            } else {
+                $response = $this->sendPaymentRequest($transaction);
 
-            $tour = Tour::where('id', $request->tour_id)->first();
+                if (!$response['status'] || !$response['status'] == 'FAIL') {
+                    $reservation->delete();
+                    $transaction->delete();
 
-            if (env('APP_ENVIRONMENT') == 'LIVE') {
-                $details = [
-                    'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
-                    'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
-                    'trip_date' => $request->trip_date,
-                    'tour_name' => $tour->name
+                    return back()->with('fail', 'Invalid Transaction');
+                }
+
+                $responseData = json_decode($response['result']->getBody(), true);
+
+                $updateTransaction = $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+
+                $payment_request_details = [
+                    'transaction_by' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
+                    'reference_no' => $transaction->reference_no,
+                    'total_additional_charges' => $transaction->total_additional_charges,
+                    'sub_amount' => $transaction->sub_amount,
+                    'total_amount' => $transaction->payment_amount,
+                    'payment_url' => $responseData['paymentUrl']
                 ];
-    
-                if ($tour) {
-                    if ($tour->tour_provider) {
-                        if (optional($tour->tour_provider)->contact_email) {
-                            Mail::to(optional($tour->tour_provider)->contact_email)->send(new TourProviderBookingNotification($details));
-                            // Mail::to($request->email)->send(new EmailVerification($details));
+
+                Mail::to($transaction->user->email)->send(new PaymentRequestMail($payment_request_details));
+
+                $tour = Tour::where('id', $request->tour_id)->first();
+
+                if (env('APP_ENVIRONMENT') == 'LIVE') {
+                    $details = [
+                        'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
+                        'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
+                        'trip_date' => $request->trip_date,
+                        'tour_name' => $tour->name
+                    ];
+
+                    if ($tour) {
+                        if ($tour->tour_provider) {
+                            if (optional($tour->tour_provider)->contact_email) {
+                                Mail::to(optional($tour->tour_provider)->contact_email)->send(new TourProviderBookingNotification($details));
+                                // Mail::to($request->email)->send(new EmailVerification($details));
+                            }
                         }
                     }
                 }
-            }
 
-            if ($request->is('api/*')) {
-                return response([
-                    'status' => 'paying',
-                    'url' => $responseData['paymentUrl']
-                ]);
-            } else {
-                return redirect($responseData['paymentUrl']);
+                if ($request->is('api/*')) {
+                    return response([
+                        'status' => 'paying',
+                        'url' => $responseData['paymentUrl']
+                    ]);
+                } else {
+                    return redirect($responseData['paymentUrl']);
+                }
             }
+        } catch (\Exception $exception) {
+            dd($exception->getMessage());
         }
     }
 
@@ -355,7 +358,8 @@ class BookingService
         }
     }
 
-    private function sendMultipleBookingNotification($items, $transaction) {
+    private function sendMultipleBookingNotification($items, $transaction)
+    {
         foreach ($items as $key => $item) {
 
             $tour = Tour::where('id', $item['tour_id'])->first();
@@ -370,7 +374,7 @@ class BookingService
             if ($tour) {
                 if ($tour->tour_provider) {
                     if ($tour->tour_provider->contact_email) {
-                        if(env('APP_ENVIRONMENT') == 'LIVE') {
+                        if (env('APP_ENVIRONMENT') == 'LIVE') {
                             Mail::to($tour->tour_provider->contact_email)->send(new TourProviderBookingNotification($details));
                         } else {
                             Mail::to('james@godesq.com')->send(new TourProviderBookingNotification($details));
@@ -379,7 +383,7 @@ class BookingService
                 }
             }
         }
-        
+
     }
 
     private function sendPaymentRequest($transaction)
@@ -403,11 +407,11 @@ class BookingService
                 'Authorization' => 'Bearer ' . $authToken,
             ])->post($url_create, $requestModel);
 
-                // Handle the response here
+            // Handle the response here
             $statusCode = $response->getStatusCode();
             $responseContent = $response->getBody()->getContents();
 
-            if($statusCode == 400) {
+            if ($statusCode == 400) {
                 return [
                     'status' => FALSE,
                     'result' => json_decode($responseContent)
@@ -442,7 +446,7 @@ class BookingService
     }
 
     private function setRequestModel($transaction)
-    {   
+    {
         $model = [
             'uniqueId' => $transaction->reference_no,
             'currency' => 'PHP',
