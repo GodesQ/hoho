@@ -135,7 +135,7 @@
                                                 <td width="50%" style="font-weight: 800;">
                                                     Total of Add. Charges:
                                                 </td>
-                                                <td align="right">₱ {{ isset($details) ? number_format($details['reference_no'], 2) : "0.00" }}</td>
+                                                <td align="right">₱ {{ isset($details) ? number_format($details['total_additional_charges'], 2) : "0.00" }}</td>
                                             </tr>
                                             <tr>
                                                 <td width="50%" style="font-weight: 800;">
