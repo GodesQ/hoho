@@ -123,7 +123,7 @@ class BookingService
 
                 if (!$response['status'] || !$response['status'] == 'FAIL') {
                     return response([
-                        'status' => FALSE,
+                        'status' => "failed",
                         'message' => 'Failed to submit request for transaction',
                         'data' => $response['result']->data
                     ]);
