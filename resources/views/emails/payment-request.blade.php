@@ -156,13 +156,10 @@
                                                     style="padding: 20px 20px 20px 20px;">
                                                     <table border="0" cellspacing="0" cellpadding="0">
                                                         <tr>
-                                                            <td align="center" style="border-radius: 3px;"
-                                                                bgcolor="#6f0d00">
-                                                                <form action="{{ $details['payment_url'] ?? '#' }}">
-                                                                    <button style="cursor: pointer; padding: 0.6rem 1rem 0.6rem 1rem; background-color: #6f0d00; color: white; text-decoration: none; border-radius: 5px; cursor: pointer; font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 16px;">
-                                                                        Pay Now
-                                                                    </button>
-                                                                </form>
+                                                            <td align="center" style="border-radius: 3px;" bgcolor="#6f0d00">
+                                                                <a href="{{ $details['payment_url'] ?? '#' }}" style="cursor: pointer; padding: 0.6rem 1rem 0.6rem 1rem; background-color: #6f0d00; color: white; text-decoration: none; border-radius: 5px; cursor: pointer; font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 16px;">
+                                                                    Pay Now
+                                                                </a>
                                                             </td>
                                                         </tr>
                                                     </table>
