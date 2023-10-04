@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TourProviderBookingNotification;
+use App\Mail\PaymentRequestMail;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +50,7 @@ class BookingService
             return back()->with('fail', 'Failed to Create Reservation');
         }
 
+
         if($request->payment_method == 'cash_payment') {
             return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Reservation Successfully');
         } else {
@@ -64,6 +66,17 @@ class BookingService
             $responseData = json_decode($response['result']->getBody(), true);
 
             $updateTransaction = $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+
+            $payment_request_details = [
+                'transaction_by' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
+                'reference_no' => $transaction->reference_no,
+                'total_additional_charges' => $transaction->total_additional_charges,
+                'sub_amount' => $transaction->sub_amount,
+                'total_amount' => $transaction->payment_amount,
+                'payment_url' => $responseData['paymentUrl']
+            ];
+
+            Mail::to($transaction->user->email)->send(new PaymentRequestMail($payment_request_details));
 
             if ($request->is('api/*')) {
                 return response([
@@ -108,16 +121,10 @@ class BookingService
             if (config('services.checkout.type') == "HPP") {
                 $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
 
-                // return response([
-                //     'subAmount' => $subAmount,
-                //     'total_discount' => $totalOfDiscount,
-                //     'total_additional_charges' => $totalOfAdditionalCharges,
-                //     'total_amount' => $totalAmount
-                // ]);
-
                 $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
 
                 $this->createMultipleReservation($request, $transaction, $additional_charges);
+
 
                 $response = $this->sendPaymentRequest($transaction);
 
@@ -138,6 +145,17 @@ class BookingService
                 }
 
                 $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+
+                $payment_request_details = [
+                    'transaction_by' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
+                    'reference_no' => $transaction->reference_no,
+                    'total_additional_charges' => $transaction->total_additional_charges,
+                    'sub_amount' => $transaction->sub_amount,
+                    'total_amount' => $transaction->payment_amount,
+                    'payment_url' => $responseData['paymentUrl']
+                ];
+
+                Mail::to($transaction->user->email)->send(new PaymentRequestMail($payment_request_details));
 
                 if ($request->is('api/*')) {
                     return response([
