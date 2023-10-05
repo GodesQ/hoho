@@ -131,8 +131,8 @@ class UserController extends Controller
                     ]);
                 } else {
                     $user->update([
-                        'countryCode' => null,
-                        'isoCode' => null,
+                        'countryCode' => $user->countryCode,
+                        'isoCode' => $user->isoCode,
                         'contact_no' => $phoneNumber
                     ]);
                 }
