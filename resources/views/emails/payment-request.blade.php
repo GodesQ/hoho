@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <style type="text/css">
         @media screen {
-            @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
         }
 
         /* CLIENT-SPECIFIC STYLES */
@@ -18,6 +18,7 @@
         a {
             -webkit-text-size-adjust: 100%;
             -ms-text-size-adjust: 100%;
+            font-family: 'Google Sans', sans-serif;
         }
 
         table,
@@ -118,7 +119,7 @@
                                 <tr>
                                     <td bgcolor="#ffffff" align="left" style="padding: 10px 40px 40px 40px;">
                                         <table border="1" cellspacing="5" cellpadding="15" width="100%"
-                                            style="font-size: 13.5px;">
+                                            style="font-size: 13.5px; font-family: 'Google Sans', Helvetica, Arial, sans-serif;">
                                             <tr>
                                                 <td width="50%" style="font-weight: 800;">
                                                     Transaction By:
