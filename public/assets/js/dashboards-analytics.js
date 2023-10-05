@@ -389,7 +389,7 @@
                 return '$' + parseInt(val);
               },
               offsetY: 5,
-              color: '#697a8d',
+              color: '#495057',
               fontSize: '13px',
               show: true
             }

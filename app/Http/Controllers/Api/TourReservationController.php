@@ -15,7 +15,8 @@ use App\Services\BookingService;
 use Carbon\Carbon;
 
 class TourReservationController extends Controller
-{
+{   
+    protected $bookingService;
     public function __construct(BookingService $bookingService)
     {
         $this->bookingService = $bookingService;

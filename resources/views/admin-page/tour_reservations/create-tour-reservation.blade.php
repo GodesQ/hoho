@@ -75,7 +75,8 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="trip_date" class="form-label">Trip Date</label>
-                                        <input type="text" readonly placeholder="Select a Trip Date" class="form-control" name="trip_date" id="trip_date" required>
+                                        <input type="text" readonly placeholder="Select a Trip Date" class="form-control"
+                                            name="trip_date" id="trip_date" required>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -108,12 +109,15 @@
                                         @foreach ($ticket_passes as $ticket_pass)
                                             <div class="form-check form-check-inline mt-3">
                                                 <input class="form-check-input diy_ticket_pass_radio" type="radio"
-                                                    name="ticket_pass" id="{{ $ticket_pass->name }}" value="{{ $ticket_pass->name }}" data-amount="{{ $ticket_pass->price }}" />
+                                                    name="ticket_pass" id="{{ $ticket_pass->name }}"
+                                                    value="{{ $ticket_pass->name }}"
+                                                    data-amount="{{ $ticket_pass->price }}" />
                                                 <label class="form-check-label" for="{{ $ticket_pass->name }}"
                                                     style="cursor: pointer;">
                                                     <img src="{{ URL::asset('assets/img/ticket_passes/' . $ticket_pass->ticket_image) }}"
                                                         alt="1 Day Ticket Pass" width="120px">
-                                                    <h6 class="text-center my-2">₱ {{ number_format($ticket_pass->price, 2) }}</h6>
+                                                    <h6 class="text-center my-2">₱
+                                                        {{ number_format($ticket_pass->price, 2) }}</h6>
                                                 </label>
                                             </div>
                                         @endforeach
@@ -177,18 +181,17 @@
                                     <h6 class="text-primary">Convenience Fee</h6>
                                 </div>
                                 <div class="col-xl-6">
-                                    <h6>₱ 99.00</h6>
+                                    <h6>₱ 99.00 / Pax</h6>
                                 </div>
                             </div>
-                            <div class="row">
+                            {{-- <div class="row">
                                 <div class="col-xl-6">
                                     <h6 class="text-primary">Travel Pass</h6>
                                 </div>
                                 <div class="col-xl-6">
                                     <h6>₱ 50.00</h6>
                                 </div>
-                            </div>
-                            <hr>
+                            </div> --}}
                             <div class="row">
                                 <div class="col-xl-6">
                                     <h6 class="text-primary">Sub Amount</h6>
@@ -199,7 +202,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-xl-6">
-                                    <h6 class="text-primary">Total Convenience Fee (99 / pax) </h6>
+                                    <h6 class="text-primary">Total Convenience Fee </h6>
                                 </div>
                                 <div class="col-xl-6">
                                     <h6 id="total_convenience_fee_text">₱ 0.00</h6>
@@ -225,11 +228,13 @@
                             <div class="mb-3">
                                 <h6>What is your Payment Method?</h6>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="payment_method"
-                                        id="cash_payment" value="cash_payment" required checked />
-                                    <label class="form-check-label" for="cash_payment">
-                                        Cash
-                                    </label>
+                                    <div>
+                                        <input class="form-check-input" type="radio" name="payment_method"
+                                            id="cash_payment" value="cash_payment" required checked />
+                                        <label class="form-check-label" for="cash_payment">
+                                            Cash
+                                        </label>
+                                    </div>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="payment_method"
@@ -255,8 +260,8 @@
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
     <script>
         $(function() {
-            
-            if(["super_admin", "admin"].includes("{{ auth('admin')->user()->role }}")) {
+
+            if (["super_admin", "admin"].includes("{{ auth('admin')->user()->role }}")) {
                 var dateToday = new Date();
             } else {
                 var dateToday = new Date();
@@ -415,10 +420,9 @@
 
 
             if (diyTourRadio.checked) {
-                const passPrices = [990, 1799, 2499];
                 const selectedPassBtn = [...ticketPasses].find(pass => pass.checked);
-                
-                if(selectedPassBtn) {
+
+                if (selectedPassBtn) {
                     const selectedPassValue = selectedPassBtn.value;
 
                     const passPrice = selectedPassBtn.getAttribute('data-amount');

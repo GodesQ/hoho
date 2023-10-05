@@ -13,7 +13,7 @@
             width: 35%;
             padding: 0.5000rem 0.875rem;
             font-size: 0.9375rem;
-            color: #697a8d;
+            color: #495057;
             background: #fff;
             border-radius: 0.375rem 0 0 0.375rem;
             border: 1px solid #d9dee3;

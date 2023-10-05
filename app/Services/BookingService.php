@@ -92,7 +92,6 @@ class BookingService
                         if ($tour->tour_provider) {
                             if (optional($tour->tour_provider)->contact_email) {
                                 Mail::to(optional($tour->tour_provider)->contact_email)->send(new TourProviderBookingNotification($details));
-                                // Mail::to($request->email)->send(new EmailVerification($details));
                             }
                         }
                     }

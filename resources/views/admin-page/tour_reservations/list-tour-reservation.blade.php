@@ -58,6 +58,7 @@
                     <table class="table data-table">
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>Trip Date</th>
                                 <th>Reserved User</th>
                                 <th>Type</th>
@@ -92,7 +93,12 @@
                             d.trip_date = $('#trip_date').val()
                     }
                 },
-                columns: [{
+                columns: [
+                    {
+                        data: 'id',
+                        name: 'id'
+                    },
+                    {
                         data: 'start_date',
                         name: 'start_date'
                     },
@@ -116,6 +122,9 @@
                         data: 'actions',
                         name: 'actions'
                     }
+                ],
+                order: [
+                    [0, 'desc'] // Sort by the first column (index 0) in descending order
                 ]
             })
         }

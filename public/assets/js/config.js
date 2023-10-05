@@ -20,7 +20,7 @@ let config = {
     black: '#000',
     white: '#fff',
     body: '#f4f5fb',
-    headingColor: '#566a7f',
+    headingColor: '#495057',
     axisColor: '#a1acb8',
     borderColor: '#eceef1'
   }
