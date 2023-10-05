@@ -49,7 +49,7 @@
             margin: 0 !important;
             padding: 0 !important;
             width: 100% !important;
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Google Sans', sans-serif;
         }
 
         /* iOS BLUE LINKS */
@@ -91,8 +91,8 @@
             </td>
         </tr>
         <tr>
-            <td bgcolor="#6f0d00" align="center" style="padding: 0px 10px 0px 0px;">
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+            <td bgcolor="#6f0d00" align="center" style="padding: 0px 0px 0px 0px;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 500px;">
                     <tr>
                         <td bgcolor="#ffffff" align="center" valign="top"
                             style="padding: 20px 20px 0px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Google Sans', Helvetica, Arial, sans-serif; font-size: 3px; font-weight: 400; letter-spacing: 4px; line-height: 48px;">
@@ -106,7 +106,7 @@
         </tr>
         <tr>
             <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px;">
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 500px;">
                     <tr>
                         <td bgcolor="#ffffff" align="center"
                             style="padding: 20px 20px 0px 20px; color: #666666; font-family: 'Google Sans', Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 25px;">
@@ -117,9 +117,9 @@
                         <td bgcolor="#ffffff" align="center">
                             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td bgcolor="#ffffff" align="left" style="padding: 10px 40px 40px 40px;">
-                                        <table border="1" cellspacing="5" cellpadding="15" width="100%"
-                                            style="font-size: 13.5px; font-family: 'Google Sans', Helvetica, Arial, sans-serif;">
+                                    <td bgcolor="#ffffff" align="center" style="padding: 10px 40px 40px 40px;">
+                                        <table border="0" cellspacing="10" cellpadding="5" width="85%"
+                                            style="font-size: 13.5px; font-family: 'Google Sans', Helvetica, Arial, sans-serif; border-bottom: 1px solid #252525;">
                                             <tr>
                                                 <td width="50%" style="font-weight: 800;">
                                                     Transaction By:
@@ -131,7 +131,7 @@
                                                     Expiration Date:
                                                 </td>
                                                 <?php
-                                                    $utcTimestamp = $details['payment_expiration'];
+                                                    $utcTimestamp = $details['payment_expiration'] ?? null;
                                                     $utcDateTime = new DateTime($utcTimestamp, new DateTimeZone('UTC'));
                                                     $manilaTimeZone = new DateTimeZone('Asia/Manila');
                                                     
@@ -182,7 +182,7 @@
                                                             <td align="center" style="border-radius: 3px;"
                                                                 bgcolor="#6f0d00">
                                                                 <a href="{{ $details['payment_url'] ?? '#' }}"
-                                                                    style="cursor: pointer; padding: 0.6rem 1rem 0.6rem 1rem; background-color: #6f0d00; color: white; text-decoration: none; border-radius: 5px; cursor: pointer; font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 16px;">
+                                                                    style="cursor: pointer; padding: 0.6rem 1rem 0.6rem 1rem; background-color: #6f0d00; color: white; text-decoration: none; border-radius: 5px; cursor: pointer; font-family: 'Google Sans', Helvetica, Arial, sans-serif; font-size: 16px;">
                                                                     Pay Now
                                                                 </a>
                                                             </td>
@@ -216,7 +216,7 @@
         </tr>
         <tr>
             <td bgcolor="#f4f4f4" align="center" style="padding: 30px 10px 0px 10px;">
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 500px;">
                     <tr>
                         <td bgcolor="#6f0d00" align="center"
                             style="padding: 30px 30px 30px 30px; border-radius: 4px 4px 4px 4px; color: #666666; font-family: 'Google Sans', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
