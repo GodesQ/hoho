@@ -100,7 +100,7 @@
                                         <div class="col-lg-3">
                                             <div class="mb-3">
                                                 <label for="price" class="form-label">Default Price</label>
-                                                <input type="number" class="form-control" name="price" id="price"
+                                                <input type="text" class="form-control" name="price" id="price"
                                                     value="{{ $tour->price }}">
                                             </div>
                                         </div>

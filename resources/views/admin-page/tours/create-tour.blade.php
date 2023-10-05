@@ -90,25 +90,25 @@
                                         <div class="col-lg-3">
                                             <div class="mb-3">
                                                 <label for="price" class="form-label">Default Price <span class="text-danger">*</span></label>
-                                                <input type="number" class="form-control" name="price" id="price" required>
+                                                <input type="text" class="form-control" name="price" id="price" required>
                                             </div>
                                         </div>
                                         <div class="col-lg-3">
                                             <div class="mb-3">
                                                 <label for="bracket_price_one" class="form-label">Bracket Price (Min of 4) <span class="text-danger">*</span></label>
-                                                <input type="number" class="form-control" name="bracket_price_one" id="bracket_price_one" required>
+                                                <input type="text" class="form-control" name="bracket_price_one" id="bracket_price_one" required>
                                             </div>
                                         </div>
                                         <div class="col-lg-3">
                                             <div class="mb-3">
                                                 <label for="bracket_price_two" class="form-label">Bracket Price (Min of 10) <span class="text-danger">*</span></label>
-                                                <input type="number" class="form-control" name="bracket_price_two" id="bracket_price_two" required>
+                                                <input type="text" class="form-control" name="bracket_price_two" id="bracket_price_two" required>
                                             </div>
                                         </div>
                                         <div class="col-lg-3">
                                             <div class="mb-3">
                                                 <label for="bracket_price_three" class="form-label">Bracket Price (Min of 25) <span class="text-danger">*</span></label>
-                                                <input type="number" class="form-control" name="bracket_price_three" id="bracket_price_three" required>
+                                                <input type="text" class="form-control" name="bracket_price_three" id="bracket_price_three" required>
                                             </div>
                                         </div>
                                     </div>
