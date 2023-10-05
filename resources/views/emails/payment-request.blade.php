@@ -128,27 +128,49 @@
                                             </tr>
                                             <tr>
                                                 <td width="50%" style="font-weight: 800;">
+                                                    Expiration Date:
+                                                </td>
+                                                <?php
+                                                    $utcTimestamp = $details['payment_expiration'];
+                                                    $utcDateTime = new DateTime($utcTimestamp, new DateTimeZone('UTC'));
+                                                    $manilaTimeZone = new DateTimeZone('Asia/Manila');
+                                                    
+                                                    $utcDateTime->setTimezone($manilaTimeZone);
+                                                    $manilaTimestamp = $utcDateTime->format('Y-m-d h:i A');
+                                                ?>
+                                                <td align="right">
+                                                    {{ $manilaTimestamp ?? null }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width="50%" style="font-weight: 800;">
                                                     Reference Number:
                                                 </td>
                                                 <td align="right">{{ $details['reference_no'] ?? null }}</td>
                                             </tr>
                                             <tr>
                                                 <td width="50%" style="font-weight: 800;">
-                                                    Total of Add. Charges:
+                                                    Total of Additional Charges:
                                                 </td>
-                                                <td align="right">₱ {{ isset($details) ? number_format($details['total_additional_charges'], 2) : "0.00" }}</td>
+                                                <td align="right">₱
+                                                    {{ isset($details) ? number_format($details['total_additional_charges'], 2) : '0.00' }}
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td width="50%" style="font-weight: 800;">
                                                     Sub Amount:
                                                 </td>
-                                                <td align="right">₱  {{ isset($details) ? number_format($details['sub_amount'], 2) : "0.00" }}</td>
+                                                <td align="right">₱
+                                                    {{ isset($details) ? number_format($details['sub_amount'], 2) : '0.00' }}
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td width="50%" style="font-weight: 800;">
                                                     Total Amount:
                                                 </td>
-                                                <td align="right">₱  {{ isset($details) ? number_format($details['total_amount'], 2) : "0.00" }}</td>
+                                                <td align="right">₱
+                                                    {{ isset($details) ? number_format($details['total_amount'], 2) : '0.00' }}
+                                                </td>
                                             </tr>
                                         </table>
                                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -157,8 +179,10 @@
                                                     style="padding: 20px 20px 20px 20px;">
                                                     <table border="0" cellspacing="0" cellpadding="0">
                                                         <tr>
-                                                            <td align="center" style="border-radius: 3px;" bgcolor="#6f0d00">
-                                                                <a href="{{ $details['payment_url'] ?? '#' }}" style="cursor: pointer; padding: 0.6rem 1rem 0.6rem 1rem; background-color: #6f0d00; color: white; text-decoration: none; border-radius: 5px; cursor: pointer; font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 16px;">
+                                                            <td align="center" style="border-radius: 3px;"
+                                                                bgcolor="#6f0d00">
+                                                                <a href="{{ $details['payment_url'] ?? '#' }}"
+                                                                    style="cursor: pointer; padding: 0.6rem 1rem 0.6rem 1rem; background-color: #6f0d00; color: white; text-decoration: none; border-radius: 5px; cursor: pointer; font-family: 'Montserrat', Helvetica, Arial, sans-serif; font-size: 16px;">
                                                                     Pay Now
                                                                 </a>
                                                             </td>

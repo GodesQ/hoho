@@ -73,7 +73,8 @@ class BookingService
                     'total_additional_charges' => $transaction->total_additional_charges,
                     'sub_amount' => $transaction->sub_amount,
                     'total_amount' => $transaction->payment_amount,
-                    'payment_url' => $responseData['paymentUrl']
+                    'payment_url' => $responseData['paymentUrl'],
+                    'payment_expiration' => $responseData['data']['expiresAt'] ?? null,
                 ];
 
                 Mail::to($transaction->user->email)->send(new PaymentRequestMail($payment_request_details));
@@ -182,7 +183,8 @@ class BookingService
                     'total_additional_charges' => $transaction->total_additional_charges,
                     'sub_amount' => $transaction->sub_amount,
                     'total_amount' => $transaction->payment_amount,
-                    'payment_url' => $responseData['paymentUrl']
+                    'payment_url' => $responseData['paymentUrl'],
+                    'payment_expiration' => $responseData['data']['expiresAt'] ?? null,
                 ];
 
                 Mail::to($transaction->user->email)->send(new PaymentRequestMail($payment_request_details));
@@ -453,14 +455,14 @@ class BookingService
             'currency' => 'PHP',
             'paymentType' => 'DTP',
             'amount' => $transaction->payment_amount,
-            'description' => 'Payment for Hoho Reservation',
+            'description' => 'Payment for Philippines Hop-On Hop-Off Reservation',
             'customer' => [
                 'name' => optional($transaction->user)->firstname . ' ' . optional($transaction->user)->lastname,
                 'email' => optional($transaction->user)->email,
                 'mobile' => $userContactNumber,
             ],
             'project' => [
-                'name' => 'Hoho Checkout Reservation',
+                'name' => 'Philippines Hop-On Hop-Off Checkout Reservation',
                 'unitNumber' => '1-1234',
                 'category' => 'Checkout'
             ],
@@ -472,7 +474,6 @@ class BookingService
             'note' => 'Checkout for Tour Reservation',
             'metadata' => [
                 'Convenience Fee' => '99.00' . ' ' . 'Per Pax',
-                'Travel Pass' => '50.00' . ' ' . 'Per Pax',
                 'Amount' => number_format($transaction->payment_amount, 2),
                 'agentName' => $transaction->user->firstname . ' ' . $transaction->user->lastname
             ]
