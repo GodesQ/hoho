@@ -76,15 +76,14 @@ class AuthController extends Controller
             ], 200);
         }
 
-
-        // if($user->role == 'guest') {
-        //     if(!$user->is_verify) {
-        //         return response([
-        //             'status' => false,
-        //             'message' => "Please Verify First Your Email Verification"
-        //         ], 200);
-        //     }
-        // }
+        if($user->role == 'guest') {
+            if(!$user->is_verify) {
+                return response([
+                    'status' => false,
+                    'message' => "Please Verify First Your Email Verification"
+                ], 200);
+            }
+        }
 
         $token = $user->createToken("API TOKEN")->plainTextToken;
 
@@ -106,15 +105,15 @@ class AuthController extends Controller
 
         $contactNo = $request->contact_no;
 
-        // Check if the value is a JSON string
         if (is_string($contactNo) && is_array(json_decode($contactNo, true)) && (json_last_error() == JSON_ERROR_NONE)) {
             $data = json_decode($contactNo, true);
             $countryCode = $data['countryCode'];
+            $isoCode = $data['isoCode'] ?? null;
             $number = $data['number'];
             $contactNo = $number;
         } else {
-            // return 'Is Normal String';
             $countryCode = null;
+            $isoCode = null;
             $contactNo = trim($request->input('contact_no'));
         }
 
@@ -127,6 +126,7 @@ class AuthController extends Controller
             'country_of_residence' => $request->country_of_residence,
             'contact_no' =>  preg_replace('/\s+/', '', $contactNo),
             'countryCode' => preg_replace("/[^0-9]/", "", $countryCode),
+            'isoCode' => $isoCode,
             'is_old_user' => false,
             'is_first_time_philippines' => $request->has('is_first_time_philippines'),
             'is_international_tourist' => $request->has('is_international_tourist'),
