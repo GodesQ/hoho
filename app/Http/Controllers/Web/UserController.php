@@ -115,7 +115,7 @@ class UserController extends Controller
 
     public function updateUserContacts(Request $request)
     {
-        $userData = User::select('contact_no', 'email', 'id', 'countryCode', 'isoCode')->where('is_old_user', 1)->get();
+        $userData = User::select('contact_no', 'email', 'id', 'countryCode', 'isoCode')->get();
         
         foreach ($userData as $key => $user) {
             $phoneNumber = $user->contact_no;
