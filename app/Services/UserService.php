@@ -124,7 +124,7 @@ class UserService
                 'birthdate' => $request->birthdate,
                 'country_of_residence' => $request->country_of_residence,
                 'contact_no' => $result['contactNumber'] ?? null,
-                'countryCode' => $result['countryCode'] ?? null,
+                'countryCode' => $result['countryCode'] ? preg_replace("/[^0-9]/", "", $result['countryCode']) :  null,
                 'isoCode' => $result['isoCode'] ?? null,
             ]);
 
