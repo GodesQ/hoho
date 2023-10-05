@@ -3,53 +3,30 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-
-use Illuminate\Support\Facades\Mail;
 use App\Mail\EmailVerification;
-
-use App\Models\User;
 use App\Models\Admin;
 use App\Models\Interest;
-
+use App\Models\User;
+use App\Services\UserService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
 {
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::get();
-            
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('status', function ($row) {
-                    if ($row->status == 'active') {
-                        return '<span class="badge bg-label-success me-1">Active</span>';
-                    } else {
-                        return '<span class="badge bg-label-warning me-1">Inactive</span>';
-                    }
-                })
-                ->addColumn('email_verify', function ($row) {
-                    if ($row->is_verify) {
-                        return '<span class="badge bg-label-success me-1">Yes</span>';
-                    } else {
-                        return '<span class="badge bg-label-warning me-1">No</span>';
-                    }
-                })
-                ->addColumn('actions', function ($row) {
-                    return '<div class="dropdown">
-                                    <a href="/admin/users/edit/' .
-                        $row->id .
-                        '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="javascript:void(0);" class="btn btn-outline-danger remove-btn btn-sm" id="' .
-                        $row->id .
-                        '"><i class="bx bx-trash me-1"></i></a>
-                                </div>';
-                })
-                ->rawColumns(['status', 'username', 'email_verify', 'actions'])
-                ->make(true);
+            $users = $this->userService->getUsersList($request);
+            return $this->userService->generateUsersDataTable($users);
         }
 
         return view('admin-page.users.list-user');
@@ -58,20 +35,7 @@ class UserController extends Controller
     public function lookup(Request $request)
     {
         $query = $request->input('q'); // Get the user input
-
-        // Use the input to filter users
-        $users = User::where('email', 'LIKE', "%$query%")
-            ->select('id', 'email')
-            ->get();
-
-        $formattedUsers = [];
-
-        foreach ($users as $user) {
-            $formattedUsers[] = [
-                'id' => $user->id,
-                'text' => $user->email,
-            ];
-        }
+        $formattedUsers = $this->userService->lookupUsers($query);
         return response()->json($formattedUsers);
     }
 
@@ -83,14 +47,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $account_uid = $this->generateRandomUuid();
-        $user = User::create(
-            array_merge($request->all(), [
-                'account_uid' => $account_uid,
-                'password' => Hash::make($request->password),
-                'interests' => $request->has('interest_ids') ? json_encode($request->interest_ids) : null,
-            ]),
-        );
+        $user = $this->userService->createUser($request);
 
         if ($user) {
             return redirect()
@@ -108,15 +65,7 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-        $user = User::where('id', $request->id)->first();
-
-        $update_user = $user->update(
-            array_merge($request->all(), [
-                'is_verify' => $request->has('is_verify') ? true : false,
-                'is_old_user' => $request->has('is_old_user') ? true : false,
-                'interest_ids' => $request->has('interest_ids') ? json_encode($request->interest_ids) : null,
-            ]),
-        );
+        $update_user = $this->userService->updateUser($request);
 
         if ($update_user) {
             return back()->withSuccess('User updated successfully');
@@ -125,54 +74,70 @@ class UserController extends Controller
 
     public function destroy(Request $request)
     {
-        $user = User::where('id', $request->id)->first();
-
-        if ($user) {
-            $delete_user = $user->delete();
-            if ($delete_user) {
-                return response()->json(
-                    [
-                        'status' => true,
-                        'message' => 'User deleted successfully',
-                    ],
-                    200,
-                );
-            }
-        } else {
-            return response()->json(
-                [
-                    'status' => false,
-                    'message' => 'User not found',
-                ],
-                200,
-            );
+        $user = User::find($request->id);
+        
+        if (!$user) {
+            return response([
+                'status' => false,
+                'message' => 'User Not Found',
+            ], 404);
         }
+
+        $delete_user = $this->userService->deleteUser($user);
+
+        return $delete_user
+            ? response([
+                'status' => true,
+                'message' => 'User deleted successfully',
+            ], 200)
+            : response([
+                'status' => false,
+                'message' => 'User failed to delete',
+            ], 500);
     }
 
-    private function generateRandomUuid()
+
+    public function resend_email(Request $request)
     {
-        $data = random_bytes(16);
-        $data[6] = chr((ord($data[6]) & 0x0f) | 0x40); // Version 4 (random)
-        $data[8] = chr((ord($data[8]) & 0x3f) | 0x80); // Variant (RFC 4122)
+        # details for sending email to worker
+        $details = [
+            'title' => 'Verification email from HOHO',
+            'email' => $request->email,
+            'username' => $request->username,
+        ];
 
-        $uuid = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
-        return $uuid;
-    }
+        // SEND EMAIL FOR VERIFICATION
+        Mail::to($request->email)->send(new EmailVerification($details));
 
-    private function customCheckPassword($providedPassword, $storedHash, $storedSalt, $iterationCount) {
-        $hashedPassword = hash_pbkdf2('sha1', $providedPassword, $storedSalt, $iterationCount, 64); // Adjust the length (64) as needed
 
-        hash_equals($hashedPassword, $storedHash);
-
+        return back()->withSuccess('Resend Verification Email');
     }
 
     public function updateUserContacts(Request $request)
     {
+        $userData = User::select('contact_no', 'email', 'id', 'countryCode', 'isoCode')->where('is_old_user', 1)->get();
+        
+        foreach ($userData as $key => $user) {
+            $phoneNumber = $user->contact_no;
+            if($phoneNumber) {
+                $countryCode = substr($phoneNumber, 0, 2);
+                $number = substr($phoneNumber, 2);
 
-        $jsonData = '';
-
-        // $userData = json_decode($jsonData, true);
-        // // dd($userData);
+                if($countryCode == '63') {
+                    $user->update([
+                        'countryCode' => $countryCode,
+                        'isoCode' => 'PH',
+                        'contact_no' => $number
+                    ]);
+                } else {
+                    $user->update([
+                        'countryCode' => null,
+                        'isoCode' => null,
+                        'contact_no' => $phoneNumber
+                    ]);
+                }
+            }
+        }
 
         // foreach ($userData as $user) {
         //     $email = $user['Email'];
@@ -219,49 +184,31 @@ class UserController extends Controller
         //     }
         // }
 
+        // $users = User::select('id', 'contact_no', 'birthdate', 'firstname', 'lastname', 'middlename')
+        //     ->where('firstname', 'NULL')
+        //     ->where('lastname', 'NULL')
+        //     ->where('middlename', 'NULL')
+        //     ->get();
 
+        // foreach ($users as $user) {
+        //     // Remove spaces from contact_no if it has a value
+        //     if ($user->contact_no) {
+        //         $user->contact_no = str_replace(' ', '', $user->contact_no);
+        //     }
 
-        $users = User::select('id', 'contact_no', 'birthdate', 'firstname', 'lastname', 'middlename')
-                        ->where('firstname', 'NULL')
-                        ->where('lastname', 'NULL')
-                        ->where('middlename', 'NULL')
-                        ->get();
+        //     // Calculate age using birthdate
+        //     if ($user->birthdate) {
+        //         $user->age = now()->diff($user->birthdate)->y;
+        //     }
 
-        foreach ($users as $user) {
-            // Remove spaces from contact_no if it has a value
-            if ($user->contact_no) {
-                $user->contact_no = str_replace(' ', '', $user->contact_no);
-            }
+        //     $user->firstname = null;
+        //     $user->lastname = null;
+        //     $user->middlename = null;
 
-            // Calculate age using birthdate
-            if ($user->birthdate) {
-                $user->age = now()->diff($user->birthdate)->y;
-            }
-
-            $user->firstname = null;
-            $user->lastname = null;
-            $user->middlename = null;
-
-            // Save the updated user model
-            $user->save();
-        }
+        //     // Save the updated user model
+        //     $user->save();
+        // }
 
         return 'User updated successfully';
-    }
-
-    public function resend_email(Request $request) {
-
-        # details for sending email to worker
-        $details = [
-            'title' => 'Verification email from HOHO',
-            'email' => $request->email,
-            'username' => $request->username,
-        ];
-
-        // SEND EMAIL FOR VERIFICATION
-        Mail::to($request->email)->send(new EmailVerification($details));
-
-
-        return back()->withSuccess('Resend Verification Email');
     }
 }

@@ -24,10 +24,6 @@ class UpdateProfileRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => [
-                'required',
-                'email',
-            ],
             'firstname' => 'nullable',
             'lastname' => 'nullable',
             'birthdate' => 'nullable'

@@ -445,7 +445,9 @@ class BookingService
     }
 
     private function setRequestModel($transaction)
-    {
+    {   
+        $userContactNumber = "+" . optional($transaction->user)->countryCode . optional($transaction->user)->contact_no;
+
         $model = [
             'uniqueId' => $transaction->reference_no,
             'currency' => 'PHP',
@@ -455,7 +457,7 @@ class BookingService
             'customer' => [
                 'name' => optional($transaction->user)->firstname . ' ' . optional($transaction->user)->lastname,
                 'email' => optional($transaction->user)->email,
-                'mobile' => optional($transaction->user)->contact_no ? "+" . optional($transaction->user)->contact_no : '+639212345678',
+                'mobile' => $userContactNumber,
             ],
             'project' => [
                 'name' => 'Hoho Checkout Reservation',
