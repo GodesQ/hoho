@@ -91,6 +91,14 @@
                                             location.reload();
                                         }
                                     })
+                            } else {
+                                Swal.fire('Failed!', response.message, 'error').then(
+                                    result => {
+                                        if (result.isConfirmed) {
+                                            toastr.error(response.message, 'Failed');
+                                            location.reload();
+                                        }
+                                    })
                             }
                         }
                     })

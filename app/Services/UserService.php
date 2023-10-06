@@ -14,7 +14,7 @@ class UserService
 {
     public function getUsersList(Request $request)
     {
-        $users = User::get();
+        $users = User::latest();
         return $users;
     }
 
@@ -35,6 +35,9 @@ class UserService
                 } else {
                     return '<span class="badge bg-label-warning me-1">No</span>';
                 }
+            })
+            ->addColumn('registered_date', function ($row) {
+               return date_format($row->created_at,'F d, Y h:i A');
             })
             ->addColumn('actions', function ($row) {
                 return '<div class="dropdown">

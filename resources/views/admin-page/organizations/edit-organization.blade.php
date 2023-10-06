@@ -76,33 +76,33 @@
                                 <div class="row">
                                     <div class="col-lg-4">
                                         <div class="mb-3">
-                                            <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_1" onchange="handlePreviewImage(this, 'previewImage1')">
                                             @if(count($organization_images) > 0 && isset($organization_images[0]))
                                                 <img src="{{ URL::asset('assets/img/organizations/' . $organization->id . '/' . $organization_images[0]) }}" id="previewImage1" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                 <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $organization->id}}, '{{ $organization_images[0] }}')">Remove <i class="bx bx-trash"></i></button>
                                             @else
+                                                <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_1" onchange="handlePreviewImage(this, 'previewImage1')">
                                                 <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage1" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
                                             @endif
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="mb-3">
-                                            <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_2" onchange="handlePreviewImage(this, 'previewImage2')">
                                             @if(count($organization_images) > 0 && isset($organization_images[1]))
                                                 <img src="{{ URL::asset('assets/img/organizations/' . $organization->id . '/' . $organization_images[1]) }}" id="previewImage2" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                 <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $organization->id}}, '{{ $organization_images[1] }}')">Remove <i class="bx bx-trash"></i></button>
                                             @else
+                                                <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_2" onchange="handlePreviewImage(this, 'previewImage2')">
                                                 <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage2" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
                                             @endif
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="mb-3">
-                                            <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_3" onchange="handlePreviewImage(this, 'previewImage3')">
                                             @if(count($organization_images) > 0 && isset($organization_images[2]))
                                                 <img src="{{ URL::asset('assets/img/organizations/' . $organization->id . '/' . $organization_images[2]) }}" id="previewImage3" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                 <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $organization->id}}, '{{ $organization_images[2] }}')">Remove <i class="bx bx-trash"></i></button>
                                             @else
+                                                <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_3" onchange="handlePreviewImage(this, 'previewImage3')">
                                                 <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage3" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
                                             @endif
                                         </div>
@@ -193,7 +193,7 @@
             }
         }
 
-        function removeImageBtn(id, image_path) {
+        function removeImageBtn(id, image_file_name) {
             Swal.fire({
                 title: 'Are you sure?',
                 text: "Remove attraction image",
@@ -210,7 +210,7 @@
                         data: {
                             _token: "{{ csrf_token() }}",
                             id: id,
-                            image_path: image_path
+                            image_file_name: image_file_name
                         },
                         success: function(response) {
                             if (response.status) {
@@ -218,6 +218,14 @@
                                     result => {
                                         if (result.isConfirmed) {
                                             toastr.success(response.message, 'Success');
+                                            location.reload();
+                                        }
+                                    })
+                            } else {
+                                Swal.fire('Failed!', response.message, 'error').then(
+                                    result => {
+                                        if (result.isConfirmed) {
+                                            toastr.error(response.message, 'Failed');
                                             location.reload();
                                         }
                                     })

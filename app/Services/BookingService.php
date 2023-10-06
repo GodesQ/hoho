@@ -22,6 +22,13 @@ use DB;
 
 class BookingService
 {
+    protected $mailService;
+
+    public function __construct(MailService $mailService)
+    {
+        $this->mailService = $mailService;
+    }
+
     public function createBooking(Request $request)
     {
         try {
@@ -44,13 +51,18 @@ class BookingService
 
             $reservation = $this->createReservation($request, $transaction, $totalAmount, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
 
+            // Check if reservation or transaction creation failed
             if (!$reservation || !$transaction) {
-                $reservation->delete();
-                $transaction->delete();
+                if ($reservation) {
+                    $reservation->delete();
+                }
+                if ($transaction) {
+                    $transaction->delete();
+                }
                 return back()->with('fail', 'Failed to Create Reservation');
             }
 
-
+            // Handle payment method
             if ($request->payment_method == 'cash_payment') {
                 return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Reservation Successfully');
             } else {
@@ -65,39 +77,31 @@ class BookingService
 
                 $responseData = json_decode($response['result']->getBody(), true);
 
-                $updateTransaction = $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+                // Update transaction after payment
+                $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
 
-                $payment_request_details = [
-                    'transaction_by' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
-                    'reference_no' => $transaction->reference_no,
-                    'total_additional_charges' => $transaction->total_additional_charges,
-                    'sub_amount' => $transaction->sub_amount,
-                    'total_amount' => $transaction->payment_amount,
-                    'payment_url' => $responseData['paymentUrl'],
-                    'payment_expiration' => $responseData['data']['expiresAt'] ?? null,
-                ];
+                // Send payment request mail
+                $this->mailService->sendPaymentRequestMail($transaction, $responseData['paymentUrl'], $responseData['data']['expiresAt']);
 
-                Mail::to($transaction->user->email)->send(new PaymentRequestMail($payment_request_details));
-
-                $tour = Tour::where('id', $request->tour_id)->first();
-
+                // Send notification to tour provider
                 if (env('APP_ENVIRONMENT') == 'LIVE') {
-                    $details = [
-                        'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
-                        'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
-                        'trip_date' => $request->trip_date,
-                        'tour_name' => $tour->name
-                    ];
+                    $tour = Tour::where('id', $request->tour_id)->first();
 
-                    if ($tour) {
-                        if ($tour->tour_provider) {
-                            if (optional($tour->tour_provider)->contact_email) {
-                                Mail::to(optional($tour->tour_provider)->contact_email)->send(new TourProviderBookingNotification($details));
-                            }
-                        }
+                    if ($tour && $tour->tour_provider && optional($tour->tour_provider)->contact_email) {
+                        
+                        $details = [
+                            'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
+                            'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
+                            'trip_date' => $request->trip_date,
+                            'tour_name' => $tour->name
+                        ];
+
+                        Mail::to(optional($tour->tour_provider)->contact_email)->send(new TourProviderBookingNotification($details));
                     }
+
                 }
 
+                // Return response
                 if ($request->is('api/*')) {
                     return response([
                         'status' => 'paying',
@@ -107,6 +111,7 @@ class BookingService
                     return redirect($responseData['paymentUrl']);
                 }
             }
+            
         } catch (\Exception $exception) {
             dd($exception->getMessage());
         }
@@ -177,17 +182,7 @@ class BookingService
 
                 $this->sendMultipleBookingNotification($items, $transaction);
 
-                $payment_request_details = [
-                    'transaction_by' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
-                    'reference_no' => $transaction->reference_no,
-                    'total_additional_charges' => $transaction->total_additional_charges,
-                    'sub_amount' => $transaction->sub_amount,
-                    'total_amount' => $transaction->payment_amount,
-                    'payment_url' => $responseData['paymentUrl'],
-                    'payment_expiration' => $responseData['data']['expiresAt'] ?? null,
-                ];
-
-                Mail::to($transaction->user->email)->send(new PaymentRequestMail($payment_request_details));
+                $this->mailService->sendPaymentRequestMail($transaction, $responseData['paymentUrl'], $responseData['data']['expiresAt']);
 
                 if ($request->is('api/*')) {
                     return response([
@@ -447,7 +442,7 @@ class BookingService
     }
 
     private function setRequestModel($transaction)
-    {   
+    {
         $userContactNumber = "+" . optional($transaction->user)->countryCode . optional($transaction->user)->contact_no;
 
         $model = [

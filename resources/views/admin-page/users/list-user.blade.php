@@ -11,8 +11,8 @@
 
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive-lg text-nowrap">
-                    <table class="table   data-table">
+                <div class="table-responsive text-nowrap">
+                    <table class="table data-table">
                         <thead>
                             <tr>
                                 <th>Id</th>
@@ -21,6 +21,7 @@
                                 <th>Contact No</th>
                                 <th>Status</th>
                                 <th>Email Verified?</th>
+                                <th>Registered Date</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -66,6 +67,10 @@
                     {
                         data: 'email_verify',
                         name: 'email_verify'
+                    },
+                    {
+                        data: 'registered_date',
+                        name: 'registered_date'
                     },
                     {
                         data: 'actions',

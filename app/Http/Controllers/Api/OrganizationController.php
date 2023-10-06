@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Organization;
 
 class OrganizationController extends Controller
-{
+{   
     public function getOrganizations(Request $request) {
         $organizations = Organization::get();
         return response([
