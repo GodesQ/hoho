@@ -117,7 +117,7 @@ class TourController extends Controller
 
             $old_upload_image = public_path('assets/img/tours/') . $tour->id . '/' . $tour->featured_image;
             if($old_upload_image) {
-                $remove_image = @unlink($old_upload_image);
+                @unlink($old_upload_image);
             }
             $save_file = $file->move(public_path() . '/assets/img/tours/' . $tour->id, $featured_file_name);
         } else {

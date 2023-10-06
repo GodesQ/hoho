@@ -29,6 +29,6 @@ class PaymentRequestMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Payment Request- Philippine Hop On Hop Off')->view('emails.payment-request', ['details' => $this->details]);
+        return $this->subject('Payment Request- Philippines Hop On Hop Off')->view('emails.payment-request', ['details' => $this->details]);
     }
 }

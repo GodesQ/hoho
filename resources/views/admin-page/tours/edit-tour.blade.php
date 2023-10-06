@@ -247,7 +247,7 @@
                     <div class="card-body">
                         <h6>Preview of Featured Image</h6>
                         @if ($tour->featured_image)
-                            <img src="{{ URL::asset('assets/img/tours/' . $tour->id . '/' . $tour->featured_image) }}"
+                            <img src="{{ URL::asset('assets/img/tours/' . $tour->id . '/' . $tour->featured_image) }}?date={{ $tour->updated_at }}"
                                 alt="{{ $tour->name }}" style="border-radius: 10px !important;" id="previewImage"
                                 width="100%">
                         @else
