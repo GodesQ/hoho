@@ -54,7 +54,7 @@
 
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive-xl text-nowrap">
+                <div class="table-responsive text-nowrap">
                     <table class="table data-table">
                         <thead>
                             <tr>
