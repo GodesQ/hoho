@@ -29,6 +29,7 @@ use App\Http\Controllers\Web\ReferralController;
 use App\Http\Controllers\Web\DataReportController;
 use App\Http\Controllers\Web\PromoCodeController;
 use App\Http\Controllers\Web\ForgotPasswordController;
+use App\Http\Controllers\Web\LogController;
 
 use App\Http\Controllers\Web\AqwireController;
 
@@ -246,6 +247,13 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('ticket_passes/edit/{id}', [TicketPassController::class, 'edit'])->name('ticket_passes.edit');
     Route::post('ticket_passes/update/{id}', [TicketPassController::class, 'update'])->name('ticket_passes.update');
     Route::delete('ticket_passes/destroy', [TicketPassController::class, 'destroy'])->name('ticket_passes.destroy');
+
+    Route::get('logs', [LogController::class, 'list'])->name('logs.list');
+    Route::get('logs/create', [LogController::class, 'create'])->name('logs.create');
+    Route::post('logs/store', [LogController::class, 'store'])->name('logs.store');
+    Route::get('logs/edit/{id}', [LogController::class, 'edit'])->name('logs.edit');
+    Route::post('logs/update/{id}', [LogController::class, 'update'])->name('logs.update');
+    Route::delete('logs/destroy', [LogController::class, 'destroy'])->name('logs.destroy');
 
 
     Route::prefix('reports')->as('reports.')->group(function () {
