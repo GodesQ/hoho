@@ -45,6 +45,7 @@ Route::post('user/post_forgot_password', [ForgotPasswordController::class, 'post
 Route::post('user/change_password', [UserController::class, 'changePassword']);
 
 Route::get('announcements/important_announcements', [AnnouncementController::class, 'getImportantAnnouncements']);
+Route::get('announcements', [AnnouncementController::class, 'getAnnouncements']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);

@@ -26,4 +26,22 @@ class AnnouncementController extends Controller
             'announcements' => $announcements,
         ]);
     }
+
+    public function getAnnouncements(Request $request) {
+        $announcements = Announcement::select('id', 'type', 'name', 'message', 'is_active', 'is_important')->where('is_active', 1)->get();
+
+        if (!$announcements || $announcements->count() == 0) {
+            return response()->json([
+                'status' => FALSE,
+                'message' => 'No Announcements Found',
+                'announcements' => [],
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => TRUE,
+            'message' => 'Announcements Found',
+            'announcements' => $announcements,
+        ]);
+    }
 }
