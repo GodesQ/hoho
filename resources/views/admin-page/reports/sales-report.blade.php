@@ -264,7 +264,7 @@
                                             return data.top_selling_tours.reduce((acc, tour) => {
                                                 // console.log(acc, tour);
                                                 console.log(tour);
-                                                return acc + tour.total_reservations;
+                                                return parseint(acc) + parseInt(tour.total_reservations);
                                             }, 0);
                                         }
                                     }
