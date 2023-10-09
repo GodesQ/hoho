@@ -30,6 +30,7 @@ use App\Http\Controllers\Web\DataReportController;
 use App\Http\Controllers\Web\PromoCodeController;
 use App\Http\Controllers\Web\ForgotPasswordController;
 use App\Http\Controllers\Web\LogController;
+use App\Http\Controllers\Web\AnnouncementController;
 
 use App\Http\Controllers\Web\AqwireController;
 
@@ -255,6 +256,12 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::post('logs/update/{id}', [LogController::class, 'update'])->name('logs.update');
     Route::delete('logs/destroy', [LogController::class, 'destroy'])->name('logs.destroy');
 
+    Route::get('announcements', [AnnouncementController::class, 'list'])->name('announcements.list');
+    Route::get('announcements/create', [AnnouncementController::class, 'create'])->name('announcements.create');
+    Route::post('announcements/store', [AnnouncementController::class, 'store'])->name('announcements.store');
+    Route::get('announcements/edit/{id}', [AnnouncementController::class, 'edit'])->name('announcements.edit');
+    Route::post('announcements/update/{id}', [AnnouncementController::class, 'update'])->name('announcements.update');
+    Route::delete('announcements/destroy', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
 
     Route::prefix('reports')->as('reports.')->group(function () {
         Route::get('user_demographics', [DataReportController::class, 'user_demographics'])->name('user_demographics');

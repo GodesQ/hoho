@@ -369,6 +369,12 @@
                         @endcan
                     @endauth
 
+                    <li class="menu-item {{ preg_match('/admin\/announcements/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.announcements.list') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-message"></i>
+                            <div data-i18n="Announcements">Announcements</div>
+                        </a>
+                    </li>
 
                     <!-- Roles & Permissions -->
                     @auth('admin')

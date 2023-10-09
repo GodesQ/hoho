@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\ReferralController;
 use App\Http\Controllers\Api\PromoCodeController;
 use App\Http\Controllers\Api\ForgotPasswordController;
 use App\Http\Controllers\Api\TicketPassController;
+use App\Http\Controllers\Api\AnnouncementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,8 +44,11 @@ Route::post('user/post_forgot_password', [ForgotPasswordController::class, 'post
 
 Route::post('user/change_password', [UserController::class, 'changePassword']);
 
+Route::get('announcements/important_announcements', [AnnouncementController::class, 'getImportantAnnouncements']);
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
+
 
     Route::get('user', [UserController::class, 'getUser']);
     Route::post('user/profile', [UserController::class, 'updateProfile']);

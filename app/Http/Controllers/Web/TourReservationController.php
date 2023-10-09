@@ -72,7 +72,8 @@ class TourReservationController extends Controller
 
     public function edit(Request $request) {
         $reservation = TourReservation::where('id', $request->id)->with('user', 'tour', 'transaction')->firstOrFail();
-        return view('admin-page.tour_reservations.edit-tour-reservation', compact('reservation'));
+        $ticket_passes = TicketPass::get();
+        return view('admin-page.tour_reservations.edit-tour-reservation', compact('reservation', 'ticket_passes'));
     }
 
     public function update(Request $request) {

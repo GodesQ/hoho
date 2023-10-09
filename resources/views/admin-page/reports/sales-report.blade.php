@@ -260,7 +260,10 @@
                                         fontSize: '0.8125rem',
                                         label: 'Monthly',
                                         formatter: function(w) {
+                                            // console.log(data.top_selling_tours);
                                             return data.top_selling_tours.reduce((acc, tour) => {
+                                                // console.log(acc, tour);
+                                                console.log(tour);
                                                 return acc + tour.total_reservations;
                                             }, 0);
                                         }
@@ -363,8 +366,6 @@
                             status.data.push(data.data[month][status.name]);
                         });
                     });
-
-                    console.log(categories, series, data);
 
                     const transactionStatusConfig = {
                         series,

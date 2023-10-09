@@ -130,36 +130,21 @@
                             <div class="col-lg-12 diy_ticket_pass {{ $reservation->type == 'DIY' ? 'active' : null }}">
                                 <div class="mb-3">
                                     <div class="form-label">DIY Ticket Pass</div>
-                                    <div class="form-check form-check-inline mt-3">
-                                        <input class="form-check-input diy_ticket_pass_radio" type="radio"
-                                            name="ticket_pass" id="one_day_diy_ticket_pass" value="1 Day Pass" disabled {{ $reservation->ticket_pass == '1 Day Pass' ? 'checked' : null }} />
-                                        <label class="form-check-label" for="one_day_diy_ticket_pass"
-                                            style="cursor: pointer;">
-                                            <img src="https://metrohoho.s3.ap-southeast-1.amazonaws.com/tickets/1-day.png"
-                                                alt="1 Day Ticket Pass" width="120px">
-                                            <h6 class="text-center my-2">₱ 990.00</h6>
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input diy_ticket_pass_radio" type="radio"
-                                            name="ticket_pass" id="two_day_diy_ticket_pass" value="2 Day Pass" disabled {{ $reservation->ticket_pass == '2 Day Pass' ? 'checked' : null }} />
-                                        <label class="form-check-label" for="two_day_diy_ticket_pass"
-                                            style="cursor: pointer;">
-                                            <img src="https://metrohoho.s3.ap-southeast-1.amazonaws.com/tickets/2-day.png"
-                                                alt="2 Day Ticket Pass" width="120px">
-                                            <h6 class="text-center my-2">₱ 1799.00</h6>
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input diy_ticket_pass_radio" type="radio"
-                                            name="ticket_pass" id="three_day_diy_ticket_pass" value="3 Day Pass" disabled {{ $reservation->ticket_pass == '3 Day Pass' ? 'checked' : null }} />
-                                        <label class="form-check-label" for="three_day_diy_ticket_pass"
-                                            style="cursor: pointer;">
-                                            <img src="https://metrohoho.s3.ap-southeast-1.amazonaws.com/tickets/3-day.png"
-                                                alt="3 Day Ticket Pass" width="120px">
-                                            <h6 class="text-center my-2">₱ 2499.00</h6>
-                                        </label>
-                                    </div>
+                                    @foreach ($ticket_passes as $ticket_pass)
+                                        <div class="form-check form-check-inline mt-3">
+                                            <input class="form-check-input diy_ticket_pass_radio" type="radio"
+                                                name="ticket_pass" id="{{ $ticket_pass->name }}"
+                                                value="{{ $ticket_pass->name }}" disabled
+                                                data-amount="{{ $ticket_pass->price }}" {{ $ticket_pass->name == $reservation->ticket_pass ? 'checked' : null }} />
+                                            <label class="form-check-label" for="{{ $ticket_pass->name }}"
+                                                style="cursor: pointer;">
+                                                <img src="{{ URL::asset('assets/img/ticket_passes/' . $ticket_pass->ticket_image) }}"
+                                                    alt="1 Day Ticket Pass" width="120px">
+                                                <h6 class="text-center my-2">₱
+                                                    {{ number_format($ticket_pass->price, 2) }}</h6>
+                                            </label>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
