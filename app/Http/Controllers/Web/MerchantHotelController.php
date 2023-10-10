@@ -83,7 +83,9 @@ class MerchantHotelController extends Controller
     public function edit(Request $request) {
         $organizations = Organization::get();
         $hotel = MerchantHotel::where('id', $request->id)->with('merchant')->first();
-        return view('admin-page.merchants.hotels.edit-hotel', compact('hotel', 'organizations'));
+        $interests = Interest::get();
+
+        return view('admin-page.merchants.hotels.edit-hotel', compact('hotel', 'organizations', 'interests'));
     }
 
     public function update(Request $request) {
