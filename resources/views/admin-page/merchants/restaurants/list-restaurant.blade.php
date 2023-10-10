@@ -15,6 +15,7 @@
                 <table class="table   data-table">
                     <thead>
                         <tr>
+                            <th>Organization</th>
                             <th>Name</th>
                             <th>Nature Of Business</th>
                             <th>Actions</th>
@@ -42,6 +43,10 @@
                     }
                 },
                 columns: [
+                    {
+                        data: 'organization',
+                        name: 'organization',
+                    },
                     {
                         data: 'name',
                         name: 'name',

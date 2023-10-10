@@ -38,6 +38,20 @@ class MerchantRestaurantController extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('organization', function($row) {
+                    if($row->merchant->organization) {
+                        if($row->merchant->organization->icon) {
+                            $path = '../../../assets/img/organizations/' . $row->merchant->organization->id . '/' . $row->merchant->organization->icon;
+                            return '<img src="' .$path. '" width="50" height="50" />';
+                        } else {
+                            $path = '../../../assets/img/' . 'default-image.jpg';
+                            return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
+                        }
+                    } else {
+                        $path = '../../../assets/img/' . 'default-image.jpg';
+                        return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
+                    }
+                })
                 ->addColumn('name', function ($row) {
                     return optional($row->merchant)->name;
                 })
@@ -50,7 +64,7 @@ class MerchantRestaurantController extends Controller
                                     <a href="javascript:void(0);" id=" ' . $row->id . ' " class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                 })
-                ->rawColumns(['actions'])
+                ->rawColumns(['actions', 'organization'])
                 ->make(true);
         }
 
