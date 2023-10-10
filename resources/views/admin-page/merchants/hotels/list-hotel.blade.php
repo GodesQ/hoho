@@ -37,7 +37,10 @@
                 responsive: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('admin.merchants.hotels.list') }}"
+                    url: "{{ route('admin.merchants.hotels.list') }}",
+                    data: function (d) {
+                        d.search = $('input[type="search"]').val();
+                    }
                 },
                 columns: [
                     {
@@ -56,6 +59,9 @@
                         data: 'actions',
                         name: 'actions'
                     },
+                ],
+                order: [
+                    [0, 'desc'] // Sort by the first column (index 0) in descending order
                 ]
             })
         }

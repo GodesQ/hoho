@@ -15,6 +15,7 @@
                 <table class="table   data-table">
                     <thead>
                         <tr>
+                            <th>Organization</th>
                             <th>Name</th>
                             <th>Nature Of Business</th>
                             <th>Actions</th>
@@ -36,9 +37,16 @@
                 responsive: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('admin.merchants.stores.list') }}"
+                    url: "{{ route('admin.merchants.stores.list') }}",
+                    data: function (d) {
+                        d.search = $('input[type="search"]').val();
+                    }
                 },
                 columns: [
+                    {
+                        data: 'organization',
+                        name: 'organization',
+                    },
                     {
                         data: 'name',
                         name: 'name',
@@ -51,6 +59,9 @@
                         data: 'actions',
                         name: 'actions'
                     },
+                ],
+                order: [
+                    [0, 'desc'] // Sort by the first column (index 0) in descending order
                 ]
             })
         }

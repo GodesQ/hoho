@@ -28,6 +28,10 @@ class Merchant extends Model
         'organization_id' => 'integer'
     ];
 
+    public function organization() {
+        return $this->belongsTo(Organization::class, 'organization_id');
+    }
+
     public function hotels() {
         return $this->hasMany(MerchantHotel::class, 'merchant_id');
     }

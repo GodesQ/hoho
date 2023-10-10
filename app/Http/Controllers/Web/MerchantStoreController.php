@@ -35,11 +35,30 @@ class MerchantStoreController extends Controller
      */
     public function list(Request $request) {
         if($request->ajax()) {
-            // dd($request->all());
-            $data = MerchantStore::with('merchant');
-            
+            $search = $request->search;
+
+            $data = MerchantStore::when($search, function($query) use ($search) {
+                $query->whereHas('merchant', function ($merchantQuery) use ($search) {
+                    $merchantQuery->where('name', 'LIKE', '%' . $search . '%');
+                });
+            })->with('merchant');
+
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('organization', function($row) {
+                    if($row->merchant->organization) {
+                        if($row->merchant->organization->icon) {
+                            $path = '../../../assets/img/organizations/' . $row->merchant->organization->id . '/' . $row->merchant->organization->icon;
+                            return '<img src="' .$path. '" width="50" height="50" />';
+                        } else {
+                            $path = '../../../assets/img/' . 'default-image.jpg';
+                            return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
+                        }
+                    } else {
+                        $path = '../../../assets/img/' . 'default-image.jpg';
+                        return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
+                    }
+                })
                 ->addColumn('name', function ($row) {
                     return ($row->merchant)->name;
                 })
@@ -52,7 +71,7 @@ class MerchantStoreController extends Controller
                                 <a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                             </div>';
                 })
-                ->rawColumns(['actions'])
+                ->rawColumns(['actions', 'organization'])
                 ->make(true);
         }
 

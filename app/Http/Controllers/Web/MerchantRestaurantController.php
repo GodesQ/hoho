@@ -28,7 +28,14 @@ class MerchantRestaurantController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $data = MerchantRestaurant::latest()->with('merchant');
+            $search = $request->search;
+
+            $data = MerchantRestaurant::when($search, function($query) use ($search) {
+                $query->whereHas('merchant', function ($merchantQuery) use ($search) {
+                    $merchantQuery->where('name', 'LIKE', '%' . $search . '%');
+                });
+            })->with('merchant');
+
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('name', function ($row) {

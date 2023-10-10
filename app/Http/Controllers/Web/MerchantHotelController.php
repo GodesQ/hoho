@@ -15,7 +15,7 @@ use App\Models\Interest;
 
 use App\Services\MerchantHotelService;
 
-use DataTables;
+use Yajra\DataTables\DataTables;
 use DB;
 
 class MerchantHotelController extends Controller
@@ -29,7 +29,14 @@ class MerchantHotelController extends Controller
     public function list(Request $request) {
 
         if($request->ajax()) {
-            $data = MerchantHotel::latest()->with('merchant');
+            $search = $request->search;
+
+            $data = MerchantHotel::when($search, function($query) use ($search) {
+                $query->whereHas('merchant', function ($merchantQuery) use ($search) {
+                    $merchantQuery->where('name', 'LIKE', '%' . $search . '%');
+                });
+            })->with('merchant');
+
             return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('name', function ($row) {
