@@ -206,6 +206,7 @@
         }
 
         function setTopSellingToursChart(data) {
+            console.log(data);
             const chartOrderStatistics = document.querySelector('#topSellingToursChart'),
                 orderChartConfig = {
                     chart: {
@@ -409,61 +410,5 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
-
-        // const transactionStatusEl = document.querySelector('#transactionStatusChart'),
-
-        //     transactionStatusConfig = {
-        //         series: [{
-        //                 name: "Success",
-        //                 data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-        //             }, {
-        //                 name: "Pending",
-        //                 data: [5, 20, 15, 34, 69, 13, 45, 78, 69]
-        //             },
-        //             {
-        //                 name: "Incomplete",
-        //                 data: [10, 30, 5, 29, 19, 103, 85, 18, 29]
-        //             }
-        //         ],
-        //         chart: {
-        //             height: 350,
-        //             type: 'line',
-        //             zoom: {
-        //                 enabled: false
-        //             }
-        //         },
-        //         dataLabels: {
-        //             enabled: false
-        //         },
-        //         stroke: {
-        //             curve: 'straight'
-        //         },
-        //         title: {
-        //             text: 'Transaction Status By Month',
-        //             align: 'left'
-        //         },
-        //         colors: [
-        //             '#6f0d00',
-        //             '#8592a3',
-        //             '#ffc858'
-        //         ],
-        //         grid: {
-        //             row: {
-        //                 colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-        //                 opacity: 0.2
-        //             },
-        //         },
-        //         xaxis: {
-        //             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-        //         }
-        //     };
-
-        // if (typeof transactionStatusEl !== undefined && transactionStatusEl !== null) {
-        //     const overallSaleChart = new ApexCharts(transactionStatusEl, transactionStatusConfig);
-        //     overallSaleChart.render();
-        // }
-
-        // var chart = new ApexCharts(document.querySelector("#chart"), options);
-        // chart.render();
     </script>
 @endpush

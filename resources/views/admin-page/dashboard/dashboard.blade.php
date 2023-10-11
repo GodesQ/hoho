@@ -51,7 +51,7 @@
                     <div class="row row-bordered g-0">
                         <div class="col-md-8">
                             <h5 class="card-header m-0 me-2 pb-3">Total Bookings</h5>
-                            <div id="totalRevenueChart" class="px-2"></div>
+                            <div id="totalBookingsPerTypeChart" class="px-2"></div>
                         </div>
                         <div class="col-md-4">
                             <div class="card-body">
@@ -207,3 +207,55 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            getTotalBookingsPerType();
+        });
+
+        function getTotalBookingsPerType() {
+            fetch("{{ route('admin.reports.get_total_bookings_per_type') }}")
+                .then(response => response.json())
+                .then(data => {
+                    setTotalBookingTypeChart(data);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function setTotalBookingTypeChart(data) {
+            const totalBookingsPerTypeChartEl = document.querySelector('#totalBookingsPerTypeChart'),
+                totalBookingsPerTypeChartOptions = {
+                    series: [{
+                        data: [data.total_guided_tours, data.total_diy_tours]
+                    }],
+                    chart: {
+                        stacked: true,
+                        type: 'bar',
+                        toolbar: {
+                            show: false
+                        },
+                        height: 300,
+                    },
+                    plotOptions: {
+                        bar: {
+                            borderRadius: 10,
+                            horizontal: false,
+                            startingShape: 'rounded',
+                            endingShape: 'rounded'
+                        }
+                    },
+                    colors: [config.colors.primary, config.colors.info],
+                    xaxis: {
+                        categories: ['Guided Tour', 'DIY Tour'],
+                    }
+                };
+            if (typeof totalBookingsPerTypeChartEl !== undefined && totalBookingsPerTypeChartEl !== null) {
+                const totalBookingsPerTypeChart = new ApexCharts(totalBookingsPerTypeChartEl,
+                    totalBookingsPerTypeChartOptions);
+                totalBookingsPerTypeChart.render();
+            }
+        }
+    </script>
+@endpush

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Transaction;
 use App\Models\TourReservation;
 
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 class TransactionController extends Controller
 {
