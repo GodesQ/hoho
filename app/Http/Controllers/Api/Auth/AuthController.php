@@ -54,7 +54,7 @@ class AuthController extends Controller
                         ]
                     ),
                     'message' => "Invalid credentials."
-                ], 200);
+                ], 400);
             }
         }
 
@@ -73,7 +73,7 @@ class AuthController extends Controller
                     ]
                 ),
                 'message' => $user && $user->is_old_user ? 'This is an old user. Please change password' : 'Invalid credentials.'
-            ], 200);
+            ], 400);
         }
 
         if($user->role == 'guest') {
@@ -81,7 +81,7 @@ class AuthController extends Controller
                 return response([
                     'status' => false,
                     'message' => "Please Verify First Your Email Verification"
-                ], 200);
+                ], 400);
             }
         }
 
