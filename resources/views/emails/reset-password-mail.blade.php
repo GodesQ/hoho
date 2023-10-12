@@ -127,17 +127,9 @@
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tr>
                                                 <td align="center" style="border-radius: 3px;" bgcolor="#6f0d00">
-                                                    <form action="{{ route('user.reset_password_form') }}">
-                                                        @csrf
-                                                        <input type="hidden" value="{{ $token }}"
-                                                            name="verify_token">
-                                                        <input type="hidden" value="{{ $email }}"
-                                                            name="email">
-                                                        <button type="submit"
-                                                            style="padding: 0.6rem 1rem 0.6rem 1rem; background: #6f0d00; color: white; text-decoration: none; border-radius: 5px; cursor: pointer; font-family: 'Google Sans', Helvetica, Arial, sans-serif; font-size: 16px;">
-                                                            RESET YOUR PASSWORD
-                                                        </button>
-                                                    </form>
+                                                    <a href="{{ route('user.reset_password_form') }}?verify_token={{ $token }}&email={{ $email }}" style="padding: 0.6rem 1rem 0.6rem 1rem; background: #6f0d00; color: white; text-decoration: none; border-radius: 5px; cursor: pointer; font-family: 'Google Sans', Helvetica, Arial, sans-serif; font-size: 16px;">
+                                                        RESET YOUR PASSWORD
+                                                    </a>
                                                 </td>
                                             </tr>
                                         </table>
