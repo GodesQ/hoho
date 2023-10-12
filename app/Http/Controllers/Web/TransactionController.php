@@ -22,7 +22,7 @@ class TransactionController extends Controller
                             if($row->user) {
                                 return $row->user->firstname . ' ' . $row->user->lastname;
                             } else {
-                                return 'HOHO User';
+                                return 'Deleted User';
                             }
                         })
                         ->addColumn('payment_amount', function($row) {

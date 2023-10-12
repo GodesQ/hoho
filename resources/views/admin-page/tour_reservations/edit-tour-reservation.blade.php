@@ -238,8 +238,11 @@
                                     {{-- {{ $reservation->transaction->payment_status }} --}}
                             </div>
                         </div>
-                        <div class="my-3 justify-content-end d-flex">
-                            <button class="btn btn-primary">Update Reservation</button>
+                        <div class="my-3 justify-content-between d-flex flex-column" style="gap: 10px;">
+                            <button class="btn btn-primary w-100">Update Reservation <i class="bx bx-save"></i></button>
+                            <div class="w-100">
+                                <a href="{{ route('admin.transactions.edit', $reservation->order_transaction_id) }}" class="w-100 btn-outline-primary btn">See Transaction Details</a>
+                            </div>
                         </div>
                     </div>
                 </div>
