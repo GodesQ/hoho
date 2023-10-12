@@ -57,7 +57,7 @@ class TransactionController extends Controller
     public function edit(Request $request) {
         $transaction = Transaction::where('id', $request->id)->with('user', 'items')->firstOrFail();
         // dd($transaction);
-        return view('admin-page.transactions.test-edit-transaction', compact('transaction'));
+        return view('admin-page.transactions.edit-transaction', compact('transaction'));
     }
 
     public function update(Request $request) {
