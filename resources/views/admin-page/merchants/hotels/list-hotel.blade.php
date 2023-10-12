@@ -18,7 +18,6 @@
                             <th>Organization</th>
                             <th>Name</th>
                             <th>Nature Of Business</th>
-                            <th>Interests</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -55,10 +54,6 @@
                     {
                         data: 'nature_of_business',
                         name: 'nature_of_business'
-                    },
-                    {
-                        data: 'interests',
-                        name: 'interests'
                     },
                     {
                         data: 'actions',

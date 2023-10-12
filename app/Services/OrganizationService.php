@@ -197,7 +197,6 @@ class OrganizationService
     private function handleUploadImage(Request $request, $path, $file_name, $file)
     {
         try {
-            // dd($path, $file);
             $save_file = Storage::disk('public')->putFileAs($path, $file, $file_name);
 
             if ($save_file)

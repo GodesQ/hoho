@@ -95,7 +95,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('admins/edit/{id}', [AdminController::class, 'edit'])->name('admins.edit')->can('edit_admin');
     Route::post('admins/update/{id}', [AdminController::class, 'update'])->name('admins.update')->can('update_admin');
     Route::delete('admins/destroy', [AdminController::class, 'destroy'])->name('admins.destroy')->can('delete_admin');
-
+    
     Route::get('users', [UserController::class, 'list'])->name('users.list')->can('view_users_list');
     Route::get('users/lookup', [UserController::class, 'lookup'])->name('users.lookup')->can('view_users_list');
     Route::get('users/create', [UserController::class, 'create'])->name('users.create')->can('create_user');
@@ -138,7 +138,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::post('attractions/update/{id}', [AttractionController::class, 'update'])->name('attractions.update');
     Route::delete('attractions/destroy', [AttractionController::class, 'destroy'])->name('attractions.destroy');
     Route::delete('attractions/remove_image', [AttractionController::class, 'removeImage'])->name('attractions.remove_image');
-    Route::get('attractions/update_attractions', [AttractionController::class, 'update_attractions']);
+    // Route::get('attractions/update_attractions', [AttractionController::class, 'update_attractions']);
 
     Route::get('tour_reservations', [TourReservationController::class, 'list'])->name('tour_reservations.list')->can('view_tour_reservations_list');
     Route::get('tour_reservations/create', [TourReservationController::class, 'create'])->name('tour_reservations.create');
