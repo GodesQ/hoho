@@ -158,6 +158,14 @@
                                         <input class="form-check-input" type="checkbox" id="isOldUser" value="1" name="is_old_user" />
                                         <label class="form-check-label" for="isOldUser">Is Old User?</label>
                                     </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="isFirstTimeInPhilippines" value="1" name="is_first_time_philippines" />
+                                        <label class="form-check-label" for="isFirstTimeInPhilippines">Is First Time in Philippines?</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="isInternationalTourist" value="1" name="is_international_tourist" />
+                                        <label class="form-check-label" for="isInternationalTourist">Is International Tourist?</label>
+                                    </div>
                                     <div class="my-3">
                                         <label for="status" class="form-label">Status</label>
                                         <div class="form-check ">

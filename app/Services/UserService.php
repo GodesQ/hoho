@@ -81,6 +81,8 @@ class UserService
                 'account_uid' => $account_uid,
                 'password' => Hash::make($request->password),
                 'interests' => $request->has('interest_ids') ? json_encode($request->interest_ids) : null,
+                'is_first_time_philippines' => $request->has('is_first_time_philippines') ? true : false,
+                'is_international_tourist' => $request->has('is_international_tourist') ? true : false,
             ]),
         );
 
@@ -95,6 +97,8 @@ class UserService
             array_merge($request->all(), [
                 'is_verify' => $request->has('is_verify') ? true : false,
                 'is_old_user' => $request->has('is_old_user') ? true : false,
+                'is_first_time_philippines' => $request->has('is_first_time_philippines') ? true : false,
+                'is_international_tourist' => $request->has('is_international_tourist') ? true : false,
                 'interest_ids' => $request->has('interest_ids') ? json_encode($request->interest_ids) : null,
             ]),
         );

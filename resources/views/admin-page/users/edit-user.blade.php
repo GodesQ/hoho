@@ -22,7 +22,7 @@
     </style>
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center">
-            <h4 class="fw-bold py-3 mb-4">Create User</h4>
+            <h4 class="fw-bold py-3 mb-4">Edit User</h4>
             <a href="{{ route('admin.users.list') }}" class="btn btn-dark"><i class="bx bx-undo"></i> Back to List</a>
         </div>
 
@@ -157,6 +157,14 @@
                                     <div class="form-check form-switch mb-2">
                                         <input class="form-check-input" type="checkbox" id="isOldUser" value="1" name="is_old_user" {{ $user->is_old_user ? 'checked' : null }} />
                                         <label class="form-check-label" for="isOldUser">Is Old User?</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="isFirstTimeInPhilippines" value="1" name="is_first_time_philippines" {{ $user->is_first_time_philippines ? 'checked' : null }} />
+                                        <label class="form-check-label" for="isFirstTimeInPhilippines">Is First Time in Philippines?</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="isInternationalTourist" value="1" name="is_international_tourist" {{ $user->is_international_tourist ? 'checked' : null }} />
+                                        <label class="form-check-label" for="isInternationalTourist">Is International Tourist?</label>
                                     </div>
                                     <div class="mb-3">
                                         <label for="status" class="form-label">Status</label>
