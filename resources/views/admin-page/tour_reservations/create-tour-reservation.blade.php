@@ -31,6 +31,9 @@
         <form action="{{ route('admin.tour_reservations.store') }}" method="POST">
             @csrf
             <input type="hidden" id="amount" name="amount" value="">
+            <input type="hidden" id="total_amount" value="">
+            <input type="hidden" id="discounted_amount" name="discounted_amount" value="">
+            <input type="hidden" id="discount" value="">
             <div class="row">
                 <div class="col-xl-7 col-lg-6">
                     <div class="card">
@@ -148,9 +151,19 @@
                     </div>
                 </div>
                 <div class="col-xl-5 col-lg-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 style="font-weight: 600;">Promo Code</h6>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Apply Promo Code" name="promo_code"
+                                    id="promo_code" />
+                                <button class="btn btn-primary" type="button" id="apply-promocode-btn">Apply</button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card">
                         <div class="card-body">
-                            <h4>Book Reservation Summary</h4>
+                            <h6 style="font-weight: 600;">Book Reservation Summary</h6>
                             <hr>
                             <div class="row">
                                 <div class="col-xl-6">
@@ -208,14 +221,14 @@
                                     <h6 id="total_convenience_fee_text">₱ 0.00</h6>
                                 </div>
                             </div>
-                            {{-- <div class="row">
+                            <div class="row">
                                 <div class="col-xl-6">
-                                    <h6 class="text-primary">Total Travel Pass Fee (50 / pax) </h6>
+                                    <h6 class="text-primary">Total Of Discount </h6>
                                 </div>
                                 <div class="col-xl-6">
-                                    <h6 id="total_travel_pass_text">₱ 0.00</h6>
+                                    <h6 id="total_discount_text">₱ 0.00</h6>
                                 </div>
-                            </div> --}}
+                            </div>
                             <div class="row">
                                 <div class="col-xl-6">
                                     <h6 class="text-primary">Total Amount</h6>
@@ -226,7 +239,7 @@
                             </div>
                             <hr>
                             <div class="mb-3">
-                                <h6>What is your Payment Method?</h6>
+                                <h6 style="font-weight: 600;">What is your Payment Method?</h6>
                                 <div class="form-check">
                                     <div>
                                         <input class="form-check-input" type="radio" name="payment_method"
@@ -301,6 +314,76 @@
 
         populateNumberOfPass();
 
+        let guidedTourRadio = document.getElementById("guided_tour");
+        let diyTourRadio = document.getElementById("diy_tour");
+        let tourSelect = document.getElementById("tour");
+        let diyTicketPass = document.querySelector(".diy_ticket_pass");
+        let tour = document.querySelector('#tour');
+        let number_of_pass = document.querySelector('#number_of_pass');
+        let tour_text = document.querySelector('#tour_text');
+        let total_amount_text = document.querySelector('#total_amount_text');
+        let total_discount_text = document.querySelector('#total_discount_text');
+        let sub_amount_text = document.querySelector('#sub_amount_text');
+        let total_convenience_fee_text = document.querySelector('#total_convenience_fee_text');
+        // let total_travel_pass_text = document.querySelector('#total_travel_pass_text');
+        let ticketPassTextContainer = document.querySelector('.ticket_pass_text_container');
+        let ticketPassText = document.querySelector('#ticket_pass_text');
+        let amount = document.querySelector('#amount');
+        let total_amount_input = document.querySelector('#total_amount');
+        let discounted_amount_input = document.querySelector('#discounted_amount');
+        let discount_input = document.querySelector('#discount');
+
+        const apply_promocode_btn = document.querySelector('#apply-promocode-btn');
+        const promo_code_input = document.querySelector('#promo_code');
+        const book_btn = document.querySelector('#book-btn');
+
+        toastr.options = {closeButton: true, timeOut: 2000};
+
+        apply_promocode_btn.addEventListener('click', function(e) {
+            if(amount.value == '') return  toastr.error('Invalid Amount Value', 'Fail');
+
+            $.ajax({
+                url: `/api/promocodes/verify/${promo_code_input.value}`,
+                method: 'GET',
+                success: function(response) {
+                    if(response.is_promocode_exist) {
+                        toastr.success('PromoCode Exists', 'Success');
+                        enabledBookButton();
+                        computeDiscountAmount(response.promocode);
+                        computeTotalAmount();
+                    } else {
+                        toastr.error('Invalid PromoCode', 'Fail');
+                        disabledBookButton();
+                    }
+                }
+            });
+        });
+
+        function computeDiscountAmount(promocode) {
+            if(promocode.discount_type == 'percentage') {
+                let discount = amount.value * (promocode.discount_amount / 100);
+                total_discount_text.textContent = `₱ ${addCommasToNumberWithDecimal(discount)}`;
+                discount_input.value = discount;
+                discounted_amount_input.value = parseInt(amount.value) - discount;
+            }
+        }
+
+        promo_code_input.addEventListener('input', function(e) {
+            if(e.target.value != '') {
+                disabledBookButton();
+            } else {
+                enabledBookButton();
+            }
+        });
+
+        function disabledBookButton() {
+            book_btn.disabled = true;
+        }
+
+        function enabledBookButton() {
+            book_btn.disabled = false;
+        }
+
         function fetchAndPopulateTours(route, placeholder, tours) {
             $.ajax({
                 url: route,
@@ -323,26 +406,12 @@
             });
         }
 
-        let guidedTourRadio = document.getElementById("guided_tour");
-        let diyTourRadio = document.getElementById("diy_tour");
-        let tourSelect = document.getElementById("tour");
-        let diyTicketPass = document.querySelector(".diy_ticket_pass");
-        let tour = document.querySelector('#tour');
-        let number_of_pass = document.querySelector('#number_of_pass');
-        let tour_text = document.querySelector('#tour_text');
-        let total_amount_text = document.querySelector('#total_amount_text');
-        let sub_amount_text = document.querySelector('#sub_amount_text');
-        let total_convenience_fee_text = document.querySelector('#total_convenience_fee_text');
-        // let total_travel_pass_text = document.querySelector('#total_travel_pass_text');
-        let ticketPassTextContainer = document.querySelector('.ticket_pass_text_container');
-        let ticketPassText = document.querySelector('#ticket_pass_text');
-        let amount = document.querySelector('#amount');
-
         guidedTourRadio.addEventListener("change", function() {
             if (guidedTourRadio.checked) {
                 fetchAndPopulateTours("{{ route('admin.tours.guided') }}", "GUIDED");
                 diyTicketPass.classList.remove("active");
                 ticketPassTextContainer.classList.remove("active");
+                total_amount_input.value = '';
                 computeTotalAmount();
             }
         });
@@ -352,6 +421,7 @@
                 fetchAndPopulateTours("{{ route('admin.tours.diy') }}", "DIY");
                 diyTicketPass.classList.add("active");
                 ticketPassTextContainer.classList.add('active');
+                total_amount_input.value = '';
             }
         });
 
@@ -368,6 +438,11 @@
             } else {
                 tour_text.innerHTML = '';
             }
+
+            if(promo_code_input.value != '') {
+                apply_promocode_btn.click();
+            }
+
             computeTotalAmount();
         })
 
@@ -407,15 +482,23 @@
                 const selectedPrice = prices[priceIndex] || prices[0];
 
                 const subAmount = selectedPrice * number_of_pass.value;
-                const totalAmount = subAmount + totalConvenienceFee;
+                amount.value = subAmount ?? '';
 
                 sub_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(subAmount)}`;
 
+                let totalAmount = (subAmount - discount_input.value) + totalConvenienceFee;
+
+                // if 100% discount
+                if(discount_input.value == subAmount) {
+                    totalAmount -= totalConvenienceFee;
+                }
+
                 // only store the sub amount because the convenience and travel pass will be computed in backend
-                amount.value = subAmount;
+                total_amount_input.value = subAmount ? totalAmount : '';
 
                 // dispay total amount including total convenience and travel pass
                 total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
+                
             }
 
 
@@ -427,19 +510,29 @@
 
                     const passPrice = selectedPassBtn.getAttribute('data-amount');
                     const subAmount = passPrice * number_of_pass.value;
-                    const totalAmount = subAmount + totalConvenienceFee;
+
+                    let totalAmount = (subAmount - discount_input.value) + totalConvenienceFee;
+
+                    // if 100% discount
+                    if(discount_input.value == subAmount) {
+                        totalAmount -= totalConvenienceFee;
+                    }
 
                     ticket_pass_text.textContent = selectedPassValue;
                     sub_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(subAmount)}`;
 
                     // only store the sub amount because the convenience and travel pass will be computed in backend
-                    amount.value = subAmount;
+                    amount.value = subAmount ?? '';
+                    total_amount_input.value = subAmount ? totalAmount : '';
+
 
                     total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
                 } else {
                     ticket_pass_text.textContent = 'N/A';
                     sub_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(0)}`;
-                    amount.value = 0;
+                    amount.value = subAmount ?? '';
+                    total_amount_input.value = '';
+
                     total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(0)}`;
                 }
 
@@ -457,7 +550,7 @@
         }
 
         function addCommasToNumberWithDecimal(number) {
-            var parts = number.toString().split(".");
+            var parts = number.toFixed(2).toString().split(".");
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             return parts.join(".");
         }

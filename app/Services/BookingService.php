@@ -29,7 +29,7 @@ class BookingService
         $this->mailService = $mailService;
     }
 
-    public function createBooking(Request $request)
+    public function createBookReservation(Request $request)
     {
         try {
             $reference_no = $this->generateReferenceNo();
@@ -37,11 +37,16 @@ class BookingService
 
             $subAmount = intval($request->amount) ?? 0;
 
-            $totalOfDiscount = (intval($request->amount) - intval($request->amount));
+            $totalOfDiscount = (intval($request->amount) - intval($request->discounted_amount));
 
             $totalOfAdditionalCharges = $this->getTotalOfAdditionalCharges($request->number_of_pass, $additional_charges);
 
             $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
+
+            // if 100% discount
+            if($subAmount == $totalOfDiscount) {
+                $totalAmount -= $totalOfAdditionalCharges;
+            }
 
             $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
 
@@ -63,7 +68,7 @@ class BookingService
             }
 
             // Handle payment method
-            if ($request->payment_method == 'cash_payment') {
+            if ($request->payment_method == 'cash_payment' || $subAmount == $totalOfDiscount) {
                 return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Reservation Successfully');
             } else {
                 $response = $this->sendPaymentRequest($transaction);
@@ -98,7 +103,6 @@ class BookingService
 
                         Mail::to(optional($tour->tour_provider)->contact_email)->send(new TourProviderBookingNotification($details));
                     }
-
                 }
 
                 // Return response
@@ -295,6 +299,7 @@ class BookingService
             'ticket_pass' => $request->type == 'DIY' ? $request->ticket_pass : null,
             'payment_method' => $request->payment_method,
             'referral_code' => $request->referral_code,
+            'promo_code' => $request->promo_code,
         ]);
 
         return $reservation;

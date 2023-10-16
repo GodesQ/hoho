@@ -67,7 +67,7 @@ class TourReservationController extends Controller
             return back()->with('fail', 'Please provide a contact number to continue');
         }
 
-        return $this->bookingService->createBooking($request);
+        return $this->bookingService->createBookReservation($request);
     }
 
     public function edit(Request $request) {
