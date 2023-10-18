@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\TourBadgeController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Web\Auth\AdminAuthController;
@@ -122,6 +123,15 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('tours/edit/{id}', [TourController::class, 'edit'])->name('tours.edit');
     Route::post('tours/update/{id}', [TourController::class, 'update'])->name('tours.update');
     Route::delete('tours/destroy', [TourController::class, 'destroy'])->name('tours.destroy');
+
+    Route::get('tour_badges', [TourBadgeController::class, 'list'])->name('tour_badges.list');
+    Route::get('tour_badges/create', [TourBadgeController::class, 'create'])->name('tour_badges.create');
+    Route::post('tour_badges/store', [TourBadgeController::class, 'store'])->name('tour_badges.store');
+    Route::get('tour_badges/edit/{id}', [TourBadgeController::class, 'edit'])->name('tour_badges.edit');
+    Route::post('tour_badges/update/{id}', [TourBadgeController::class, 'update'])->name('tour_badges.update');
+    Route::delete('tour_badges/destroy', [TourBadgeController::class, 'destroy'])->name('tour_badges.destroy');
+
+    // Route::post('tour_badges/store', [TourBadgeController::class, 'store'])->name('tour_badges.store');
 
     Route::get('transports', [TransportController::class, 'list'])->name('transports.list')->can('view_transports_list');
     Route::get('transports/create', [TransportController::class, 'create'])->name('transports.create');

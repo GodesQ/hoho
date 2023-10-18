@@ -10,7 +10,7 @@ use App\Models\Organization;
 class OrganizationController extends Controller
 {   
     public function getOrganizations(Request $request) {
-        $organizations = Organization::get();
+        $organizations = Organization::where('is_active', 1)->get();
         return response([
             'status' => TRUE,
            'organizations' => $organizations

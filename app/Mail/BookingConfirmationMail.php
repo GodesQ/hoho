@@ -16,6 +16,8 @@ class BookingConfirmationMail extends Mailable
      *
      * @return void
      */
+
+     protected $details;
     public function __construct($details)
     {
         $this->details = $details;

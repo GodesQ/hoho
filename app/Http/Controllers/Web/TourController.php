@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Models\Tour;
 use App\Models\Attraction;
 use App\Models\MerchantTourProvider;
+use App\Models\TourBadge;
 
 use App\Services\TourService;
 
@@ -92,8 +93,9 @@ class TourController extends Controller
         $attractions = Attraction::get();
         $tour = Tour::where('id', $request->id)->firstOrFail();
         $tour_providers = MerchantTourProvider::get();
+        $tour_badges = TourBadge::where('tour_id', $tour->id)->get();
 
-        return view('admin-page.tours.edit-tour', compact('tour', 'attractions', 'tour_providers'));
+        return view('admin-page.tours.edit-tour', compact('tour', 'attractions', 'tour_providers', 'tour_badges'));
     }
 
     public function update(Request $request) {

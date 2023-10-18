@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\PromoCodeController;
 use App\Http\Controllers\Api\ForgotPasswordController;
 use App\Http\Controllers\Api\TicketPassController;
 use App\Http\Controllers\Api\AnnouncementController;
+use App\Http\Controllers\Api\TourBadgeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -92,4 +93,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('reservation_codes/verify/{reservation_id}/{code}', [TourReservationController::class, 'verifyReservationCodes']);
 
     Route::get('verify_referral_code/{referral_code}', [ReferralController::class, 'verifyReferralCode']);
+
+    Route::post('tour_badge/check', [TourBadgeController::class, 'checkBadge']);
 });

@@ -145,12 +145,15 @@ class TourReservationController extends Controller
 
         // return response($this->getDatesInRange($tour_reservation->start_date, $tour_reservation->end_date));
 
-        if($tour_reservation->start_date != $today) {
-            return response([
-                'status' => FALSE,
-                'message' => 'Failed! Your tour reservation is not for today.',
-            ]);
+        if(!$qrcode->start_datetime) {
+            if($qrcode->start_datetime != $today) {
+                return response([
+                    'status' => FALSE,
+                    'message' => 'Failed! You already use this QR Code in other date.',
+                ]);
+            }
         }
+        
 
         $qrcode->update([
             'scan_count' => $qrcode->scan_count + 1,

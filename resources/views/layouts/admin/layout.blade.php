@@ -204,7 +204,6 @@
                         @endcanany
                     @endauth
 
-
                     @auth('admin')
                         @can('view_tours_list')
                             <!-- Tours -->
@@ -216,6 +215,13 @@
                             </li>
                         @endcan
                     @endauth
+
+                    <li class="menu-item {{ preg_match('/admin\/tour_badges/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.tour_badges.list') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-badge"></i>
+                            <div data-i18n="Tour Badges">Tour Badges</div>
+                        </a>
+                    </li>
 
                     @auth('admin')
                         @can('view_attractions_list')
@@ -576,6 +582,7 @@
     <script src="{{ asset('assets/js/wizard-steps.js') }}"></script>
     <script src="{{ asset('assets/js/pages-account-settings-account.js') }}"></script>
 
+    <!-- CDN JS -->
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
@@ -586,9 +593,13 @@
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+    {{-- <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDxz6s-kdoLiIM5Lr__lve7jyf9WTjlnE4&libraries=places&callback=initMap">
+    </script> --}}
     {{-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initMap"></script> --}}
 
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
