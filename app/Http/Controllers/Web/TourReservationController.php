@@ -95,7 +95,7 @@ class TourReservationController extends Controller
                                 "1 Guided Tour " . '"' . $reservation->tour->name . '"' . ' x ' . $reservation->number_of_pass . ' pax'
                             );
 
-                $trip_date = new \DateTime($reservation->trip_date);
+                $trip_date = new \DateTime($reservation->start_date);
                 $when = $trip_date->format('l, F j, Y');
 
                 $details = [
