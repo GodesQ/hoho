@@ -36,7 +36,7 @@ class MerchantTourProviderController extends Controller
                     ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
                                     <a href="/admin/merchants/tour_providers/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="javascript:void(0);" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
+                                    <a id="'. $row->id .'" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                     })
                     ->rawColumns(['actions'])
@@ -68,7 +68,7 @@ class MerchantTourProviderController extends Controller
                 return redirect()->route('admin.dashboard')->withSuccess('Merchant Tour Provider Created Successfully');
             }
 
-            return redirect()->route('admin.merchants.tour_provider.edit', $result['merchant_tour_provider']->id)->withSuccess('Merchant Tour Provider Created Successfully');
+            return redirect()->route('admin.merchants.tour_providers.edit', $result['merchant_tour_provider']->id)->withSuccess('Merchant Tour Provider Created Successfully');
         }
     }
 
@@ -88,12 +88,23 @@ class MerchantTourProviderController extends Controller
     }
 
     public function destroy(Request $request) {
-        $tour_provider = MerchantTourProvider::where('id', $request->id)->with('merchant')->firstOrFail();
+        $tour_provider = MerchantTourProvider::where('id', $request->id)->with('merchant')->first();
+
+        if(!$tour_provider) {
+            return response([
+                'status' => false,
+                'message' => 'Tour Provider Not Found'
+            ]);
+        }
 
         $old_upload_image = public_path('assets/img/tour_providers/') . $tour_provider->merchant->id . '/' . $tour_provider->merchant->featured_image;
+
         if($old_upload_image) {
             $remove_image = @unlink($old_upload_image);
-            rmdir(public_path('assets/img/tour_providers/') . $tour_provider->merchant->id . '/');
+            $directory = public_path('assets/img/tour_providers/') . $tour_provider->merchant->id;
+            if (is_dir($directory)) {
+                @rmdir($directory);
+            }
         }
 
         $delete_merchant = $tour_provider->merchant->delete();
@@ -103,7 +114,7 @@ class MerchantTourProviderController extends Controller
             if($delete_tour_provider) {
                 return response([
                     'status' => true,
-                    'message' => 'Restaurant Deleted Successfully'
+                    'message' => 'Tour Provider Deleted Successfully'
                 ]);
             }
         }
