@@ -150,10 +150,12 @@ class TourReservationController extends Controller
         // return response($this->getDatesInRange($tour_reservation->start_date, $tour_reservation->end_date));
 
         if ($qrcode->start_datetime) {
-            if ($qrcode->start_datetime->format('Y-m-d') != $today) {
+            $startDatetime = \DateTime::createFromFormat('Y-m-d H:i:s', $qrcode->start_datetime);
+
+            if ($startDatetime && $startDatetime->format('Y-m-d') != $today) {
                 return response([
                     'status' => FALSE,
-                    'message' => $qrcode->start_datetime->format('Y-m-d'),
+                    'message' => 'Failed! You already use this QR Code in other date.',
                 ]);
             }
         }
