@@ -153,7 +153,7 @@ class TourReservationController extends Controller
             if ($qrcode->start_datetime->format('Y-m-d') != $today) {
                 return response([
                     'status' => FALSE,
-                    'message' => 'Failed! You already use this QR Code in other date.',
+                    'message' => $qrcode->start_datetime->format('Y-m-d'),
                 ]);
             }
         }
