@@ -10,4 +10,10 @@ class UserTourBadge extends Model
     use HasFactory;
     protected $table = 'users_tour_badges';
     protected $fillable = ['user_id', 'tour_reservation_id', 'badge_id', 'status'];
+
+    protected $casts = [
+        'user_id'=> 'integer',
+        'tour_reservation_id' => 'integer',
+        'badge_id' => 'integer',
+    ];
 }

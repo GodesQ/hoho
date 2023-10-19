@@ -160,7 +160,6 @@ class TourReservationController extends Controller
             }
         }
 
-
         $qrcode->update([
             'scan_count' => $qrcode->scan_count + 1,
             'start_datetime' => Carbon::now(),

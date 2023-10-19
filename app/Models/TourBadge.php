@@ -18,6 +18,10 @@ class TourBadge extends Model
         'longitude',
     ];
 
+    protected $casts = [
+        'tour_id'=> 'integer',
+    ];
+
     public function tour() {
         return $this->belongsTo(Tour::class, 'tour_id');
     }
