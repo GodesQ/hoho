@@ -149,7 +149,7 @@ class TourReservationController extends Controller
 
         // return response($this->getDatesInRange($tour_reservation->start_date, $tour_reservation->end_date));
 
-        if (!$qrcode->start_datetime) {
+        if ($qrcode->start_datetime) {
             if ($qrcode->start_datetime != $today) {
                 return response([
                     'status' => FALSE,
