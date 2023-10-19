@@ -1,6 +1,6 @@
 @extends('layouts.admin.layout')
 
-@section('title', 'Test Edit')
+@section('title', 'Transaction Details')
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
