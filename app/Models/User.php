@@ -82,4 +82,8 @@ class User extends Authenticatable
             }
         }
     }
+
+    public function user_badges() {
+        return $this->hasMany(UserTourBadge::class, 'user_id');
+    }
 }

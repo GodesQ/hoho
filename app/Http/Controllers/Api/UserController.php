@@ -22,9 +22,15 @@ class UserController extends Controller
     public function getUser(Request $request)
     {
         $user = Auth::user();
+
         if ($user->role == 'bus_operator') {
             $user->load('transport');
         }
+
+        if($user->role == 'guest') {
+            $user->load('user_badges');
+        }
+ 
         return $user;
     }
 
