@@ -47,6 +47,7 @@ class TourBadgeController extends Controller
             return response([
                 'status' => TRUE,
                 'message' => 'Gotcha! Claim Your Badge Now!',
+                'badge' => $tour_badge
             ]);
         } else {
             return response([
