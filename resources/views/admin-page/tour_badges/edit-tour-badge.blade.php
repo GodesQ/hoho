@@ -31,7 +31,7 @@
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label for="badge_img" class="form-label">Badge Image</label>
-                                        <input type="file" class="form-control" name="badge_img" id="badge_img" required>
+                                        <input type="file" class="form-control" name="badge_img" id="badge_img">
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
