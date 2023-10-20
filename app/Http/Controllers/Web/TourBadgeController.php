@@ -65,7 +65,11 @@ class TourBadgeController extends Controller
 
     public function update(Request $request) {
         $tour_badge = TourBadge::findOrFail($request->id);
-        $data = $request->all();
+        $data = $request->except('badge_img');
+
+        $tour_badge->update($data);
+        return back()->withSuccess('Badge Updated Successfully');
+        
     }
 
     public function destroy(Request $request) {
