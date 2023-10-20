@@ -16,6 +16,16 @@ class TourBadgeController extends Controller
         return response()->json($tour_badges);
     }
 
+    public function getUserTourBadges(Request $request) {
+        $user = Auth::user();
+        $user_badges = UserTourBadge::where('user_id', $user->id)->with('tour_badge')->get();
+
+        return response()->json([
+            'status' => 'success',
+            'user_badges' => $user_badges
+        ]);
+    }
+
     public function checkBadge(Request $request) {
         $user = Auth::user();
         $today = date("Y-m-d");

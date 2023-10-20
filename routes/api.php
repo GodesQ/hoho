@@ -95,5 +95,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('verify_referral_code/{referral_code}', [ReferralController::class, 'verifyReferralCode']);
 
     Route::get('tour_badges', [TourBadgeController::class, 'getAllTourBadges']);
+    Route::get('tour_badges/user_badges', [TourBadgeController::class,'getUserTourBadges']);
     Route::post('tour_badge/check', [TourBadgeController::class, 'checkBadge']);
 });

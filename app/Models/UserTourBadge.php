@@ -16,4 +16,8 @@ class UserTourBadge extends Model
         'tour_reservation_id' => 'integer',
         'badge_id' => 'integer',
     ];
+
+    public function tour_badge() {
+        return $this->hasOne(TourBadge::class, 'id', 'badge_id');
+    }
 }
