@@ -73,6 +73,21 @@ class TourBadgeController extends Controller
     }
 
     public function destroy(Request $request) {
+        $tour_badge = TourBadge::findOrFail($request->id);
 
+        $upload_image = public_path('assets/img/badges/') . $tour_badge->badge_img;
+
+        if($upload_image) {
+             @unlink($upload_image);
+        }
+
+        $remove = $tour_badge->delete();
+
+        if($remove) {
+            return response([
+                'status' => true,
+                'message' => 'Tour Deleted Successfully'
+            ]);
+        }
     }
 }
