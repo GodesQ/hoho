@@ -21,7 +21,7 @@ class TicketPassController extends Controller
                     ->addColumn('actions', function($row) {
                         return '<div class="dropdown">
                         <a href="/admin/ticket_passes/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                        <a href="javascript:void(0);" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
+                        <a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                     </div>';
                     })
                     ->rawColumns(['actions', 'organizations'])
@@ -97,6 +97,21 @@ class TicketPassController extends Controller
     }
 
     public function destroy(Request $request) {
-        
+        $ticket_passes = TicketPass::findOrFail($request->id);
+
+        $upload_image = public_path('assets/img/ticket_passes/') . $ticket_passes->id . '/' . $ticket_passes->featured_image;
+
+        if($upload_image) {
+             @unlink($upload_image);
+        }
+
+        $remove = $ticket_passes->delete();
+
+        if($remove) {
+            return response([
+                'status' => true,
+                'message' => 'Ticket Pass Deleted Successfully'
+            ]);
+        }
     }
 }
