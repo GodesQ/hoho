@@ -60,44 +60,6 @@
             })
         }
 
-<<<<<<< HEAD
-=======
-        $(document).on("click", ".remove-btn", function(e) {
-            let id = $(this).attr("id");
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "Remove tour from list",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, remove it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{{ route('admin.ticket_passes.destroy') }}",
-                        method: "DELETE",
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            id: id
-                        },
-                        success: function(response) {
-                            if (response.status) {
-                                Swal.fire('Removed!', response.message, 'success').then(
-                                    result => {
-                                        if (result.isConfirmed) {
-                                            toastr.success(response.message, 'Success');
-                                            location.reload();
-                                        }
-                                    })
-                            }
-                        }
-                    })
-                }
-            })
-        });
-
->>>>>>> master
         loadTable();
     </script>
 @endpush

@@ -6,8 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Role;
-use Yajra\DataTables\DataTables;
-
+use DataTables;
 class RoleController extends Controller
 {
     public function list(Request $request) {
@@ -17,8 +16,17 @@ class RoleController extends Controller
                     ->addIndexColumn()
                     ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
-                                    <a href="/admin/roles/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="javascript:void(0);" id=' .$row->id. '  class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="/admin/roles/edit/' .$row->id. '">
+                                            <i class="bx bx-edit-alt me-1"></i> Edit
+                                        </a>
+                                        <a class="dropdown-item remove-btn" href="javascript:void(0);" id="' .$row->id. '">
+                                            <i class="bx bx-trash me-1"></i> Delete
+                                        </a>
+                                    </div>
                                 </div>';
                     })
                     ->rawColumns(['actions'])
@@ -55,21 +63,6 @@ class RoleController extends Controller
     }
 
     public function destroy(Request $request) {
-        $roles = Role::findOrFail($request->id);
 
-        $upload_image = public_path('assets/img/roles/'). $roles->ticket_image;
-
-        if($upload_image) {
-             @unlink($upload_image);
-        }
-
-        $remove = $roles->delete();
-
-        if($remove) {
-            return response([
-               'status' => true,
-               'message' => 'Ticket Pass Deleted Successfully'
-            ]);
-        }
     }
 }

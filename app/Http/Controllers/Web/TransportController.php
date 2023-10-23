@@ -10,8 +10,7 @@ use App\Models\Tour;
 use App\Models\Admin;
 
 use App\Events\BusLocationEvent;
-use Yajra\DataTables\DataTables;
-
+use DataTables;
 
 class TransportController extends Controller
 {
@@ -27,7 +26,7 @@ class TransportController extends Controller
                     ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
                                     <a href="/admin/transports/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <button type="button" id='.$row->id.' class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
+                                    <button type="button" disabled class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
                                 </div>';
                     })
                     ->rawColumns(['actions', 'transport_provider'])
@@ -88,21 +87,6 @@ class TransportController extends Controller
     }
 
     public function destroy(Request $request) {
-        $transports = Transport::findOrFail($request->id);
 
-        // $upload_image = public_path('assets/img/transports/') . $transports->id . '/' . $transports->featured_image;
-
-        // if($upload_image) {
-        //      @unlink($upload_image);
-        // }
-
-        $remove = $transports->delete();
-
-        if($remove) {
-            return response([
-                'status' => true,
-                'message' => 'Transport Deleted Successfully'
-            ]);
-        }
     }
 }

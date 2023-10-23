@@ -8,9 +8,8 @@ use Illuminate\Support\Str;
 
 use App\Models\ProductCategory;
 use App\Models\Organization;
-use Yajra\DataTables\DataTables;
 
-
+use DataTables;
 
 class ProductCategoryController extends Controller
 {
@@ -31,7 +30,7 @@ class ProductCategoryController extends Controller
                     ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
                                     <a href="/admin/product_categories/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="javascript:void(0);" id=' .$row->id. '  class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                     })
                     ->rawColumns(['actions', 'organizations'])
@@ -91,21 +90,6 @@ class ProductCategoryController extends Controller
     }
 
     public function destroy(Request $request) {
-        $product_categories = ProductCategory::findOrFail($request->id);
 
-        $upload_image = public_path('assets/img/product_categories/'). $product_categories->ticket_image;
-
-        if($upload_image) {
-             @unlink($upload_image);
-        }
-
-        $remove = $product_categories->delete();
-
-        if($remove) {
-            return response([
-               'status' => true,
-               'message' => 'Ticket Pass Deleted Successfully'
-            ]);
-        }
     }
 }
