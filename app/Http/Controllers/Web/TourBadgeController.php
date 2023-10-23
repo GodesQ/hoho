@@ -21,7 +21,7 @@ class TourBadgeController extends Controller
                     ->addColumn("actions", function ($row) {
                         return '<div class="dropdown">
                                     <a href="/admin/tour_badges/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="javascript:void(0);" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
+                                    <a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                     })
                     ->rawColumns(['actions'])
@@ -73,6 +73,21 @@ class TourBadgeController extends Controller
     }
 
     public function destroy(Request $request) {
+        $tour_badges = TourBadge::findOrFail($request->id);
 
+        $upload_image = public_path('assets/img/tour_badges/') . $tour_badges->id . '/' . $tour_badges->featured_image;
+
+        if($upload_image) {
+             @unlink($upload_image);
+        }
+
+        $remove = $tour_badges->delete();
+
+        if($remove) {
+            return response([
+                'status' => true,
+                'message' => 'Tour Deleted Successfully'
+            ]);
+        }
     }
 }
