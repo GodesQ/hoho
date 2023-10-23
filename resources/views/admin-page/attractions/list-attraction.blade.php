@@ -19,7 +19,7 @@
                             <th width="75">Organization</th>
                             <th>Name</th>
                             <th>Status</th>
-                            <th>Actionssssss</th>
+                            <th>Actionsssssssss</th>
                         </tr>
                     </thead>
                 </table>
