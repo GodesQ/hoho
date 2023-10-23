@@ -74,4 +74,24 @@ class PermissionController extends Controller
 
         if($update) return back()->withSuccess('Permission updated successfully');
     }
+
+    public function destroy(Request $request) {
+        $permissions = Permission::findOrFail($request->id);
+
+        $upload_image = public_path('assets/img/permissions/'). $permissions->ticket_image;
+
+        if($upload_image) {
+             @unlink($upload_image);
+        }
+
+        $remove = $permissions->delete();
+
+        if($remove) {
+            return response([
+               'status' => true,
+               'message' => 'Ticket Pass Deleted Successfully'
+            ]);
+        }
+        
+    }
 }
