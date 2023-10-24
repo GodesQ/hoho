@@ -104,7 +104,7 @@ class ProductCategoryController extends Controller
         if($remove) {
             return response([
                 'status' => true,
-                'message' => 'Tour Deleted Successfully'
+                'message' => 'Product Category Deleted Successfully'
             ]);
         }
     }

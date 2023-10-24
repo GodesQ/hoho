@@ -77,7 +77,7 @@ class InterestController extends Controller
         if($remove) {
             return response([
                 'status' => true,
-                'message' => 'interest Deleted Successfully'
+                'message' => 'Interest Deleted Successfully'
             ]);
         }
     }

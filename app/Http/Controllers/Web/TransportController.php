@@ -101,7 +101,7 @@ class TransportController extends Controller
         if($remove) {
             return response([
                 'status' => true,
-                'message' => 'Tour Deleted Successfully'
+                'message' => 'Transport Deleted Successfully'
             ]);
         }
     }

@@ -69,7 +69,7 @@ class RoleController extends Controller
         if($remove) {
             return response([
                 'status' => true,
-                'message' => 'Interest Deleted Successfully'
+                'message' => 'Role Deleted Successfully'
             ]);
         }
     }
