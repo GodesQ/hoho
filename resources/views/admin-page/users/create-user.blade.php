@@ -90,8 +90,7 @@
                                 <div class="col-lg-4">
                                     <div class="mb-3">
                                         <label for="birthdate" class="form-label">Birthdate</label>
-                                        <input type="date" onchange="FindAge()" class="form-control" name="birthdate" id="birthdate"
-                                            placeholder="Ex. John">
+                                        <input type="date" onchange="FindAge()" class="form-control" name="birthdate" id="birthdate">
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
