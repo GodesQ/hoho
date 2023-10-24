@@ -55,13 +55,14 @@
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="birthdate" class="form-label">Birthdate</label>
-                                    <input type="date" class="form-control" name="birthdate" value="">
+                                    <input type="date" onchange="FindAge()"  class="form-control" name="birthdate" id="birthdate">
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="age" class="form-label">Age</label>
-                                    <input type="int" readonly class="form-control" name="age" value="">
+                                    <input type="text" class="form-control" name="age" id="age"
+                                            placeholder="Input the birthdate to get the age" readonly>
                                 </div>
                             </div>
                             <div class="col-lg-4">
@@ -90,3 +91,18 @@
 </div>
 
 @endsection
+
+@push('scripts')
+
+    <script>
+        function FindAge() {
+            var day = document.getElementById("birthdate").value;
+            var birthdate = new Date(day);
+            var today = new Date();
+            var Age = today.getTime() - birthdate.getTime();
+            Age = Math.floor(Age / (1000*60*60*24*365.25));
+            document.getElementById("age").value = Age;
+        }
+    </script>
+
+@endpush
