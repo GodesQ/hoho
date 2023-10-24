@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 use App\Models\Interest;
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 class InterestController extends Controller
 {
