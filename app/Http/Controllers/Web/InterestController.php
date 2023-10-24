@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 use App\Models\Interest;
-use Yajra\DataTables\DataTables;
+use Yajra\DataTables\Yajra\DataTables;
+
 
 class InterestController extends Controller
 {
@@ -19,7 +20,7 @@ class InterestController extends Controller
                     ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
                                     <a href="/admin/interests/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <button type="button" disabled class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
+                                    <button type="button" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
                                 </div>';
                     })
                     ->rawColumns(['actions'])
@@ -63,6 +64,21 @@ class InterestController extends Controller
     }
 
     public function destroy(Request $request) {
+        $interests = Interest::findOrFail($request->id);
 
+        $upload_image = public_path('assets/img/interests/') . $interests->id . '/' . $interests->featured_image;
+
+        if($upload_image) {
+             @unlink($upload_image);
+        }
+
+        $remove = $interests->delete();
+
+        if($remove) {
+            return response([
+                'status' => true,
+                'message' => 'Interest Deleted Successfully'
+            ]);
+        }
     }
 }

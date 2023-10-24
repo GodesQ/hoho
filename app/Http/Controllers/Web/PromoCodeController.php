@@ -7,8 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 use App\Models\PromoCode;
+use Yajra\DataTables\DataTables;
 
-use DataTables;
+
 
 class PromoCodeController extends Controller
 {
@@ -27,7 +28,7 @@ class PromoCodeController extends Controller
                     ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
                                     <a href="/admin/promo_codes/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="javascript:void(0);" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
+                                    <a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                     })
                     ->rawColumns(['actions', 'is_need_requirement'])
@@ -69,7 +70,22 @@ class PromoCodeController extends Controller
     }
 
     public function destroy(Request $request) {
+        $promo_codes = PromoCode::findOrFail($request->id);
 
+        $upload_image = public_path('assets/img/promo_codes/') . $promo_codes->id . '/' . $promo_codes->featured_image;
+
+        if($upload_image) {
+             @unlink($upload_image);
+        }
+
+        $remove = $promo_codes->delete();
+
+        if($remove) {
+            return response([
+                'status' => true,
+                'message' => 'Promo Code Deleted Successfully'
+            ]);
+        }
     }
 
 }
