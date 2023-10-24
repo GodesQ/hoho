@@ -64,7 +64,7 @@ class Tour extends Model
         $attraction_ids = json_decode($this->attractions_assignments_ids, true); // Passing true as the second argument to get an associative array
 
         if (is_array($attraction_ids) && !empty($attraction_ids)) {
-            $data = Attraction::select('id', 'name', 'address', 'latitude', 'longitude', 'featured_image')->whereIn('id', $attraction_ids)
+            $data = Attraction::select('id', 'name', 'address', 'latitude', 'longitude', 'featured_image', 'youtube_id')->whereIn('id', $attraction_ids)
                 ->get()
                 ->toArray();
             if (!empty($data)) {
