@@ -10,13 +10,14 @@ use App\Models\Merchant;
 use App\Models\MerchantRestaurant;
 
 use DB;
+
 class MerchantRestaurantService
 {
     public function CreateMerchantRestaurant(Request $request)
     {
         return DB::transaction(function () use ($request) {
             $data = $request->except('_token', 'featured_image', 'images');
-            $merchant = Merchant::create($data);
+            $merchant = Merchant::create(array_merge($data, ['is_active' => $request->has('is_active')]));
             $file_name = null;
 
             if ($request->hasFile('featured_image')) {
@@ -109,7 +110,7 @@ class MerchantRestaurantService
                 $file_name = $restaurant->merchant->featured_image;
             }
 
-            $update_merchant = $restaurant->merchant->update(array_merge($data, ['featured_image' => $file_name]));
+            $update_merchant = $restaurant->merchant->update(array_merge($data, ['featured_image' => $file_name, 'is_active' => $request->has('is_active')]));
 
             if ($update_restaurant && $update_merchant) {
                 return [

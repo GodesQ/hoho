@@ -17,7 +17,7 @@ class MerchantHotelService
     {
         return DB::transaction(function () use ($request) {
             $data = $request->except('_token', 'featured_image', 'images');
-            $merchant = Merchant::create($data);
+            $merchant = Merchant::create(array_merge($data, ['is_active' => $request->has('is_active')]));
             $file_name = null;
             $path_folder = 'hotels/' . $merchant->id . '/';
 
@@ -114,7 +114,7 @@ class MerchantHotelService
                 $file_name = $hotel->merchant->featured_image;
             }
 
-            $update_merchant = $hotel->merchant->update(array_merge($data, ['featured_image' => $file_name]));
+            $update_merchant = $hotel->merchant->update(array_merge($data, ['featured_image' => $file_name, 'is_active' => $request->has('is_active')]));
 
             if ($update_hotel && $update_merchant) {
                 return [

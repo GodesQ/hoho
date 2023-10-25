@@ -25,7 +25,9 @@ class MerchantStoreService {
         return DB::transaction(function () use ($request) {
             $data = $request->except('_token', 'featured_image', 'images');
 
-            $merchant = Merchant::create($data);
+            $merchant = Merchant::create(array_merge($data, [
+                'is_active' => $request->has('is_active')
+            ]));
 
             $file_name = null;
 
@@ -83,7 +85,7 @@ class MerchantStoreService {
             $store = MerchantStore::where('id', $request->id)->with('merchant')->firstOrFail();
 
             $update_store = $store->update(array_merge($data, [
-                'interests' => $request->has('interests') ? json_encode($request->interests) : null
+                'interests' => $request->has('interests') ? json_encode($request->interests) : null,
             ]));
 
             $images = $store->images ? json_decode($store->images) : [];
@@ -119,7 +121,10 @@ class MerchantStoreService {
                 $file_name = $store->merchant->featured_image;
             }
 
-            $update_merchant = $store->merchant->update(array_merge($data, ['featured_image' => $file_name]));
+            $update_merchant = $store->merchant->update(array_merge($data, [
+                    'featured_image' => $file_name,
+                    'is_active' => $request->has('is_active')
+            ]));
 
             if($update_store && $update_merchant) {
                 return [

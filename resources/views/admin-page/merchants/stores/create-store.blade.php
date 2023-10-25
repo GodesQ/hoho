@@ -133,6 +133,14 @@
                                         <textarea name="tags" id="tags" cols="30" rows="5" class="form-control"></textarea>
                                     </div>
                                 </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch mb-2">
+                                            <input class="form-check-input" type="checkbox" id="isActive" name="is_active" />
+                                            <label class="form-check-label" for="isActive">Active</label>
+                                        </div>
+                                    </div>
+                                </div>
                                 {{-- <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="images" class="form-label">Images</label>

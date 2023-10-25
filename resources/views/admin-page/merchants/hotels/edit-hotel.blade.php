@@ -125,6 +125,14 @@
                                         <textarea name="tags" id="tags" cols="30" rows="5" class="form-control">{{ $hotel->tags }}</textarea>
                                     </div>
                                 </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch mb-2">
+                                            <input class="form-check-input" type="checkbox" id="isActive" name="is_active" {{ $hotel->merchant->is_active ? 'checked' : null }} />
+                                            <label class="form-check-label" for="isActive">Active</label>
+                                        </div>
+                                    </div>
+                                </div>
                                 {{-- <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="images" class="form-label">Images</label>

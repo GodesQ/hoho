@@ -157,7 +157,6 @@ class BookingService
 
                 $this->createMultipleReservation($request, $transaction, $additional_charges);
 
-
                 $response = $this->sendPaymentRequest($transaction);
 
                 if (!$response['status'] || !$response['status'] == 'FAIL') {
