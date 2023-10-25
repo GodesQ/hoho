@@ -61,8 +61,9 @@
 
                                     <label for="tour_assignment_ids" class="form-label">Tour Assignments</label>
                                     <select name="tour_assignment_ids[]" id="tour_assignment_ids" class="select2 form-select" multiple>
+                                        <?php $tour_assignment_ids = is_array($transport->tour_assignment_ids) ? $transport->tour_assignment_ids : [] ?>
                                         @foreach ($tours as $tour)
-                                            <option {{ in_array($tour->id, $transport->tour_assignment_ids) ? 'selected' : null }} value="{{ $tour->id }}">{{ $tour->name }}</option>
+                                            <option {{ in_array($tour->id, $tour_assignment_ids) ? 'selected' : null }} value="{{ $tour->id }}">{{ $tour->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
