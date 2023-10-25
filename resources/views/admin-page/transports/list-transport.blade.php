@@ -60,7 +60,7 @@
                 processing: true,
                 pageLength: 10,
                 responsive: true,
-                serverSide: true,
+                serverSide: false,
                 ajax: {
                     url: "{{ route('admin.transports.list') }}"
                 },
@@ -80,6 +80,16 @@
                         data: 'actions',
                         name: 'actions'
                     }
+                ],
+
+                columnDefs: [
+                    {
+                    targets: [3], // Index of the column you want to disable sorting for
+                    orderable: false
+                    }
+                ],
+                order: [
+                    [0, 'asc'] // Sort by the first column (index 0) in descending order
                 ]
             })
         }
