@@ -35,7 +35,7 @@
                 processing: true,
                 pageLength: 10,
                 responsive: true,
-                serverSide: true,
+                serverSide: false,
                 ajax: {
                     url: "{{ route('admin.merchants.restaurants.list') }}",
                     data: function (d) {
