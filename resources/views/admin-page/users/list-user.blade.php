@@ -22,7 +22,7 @@
                                 <th>Status</th>
                                 <th>Email Verified?</th>
                                 <th>Registered Date</th>
-                                <th>Actions</th>
+                                <th class="">Actions</th>
                             </tr>
                         </thead>
                     </table>
@@ -39,8 +39,8 @@
                 processing: true,
                 pageLength: 25,
                 responsive: true,
-                serverSide: true,
-                ordering: true,
+                serverSide: false,
+                
                 ajax: {
                     url: "{{ route('admin.users.list') }}"
                 },
@@ -77,10 +77,15 @@
                         name: 'actions'
                     }
                 ],
-                order: [
-                    [0, 'desc'] // Sort by the first column (index 0) in descending order
-                ]
-            })
+                columnDefs: [
+                    {
+                    targets: 7, // Index of the column you want to disable sorting for
+                    orderable: false
+                    }
+                ],
+
+                order: [[0, 'asc']] // Sort by the first column (index 0) in descending order
+            });
         }
 
         $(document).on("click", ".remove-btn", function(e) {

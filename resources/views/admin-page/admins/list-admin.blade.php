@@ -35,7 +35,7 @@
                 processing: true,
                 pageLength: 10,
                 responsive: true,
-                serverSide: true,
+                serverSide: false,
                 ajax: {
                     url: "{{ route('admin.admins.list') }}"
                 },
@@ -54,6 +54,12 @@
                     {
                         data: 'actions',
                         name: 'actions'
+                    }
+                ],
+                columnDefs: [
+                    {
+                    targets: 3, // Index of the column you want to disable sorting for
+                    orderable: false
                     }
                 ],
                 order: [
