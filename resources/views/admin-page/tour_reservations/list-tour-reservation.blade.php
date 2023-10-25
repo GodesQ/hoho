@@ -123,8 +123,15 @@
                         name: 'actions'
                     }
                 ],
+                
+                columnDefs: [
+                    {
+                    targets: [6], // Index of the column you want to disable sorting for
+                    orderable: false
+                    }
+                ],
                 order: [
-                    [0, 'desc'] // Sort by the first column (index 0) in descending order
+                    [0, 'asc'] // Sort by the first column (index 0) in descending order
                 ]
             })
         }
