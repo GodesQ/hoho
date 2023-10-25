@@ -84,7 +84,13 @@ class TransportController extends Controller
     }
 
     public function update(Request $request) {
+        $data = $request->except('_token', 'tour_assignment_ids');
+        $transports = Transport::where('id', $request->id)->firstOrFail();
+        $update = $transports->update(array_merge($data, [
+            'tour_assignment_ids' => $request->has('tour_assignment_ids') ? json_encode($request->tour_assignment_ids) : null
+        ]));
 
+        return back()->with('success','Transport Updated Successfully');
     }
 
     public function destroy(Request $request) {
