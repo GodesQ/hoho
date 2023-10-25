@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class TourBadgeController extends Controller
 {   
     public function getAllTourBadges(Request $request) {
-        $tour_badges = TourBadge::select('id', 'tour_id', 'badge_name', 'badge_code', 'badge_img', 'location', 'latitude', 'longitude')->get();
+        $tour_badges = TourBadge::select('id', 'tour_id', 'badge_name', 'badge_code', 'badge_img', 'location', 'latitude', 'longitude')->with('tour')->get();
         return response()->json($tour_badges);
     }
 
