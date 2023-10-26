@@ -35,7 +35,8 @@
                 processing: true,
                 pageLength: 10,
                 responsive: true,
-                serverSide: false,
+                serverSide: true,
+                
                 ajax: {
                     url: "{{ route('admin.admins.list') }}"
                 },
