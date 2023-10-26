@@ -113,7 +113,7 @@
                             </li>
                         @endcan
                     @endauth
-
+                        
                     @auth('admin')
                         @can('view_organizations_list')
                             <li
@@ -310,6 +310,12 @@
                                             <div data-i18n="Sales Report">Sales Report</div>
                                         </a>
                                     </li>
+                                    <li
+                                        class="menu-item {{ preg_match('/admin\/reports\/tour_reservations_report/', Request::path()) ? 'active' : null }}">
+                                        <a href="{{ route('admin.reports.tour_reservations_report') }}" class="menu-link">
+                                            <div data-i18n="Tour Reservations Report">Tour Reservations Report</div>
+                                        </a>
+                                    </li>
                                 @endcan
                             @endauth
                             {{-- <li
@@ -385,6 +391,13 @@
                             </li>
                         @endcan
                     @endauth
+
+                    <li class="menu-item {{ preg_match('/admin\/unavailable_dates/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.unavailable_dates.list') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-calendar"></i>
+                            <div data-i18n="Unavailable Dates">Unavailable Dates</div>
+                        </a>
+                    </li>
 
                     <!-- Roles & Permissions -->
                     @auth('admin')

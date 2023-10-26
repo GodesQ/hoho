@@ -6,7 +6,11 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center">
         <h4 class="fw-bold py-3 mb-4">Announcements List</h4>
-        <a href="{{ route('admin.announcements.create') }}" class="btn btn-primary">Add Announcement <i class="bx bx-plus"></i></a>
+        @auth('admin')
+            @can('create_announcement')
+                <a href="{{ route('admin.announcements.create') }}" class="btn btn-primary">Add Announcement <i class="bx bx-plus"></i></a>
+            @endcan
+        @endauth
     </div>
 
     <div class="card">

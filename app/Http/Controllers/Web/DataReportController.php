@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Report\TourReservationReportRequest;
 use Illuminate\Http\Request;
 
 use App\Models\User;
@@ -18,6 +19,24 @@ class DataReportController extends Controller
 
     public function sales_report(Request $request) {
         return view('admin-page.reports.sales-report');
+    }
+
+    public function tour_reservations_report(Request $request) {
+        return view('admin-page.reports.tour_reservations_report');
+    }
+
+    public function getTourReservationData(TourReservationReportRequest $request) {
+        $tour_reservations = TourReservation::whereBetween('start_date', [$request->from_date, $request->to_date])
+                                ->where('type', $request->tour_type)
+                                ->when($request->status, function ($q) use ($request) {
+                                    return $q->where('status', $request->status);
+                                })
+                                ->has('user')
+                                ->with('user')
+                                ->orderBy('start_date', 'desc')
+                                ->get();
+        
+        return view('admin-page.printable_pages.reservation_print_page', compact('tour_reservations'));
     }
 
     public function getCurrentMonthProfit(Request $request) {

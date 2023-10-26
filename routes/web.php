@@ -32,6 +32,7 @@ use App\Http\Controllers\Web\PromoCodeController;
 use App\Http\Controllers\Web\ForgotPasswordController;
 use App\Http\Controllers\Web\LogController;
 use App\Http\Controllers\Web\AnnouncementController;
+use App\Http\Controllers\Web\TourUnavailableDateController;
 
 use App\Http\Controllers\Web\AqwireController;
 
@@ -267,15 +268,24 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::delete('logs/destroy', [LogController::class, 'destroy'])->name('logs.destroy');
 
     Route::get('announcements', [AnnouncementController::class, 'list'])->name('announcements.list');
-    Route::get('announcements/create', [AnnouncementController::class, 'create'])->name('announcements.create');
+    Route::get('announcements/create', [AnnouncementController::class, 'create'])->name('announcements.create')->can('create_announcement');
     Route::post('announcements/store', [AnnouncementController::class, 'store'])->name('announcements.store');
     Route::get('announcements/edit/{id}', [AnnouncementController::class, 'edit'])->name('announcements.edit');
     Route::post('announcements/update/{id}', [AnnouncementController::class, 'update'])->name('announcements.update');
     Route::delete('announcements/destroy', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
 
+    Route::get('unavailable_dates', [TourUnavailableDateController::class, 'list'])->name('unavailable_dates.list');
+    Route::get('unavailable_dates/create', [TourUnavailableDateController::class, 'create'])->name('unavailable_dates.create')->can('create_announcement');
+    Route::post('unavailable_dates/store', [TourUnavailableDateController::class, 'store'])->name('unavailable_dates.store');
+    Route::get('unavailable_dates/edit/{id}', [TourUnavailableDateController::class, 'edit'])->name('unavailable_dates.edit');
+    Route::post('unavailable_dates/update/{id}', [TourUnavailableDateController::class, 'update'])->name('unavailable_dates.update');
+    Route::delete('unavailable_dates/destroy', [TourUnavailableDateController::class, 'destroy'])->name('unavailable_dates.destroy');
+
     Route::prefix('reports')->as('reports.')->group(function () {
         Route::get('user_demographics', [DataReportController::class, 'user_demographics'])->name('user_demographics');
         Route::get('sales_report', [DataReportController::class, 'sales_report'])->name('sales_report')->can('view_sales_report');
+        Route::get('tour_reservations_report', [DataReportController::class, 'tour_reservations_report'])->name('tour_reservations_report');
+        Route::get('tour_reservations_report/get_data', [DataReportController::class, 'getTourReservationData'])->name('tour_reservations_report.get_data');
 
         Route::get('get_profit', [DataReportController::class, 'getCurrentMonthProfit'])->name('get_profit')->can('view_sales_report');
         Route::get('get_top_selling_tours', [DataReportController::class, 'getTopSellingTours'])->name('get_top_selling_tours');

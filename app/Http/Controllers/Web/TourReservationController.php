@@ -116,7 +116,7 @@ class TourReservationController extends Controller
     }
 
     public function destroy(Request $request) {
-
+        
     }
 
     private function generateReservationCode($number_of_pass, $reservation) {
