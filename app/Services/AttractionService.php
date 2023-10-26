@@ -15,9 +15,11 @@ class AttractionService
 
     public function createAttraction(Request $request) {
         try {
-            $data = $request->except('_token', 'organization_ids', 'images', 'featured_image');
+            $data = $request->except('_token', 'organization_ids', 'images', 'featured_image', 'interests');
 
             $attraction = Attraction::create(array_merge($data, [
+                'interest_ids' => $request->has('interests') ? json_encode($request->interests) : null,
+                'product_category_ids' => $request->has('product_categories') ? json_encode($request->product_categories) : null,
                 'is_cancellable' => $request->has('is_cancellable'),
                 'is_refundable' => $request->has('is_refundable'),
                 'status' => $request->has('is_active'),
@@ -83,6 +85,8 @@ class AttractionService
 
             $update_attraction = $attraction->update(array_merge($data, [
                 'featured_image' => $file_name,
+                'interest_ids' => $request->has('interests') ? json_encode($request->interests) : null,
+                'product_category_ids' => $request->has('product_categories') ? json_encode($request->product_categories) : null,
                 'images' => count($images) > 0 ? json_encode($images) : $attraction->images,
                 'is_cancellable' => $request->has('is_cancellable'),
                 'is_refundable' => $request->has('is_refundable'),
