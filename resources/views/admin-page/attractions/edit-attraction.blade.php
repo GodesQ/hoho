@@ -42,10 +42,16 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
+                                    <?php $interest_ids = $attraction->interest_ids ? json_decode($attraction->interest_ids) : []; ?>
                                     <div class="mb-3">
                                         <label for="interests" class="form-label">Interests</label>
                                         <select name="interests[]" id="interests" multiple class="select2 form-select">
-                                            <option value=""></option>
+                                            @foreach ($interests as $interest)
+                                                <option
+                                                    {{ in_array($interest->id, $interest_ids) ? 'selected' : null }}
+                                                    value="{{ $interest->id }}">{{ $interest->name }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -53,7 +59,7 @@
                                     <?php $product_category_ids = $attraction->product_category_ids ? json_decode($attraction->product_category_ids) : []; ?>
                                     <div class="mb-3">
                                         <label for="product_category_ids" class="form-label">Product Categories</label>
-                                        <select name="product_category_ids[]" id="product_category_ids" multiple
+                                        <select name="product_categories[]" id="product_category_ids" multiple
                                             class="select2 form-select">
                                             @foreach ($product_categories as $product_category)
                                                 <option
@@ -176,7 +182,8 @@
                                                     @elsefileExists
                                                         <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
                                                             id="previewImage1" alt="Default Image" width="100%"
-                                                            height="210px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                            height="210px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                     @endfileExists
                                                     <button type="button"
                                                         style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
@@ -204,7 +211,8 @@
                                                     @elsefileExists
                                                         <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
                                                             id="previewImage2" alt="Default Image" width="100%"
-                                                            height="210px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                            height="210px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                     @endfileExists
                                                     <button type="button"
                                                         style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
@@ -232,7 +240,8 @@
                                                     @elsefileExists
                                                         <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
                                                             id="previewImage3" alt="Default Image" width="100%"
-                                                            height="210px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                            height="210px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                     @endfileExists
                                                     <button type="button"
                                                         style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
@@ -263,7 +272,6 @@
                     <div class="card-body">
                         <h6>Preview of Featured Image</h6>
                         @if ($attraction->featured_image)
-
                             <img src="{{ URL::asset('assets/img/attractions/' . $attraction->id . '/' . $attraction->featured_image) }}"
                                 id="previewImage" alt="{{ $attraction->name }}" width="100%"
                                 style="border-radius: 10px;">

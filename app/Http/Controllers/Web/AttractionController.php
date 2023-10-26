@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Models\Attraction;
 use App\Models\Organization;
 use App\Models\ProductCategory;
+use App\Models\Interest;
 
 use Yajra\DataTables\DataTables;
 
@@ -32,7 +33,9 @@ class AttractionController extends Controller
 
     public function create(Request $request) {
         $organizations = Organization::get();
-        return view('admin-page.attractions.create-attraction', compact('organizations'));
+        $interests = Interest::latest()->get();
+        $product_categories = ProductCategory::latest()->get();
+        return view('admin-page.attractions.create-attraction', compact('organizations', 'interests', 'product_categories'));
     }
 
     public function store(Request $request) {
@@ -44,7 +47,9 @@ class AttractionController extends Controller
         $attraction = Attraction::findOrFail($request->id);
         $organizations = Organization::get();
         $product_categories = ProductCategory::get();
-        return view('admin-page.attractions.edit-attraction', compact('attraction', 'organizations', 'product_categories'));
+        $interests = Interest::latest()->get();
+
+        return view('admin-page.attractions.edit-attraction', compact('attraction', 'organizations', 'product_categories', 'interests'));
     }
 
     public function update(Request $request) {
