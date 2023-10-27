@@ -79,6 +79,18 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label for="bypass_days" class="form-label">ByPass Days</label>
+                                                <input type="number" name="bypass_days" id="bypass_days" class="form-control" value="{{ $tour->bypass_days }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label for="minimum_pax" class="form-label">Minimum Pax</label>
+                                                <input type="number" name="minimum_pax" id="minimum_pax" class="form-control" value="{{ $tour->minimum_pax }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
                                             <div class="row">
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
