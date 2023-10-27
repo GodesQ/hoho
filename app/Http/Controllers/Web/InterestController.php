@@ -60,7 +60,12 @@ class InterestController extends Controller
     }
 
     public function update(Request $request) {
+        $interest = Interest::where('id', $request->id)->firstOrFail();
+        $data = $request->all();
 
+        $update_interest = $interest->update($data);
+
+        if($update_interest) return back()->withSuccess('Referral updated successfully');
     }
 
     public function destroy(Request $request) {
