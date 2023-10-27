@@ -61,7 +61,8 @@
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="age" class="form-label">Age</label>
-                                    <input type="int" readonly class="form-control" name="age" id="age" value="{{ $admin->age }}">
+                                    <input type="int" readonly class="form-control" name="age" id="age" value="{{ $admin->age }}"
+                                            placeholder="Input the birthdate to get the age">
                                 </div>
                             </div>
                             <div class="col-lg-4">
@@ -125,8 +126,11 @@
             var birthdate = new Date(day);
             var today = new Date();
             var Age = today.getTime() - birthdate.getTime();
-            Age = Math.floor(Age / (1000*60*60*24*365.25));
-            document.getElementById("age").value = Age;
+                if (isNaN(Age))
+                    Age = '';
+                else
+                    Age = Math.floor(Age / (1000*60*60*24*365.25));
+                    document.getElementById("age").value = Age;
         }
     </script>
 @endpush

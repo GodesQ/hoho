@@ -223,8 +223,11 @@
             var birthdate = new Date(day);
             var today = new Date();
             var Age = today.getTime() - birthdate.getTime();
-            Age = Math.floor(Age / (1000*60*60*24*365.25));
-            document.getElementById("age").value = Age;
+                if (isNaN(Age))
+                    Age = '';
+                else
+                    Age = Math.floor(Age / (1000*60*60*24*365.25));
+                    document.getElementById("age").value = Age;
         }
     </script>
 @endpush
