@@ -90,7 +90,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('interests', [InterestController::class, 'getInterests']);
 
-    Route::get('reservation_codes/verify/{reservation_id}/{code}', [TourReservationController::class, 'verifyReservationCodes']);
+    Route::get('reservation_codes/verify/{reservation_id}/{code}', [TourReservationController::class, 'verifyReservationCode']);
 
     Route::get('verify_referral_code/{referral_code}', [ReferralController::class, 'verifyReferralCode']);
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\TourUnavailableDate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -27,7 +28,7 @@ class TourReservationController extends Controller
         $user = Auth::user();
         // dd($user);
         $today_date = date('Y-m-d');
-        // return response($user);
+
         $tour_reservation = TourReservation::where('reserved_user_id', $user->id)
             ->where('status', 'approved')
             ->where('start_date', $today_date)
@@ -70,11 +71,13 @@ class TourReservationController extends Controller
             }
         }
 
-        // Get disabled dates from Cart
         $cartDates = Cart::where('user_id', $user->id)->pluck('trip_date')->toArray();
 
         $disabledDates = array_merge($disabledDates, $cartDates);
 
+        $unavailableDates = TourUnavailableDate::pluck('unavailable_date')->toArray();
+
+        $disabledDates = array_merge($disabledDates, $unavailableDates);
 
         return response([
             'status' => TRUE,
@@ -125,7 +128,7 @@ class TourReservationController extends Controller
         ]);
     }
 
-    public function verifyReservationCodes(Request $request)
+    public function verifyReservationCode(Request $request)
     {
         $today = date('Y-m-d');
         $tour_reservation = TourReservation::where('id', $request->reservation_id)->first();
@@ -162,8 +165,8 @@ class TourReservationController extends Controller
 
         $qrcode->update([
             'scan_count' => $qrcode->scan_count + 1,
-            'start_datetime' => Carbon::now(),
-            'end_datetime' => Carbon::now()->addDay()
+            'start_datetime' => $qrcode->start_datetime ? $qrcode->start_datetime : Carbon::now(),
+            'end_datetime' => $qrcode->end_datetime ? $qrcode->end_datetime : Carbon::now()->addDay()
         ]);
 
         return response([

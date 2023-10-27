@@ -6,14 +6,20 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center">
         <h4 class="fw-bold py-3 mb-4">Unavailable Dates List</h4>
-        <a href="{{ route('admin.transports.create') }}" class="btn btn-primary">Add Unavailable Dates <i class="bx bx-plus"></i></a>
+        <a href="{{ route('admin.unavailable_dates.create') }}" class="btn btn-primary">Add Unavailable Dates <i class="bx bx-plus"></i></a>
     </div>
 
     <div class="card">
         <div class="card-body">
             <div class="table-responsive table-wrap">
                 <table class="table data-table">
-
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Unavailable Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
                 </table>
             </div>
         </div>
