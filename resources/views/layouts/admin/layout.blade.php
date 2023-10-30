@@ -217,13 +217,17 @@
                             </li>
                         @endcan
                     @endauth
-
-                    <li class="menu-item {{ preg_match('/admin\/tour_badges/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.tour_badges.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-badge"></i>
-                            <div data-i18n="Tour Badges">Tour Badges</div>
-                        </a>
-                    </li>
+                    
+                    @auth('admin')
+                        @can('view_tour_badges_list')
+                            <li class="menu-item {{ preg_match('/admin\/tour_badges/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.tour_badges.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-badge"></i>
+                                    <div data-i18n="Tour Badges">Tour Badges</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
 
                     @auth('admin')
                         @can('view_attractions_list')
@@ -251,12 +255,12 @@
 
                     @auth('admin')
                         @can('view_ticket_passes_list')
-                    <li class="menu-item {{ preg_match('/admin\/ticket_passes/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.ticket_passes.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-box"></i>
-                            <div data-i18n="Ticket Passes">Ticket Passes</div>
-                        </a>
-                    </li>
+                            <li class="menu-item {{ preg_match('/admin\/ticket_passes/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.ticket_passes.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-box"></i>
+                                    <div data-i18n="Ticket Passes">Ticket Passes</div>
+                                </a>
+                            </li>
                         @endcan
                     @endauth
 
@@ -394,12 +398,16 @@
                         @endcan
                     @endauth
 
-                    <li class="menu-item {{ preg_match('/admin\/unavailable_dates/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.unavailable_dates.list') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-calendar"></i>
-                            <div data-i18n="Unavailable Dates">Unavailable Dates</div>
-                        </a>
-                    </li>
+                    @auth('admin')
+                        @can('view_unavailable_dates_list')
+                            <li class="menu-item {{ preg_match('/admin\/unavailable_dates/', Request::path()) ? 'active' : null }}">
+                                <a href="{{ route('admin.unavailable_dates.list') }}" class="menu-link">
+                                    <i class="menu-icon tf-icons bx bx-calendar"></i>
+                                    <div data-i18n="Unavailable Dates">Unavailable Dates</div>
+                                </a>
+                            </li>
+                        @endcan
+                    @endauth
 
                     <!-- Roles & Permissions -->
                     @auth('admin')
