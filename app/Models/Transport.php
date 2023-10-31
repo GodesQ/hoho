@@ -11,6 +11,7 @@ class Transport extends Model
     protected $table = 'transports';
     protected $fillable = [
         'route',
+        'available_seats',
         'capacity',
         'duration',
         'transport_provider_id',
@@ -40,6 +41,7 @@ class Transport extends Model
     ];
 
     protected $casts = [
+        'available_seats' => 'integer',
         'capacity' => 'integer',
         'duration' => 'integer',
         'transport_provider_id' => 'integer',

@@ -16,6 +16,7 @@ class ReservationUserCode extends Model
         'scan_count',
         'start_datetime',
         'end_datetime',
+        'status'
     ];
 
     public function tour_reservation() {

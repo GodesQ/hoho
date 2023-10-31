@@ -59,7 +59,7 @@ class TourReservation extends Model
     }
 
     public function reservation_codes() {
-        return $this->hasMany(ReservationUserCode::class, 'reservation_id')->select('id', 'reservation_id', 'code', 'scan_count', 'start_datetime', 'end_datetime');
+        return $this->hasMany(ReservationUserCode::class, 'reservation_id')->select('id', 'reservation_id', 'code', 'scan_count', 'start_datetime', 'end_datetime', 'status');
     }
 
     public function referral() {

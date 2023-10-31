@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\TourReservation;
 use App\Models\Cart;
 use App\Models\User;
+use App\Models\ReservationCodeScanLog;
 
 use App\Services\BookingService;
 
@@ -131,8 +132,7 @@ class TourReservationController extends Controller
     public function verifyReservationCode(Request $request)
     {
         $today = date('Y-m-d');
-        $tour_reservation = TourReservation::where('id', $request->reservation_id)->first();
-
+        $tour_reservation = TourReservation::where('id', $request->reservation_id)->with('tour.transport')->first();
         if (!$tour_reservation) {
             return response([
                 'status' => FALSE,
@@ -163,15 +163,34 @@ class TourReservationController extends Controller
             }
         }
 
+        if($qrcode->status == 'hop_in') {
+            $status = 'hop_off';
+            $tour_reservation->tour->transport->update([
+                'available_seats' => $tour_reservation->tour->transport->available_seats + 1,
+            ]);
+        } else {
+            $status = 'hop_in';
+            $tour_reservation->tour->transport->update([
+                'available_seats' => $tour_reservation->tour->transport->available_seats - 1,
+            ]);
+        }
+
         $qrcode->update([
             'scan_count' => $qrcode->scan_count + 1,
             'start_datetime' => $qrcode->start_datetime ? $qrcode->start_datetime : Carbon::now(),
-            'end_datetime' => $qrcode->end_datetime ? $qrcode->end_datetime : Carbon::now()->addDay()
+            'end_datetime' => $qrcode->end_datetime ? $qrcode->end_datetime : Carbon::now()->addDay(),
+            'status' => $status
+        ]);
+
+        ReservationCodeScanLog::create([
+            'reservation_code_id' => $qrcode->id,
+            'scan_datetime' =>Carbon::now(),
+            'scan_type' => $status
         ]);
 
         return response([
             'status' => TRUE,
-            'message' => 'Success! You can now ride the HOHO bus.',
+            'message' => $status == 'hop_in' ? 'Success! You can now ride the HOHO bus.' : 'Thank you for riding with us! Have a great day!',
         ]);
     }
 

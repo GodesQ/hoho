@@ -186,6 +186,29 @@
                                 </div>
                             </div>
                             <hr>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h4>Links</h4>
+                                <button class="btn btn-outline-primary" type="button">Add Link <i class="bx bx-plus"></i></button>
+                            </div>
+                            <div class="table-responsive my-3">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Name</th>
+                                            <th width="75">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <hr>
                             <button class="btn btn-primary">Save Attraction</button>
                         </form>
                     </div>
