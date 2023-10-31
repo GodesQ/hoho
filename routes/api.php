@@ -48,6 +48,9 @@ Route::post('user/change_password', [UserController::class, 'changePassword']);
 Route::get('announcements/important_announcements', [AnnouncementController::class, 'getImportantAnnouncements']);
 Route::get('announcements', [AnnouncementController::class, 'getAnnouncements']);
 
+Route::get('featured_merchants', [MerchantController::class, 'getFeaturedMerchants']);
+
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
@@ -69,6 +72,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('attraction/{id}', [AttractionController::class, 'getAttraction']);
     Route::get('merchant/{id}', [MerchantController::class, 'getMerchant']);
+
 
     Route::get('tours/guided', [TourController::class, 'getGuidedTours']);
     Route::get('tours/diy', [TourController::class, 'getDIYTours']);

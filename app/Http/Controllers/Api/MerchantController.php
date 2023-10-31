@@ -50,4 +50,21 @@ class MerchantController extends Controller
 
         return response($merchantResult);
     }
+
+    public function getFeaturedMerchants(Request $request) {
+        $featured_merchants = Merchant::where('is_featured', 1)
+        ->where('is_active', 1)
+        ->where(function ($query) {
+            $query->whereHas('store_info')
+                ->orWhereHas('restaurant_info')
+                ->orWhereHas('hotel_info');
+        })
+        ->with(['store_info', 'restaurant_info', 'hotel_info'])
+        ->get();
+
+        return response([
+            'status' => TRUE,
+            'featured_merchants' => $featured_merchants
+        ]);
+    }
 }
