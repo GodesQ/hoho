@@ -3,6 +3,16 @@
 @section('title', 'Hop On Hop Off - Edit Store')
 
 @section('content')
+    <style>
+        .main-featured-image-container {
+            display: none;
+        }
+
+        .main-featured-image-container.active {
+            display: block;
+        }
+    </style>
+
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="fw-bold py-3 mb-4">Edit Store</h4>
@@ -171,15 +181,24 @@
                                             <label class="form-check-label" for="isActive">Active</label>
                                         </div>
                                     </div>
-                                </div>
-                                {{-- <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="images" class="form-label">Images</label>
-                                        <input type="file" name="images[]" id="images_1" class="form-control">
-                                        <input type="file" name="images[]" id="images_2" class="form-control">
-                                        <input type="file" name="images[]" id="images_3" class="form-control">
+                                        <div class="form-check form-switch mb-2">
+                                            <input class="form-check-input" type="checkbox" id="isFeatured" name="is_featured" {{ $store->merchant->is_featured ? 'checked' : null }} />
+                                            <label class="form-check-label" for="isFeatured">Featured</label>
+                                        </div>
                                     </div>
-                                </div> --}}
+                                </div>
+                                <div class="col-lg-6 main-featured-image-container {{ $store->merchant->is_featured ? 'active' : null }}">
+                                    <div class="mb-3">
+                                        <label for="main_featured_image" class="form-label">Main Featured Image</label>
+                                        <input type="file" class="form-control mb-2 image-input" accept="image/*" name="main_featured_image" id="main_featured_image">
+                                        @if ($store->merchant->main_featured_image)
+                                            <img src="{{ URL::asset('/assets/img/stores/' . $store->merchant->id . '/' . $store->merchant->main_featured_image) }}" id="preview-main-featured-image" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                        @else
+                                            <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="preview-main-featured-image" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                             <hr>
                             <h4>Images</h4>
@@ -283,7 +302,7 @@
 @push('scripts')
     <script>
         // Function to handle file selection and display preview image
-        function handleFileSelect(event) {
+        function handleFeaturedImageSelect(event) {
             const file = event.target.files[0];
 
             if (file) {
@@ -313,43 +332,34 @@
             }
         }
 
-        function removeImageBtn(id, image_path) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "Remove store image",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, remove it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: `{{ route('admin.merchants.stores.remove_image') }}`,
-                        method: "DELETE",
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            id: id,
-                            image_path: image_path
-                        },
-                        success: function(response) {
-                            if (response.status) {
-                                Swal.fire('Removed!', response.message, 'success').then(
-                                    result => {
-                                        if (result.isConfirmed) {
-                                            toastr.success(response.message, 'Success');
-                                            location.reload();
-                                        }
-                                    })
-                            }
-                        }
-                    })
-                }
-            })
+        function handleMainFeaturedImageSelect(e) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const previewImage = document.getElementById('preview-main-featured-image');
+                    previewImage.src = event.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
         }
 
-        // Attach the 'handleFileSelect' function to the file input's change event
-        document.getElementById('featured_image').addEventListener('change', handleFileSelect);
+        function handleIsFeaturedChange(e) {
+            let main_featured_image_con = document.querySelector('.main-featured-image-container');
+            if(e.target.checked) {
+                main_featured_image_con.classList.add('active');
+            } else {
+                main_featured_image_con.classList.remove('active');
+            }
+        }
+
+        document.getElementById('isFeatured').addEventListener('change', handleIsFeaturedChange);
+        document.getElementById('main_featured_image').addEventListener('change', handleMainFeaturedImageSelect);
+        document.getElementById('featured_image').addEventListener('change', handleFeaturedImageSelect);
+
     </script>
 
     <script>

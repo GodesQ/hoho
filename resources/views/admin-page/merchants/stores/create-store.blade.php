@@ -3,6 +3,17 @@
 @section('title', 'Hop On Hop Off - Create Store')
 
 @section('content')
+
+    <style>
+        .main-featured-image-container {
+            display: none;
+        }
+
+        .main-featured-image-container.active {
+            display: block;
+        }
+    </style>
+
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="fw-bold py-3 mb-4">Create Store</h4>
@@ -140,15 +151,18 @@
                                             <label class="form-check-label" for="isActive">Active</label>
                                         </div>
                                     </div>
-                                </div>
-                                {{-- <div class="col-lg-6">
-                                    <div class="mb-3">
-                                        <label for="images" class="form-label">Images</label>
-                                        <input type="file" name="images[]" id="images_1" class="form-control">
-                                        <input type="file" name="images[]" id="images_2" class="form-control">
-                                        <input type="file" name="images[]" id="images_3" class="form-control">
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="isFeatured" name="is_featured" />
+                                        <label class="form-check-label" for="isFeatured">Featured</label>
                                     </div>
-                                </div> --}}
+                                </div>
+                                <div class="col-lg-6 main-featured-image-container">
+                                    <div class="mb-3">
+                                        <label for="main_featured_image" class="form-label">Main Featured Image</label>
+                                        <input type="file" class="form-control mb-2 image-input" accept="image/*" name="main_featured_image" id="main_featured_image">
+                                        <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="preview-main-featured-image" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                    </div>
+                                </div>
                             </div>
                             <hr>
                             <h4>Images</h4>
@@ -197,7 +211,7 @@
 @push('scripts')
     <script>
         // Function to handle file selection and display preview image
-        function handleFileSelect(event) {
+        function handleFeaturedImageSelect(event) {
             const file = event.target.files[0];
 
             if (file) {
@@ -227,7 +241,68 @@
             }
         }
 
-        // Attach the 'handleFileSelect' function to the file input's change event
-        document.getElementById('featured_image').addEventListener('change', handleFileSelect);
+        function handleMainFeaturedImageSelect(e) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const previewImage = document.getElementById('preview-main-featured-image');
+                    previewImage.src = event.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleIsFeaturedChange(e) {
+            let main_featured_image_con = document.querySelector('.main-featured-image-container');
+            if(e.target.checked) {
+                main_featured_image_con.classList.add('active');
+            } else {
+                main_featured_image_con.classList.remove('active');
+            }
+        }
+
+        document.getElementById('isFeatured').addEventListener('change', handleIsFeaturedChange);
+        document.getElementById('featured_image').addEventListener('change', handleFeaturedImageSelect);
+        document.getElementById('main_featured_image').addEventListener('change', handleMainFeaturedImageSelect);
+
+    </script>
+
+    <script>
+        let address = document.querySelector('#address');
+        let latitude = document.querySelector('#latitude');
+        let longitude = document.querySelector('#longitude');
+
+        function initMap() {
+            // for search
+            let searchBox = new google.maps.places.SearchBox(address);
+
+            google.maps.event.addListener(searchBox, 'places_changed', function() {
+                var places = searchBox.getPlaces(),
+                    bounds = new google.maps.LatLngBounds(),
+                    i, place, lat, long, resultArray, address = places[0].formatted_address;
+                lat = places[0].geometry.location.lat()
+                long = places[0].geometry.location.lng();
+                latitude.value = lat;
+                longitude.value = long;
+                resultArray = places[0].address_components;
+            });
+        }
+
+        $(document).ready(function() {
+            $('#address').keydown(function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        });
+    </script>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDxz6s-kdoLiIM5Lr__lve7jyf9WTjlnE4&libraries=places&callback=initMap">
     </script>
 @endpush

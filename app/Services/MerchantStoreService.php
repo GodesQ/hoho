@@ -23,10 +23,11 @@ class MerchantStoreService {
      */
     public function CreateMerchantStore(Request $request) {
         return DB::transaction(function () use ($request) {
-            $data = $request->except('_token', 'featured_image', 'images');
+            $data = $request->except('_token', 'featured_image', 'main_featured_image', 'images');
 
             $merchant = Merchant::create(array_merge($data, [
-                'is_active' => $request->has('is_active')
+                'is_active' => $request->has('is_active'),
+                'is_featured' => $request->has('is_featured'),
             ]));
 
             $file_name = null;
@@ -39,6 +40,17 @@ class MerchantStoreService {
 
                 $merchant->update([
                     'featured_image' => $file_name,
+                ]);
+            }
+
+            if ($request->hasFile('main_featured_image')) {
+                $main_featured_file = $request->file('main_featured_image');
+                $name = Str::snake(Str::lower($request->name)) . '_main_featured_image';
+                $file_name = $name . '.' . $main_featured_file->getClientOriginalExtension();
+                $main_featured_file->move(public_path() . '/assets/img/stores/' . $merchant->id, $file_name);
+
+                $merchant->update([
+                    'main_featured_image' => $file_name,
                 ]);
             }
 
@@ -121,9 +133,26 @@ class MerchantStoreService {
                 $file_name = $store->merchant->featured_image;
             }
 
+            if($request->hasFile('main_featured_image')) {
+                $file = $request->file('main_featured_image');
+                $name = Str::snake(Str::lower($request->name));
+                $main_featured_file_name = $name . '.' . $file->getClientOriginalExtension();
+                $old_upload_image = public_path('assets/img/stores/') . $store->merchant->id . '/' . $store->merchant->main_featured_image;
+
+                if($old_upload_image) {
+                    $remove_image = @unlink($old_upload_image);
+                }
+
+                $save_file = $file->move(public_path() . '/assets/img/stores/' . $store->merchant->id, $main_featured_file_name);
+            } else {
+                $main_featured_file_name = $store->merchant->main_featured_image;
+            }
+
             $update_merchant = $store->merchant->update(array_merge($data, [
                     'featured_image' => $file_name,
-                    'is_active' => $request->has('is_active')
+                    'main_featured_image' => $main_featured_file_name,
+                    'is_active' => $request->has('is_active'),
+                    'is_featured' => $request->has('is_featured'),
             ]));
 
             if($update_store && $update_merchant) {

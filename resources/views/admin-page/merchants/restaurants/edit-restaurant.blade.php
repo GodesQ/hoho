@@ -3,6 +3,17 @@
 @section('title', 'Hop On Hop Off - Edit Restaurant')
 
 @section('content')
+
+    <style>
+        .main-featured-image-container {
+            display: none;
+        }
+
+        .main-featured-image-container.active {
+            display: block;
+        }
+    </style>
+
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="fw-bold py-3 mb-4">Edit Restaurant</h4>
@@ -171,6 +182,23 @@
                                             <label class="form-check-label" for="isActive">Active</label>
                                         </div>
                                     </div>
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch mb-2">
+                                            <input class="form-check-input" type="checkbox" id="isFeatured" name="is_featured" {{ $restaurant->merchant->is_featured ? 'checked' : null }} />
+                                            <label class="form-check-label" for="isFeatured">Featured</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 main-featured-image-container {{ $restaurant->merchant->is_featured ? 'active' : null }}">
+                                    <div class="mb-3">
+                                        <label for="main_featured_image" class="form-label">Main Featured Image</label>
+                                        <input type="file" class="form-control mb-2 image-input" accept="image/*" name="main_featured_image" id="main_featured_image">
+                                        @if ($restaurant->merchant->main_featured_image)
+                                            <img src="{{ URL::asset('/assets/img/restaurants/' . $restaurant->merchant->id . '/' . $restaurant->merchant->main_featured_image) }}" id="preview-main-featured-image" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                        @else
+                                            <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="preview-main-featured-image" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                                        @endif
+                                    </div>
                                 </div>
                                 {{-- <div class="col-lg-6">
                                     <div class="mb-3">
@@ -313,6 +341,30 @@
             }
         }
 
+        function handleMainFeaturedImageSelect(e) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const previewImage = document.getElementById('preview-main-featured-image');
+                    previewImage.src = event.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleIsFeaturedChange(e) {
+            let main_featured_image_con = document.querySelector('.main-featured-image-container');
+            if(e.target.checked) {
+                main_featured_image_con.classList.add('active');
+            } else {
+                main_featured_image_con.classList.remove('active');
+            }
+        }
+
         function removeImageBtn(id, image_path) {
             Swal.fire({
                 title: 'Are you sure?',
@@ -348,7 +400,8 @@
             })
         }
 
-        // Attach the 'handleFileSelect' function to the file input's change event
+        document.getElementById('isFeatured').addEventListener('change', handleIsFeaturedChange);
+        document.getElementById('main_featured_image').addEventListener('change', handleMainFeaturedImageSelect);
         document.getElementById('featured_image').addEventListener('change', handleFileSelect);
     </script>
 

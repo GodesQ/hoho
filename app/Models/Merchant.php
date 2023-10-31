@@ -13,6 +13,7 @@ class Merchant extends Model
         'name',
         'type',
         'featured_image',
+        'main_featured_image',
         'nature_of_business',
         'organization_id',
         'code',
@@ -20,11 +21,13 @@ class Merchant extends Model
         'address',
         'latitude',
         'longitude',
-        'is_active'
+        'is_active',
+        'is_featured'
     ];
 
     protected $casts = [
         'is_active' => 'integer',
+        'is_featured' => 'integer',
         'organization_id' => 'integer'
     ];
 
