@@ -135,7 +135,7 @@ class MerchantStoreService {
 
             if($request->hasFile('main_featured_image')) {
                 $file = $request->file('main_featured_image');
-                $name = Str::snake(Str::lower($request->name));
+                $name = Str::snake(Str::lower($request->name)) . '_main_featured_image';
                 $main_featured_file_name = $name . '.' . $file->getClientOriginalExtension();
                 $old_upload_image = public_path('assets/img/stores/') . $store->merchant->id . '/' . $store->merchant->main_featured_image;
 
