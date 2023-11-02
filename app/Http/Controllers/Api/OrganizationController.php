@@ -35,21 +35,21 @@ class OrganizationController extends Controller
 
         // Filter hotels based on user interests and merge into the $filteredMerchants array
         $filteredHotels = $organization->hotels->filter(function ($hotel) use ($userInterests) {
-            $hotelInterests = $hotel->hotel_info->interests;
+            $hotelInterests = $hotel->hotel_info->interests ?? [];
             return $hotelInterests && array_intersect($userInterests, json_decode($hotelInterests, true));
         });
         $filteredMerchants = array_merge($filteredMerchants, $filteredHotels->all());
 
         // Filter stores based on user interests and merge into the $filteredMerchants array
         $filteredStores = $organization->stores->filter(function ($store) use ($userInterests) {
-            $storeInterests = $store->store_info->interests;
+            $storeInterests = $store->store_info->interests ?? [];
             return $storeInterests && array_intersect($userInterests, json_decode($storeInterests, true));
         });
         $filteredMerchants = array_merge($filteredMerchants, $filteredStores->all());
 
         // Filter restaurants based on user interests and merge into the $filteredMerchants array
         $filteredRestaurants = $organization->restaurants->filter(function ($restaurant) use ($userInterests) {
-            $restaurantInterests = $restaurant->restaurant_info->interests;
+            $restaurantInterests = $restaurant->restaurant_info->interests ?? [];
             return $restaurantInterests && array_intersect($userInterests, json_decode($restaurantInterests, true));
         });
 
