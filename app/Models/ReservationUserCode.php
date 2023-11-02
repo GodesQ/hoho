@@ -20,6 +20,7 @@ class ReservationUserCode extends Model
     ];
 
     protected $casts = [    
+        'reservation_id' => 'integer',
         'scan_count' => 'integer'
     ];
 
