@@ -81,7 +81,7 @@ class AuthController extends Controller
             if(!$user->is_verify) {
                 return response([
                     'status' => false,
-                    'message' => "Please verify your email first before verification."
+                    'message' => "Please verify your email first before signing-in."
                 ], 400);
             }
         }
