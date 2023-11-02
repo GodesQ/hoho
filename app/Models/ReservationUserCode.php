@@ -19,6 +19,10 @@ class ReservationUserCode extends Model
         'status'
     ];
 
+    protected $casts = [    
+        'scan_count' => 'integer'
+    ];
+
     public function tour_reservation() {
         return $this->hasOne(TourReservation::class, 'id', 'reservation_id');
     }
