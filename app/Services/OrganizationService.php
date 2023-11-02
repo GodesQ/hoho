@@ -157,12 +157,12 @@ class OrganizationService
             }
 
             if ($request->has('images')) {
-                $images = [];
+                $images = json_decode($organization->images);
                 $count = 1;
                 foreach ($request->images as $image) {
                     $image_file_name = "{$file_name}_image_{$count}." . $image->getClientOriginalExtension();
                     $this->handleUploadImage($request, $path, $image_file_name, $image);
-                    $images[] = $image_file_name;
+                    array_push($images, $image_file_name);
                     $count++;
                 }
 
