@@ -158,12 +158,11 @@ class OrganizationService
 
             if ($request->has('images')) {
                 $images = $organization->images ? json_decode($organization->images) : [];
-                $count = 1;
                 foreach ($request->images as $image) {
+                    $count = Str::random(5);
                     $image_file_name = "{$file_name}_image_{$count}." . $image->getClientOriginalExtension();
                     $this->handleUploadImage($request, $path, $image_file_name, $image);
                     array_push($images, $image_file_name);
-                    $count++;
                 }
 
                 $organization->update(['images' => count($images) > 0 ? json_encode($images) : null]);
