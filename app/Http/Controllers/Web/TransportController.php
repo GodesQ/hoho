@@ -119,9 +119,15 @@ class TransportController extends Controller
     }
     
     public function destroy(Request $request) {
-        $transports = Transport::findOrFail($request->id);
+        $transport = Transport::findOrFail($request->id);
 
-        $remove = $transports->delete();
+        $transport_tour_ids = $transport->tour_assignment_ids ?? [];
+    
+        Tour::whereIn('id', $transport_tour_ids)->update([
+            'transport_id' => null
+        ]);
+
+        $remove = $transport->delete();
 
         if($remove) {
             return response([
