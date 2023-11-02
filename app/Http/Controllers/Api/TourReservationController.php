@@ -163,13 +163,13 @@ class TourReservationController extends Controller
             }
         }
 
-        if($qrcode->status == 'hop_in') {
+        if($qrcode->status == 'hop_on') {
             $status = 'hop_off';
             $tour_reservation->tour->transport->update([
                 'available_seats' => $tour_reservation->tour->transport->available_seats + 1,
             ]);
         } else {
-            $status = 'hop_in';
+            $status = 'hop_on';
             $tour_reservation->tour->transport->update([
                 'available_seats' => $tour_reservation->tour->transport->available_seats - 1,
             ]);
@@ -190,7 +190,7 @@ class TourReservationController extends Controller
 
         return response([
             'status' => TRUE,
-            'message' => $status == 'hop_in' ? 'Success! You can now ride the HOHO bus.' : 'Thank you for riding with us! Have a great day!',
+            'message' => $status == 'hop_on' ? 'Success! You can now ride the HOHO bus.' : 'Thank you for riding with us! Have a great day!',
         ]);
     }
 
