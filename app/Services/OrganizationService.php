@@ -157,7 +157,7 @@ class OrganizationService
             }
 
             if ($request->has('images')) {
-                $images = json_decode($organization->images);
+                $images = $organization->images ? json_decode($organization->images) : [];
                 $count = 1;
                 foreach ($request->images as $image) {
                     $image_file_name = "{$file_name}_image_{$count}." . $image->getClientOriginalExtension();
