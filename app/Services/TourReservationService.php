@@ -91,11 +91,14 @@ class TourReservationService
                 return optional($row->tour)->name ?? "Deleted Tour";
             })
             ->addColumn('actions', function ($row) {
-                return '<div class="dropdown">
-                        <a href="/admin/tour_reservations/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                        <button type="button" disabled class="btn btn-outline-danger remove-btn btn-sm d-none"><i class="bx bx-trash me-1"></i></button>
-                    </div>';
-            })
+                $output = '<div class="dropdown">
+                    <a href="/admin/tour_reservations/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>';
+            
+                $output .= $row->status === 'pending' ? '<button type="button" id="'.$row->id.'" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>' : '';
+            
+                $output .= '</div>';
+                return $output;
+            })            
             ->rawColumns(['actions'])
             ->make(true);
     }

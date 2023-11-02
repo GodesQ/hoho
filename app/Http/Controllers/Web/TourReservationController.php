@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -116,7 +117,28 @@ class TourReservationController extends Controller
     }
 
     public function destroy(Request $request) {
-        
+        $tour_reservation = TourReservation::with('transaction')->find($request->id);
+    
+        if(!$tour_reservation) {
+            return response([
+                'status' => false,
+                'message' => 'Reservation Not Found'
+            ]);
+        }
+    
+        $reservationTransactionId = $tour_reservation->order_transaction_id;
+        $reservations_by_transaction = TourReservation::where('order_transaction_id', $reservationTransactionId)->get();
+    
+        if($reservations_by_transaction->count() <= 1 && $tour_reservation->transaction) {
+            $tour_reservation->transaction->delete();
+        }
+    
+        $tour_reservation->delete();
+    
+        return response([
+            'status'=> true,
+            'message' => 'Reservation Deleted Successfully'
+        ]);
     }
 
     private function generateReservationCode($number_of_pass, $reservation) {
