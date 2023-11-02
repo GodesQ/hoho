@@ -101,6 +101,14 @@
                                         <input type="text" name="contact_email" id="contact_email" class="form-control">
                                     </div>
                                 </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch mb-2">
+                                            <input class="form-check-input" type="checkbox" id="isActive" name="is_active" />
+                                            <label class="form-check-label" for="isActive">Active</label>
+                                        </div>
+                                    </div>
+                                </div>
                                 {{-- <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="images" class="form-label">Images</label>

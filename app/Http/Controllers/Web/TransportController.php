@@ -39,15 +39,22 @@ class TransportController extends Controller
 
     public function create(Request $request) {
         $operators = Admin::where('role', 'bus_operator')->get();
-        $tours = Tour::get();
+        $tours = Tour::whereNull('transport_id')->get();
         return view('admin-page.transports.create-transport', compact('operators', 'tours'));
     }
 
     public function store(Request $request) {
         $data = $request->except('_token', 'tour_assignment_ids');
+
         $transport = Transport::create(array_merge($data, [
             'tour_assignment_ids' => json_encode($request->tour_assignment_ids)
         ]));
+
+        if(is_array($request->tour_assignment_ids) && count($request->tour_assignment_ids) > 0) {
+            Tour::whereIn('id', $request->tour_assignment_ids)->update([
+                'transport_id' => $transport->id
+            ]);
+        }
 
         if($transport) return redirect()->route('admin.transports.edit', $transport->id)->withSuccess('Transport created successfully');
     }
@@ -55,7 +62,8 @@ class TransportController extends Controller
     public function edit(Request $request) {
         $operators = Admin::where('role', 'bus_operator')->get();
         $transport = Transport::where('id', $request->id)->firstOrFail();
-        $tours = Tour::get();
+        $tours = Tour::where('transport_id', $transport->id)->orWhereNull('transport_id')->get();
+
         return view('admin-page.transports.edit-transport', compact('transport', 'operators', 'tours'));
     }
 
@@ -85,22 +93,33 @@ class TransportController extends Controller
 
     public function update(Request $request) {
         $data = $request->except('_token', 'tour_assignment_ids');
-        $transports = Transport::where('id', $request->id)->firstOrFail();
-        $update = $transports->update(array_merge($data, [
-            'tour_assignment_ids' => $request->has('tour_assignment_ids') ? json_encode($request->tour_assignment_ids) : null
+        $transport = Transport::where('id', $request->id)->firstOrFail();
+    
+        $transport_tour_ids = $transport->tour_assignment_ids ?? [];
+    
+        Tour::whereIn('id', $transport_tour_ids)->update([
+            'transport_id' => null
+        ]);
+    
+        $updatedTourAssignments = null;
+        if ($request->has('tour_assignment_ids') && is_array($request->tour_assignment_ids)) {
+            $updatedTourAssignments = json_encode($request->tour_assignment_ids);
+            Tour::whereIn('id', $request->tour_assignment_ids)->update([
+                'transport_id' => $transport->id
+            ]);
+        }
+    
+        $update = $transport->update(array_merge($data, [
+            'tour_assignment_ids' => $updatedTourAssignments
         ]));
-
-        return back()->with('success','Transport Updated Successfully');
+    
+        if ($update) {
+            return back()->with('success', 'Transport Updated Successfully');
+        }
     }
-
+    
     public function destroy(Request $request) {
         $transports = Transport::findOrFail($request->id);
-
-        $upload_image = public_path('assets/img/transports/') . $transports->badge_img;
-
-        if($upload_image) {
-             @unlink($upload_image);
-        }
 
         $remove = $transports->delete();
 

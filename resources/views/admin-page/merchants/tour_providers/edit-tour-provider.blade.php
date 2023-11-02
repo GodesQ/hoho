@@ -102,14 +102,14 @@
                                         <input type="text" name="contact_email" id="contact_email" class="form-control" value="{{ $tour_provider->contact_email }}">
                                     </div>
                                 </div>
-                                {{-- <div class="col-lg-6">
+                                <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="images" class="form-label">Images</label>
-                                        <input type="file" name="images[]" id="images_1" class="form-control">
-                                        <input type="file" name="images[]" id="images_2" class="form-control">
-                                        <input type="file" name="images[]" id="images_3" class="form-control">
+                                        <div class="form-check form-switch mb-2">
+                                            <input class="form-check-input" type="checkbox" id="isActive" name="is_active" {{ $tour_provider->is_active ? 'checked' : null }} />
+                                            <label class="form-check-label" for="isActive">Active</label>
+                                        </div>
                                     </div>
-                                </div> --}}
+                                </div>
                             </div>
                             <hr>
                             <button class="btn btn-primary">Save Tour Provider</button>
