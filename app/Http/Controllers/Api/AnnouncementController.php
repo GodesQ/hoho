@@ -10,7 +10,7 @@ class AnnouncementController extends Controller
 {
     public function getImportantAnnouncements(Request $request)
     {
-        $announcements = Announcement::select('id', 'type', 'name', 'message', 'is_active', 'is_important')->where('is_important', 1)->get();
+        $announcements = Announcement::select('id', 'announcement_image', 'type', 'name', 'message', 'is_active', 'is_important')->where('is_important', 1)->get();
 
         if (!$announcements || $announcements->count() == 0) {
             return response()->json([
@@ -28,7 +28,7 @@ class AnnouncementController extends Controller
     }
 
     public function getAnnouncements(Request $request) {
-        $announcements = Announcement::select('id', 'type', 'name', 'message', 'is_active', 'is_important')->where('is_active', 1)->get();
+        $announcements = Announcement::select('id', 'announcement_image', 'type', 'name', 'message', 'is_active', 'is_important')->where('is_active', 1)->get();
 
         if (!$announcements || $announcements->count() == 0) {
             return response()->json([
