@@ -59,13 +59,20 @@ class MerchantHotelController extends Controller
                     ->addColumn('nature_of_business', function($row) {
                         return optional($row->merchant)->nature_of_business;
                     })
+                    ->addColumn('is_featured', function($row) {
+                        if ($row->merchant->is_featured) {
+                            return '<span class="badge bg-label-success me-1">Yes</span>';
+                        } else {
+                            return '<span class="badge bg-label-secondary me-1">No</span>';
+                        }
+                    })
                     ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
                                     <a href="/admin/merchants/hotels/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
                                     <a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                     })
-                    ->rawColumns(['actions', 'organization'])
+                    ->rawColumns(['actions', 'organization', 'is_featured'])
                     ->make(true);
         }
 
