@@ -148,7 +148,7 @@ class UserService
             $user = Auth::user();
 
             $update_interests = $user->update([
-                'interest_ids' => json_encode($request->interest_ids)
+                'interest_ids' => $request->has('interest_ids') ? json_encode($request->interest_ids) : null,
             ]);
 
             return $update_interests;

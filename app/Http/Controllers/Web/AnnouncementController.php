@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 
 class AnnouncementController extends Controller
@@ -44,16 +45,30 @@ class AnnouncementController extends Controller
     }
 
     public function store(Request $request)
-    {
+    {   
+        $data = $request->except('announcement_image');
+
+        if($request->hasFile('featured_image')) {
+            $file = $request->file('featured_image');
+            $outputString = str_replace(array(":", ";"), " ", $request->name);
+
+            $name = Str::snake(Str::lower($outputString));
+            $featured_file_name = $name . '.' . $file->getClientOriginalExtension();
+
+            $file->move(public_path() . '/assets/img/announcements', $featured_file_name);
+        } else {
+            $featured_file_name = null;
+        }
+        
         $announcement = Announcement::create(
-            array_merge(
-                $request->all(),
-                [
+            array_merge($data, [
+                    'announcement_image' => $featured_file_name,
                     'is_active' => $request->has('is_active'),
                     'is_important' => $request->has('is_important')
                 ]
             )
         );
+
         return redirect()->route('admin.announcements.edit', $announcement->id)->with('success', 'New Announcement Added Successfully');
     }
 
@@ -64,15 +79,38 @@ class AnnouncementController extends Controller
     }
 
     public function update(Request $request)
-    {
+    {   
+        $data = $request->except('announcement_image');
         $announcement = Announcement::findOrFail($request->id);
+
         $announcement->update(array_merge(
-            $request->all(),
+            $data,
             [
                 'is_active' => $request->has('is_active'),
                 'is_important' => $request->has('is_important')
             ]
         ));
+
+        $announcement_file_image = $announcement->announcement_image;
+
+        if($request->hasFile('announcement_image')) {
+            $file = $request->file('announcement_image');
+            $outputString = str_replace(array(":", ";"), " ", $request->name);
+
+            $name = Str::snake(Str::lower($outputString));
+            $announcement_file_image = $name . '.' . $file->getClientOriginalExtension();
+
+            $old_upload_image = public_path('assets/img/announcements/') . $announcement->announcement_image;
+
+            // Remove old image
+            if($old_upload_image) @unlink($old_upload_image);
+
+            $file->move(public_path() . '/assets/img/announcements', $announcement_file_image);
+        }
+
+        $announcement->update([
+            'announcement_image' => $announcement_file_image
+        ]);
 
         return back()->with('success', 'Announcement Updated Successfully');
     }

@@ -13,6 +13,7 @@ class Announcement extends Model
     protected $fillable = [
         'type',
         'name',
+        'announcement_image',
         'message',
         'is_active',
         'is_important'

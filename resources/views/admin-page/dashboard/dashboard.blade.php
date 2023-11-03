@@ -22,7 +22,7 @@
                         <div class="col-sm-6">
                             <div class="card-body">
                                 <h5 class="card-title text-primary">Good Morning,
-                                    {{ ucwords(str_replace('_', ' ', Auth::guard('admin')->user()->role)) }}! 🎉</h5>
+                                    {{ ucwords(str_replace('_', ' ', Auth::guard('admin')->user()->username)) }}! 🎉</h5>
                                 <p class="mb-4">
                                     Welcome to your Hop On Hop Off Travel Dashboard.
                                     Here's your overview regarding tour reservations
@@ -32,8 +32,7 @@
                                     If you have any questions or see any mistakes,
                                     kindly contact our support.
                                 </p>
-
-                                <a href="javascript:;" class="btn btn-sm btn-outline-primary">Contact Support</a>
+                                {{-- <a href="javascript:;" class="btn btn-sm btn-outline-primary">Contact Support</a> --}}
                             </div>
                         </div>
                         <div class="col-sm-6 text-center text-sm-left">

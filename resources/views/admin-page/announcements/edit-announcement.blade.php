@@ -9,50 +9,101 @@
         <a href="{{ route('admin.announcements.list') }}" class="btn btn-dark"><i class="bx bx-undo"></i> Back to List</a>
     </div>
 
-    <div class="card">
-        <div class="card-body">
-            <form action="{{ route('admin.announcements.update', $announcement->id) }}" method="post">
-                @csrf
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" name="name" id="name" value="{{ $announcement->name }}">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ route('admin.announcements.update', $announcement->id) }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" name="name" id="name" value="{{ $announcement->name }}">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="announcement_image" class="form-label">Announcement Image</label>
+                                    <input type="file" class="form-control" name="announcement_image" id="announcement_image">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="type" class="form-label">Type</label>
+                                    <select name="type" id="type" class="form-select" required>
+                                        <option {{ $announcement->type == 'operation' ? 'selected' : null }} value="operation">Operation Announcement</option>
+                                        <option {{ $announcement->type == 'safety' ? 'selected' : null }} value="safety">Safety Announcement</option>
+                                        <option {{ $announcement->type == 'holiday_greeting' ? 'selected' : null }} value="holiday_greeting">Holiday Greeting Announcement</option>
+                                        <option {{ $announcement->type == 'subscription' ? 'selected' : null }} value="subscription">News Letter Subscription Announcement</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Message</label>
+                                    <textarea name="message" id="message" cols="30" rows="5" class="form-control">{{ $announcement->message }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="isActive" name="is_active" {{ $announcement->is_active ? 'checked' : null}} />
+                                    <label class="form-check-label" for="isActive">Active</label>
+                                </div>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="isImportant" name="is_important" {{ $announcement->is_important ? 'checked' : null}} />
+                                    <label class="form-check-label" for="isImportant">Is Important?</label>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label for="type" class="form-label">Type</label>
-                            <select name="type" id="type" class="form-select" required>
-                                <option {{ $announcement->type == 'operation' ? 'selected' : null }} value="operation">Operation Announcement</option>
-                                <option {{ $announcement->type == 'safety' ? 'selected' : null }} value="safety">Safety Announcement</option>
-                                <option {{ $announcement->type == 'holiday_greeting' ? 'selected' : null }} value="holiday_greeting">Holiday Greeting Announcement</option>
-                                <option {{ $announcement->type == 'subscription' ? 'selected' : null }} value="subscription">News Letter Subscription Announcement</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label for="message" class="form-label">Message</label>
-                            <textarea name="message" id="message" cols="30" rows="5" class="form-control">{{ $announcement->message }}</textarea>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" id="isActive" name="is_active" {{ $announcement->is_active ? 'checked' : null}} />
-                            <label class="form-check-label" for="isActive">Active</label>
-                        </div>
-                        <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" id="isImportant" name="is_important" {{ $announcement->is_important ? 'checked' : null}} />
-                            <label class="form-check-label" for="isImportant">Is Important?</label>
-                        </div>
-                    </div>
+                        <hr>
+                        <button class="btn btn-primary">Save Announcement</button>
+                    </form>
                 </div>
-                <hr>
-                <button class="btn btn-primary">Save Announcement</button>
-            </form>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6>Featured Image</h6>
+                    @if ($announcement->announcement_image)
+                        <img src="{{ URL::asset('assets/img/announcements/' . $announcement->announcement_image) }}?date={{ $announcement->updated_at }}"
+                            alt="{{ $announcement->name }}" style="border-radius: 10px !important;"
+                            id="previewImage" width="100%">
+                    @else
+                        <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
+                            alt="{{ $announcement->name }}" style="border-radius: 10px !important;"
+                            id="previewImage" width="100%">
+                    @endif
+                    {{-- <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage"
+                            alt="Default Image" width="100%" style="border-radius: 10px;"> --}}
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 @endsection
+
+@push('scripts')
+    <script>
+        // Function to handle file selection and display preview image
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const previewImage = document.getElementById('previewImage');
+                    previewImage.src = event.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Attach the 'handleFileSelect' function to the file input's change event
+        document.getElementById('announcement_image').addEventListener('change', handleFileSelect);
+    </script>
+@endpush
