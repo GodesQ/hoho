@@ -67,7 +67,7 @@
                 <div class="card-body">
                     <h6>Featured Image</h6>
                     @if ($announcement->announcement_image)
-                        <img src="{{ URL::asset('assets/img/announcements/' . $announcement->announcement_image) }}?date={{ $announcement->updated_at }}"
+                        <img src="{{ URL::asset('assets/img/announcements/' . $announcement->announcement_image) }}"
                             alt="{{ $announcement->name }}" style="border-radius: 10px !important;"
                             id="previewImage" width="100%">
                     @else
