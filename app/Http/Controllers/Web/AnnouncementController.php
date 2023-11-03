@@ -23,7 +23,7 @@ class AnnouncementController extends Controller
                     if ($row->is_active) {
                         return '<div class="badge bg-label-success">Active</div>';
                     } else {
-                        return '<div class="badge bg-label-warning">In Active</div>';
+                        return '<div class="badge bg-label-warning">InActive</div>';
                     }
                 })
                 ->addColumn("actions", function ($row) {
@@ -117,7 +117,7 @@ class AnnouncementController extends Controller
     {
         $announcement = Announcement::findOrFail($request->id);
 
-        old_upload_image = public_path('assets/img/announcements/') . $announcement->announcement_image;
+        $old_upload_image = public_path('assets/img/announcements/') . $announcement->announcement_image;
         // Remove old image
         if($old_upload_image) @unlink($old_upload_image);
 
