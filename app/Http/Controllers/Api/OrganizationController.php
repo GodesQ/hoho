@@ -56,9 +56,9 @@ class OrganizationController extends Controller
 
         $filteredMerchants = array_merge($filteredMerchants, $filteredRestaurants->all());
 
-        $filteredAttractions = $organization->attractions->filter(function ($attraction) {
-            return $attraction->is_featured;
-        });
+        // $filteredAttractions = $organization->attractions->filter(function ($attraction) {
+        //     return $attraction->is_featured;
+        // });
 
         // Add the filtered merchants to the $organization object
         $organization->filtered_merchants = $filteredMerchants;
