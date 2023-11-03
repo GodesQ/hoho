@@ -41,13 +41,6 @@ class OrganizationController extends Controller
         });
         $filteredMerchants = array_merge($filteredMerchants, $filteredHotels->all());
 
-        // Filter stores based on user interests and merge into the $filteredMerchants array
-        $filteredStores = $organization->stores->filter(function ($store) use ($userInterests) {
-            $storeInterests = $store->store_info->interests ?? [];
-            return $storeInterests && array_intersect($userInterests, json_decode($storeInterests, true));
-        });
-        $filteredMerchants = array_merge($filteredMerchants, $filteredStores->all());
-
         // Filter restaurants based on user interests and merge into the $filteredMerchants array
         $filteredRestaurants = $organization->restaurants->filter(function ($restaurant) use ($userInterests) {
             $restaurantInterests = $restaurant->restaurant_info->interests ?? [];
@@ -56,13 +49,30 @@ class OrganizationController extends Controller
 
         $filteredMerchants = array_merge($filteredMerchants, $filteredRestaurants->all());
 
-        $filteredAttractions = $organization->attractions->filter(function ($attraction) {
-            return $attraction->is_featured;
+        // Filter stores based on user interests and merge into the $filteredMerchants array
+        $filteredStores = $organization->stores->filter(function ($store) use ($userInterests) {
+            $storeInterests = $store->store_info->interests ?? [];
+            return $storeInterests && array_intersect($userInterests, json_decode($storeInterests, true));
+        });
+        $filteredMerchants = array_merge($filteredMerchants, $filteredStores->all());
+
+        
+
+
+        $featuredAttractions = [];
+
+        $filteredAttractions = $organization->attractions->map(function ($attraction) {
+            return $attraction->toArray();
         });
 
-        // Add the filtered merchants to the $organization object
+        $featuredAttractions = $filteredAttractions->filter(function ($attraction) {
+            return $attraction['is_featured'];
+        })->toArray();
+
+        $featuredAttractions = array_values($featuredAttractions);
+
         $organization->filtered_merchants = $filteredMerchants;
-        $organization->featured_attractions = $filteredAttractions;
+        $organization->featured_attractions = $featuredAttractions;
 
         if ($organization) {
             return response([
