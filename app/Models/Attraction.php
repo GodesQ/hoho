@@ -27,6 +27,7 @@ class Attraction extends Model
         'longitude',
         'is_cancellable',
         'is_refundable',
+        'is_featured',
         'status',
     ];
 
@@ -35,6 +36,7 @@ class Attraction extends Model
         'attraction_provider' => 'integer',
         'is_cancellable' => 'integer',
         'is_refundable' => 'integer',
+        'is_featured' => 'integer',
         'status' => 'integer'
     ];
 

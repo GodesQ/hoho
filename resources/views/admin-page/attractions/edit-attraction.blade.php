@@ -157,6 +157,11 @@
                                                 <label class="form-check-label" for="isRefundable">Refundable</label>
                                             </div>
                                             <div class="form-check form-switch mb-2">
+                                                <input class="form-check-input" type="checkbox" id="isFeatured"
+                                                    name="is_featured" {{ $attraction->is_featured ? 'checked' : null }} />
+                                                <label class="form-check-label" for="isFeatured">Featured</label>
+                                            </div>
+                                            <div class="form-check form-switch mb-2">
                                                 <input class="form-check-input" type="checkbox" id="isActive"
                                                     name="is_active" {{ $attraction->status ? 'checked' : null }} />
                                                 <label class="form-check-label" for="isActive">Active</label>

@@ -22,6 +22,7 @@ class AttractionService
                 'product_category_ids' => $request->has('product_categories') ? json_encode($request->product_categories) : null,
                 'is_cancellable' => $request->has('is_cancellable'),
                 'is_refundable' => $request->has('is_refundable'),
+                'is_featured' => $request->has('is_featured'),
                 'status' => $request->has('is_active'),
             ]));
     
@@ -42,7 +43,6 @@ class AttractionService
                     $save_file = $image_file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $image_file_name);
     
                     array_push($images, $image_file_name);
-                    $count++;
                 }
             }
     
@@ -65,7 +65,7 @@ class AttractionService
             if($request->hasFile('featured_image')) {
                 $file = $request->file('featured_image');
                 $file_name = Str::snake(Str::lower($request->name)) . '.' . $file->getClientOriginalExtension();
-                $save_file = $file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $file_name);
+                $file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $file_name);
             } else {
                 $file_name = $attraction->featured_image;
             }
@@ -90,6 +90,7 @@ class AttractionService
                 'images' => count($images) > 0 ? json_encode($images) : $attraction->images,
                 'is_cancellable' => $request->has('is_cancellable'),
                 'is_refundable' => $request->has('is_refundable'),
+                'is_featured' => $request->has('is_featured'),
                 'status' => $request->has('is_active'),
             ]));
 
@@ -107,6 +108,25 @@ class AttractionService
                     'message' => 'Not Found'
                 ]);
             });
+
+            $old_upload_image = public_path('assets/img/attractions/') . $attraction->id . '/' . $attraction->featured_image;
+            if($old_upload_image) {
+                $remove_image = @unlink($old_upload_image);
+            }
+
+            // Remove all files from the directory
+            $directory = public_path('assets/img/attractions/') . $attraction->id;
+            $files = glob($directory . '/*');
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    @unlink($file);
+                }
+            }
+
+            // Now try to remove the directory
+            if (is_dir($directory)) {
+                @rmdir($directory);
+            }
     
             return $attraction->delete();
             
