@@ -129,6 +129,7 @@
                                         <label for="interests" class="form-label">Interests</label>
                                         <select name="interest_ids[]" id="interest_ids" class="select2 form-select" multiple>
                                             @foreach ($interests as $interest)
+                                                
                                                 <option {{ in_array($interest->id, $interest_ids) ? 'selected' : null }} value="{{ $interest->id }}">{{ $interest->name }}</option>
                                             @endforeach
                                         </select>
