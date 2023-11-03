@@ -62,7 +62,7 @@ class OrganizationController extends Controller
 
         // Add the filtered merchants to the $organization object
         $organization->filtered_merchants = $filteredMerchants;
-        $organization->featured_attractions = $filteredAttractions;
+        // $organization->featured_attractions = $filteredAttractions;
 
         if ($organization) {
             return response([
