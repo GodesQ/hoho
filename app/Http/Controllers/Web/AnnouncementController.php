@@ -116,6 +116,11 @@ class AnnouncementController extends Controller
     public function destroy(Request $request)
     {
         $announcement = Announcement::findOrFail($request->id);
+
+        old_upload_image = public_path('assets/img/announcements/') . $announcement->announcement_image;
+        // Remove old image
+        if($old_upload_image) @unlink($old_upload_image);
+
         $announcement->delete();
 
         return response(['status' => TRUE, 'message' => 'Announcement Successfully Deleted']);
