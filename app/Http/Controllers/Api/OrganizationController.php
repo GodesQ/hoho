@@ -23,7 +23,6 @@ class OrganizationController extends Controller
     {
         // Fetch the organization data with necessary relations and filtered results
         $organization = Organization::with([
-            'attractions',
             'hotels.hotel_info',
             'stores.store_info',
             'restaurants.restaurant_info'
