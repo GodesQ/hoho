@@ -56,9 +56,6 @@ class OrganizationController extends Controller
         });
         $filteredMerchants = array_merge($filteredMerchants, $filteredStores->all());
 
-        
-
-
         $featuredAttractions = [];
 
         $filteredAttractions = $organization->attractions->map(function ($attraction) {
