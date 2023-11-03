@@ -48,8 +48,8 @@ class AnnouncementController extends Controller
     {   
         $data = $request->except('announcement_image');
 
-        if($request->hasFile('featured_image')) {
-            $file = $request->file('featured_image');
+        if($request->hasFile('announcement_image')) {
+            $file = $request->file('announcement_image');
             $outputString = str_replace(array(":", ";"), " ", $request->name);
 
             $name = Str::snake(Str::lower($outputString));
@@ -101,10 +101,8 @@ class AnnouncementController extends Controller
             $announcement_file_image = $name . '.' . $file->getClientOriginalExtension();
 
             $old_upload_image = public_path('assets/img/announcements/') . $announcement->announcement_image;
-
             // Remove old image
             if($old_upload_image) @unlink($old_upload_image);
-
             $file->move(public_path() . '/assets/img/announcements', $announcement_file_image);
         }
 
