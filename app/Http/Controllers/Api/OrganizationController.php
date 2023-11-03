@@ -23,6 +23,7 @@ class OrganizationController extends Controller
     {
         // Fetch the organization data with necessary relations and filtered results
         $organization = Organization::with([
+            'attractions',
             'hotels.hotel_info',
             'stores.store_info',
             'restaurants.restaurant_info'
@@ -55,8 +56,13 @@ class OrganizationController extends Controller
 
         $filteredMerchants = array_merge($filteredMerchants, $filteredRestaurants->all());
 
+        $filteredAttractions = $organization->attractions->filter(function ($attraction) {
+            return $attraction->is_featured;
+        });
+
         // Add the filtered merchants to the $organization object
         $organization->filtered_merchants = $filteredMerchants;
+        $organization->featured_attractions = $filteredAttractions;
 
         if ($organization) {
             return response([
