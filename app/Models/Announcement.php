@@ -18,4 +18,9 @@ class Announcement extends Model
         'is_active',
         'is_important'
     ];
+
+    protected $casts = [
+        'is_active' => 'integer',
+        'is_important' => 'integer'
+    ];
 }
