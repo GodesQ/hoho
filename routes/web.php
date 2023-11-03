@@ -84,7 +84,7 @@ Route::view('user/reset_password_success', 'misc.success-reset-password-message'
 
 Route::get('merchant_form/{type}', [MerchantController::class, 'merchant_form'])->name('merchant_form')->middleware('auth:admin');
 
-Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function(){
+Route::group(['prefix'=> 'admin', 'as' => 'admin.'], function(){
     Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('profile', [DashboardController::class, 'adminProfile'])->name('profile');
