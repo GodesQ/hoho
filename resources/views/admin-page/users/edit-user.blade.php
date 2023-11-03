@@ -125,7 +125,7 @@
 
                                 <div class="col-lg-4">
                                     <div class="mb-3">
-                                        <?php $interest_ids = $user->interest_ids != null ? json_decode($user->interest_ids) : [] ?>
+                                        <?php $interest_ids = $user->interest_ids ? json_decode($user->interest_ids) : [] ?>
                                         <label for="interests" class="form-label">Interests</label>
                                         <select name="interest_ids[]" id="interest_ids" class="select2 form-select" multiple>
                                             @foreach ($interests as $interest)
