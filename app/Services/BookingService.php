@@ -76,6 +76,7 @@ class BookingService
                 if (!$response['status'] || !$response['status'] == 'FAIL') {
                     $reservation->delete();
                     $transaction->delete();
+                    dd($response);
 
                     return back()->with('fail', 'Invalid Transaction');
                 }
