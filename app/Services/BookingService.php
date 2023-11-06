@@ -37,17 +37,19 @@ class BookingService
 
             $subAmount = intval($request->amount) ?? 0;
 
-            $totalOfDiscount = (intval($request->amount) - intval($request->discounted_amount));
+            if($request->promo_code) {
+                $totalOfDiscount = (intval($request->amount) - intval($request->discounted_amount));
+            } else {
+                $totalOfDiscount = 0;
+            }
 
             $totalOfAdditionalCharges = $this->getTotalOfAdditionalCharges($request->number_of_pass, $additional_charges);
-
             $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
 
             // if 100% discount
             if($subAmount == $totalOfDiscount) {
                 $totalAmount -= $totalOfAdditionalCharges;
             }
-
 
             $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
 
@@ -72,13 +74,11 @@ class BookingService
             if ($request->payment_method == 'cash_payment' || ($request->promo_code && $subAmount == $totalOfDiscount)) {
                 return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Reservation Successfully');
             } else {
-                dd($transaction->payment_amount);
                 $response = $this->sendPaymentRequest($transaction);
 
                 if (!$response['status'] || !$response['status'] == 'FAIL') {
                     $reservation->delete();
                     $transaction->delete();
-
                     return back()->with('fail', 'Invalid Transaction');
                 }
 
@@ -427,7 +427,6 @@ class BookingService
 
         } catch (RequestException $e) {
             $errorMessage = $e->getMessage();
-            // dd($e);
 
             return [
                 'status' => FALSE,
