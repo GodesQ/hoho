@@ -120,10 +120,10 @@ class MerchantHotelController extends Controller
         $result = $this->merchantHotelService->UpdateMerchantHotel($request);
 
         if($result['status']) {
-            return back()->with('success', 'Merchant Restaurant Updated Successfully');
+            return back()->with('success', 'Merchant Hotel Updated Successfully');
         }
 
-        return back()->with('fail', 'Merchant Restaurant Failed to Update');
+        return back()->with('fail', 'Merchant Hotel Failed to Update');
 
     }
 
