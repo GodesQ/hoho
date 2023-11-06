@@ -193,7 +193,47 @@
                             <hr>
                             <div class="d-flex justify-content-between align-items-center">
                                 <h4>Links</h4>
-                                <button class="btn btn-outline-primary" type="button">Add Link <i class="bx bx-plus"></i></button>
+                                <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#modalCenter">Add Link <i class="bx bx-plus"></i></button>
+                                <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalCenterTitle">Modal title</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-lg-12 mb-3">
+                                                        <label for="link_type" class="form-label">Type</label>
+                                                        <select class="form-select" name="type" id="link_type">
+                                                            <option value="Attraction">Attraction</option>
+                                                            <option value="Store">Store</option>
+                                                            <option value="Restaurant">Restaurant</option>
+                                                            <option value="Hotel">Hotel</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-lg-12 mb-3">
+                                                        <label for="link" class="form-label">Name</label>
+                                                        <select name="link_id" id="link" class="form-select">
+                                                            <option value="Test">Test</option>
+                                                            <option value="Test">Test</option>
+                                                            <option value="Test">Test</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="button" class="btn btn-primary">Save changes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="table-responsive my-3">
                                 <table class="table table-bordered">
@@ -257,7 +297,6 @@
 
                 reader.onload = function(event) {
                     const previewImage = document.getElementById(previewImageId);
-                    console.log(previewImage);
                     previewImage.src = event.target.result;
                 };
 

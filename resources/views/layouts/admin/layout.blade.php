@@ -591,7 +591,6 @@
     <script src="{{ URL::asset('assets/js/select/select2.full.min.js') }}"></script>
     <script src="{{ asset('assets/js/jquery.steps.min.js') }}"></script>
     <script src="{{ URL::asset('assets/vendor/js/menu.js') }}"></script>
-    <!-- endbuild -->
 
     <!-- Vendors JS -->
     <script src="{{ URL::asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
