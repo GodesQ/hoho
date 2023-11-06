@@ -68,7 +68,7 @@ class BookingService
             }
 
             // Handle payment method
-            if ($request->payment_method == 'cash_payment' || $subAmount == $totalOfDiscount) {
+            if ($request->payment_method == 'cash_payment' || ($request->promo_code && $subAmount == $totalOfDiscount)) {
                 return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Reservation Successfully');
             } else {
                 $response = $this->sendPaymentRequest($transaction);
@@ -383,7 +383,6 @@ class BookingService
                 }
             }
         }
-
     }
 
     private function sendPaymentRequest($transaction)
