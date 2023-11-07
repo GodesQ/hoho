@@ -16,7 +16,7 @@ use App\Models\Transaction;
 class DashboardController extends Controller
 {
     public function dashboard(Request $request) {
-        $recent_transactions = Transaction::select('reference_no', 'id', 'transaction_by_id', 'payment_status', 'aqwire_totalAmount', 'aqwire_paymentMethodCode')->with('user')->latest()->limit(6)->get();
+        $recent_transactions = Transaction::select('reference_no', 'id', 'transaction_by_id', 'payment_status', 'aqwire_totalAmount', 'aqwire_paymentMethodCode')->where('payment_status', 'success')->with('user')->latest()->limit(6)->get();
         // dd($recent_transactions);
         return view('admin-page.dashboard.dashboard', compact('recent_transactions'));
     }

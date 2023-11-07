@@ -450,12 +450,6 @@
                     height: 150
                 });
 
-                // const qrCodeDownload = new QRCode(document.createElement('div'), {
-                //     text: badgeCode,
-                //     width: 300,
-                //     height: 300
-                // });
-
                 return qrCode._el.firstChild.toDataURL('image/png');
             }
         });

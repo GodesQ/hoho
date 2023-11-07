@@ -25,7 +25,8 @@ class CartController extends Controller
 
     public function getUserCarts(Request $request) {
         $user = Auth::user();
-        $carts = Cart::where('user_id', $user->id)->with('tour')->latest()->get();
+        $date = date('Y-m-d');
+        $carts = Cart::where('user_id', $user->id)->where('trip_date', '>=', $date)->with('tour')->latest()->get();
 
         return response([
             'status' => TRUE,
