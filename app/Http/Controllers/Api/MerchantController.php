@@ -21,7 +21,6 @@ class MerchantController extends Controller
             ], 404);
         });
 
-
         switch ($merchant->type) {
             case 'Store':
                 $merchant_child = MerchantStore::where('merchant_id', $merchant->id)->first();

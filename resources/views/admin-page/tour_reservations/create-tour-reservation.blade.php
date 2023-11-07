@@ -114,7 +114,7 @@
                                                 <input class="form-check-input diy_ticket_pass_radio" type="radio"
                                                     name="ticket_pass" id="{{ $ticket_pass->name }}"
                                                     value="{{ $ticket_pass->name }}"
-                                                    data-amount="{{ $ticket_pass->price }}" required />
+                                                    data-amount="{{ $ticket_pass->price }}" />
                                                 <label class="form-check-label" for="{{ $ticket_pass->name }}"
                                                     style="cursor: pointer;">
                                                     <img src="{{ URL::asset('assets/img/ticket_passes/' . $ticket_pass->ticket_image) }}"
