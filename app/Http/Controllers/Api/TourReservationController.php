@@ -11,6 +11,7 @@ use App\Models\TourReservation;
 use App\Models\Cart;
 use App\Models\User;
 use App\Models\ReservationCodeScanLog;
+use App\Models\ReservationUserCode;
 
 use App\Services\BookingService;
 
@@ -113,6 +114,23 @@ class TourReservationController extends Controller
         $reservations = TourReservation::latest('created_at')->where('status', 'approved')->where('type', 'DIY')->where('reserved_user_id', $user->id)->with('reservation_codes')->get();
 
         return response($reservations);
+    }
+
+    public function getDIYTicketPassReservation(Request $request) {
+        $reservation_code = ReservationUserCode::where('id', $request->id)->first();
+        if (!$reservation_code) {
+            return response([
+                'status' => FALSE,
+                'message' => 'Reservation Not Found',
+                'reservation_code' => null
+            ], 404);
+        }
+
+        return response([
+            'status' => TRUE,
+            'message' => 'Reservation Found',
+            'reservation_code' => $reservation_code
+        ]);
     }
 
     public function getUserReservations(Request $request)
