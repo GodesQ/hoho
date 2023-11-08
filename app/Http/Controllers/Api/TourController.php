@@ -11,7 +11,7 @@ use App\Models\Tour;
 class TourController extends Controller
 {
     public function getGuidedTours(Request $request) {
-        $tours = Tour::where('type', 'Guided Tour')->where('status', 1)->get();
+        $tours = Tour::where('type', 'Guided Tour')->where('status', 1)->inRandomOrder()->get();
 
         return response([
             'status' => TRUE,
