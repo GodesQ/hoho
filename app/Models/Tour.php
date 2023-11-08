@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use DB;
 class Tour extends Model
 {
     use HasFactory;
@@ -69,6 +70,7 @@ class Tour extends Model
 
         if (is_array($attraction_ids) && !empty($attraction_ids)) {
             $data = Attraction::select('id', 'name', 'address', 'latitude', 'longitude', 'featured_image', 'youtube_id')->whereIn('id', $attraction_ids)
+                ->orderByRaw(DB::raw("FIELD(id, " . implode(',', $attraction_ids) . ")"))
                 ->get()
                 ->toArray();
             if (!empty($data)) {
