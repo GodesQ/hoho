@@ -76,7 +76,7 @@ Route::post('aqwire/payment/callback/{id}', [AqwireController::class, 'callback'
 
 Route::get('user/verify_email', [UserAuthController::class, 'verifyEmail']);
 
-Route::view('test_email', 'emails.payment-request');
+Route::view('test_email', 'emails.invoice-email');
 
 Route::get('user/reset_password_form', [ForgotPasswordController::class, 'resetPasswordForm'])->name('user.reset_password_form');
 Route::post('user/reset_password_form', [ForgotPasswordController::class, 'postResetPasswordForm'])->name('user.post_reset_password_form');

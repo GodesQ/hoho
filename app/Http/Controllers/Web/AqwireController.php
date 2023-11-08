@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\InvoiceMail;
 
 use App\Models\Transaction;
 use App\Models\TourReservation;
@@ -23,13 +25,23 @@ class AqwireController extends Controller
             'payment_date' => Carbon::now()
         ]);
 
-        $reservations = TourReservation::where('order_transaction_id', $transaction->id)->get();
+        $reservations = TourReservation::where('order_transaction_id', $transaction->id)->with('tour', 'user')->get();
 
         foreach ($reservations as $key => $reservation) {
             $reservation->update([
                 'payment_method' => $request->paymentMethodCode
             ]);
+
+            $details = [
+                'tour' => $reservation->tour,
+                'reservation' => $reservation,
+                'transaction' => $transaction
+            ];
+
+            Mail::to(optional($reservation->user->email)->contact_email)->send(new InvoiceMail($details));
         }
+
+
 
         if($update_transaction) {
             return redirect('aqwire/payment/view_success');
