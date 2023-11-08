@@ -110,7 +110,7 @@
                                 <table cellpadding="10" align="left">
                                     <tr>
                                         <td>
-                                            <img src="{{ URL::asset('assets/img/tours/' . $details['tour']->id . '/' . $details['tour']->featured_image) }}?date={{ $tour->updated_at }}" width="125" height="125" style="display: block; border: 0px; object-fit: cover;" />
+                                            <img src="{{ URL::asset('assets/img/tours/' . $details['tour']->id . '/' . $details['tour']->featured_image) }}?date={{ $details['tour']->updated_at }}" width="125" height="125" style="display: block; border: 0px; object-fit: cover;" />
                                         </td>
                                         <td>
                                             <div style="font-size: 15px !important; color: #929292; text-align: center !important; line-height: 25px;">
