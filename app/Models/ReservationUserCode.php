@@ -21,7 +21,9 @@ class ReservationUserCode extends Model
 
     protected $casts = [    
         'reservation_id' => 'integer',
-        'scan_count' => 'integer'
+        'scan_count' => 'integer',
+        'start_datetime' => 'datetime',
+        'end_datetime' => 'datetime'
     ];
 
     public function tour_reservation() {
