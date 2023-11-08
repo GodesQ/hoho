@@ -172,7 +172,7 @@
                                                 </td>
                                                 
                                                 <td align="right">
-                                                    {{ $details['reservation']->promo_code }}
+                                                    {{ $details['reservation']->promo_code ?? 'No Promo Code Found' }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -194,7 +194,7 @@
                                                     Discount:
                                                 </td>
                                                 <td align="right">₱
-                                                    {{ $details['reservation']->discount ?? null }}
+                                                    {{ isset($details) ? number_format($details['reservation']->discount, 2) : '0.00' }}
                                                 </td>
                                             </tr>
                                             <tr>
