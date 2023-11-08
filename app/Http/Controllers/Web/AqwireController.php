@@ -38,7 +38,7 @@ class AqwireController extends Controller
                 'transaction' => $transaction
             ];
 
-            Mail::to(optional($reservation->user->email)->contact_email)->send(new InvoiceMail($details));
+            Mail::to(optional($reservation->user)->email)->send(new InvoiceMail($details));
         }
 
 
