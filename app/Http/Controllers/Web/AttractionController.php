@@ -11,6 +11,7 @@ use App\Models\Attraction;
 use App\Models\Organization;
 use App\Models\ProductCategory;
 use App\Models\Interest;
+use App\Models\Merchant;
 
 use Yajra\DataTables\DataTables;
 
@@ -35,7 +36,12 @@ class AttractionController extends Controller
         $organizations = Organization::get();
         $interests = Interest::latest()->get();
         $product_categories = ProductCategory::latest()->get();
-        return view('admin-page.attractions.create-attraction', compact('organizations', 'interests', 'product_categories'));
+        $attractions = Attraction::latest()->get();
+        $hotels = Merchant::where('type', 'Hotel')->get();
+        $stores = Merchant::where('type', 'Store')->get();
+        $restaurants = Merchant::where('type', 'Restaurant')->get();
+
+        return view('admin-page.attractions.create-attraction', compact('organizations', 'interests', 'product_categories', 'attractions', 'hotels', 'stores', 'restaurants'));
     }
 
     public function store(Request $request) {
@@ -48,6 +54,10 @@ class AttractionController extends Controller
         $organizations = Organization::get();
         $product_categories = ProductCategory::get();
         $interests = Interest::latest()->get();
+        $attractions = Attraction::latest()->get();
+        $hotels = Merchant::where('type', 'Hotel')->get();
+        $stores = Merchant::where('type', 'Store')->get();
+        $restaurants = Merchant::where('type', 'Restaurant')->get();
 
         return view('admin-page.attractions.edit-attraction', compact('attraction', 'organizations', 'product_categories', 'interests'));
     }

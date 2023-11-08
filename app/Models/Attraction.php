@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use DB;
+
 class Attraction extends Model
 {
     use HasFactory;
@@ -29,6 +31,10 @@ class Attraction extends Model
         'is_refundable',
         'is_featured',
         'status',
+        'nearest_attraction_ids',
+        'nearest_hotel_ids',
+        'nearest_store_ids',
+        'nearest_restaurant_ids'
     ];
 
     protected $casts = [
@@ -40,7 +46,62 @@ class Attraction extends Model
         'status' => 'integer'
     ];
 
-    public function organization() {
+    protected $appends = ['nearest_attractions', 'nearest_stores', 'nearest_hotels', 'nearest_restaurants'];
+
+    public function getNearestAttractionsAttribute() {
+        $nearest_attractions = $this->nearest_attraction_ids ? json_decode($this->nearest_attraction_ids, true) : [];
+
+        if (is_array($nearest_attractions) && !empty($nearest_attractions)) {
+            $data = Attraction::whereIn('id', $nearest_attractions)
+                ->get()
+                ->toArray();
+            if (!empty($data)) {
+                return $data;
+            }
+        }
+    }
+
+    public function getNearestStoresAttribute() {
+        $nearest_stores = $this->nearest_store_ids ? json_decode($this->nearest_store_ids, true) : [];
+
+        if (is_array($nearest_stores) && !empty($nearest_stores)) {
+            $data = Merchant::whereIn('id', $nearest_stores)
+                ->get()
+                ->toArray();
+            if (!empty($data)) {
+                return $data;
+            }
+        }
+    }
+
+    public function getNearestRestaurantsAttribute() {
+        $nearest_restaurants = $this->nearest_restaurant_ids ? json_decode($this->nearest_restaurant_ids, true) : [];
+        
+        if (is_array($nearest_restaurants) && !empty($nearest_restaurants)) {
+            $data = Merchant::whereIn('id', $nearest_restaurants)
+                ->get()
+                ->toArray();
+            if (!empty($data)) {
+                return $data;
+            }
+        }
+    }
+
+    public function getNearestHotelsAttribute() {
+        $nearest_hotels = $this->nearest_hotel_ids ? json_decode($this->nearest_hotel_ids, true) : [];
+        
+        if (is_array($nearest_hotels) && !empty($nearest_hotels)) {
+            $data = Merchant::whereIn('id', $nearest_hotels)
+                ->get()
+                ->toArray();
+            if (!empty($data)) {
+                return $data;
+            }
+        }
+    }
+
+    public function organization()
+    {
         return $this->hasOne(Organization::class, 'id', 'organization_id');
     }
 }

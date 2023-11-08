@@ -118,6 +118,7 @@ class TourReservationController extends Controller
 
     public function getDIYTicketPassReservation(Request $request) {
         $reservation_code = ReservationUserCode::where('id', $request->id)->first();
+        
         if (!$reservation_code) {
             return response([
                 'status' => FALSE,

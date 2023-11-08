@@ -126,7 +126,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <div class="row">
+                                    <div class="row my-3">
                                         <div class="col-lg-6">
                                             <div class="form-check form-switch mb-2">
                                                 <input class="form-check-input" type="checkbox" id="isCancellable"
@@ -151,9 +151,52 @@
                                         </div>
                                     </div>
                                 </div>
+                                <hr>
+                                <h4><i class="bx bx-pin"></i> Nearest</h4>
+                                <hr>
+                                <div class="col-lg-6">
+                                    <div class="my-3">
+                                        <label for="nearest_attraction_ids" class="form-label">Nearest Attractions</label>
+                                        <select name="nearest_attraction_ids[]" id="nearest_attraction_ids" class="select2" multiple>
+                                            @foreach ($attractions as $attraction)
+                                                <option value="{{ $attraction->id }}">{{ $attraction->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="my-3">
+                                        <label for="nearest_store_ids" class="form-label">Nearest Stores</label>
+                                        <select name="nearest_store_ids[]" id="nearest_store_ids" class="select2" multiple>
+                                            @foreach ($stores as $store)
+                                                <option value="{{ $store->id }}">{{ $store->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="my-3">
+                                        <label for="nearest_restaurant_ids" class="form-label">Nearest Restaurants</label>
+                                        <select name="nearest_restaurant_ids[]" id="nearest_restaurant_ids" class="select2" multiple>
+                                            @foreach ($restaurants as $restaurant)
+                                                <option value="{{ $restaurant->id }}">{{ $restaurant->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="my-3">
+                                        <label for="nearest_hotel_ids" class="form-label">Nearest Hotels</label>
+                                        <select name="nearest_hotel_ids[]" id="nearest_hotel_ids" class="select2" multiple>
+                                            @foreach ($hotels as $hotel)
+                                                <option value="{{ $hotel->id }}">{{ $hotel->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <hr>
-                            <h4>Images</h4>
+                            <h4><i class="bx bx-images"></i> Images</h4>
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="row">
@@ -185,51 +228,6 @@
                                                 <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
                                                     id="previewImage3" alt="Default Image" width="100%" height="200px"
                                                     style="border-radius: 10px; object-fit: cover;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h4>Links</h4>
-                                <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal"
-                                    data-bs-target="#modalCenter">Add Link <i class="bx bx-plus"></i></button>
-                                <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalCenterTitle">Modal title</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="row">
-                                                    <div class="col-lg-12 mb-3">
-                                                        <label for="link_type" class="form-label">Type</label>
-                                                        <select class="form-select" name="type" id="link_type">
-                                                            <option value="Attraction">Attraction</option>
-                                                            <option value="Store">Store</option>
-                                                            <option value="Restaurant">Restaurant</option>
-                                                            <option value="Hotel">Hotel</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-lg-12 mb-3">
-                                                        <label for="link" class="form-label">Name</label>
-                                                        <select name="link_id" id="link" class="form-select">
-                                                            <option value="Test">Test</option>
-                                                            <option value="Test">Test</option>
-                                                            <option value="Test">Test</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-outline-secondary"
-                                                    data-bs-dismiss="modal">
-                                                    Close
-                                                </button>
-                                                <button type="button" class="btn btn-primary">Save changes</button>
                                             </div>
                                         </div>
                                     </div>

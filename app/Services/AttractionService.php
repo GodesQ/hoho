@@ -20,6 +20,10 @@ class AttractionService
             $attraction = Attraction::create(array_merge($data, [
                 'interest_ids' => $request->has('interests') ? json_encode($request->interests) : null,
                 'product_category_ids' => $request->has('product_categories') ? json_encode($request->product_categories) : null,
+                'nearest_attraction_ids' => $request->has('nearest_attraction_ids') ? json_encode($request->nearest_attraction_ids) : null,
+                'nearest_store_ids' => $request->has('nearest_store_ids') ? json_encode($request->nearest_store_ids) : null,
+                'nearest_restaurant_ids' => $request->has('nearest_restaurant_ids') ? json_encode($request->nearest_restaurant_ids) : null,
+                'nearest_hotel_ids' => $request->has('nearest_hotel_ids') ? json_encode($request->nearest_hotel_ids) : null,
                 'is_cancellable' => $request->has('is_cancellable'),
                 'is_refundable' => $request->has('is_refundable'),
                 'is_featured' => $request->has('is_featured'),
@@ -41,7 +45,7 @@ class AttractionService
                     $image_file = $image;
                     $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $uniqueId . '.' . $image_file->getClientOriginalExtension();
                     $save_file = $image_file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $image_file_name);
-    
+                    
                     array_push($images, $image_file_name);
                 }
             }

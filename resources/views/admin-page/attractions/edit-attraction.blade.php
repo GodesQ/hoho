@@ -169,6 +169,49 @@
                                         </div>
                                     </div>
                                 </div>
+                                <hr>
+                                <h4><i class="bx bx-pin"></i> Nearest</h4>
+                                <hr>
+                                <div class="col-lg-6">
+                                    <div class="my-3">
+                                        <label for="nearest_attraction_ids" class="form-label">Nearest Attractions</label>
+                                        <select name="nearest_attraction_ids[]" id="nearest_attraction_ids" class="select2" multiple>
+                                            @foreach ($attractions as $attraction)
+                                                <option value="{{ $attraction->id }}">{{ $attraction->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="my-3">
+                                        <label for="nearest_store_ids" class="form-label">Nearest Stores</label>
+                                        <select name="nearest_store_ids[]" id="nearest_store_ids" class="select2" multiple>
+                                            @foreach ($stores as $store)
+                                                <option value="{{ $store->id }}">{{ $store->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="my-3">
+                                        <label for="nearest_restaurant_ids" class="form-label">Nearest Restaurants</label>
+                                        <select name="nearest_restaurant_ids[]" id="nearest_restaurant_ids" class="select2" multiple>
+                                            @foreach ($restaurants as $restaurant)
+                                                <option value="{{ $restaurant->id }}">{{ $restaurant->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="my-3">
+                                        <label for="nearest_hotel_ids" class="form-label">Nearest Hotels</label>
+                                        <select name="nearest_hotel_ids[]" id="nearest_hotel_ids" class="select2" multiple>
+                                            @foreach ($hotels as $hotel)
+                                                <option value="{{ $hotel->id }}">{{ $hotel->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <hr>
                             <h4>Images</h4>
