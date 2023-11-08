@@ -98,7 +98,7 @@
                             style="padding: 20px 20px 0px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Google Sans', Helvetica, Arial, sans-serif; font-size: 3px; font-weight: 400; letter-spacing: 4px; line-height: 48px;">
                             <div style="width: 100%; padding: 50px 0; marin-right: auto; margin-left: auto; background: linear-gradient(160deg, rgba(67,7,9,1) 6%, rgba(161,30,3,1) 95%); border-radius: 10px;">
                                 <img src="{{ URL::asset('assets/img/hoho_text_horizontal_white.png') }}" width="155" style="display: block; border: 0px;" />
-                                <div style="font-size: 20px !important; color: #fff;">Thankyou for Purchase!</div>
+                                <div style="font-size: 20px !important; color: #fff;">Thank You for Purchase!</div>
                             </div>
                             <div style="margin-top: 10px;">
                                 <div style="font-size: 20px !important; color: #000; font-weight: 600; text-align: left !important; line-height: 25px;">{{ $details['tour']->name }}</div>
@@ -175,12 +175,14 @@
                                                     {{ $details['reservation']->promo_code ?? 'No Promo Code Found' }}
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td width="50%" style="font-weight: 800;">
-                                                    Ticket Pass:
-                                                </td>
-                                                <td align="right">{{ $details['reservation']->ticket_pass ?? null }}</td>
-                                            </tr>
+                                            @if($details['reservation']->type == 'DIY')
+                                                <tr>
+                                                    <td width="50%" style="font-weight: 800;">
+                                                        Ticket Pass:
+                                                    </td>
+                                                    <td align="right">{{ $details['reservation']->ticket_pass ?? null }}</td>
+                                                </tr>
+                                            @endif
                                             <tr>
                                                 <td width="50%" style="font-weight: 800;">
                                                     Sub Amount:
