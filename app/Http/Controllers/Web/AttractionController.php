@@ -59,7 +59,7 @@ class AttractionController extends Controller
         $stores = Merchant::where('type', 'Store')->get();
         $restaurants = Merchant::where('type', 'Restaurant')->get();
 
-        return view('admin-page.attractions.edit-attraction', compact('attraction', 'organizations', 'product_categories', 'interests'));
+        return view('admin-page.attractions.edit-attraction', compact('attraction', 'organizations', 'product_categories', 'interests', 'attractions', 'hotels', 'stores', 'restaurants'));
     }
 
     public function update(Request $request) {
