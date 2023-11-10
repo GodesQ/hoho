@@ -66,6 +66,7 @@ class Attraction extends Model
 
         if (is_array($nearest_stores) && !empty($nearest_stores)) {
             $data = Merchant::whereIn('id', $nearest_stores)
+                ->with('store_info')
                 ->get()
                 ->toArray();
             if (!empty($data)) {
@@ -79,6 +80,7 @@ class Attraction extends Model
         
         if (is_array($nearest_restaurants) && !empty($nearest_restaurants)) {
             $data = Merchant::whereIn('id', $nearest_restaurants)
+                ->with('restaurant_info')
                 ->get()
                 ->toArray();
             if (!empty($data)) {
@@ -92,6 +94,7 @@ class Attraction extends Model
         
         if (is_array($nearest_hotels) && !empty($nearest_hotels)) {
             $data = Merchant::whereIn('id', $nearest_hotels)
+                ->with('hotel_info')
                 ->get()
                 ->toArray();
             if (!empty($data)) {

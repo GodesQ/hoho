@@ -174,44 +174,44 @@
                                 <hr>
                                 <div class="col-lg-6">
                                     <div class="my-3">
+                                        <?php $nearest_attraction_ids = $attraction->nearest_attraction_ids ? json_decode($attraction->nearest_attraction_ids) : [] ?>
                                         <label for="nearest_attraction_ids" class="form-label">Nearest Attractions</label>
                                         <select name="nearest_attraction_ids[]" id="nearest_attraction_ids" class="select2" multiple>
-                                            <?php $nearest_attraction_ids = $attraction->nearest_attraction_ids ? json_decode($attraction->nearest_attraction_ids) : [] ?>
-                                            @foreach ($attractions as $attraction)
-                                                <option value="{{ $attraction->id }}" {{ in_array($attraction->id, $nearest_attraction_ids) ? 'selected' : null }}>{{ $attraction->name }}</option>
+                                            @foreach ($attractions as $data)
+                                                <option value="{{ $data->id }}" {{ in_array($data->id, $nearest_attraction_ids) ? 'selected' : null }}>{{ $data->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="my-3">
+                                        <?php $nearest_store_ids = $attraction->nearest_store_ids ? json_decode($attraction->nearest_store_ids) : []; ?>
                                         <label for="nearest_store_ids" class="form-label">Nearest Stores</label>
                                         <select name="nearest_store_ids[]" id="nearest_store_ids" class="select2" multiple>
-                                            <?php $nearest_store_ids = $attraction->nearest_store_ids ? json_decode($attraction->nearest_store_ids) : [] ?>
                                             @foreach ($stores as $store)
-                                                <option value="{{ $store->id }}" {{ in_array($attraction->id, $nearest_store_ids) ? 'selected' : null }}>{{ $store->name }}</option>
+                                                <option value="{{ $store->id }}" {{ in_array($store->id, $nearest_store_ids) ? 'selected' : null }}>{{ $store->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="my-3">
+                                        <?php $nearest_restaurant_ids = $attraction->nearest_restaurant_ids ? json_decode($attraction->nearest_restaurant_ids) : []; ?>
                                         <label for="nearest_restaurant_ids" class="form-label">Nearest Restaurants</label>
                                         <select name="nearest_restaurant_ids[]" id="nearest_restaurant_ids" class="select2" multiple>
-                                            <?php $nearest_restaurant_ids = $attraction->nearest_restaurant_ids ? json_decode($attraction->nearest_restaurant_ids) : [] ?>
                                             @foreach ($restaurants as $restaurant)
-                                                <option value="{{ $restaurant->id }}" {{ in_array($attraction->id, $nearest_restaurant_ids) ? 'selected' : null }}>{{ $restaurant->name }}</option>
+                                                <option value="{{ $restaurant->id }}" {{ in_array($restaurant->id, $nearest_restaurant_ids) ? 'selected' : null }}>{{ $restaurant->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="my-3">
+                                        <?php $nearest_hotel_ids = $attraction->nearest_hotel_ids ? json_decode($attraction->nearest_hotel_ids) : [] ?>
                                         <label for="nearest_hotel_ids" class="form-label">Nearest Hotels</label>
                                         <select name="nearest_hotel_ids[]" id="nearest_hotel_ids" class="select2" multiple>
-                                            <?php $nearest_hotel_ids = $attraction->nearest_hotel_ids ? json_decode($attraction->nearest_hotel_ids) : [] ?>
                                             @foreach ($hotels as $hotel)
-                                                <option value="{{ $hotel->id }}" {{ in_array($attraction->id, $nearest_hotel_ids) ? 'selected' : null }}>{{ $hotel->name }}</option>
+                                                <option value="{{ $hotel->id }}" {{ in_array($hotel->id, $nearest_hotel_ids) ? 'selected' : null }}>{{ $hotel->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
