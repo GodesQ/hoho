@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use GuzzleHttp\Client;
 
 use App\Models\Admin;
 use App\Models\Role;
@@ -77,5 +78,30 @@ class AdminController extends Controller
 
     public function destroy(Request $request) {
 
+    }
+
+    public function sendMessageWithSemaphore() {
+        $client = new Client();
+    
+        $parameters = [
+            'apikey' => '2e9288e75f56bb100bd53d018142b2e7',
+            'number' => '+639633987953',
+            'message' => 'I just sent my first message with Semaphore',
+            'sendername' => 'PEP',
+        ];
+    
+        try {
+            $response = $client->request('POST', 'https://semaphore.co/api/v4/messages', [
+                'form_params' => $parameters
+            ]);
+    
+            $output = $response->getBody()->getContents();
+    
+            // Show the server response
+            echo $output;
+        } catch (\Exception $e) {
+            // Handle any exceptions or errors here
+            echo "Error: " . $e->getMessage();
+        }
     }
 }
