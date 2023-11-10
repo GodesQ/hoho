@@ -87,7 +87,6 @@ class AdminController extends Controller
             'apikey' => '2e9288e75f56bb100bd53d018142b2e7',
             'number' => '+639633987953',
             'message' => 'I just sent my first message with Semaphore',
-            'sendername' => 'PEP',
         ];
     
         try {
