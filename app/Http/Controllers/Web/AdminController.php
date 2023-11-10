@@ -81,26 +81,26 @@ class AdminController extends Controller
     }
 
     public function sendMessageWithSemaphore() {
-        $client = new Client();
+        // $client = new Client();
     
-        $parameters = [
-            'apikey' => '2e9288e75f56bb100bd53d018142b2e7',
-            'number' => '+639633987953',
-            'message' => 'I just sent my first message with Semaphore',
-        ];
+        // $parameters = [
+        //     'apikey' => '2e9288e75f56bb100bd53d018142b2e7',
+        //     'number' => '+639633987953',
+        //     'message' => 'I just sent my first message with Semaphore',
+        // ];
     
-        try {
-            $response = $client->request('POST', 'https://semaphore.co/api/v4/messages', [
-                'form_params' => $parameters
-            ]);
+        // try {
+        //     $response = $client->request('POST', 'https://semaphore.co/api/v4/messages', [
+        //         'form_params' => $parameters
+        //     ]);
     
-            $output = $response->getBody()->getContents();
+        //     $output = $response->getBody()->getContents();
     
-            // Show the server response
-            echo $output;
-        } catch (\Exception $e) {
-            // Handle any exceptions or errors here
-            echo "Error: " . $e->getMessage();
-        }
+        //     // Show the server response
+        //     echo $output;
+        // } catch (\Exception $e) {
+        //     // Handle any exceptions or errors here
+        //     echo "Error: " . $e->getMessage();
+        // }
     }
 }

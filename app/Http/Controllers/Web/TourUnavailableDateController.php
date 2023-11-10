@@ -55,4 +55,15 @@ class TourUnavailableDateController extends Controller
             return back()->withSuccess('Unavailable Date Update Successfully');    
         }
     }
+
+    public function destroy(Request $request) {
+        $tourUnavailableDate = TourUnavailableDate::findOrFail($request->id);
+
+        $tourUnavailableDate->delete();
+
+        return response([
+            'status' => TRUE,
+            'message' => 'Unavailable Date Remove Successfully'
+        ]);
+    }
 }
