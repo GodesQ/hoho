@@ -82,7 +82,6 @@ class AttractionService
                     $image_file = $image;
                     $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $uniqueId . '.' . $image_file->getClientOriginalExtension();
                     $save_file = $image_file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $image_file_name);
-
                     array_push($images, $image_file_name);
                 }
             }
