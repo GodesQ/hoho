@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\TourBadgeController;
 use Illuminate\Support\Facades\Route;
 
@@ -238,6 +239,13 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('product_categories/edit/{id}', [ProductCategoryController::class, 'edit'])->name('product_categories.edit');
     Route::post('product_categories/update/{id}', [ProductCategoryController::class, 'update'])->name('product_categories.update');
     Route::delete('product_categories/destroy', [ProductCategoryController::class, 'destroy'])->name('product_categories.destroy');
+
+    Route::get('carts', [CartController::class, 'list'])->name('carts.list');
+    Route::get('carts/create', [CartController::class, 'create'])->name('carts.create');
+    Route::post('carts/store', [CartController::class, 'store'])->name('carts.store');
+    Route::get('carts/edit/{id}', [CartController::class, 'edit'])->name('carts.edit');
+    Route::post('carts/update/{id}', [CartController::class, 'update'])->name('carts.update');
+    Route::delete('carts/destroy', [CartController::class, 'destroy'])->name('carts.destroy');
 
     Route::get('referrals', [ReferralController::class, 'list'])->name('referrals.list')->can('view_referrals_list');
     Route::get('referrals/create', [ReferralController::class, 'create'])->name('referrals.create');
