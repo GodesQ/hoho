@@ -197,14 +197,6 @@
                                     <h6>₱ 99.00 / Pax</h6>
                                 </div>
                             </div>
-                            {{-- <div class="row">
-                                <div class="col-xl-6">
-                                    <h6 class="text-primary">Travel Pass</h6>
-                                </div>
-                                <div class="col-xl-6">
-                                    <h6>₱ 50.00</h6>
-                                </div>
-                            </div> --}}
                             <div class="row">
                                 <div class="col-xl-6">
                                     <h6 class="text-primary">Sub Amount</h6>
@@ -335,7 +327,6 @@
         let total_discount_text = document.querySelector('#total_discount_text');
         let sub_amount_text = document.querySelector('#sub_amount_text');
         let total_convenience_fee_text = document.querySelector('#total_convenience_fee_text');
-        // let total_travel_pass_text = document.querySelector('#total_travel_pass_text');
         let ticketPassTextContainer = document.querySelector('.ticket_pass_text_container');
         let ticketPassText = document.querySelector('#ticket_pass_text');
         let amount = document.querySelector('#amount');
