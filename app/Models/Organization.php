@@ -30,15 +30,15 @@ class Organization extends Model
     }
 
     public function stores() {
-        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Store')->where('is_active', 1);
+        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Store')->where('is_active', 1)->inRandomOrder();
     }
 
     public function hotels() {
-        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Hotel')->where('is_active', 1);
+        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Hotel')->where('is_active', 1)->inRandomOrder();
     }
 
     public function restaurants() {
-        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Restaurant')->where('is_active', 1);
+        return $this->hasMany(Merchant::class, 'organization_id')->where('type', 'Restaurant')->where('is_active', 1)->inRandomOrder();
     }
 
     public function tour() {
