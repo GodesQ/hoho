@@ -18,7 +18,7 @@ class CartController extends Controller
                     ->addIndexColumn()
                     ->addColumn("user", function ($row) {
                         if($row->user) {
-                            return $row->user->firstname . ' ' . $row->user->lastname;
+                            return $row->user->email;
                         } else {
                             return "Deleted User";
                         }
@@ -32,6 +32,7 @@ class CartController extends Controller
                     })
                     ->addColumn("actions", function ($row) {
                         return '<div class="dropdown">
+                                    <a href="/admin/carts/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
                                     <a href="javascript:void(0);" id="'.$row->id.'" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                     })
@@ -40,6 +41,12 @@ class CartController extends Controller
         }
 
         return view("admin-page.carts.list-cart");
+    }
+
+    public function edit(Request $request) {
+        $cart = Cart::with('tour', 'user')->findOrFail($request->id);
+
+        return view('admin-page.carts.edit-cart', compact('cart'));
     }
 
     public function destroy(Request $request) {
