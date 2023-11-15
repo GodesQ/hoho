@@ -34,9 +34,14 @@ class AdminAuthController extends Controller
 
             if ($admin->is_merchant) {
                 return $this->checkAdminRoleForMerchant($admin);
-            } else {
-                return redirect()->route('admin.dashboard')->with('success', 'Login Successful');
+            } 
+
+            if($admin->is_approved) {
+                Auth::logout();
+                return back()->with('fail', 'This account has not been approved yet. Please await approval from the administrator.');
             }
+
+            return redirect()->route('admin.dashboard')->with('success', 'Login Successful');
 
         } else {
             return back()->with('fail', 'Invalid Credentials.');

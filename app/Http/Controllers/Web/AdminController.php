@@ -20,14 +20,22 @@ class AdminController extends Controller
             $data = Admin::get();
             return DataTables::of($data)
                     ->addIndexColumn()
+                    ->addColumn('is_approved', function($row) {
+                        if ($row->is_approved) {
+                            return '<span class="badge bg-label-success me-1">Yes</span>';
+                        } else {
+                            return '<span class="badge bg-label-secondary me-1">No</span>';
+                        }
+                    })
                     ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
                                     <a href="/admin/admins/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
                                 </div>';
                     })
-                    ->rawColumns(['actions'])
+                    ->rawColumns(['actions', 'is_approved'])
                     ->make(true);
         }
+        
         return view('admin-page.admins.list-admin');
     }
 
@@ -40,6 +48,7 @@ class AdminController extends Controller
         $data = $request->except('_token', 'password');
 
         $admin = Admin::create(array_merge($data, [
+            'is_approved' => in_array($request->role, ['super_admin', 'admin', 'bus_operator']) ? true : false,
             'password' => Hash::make($request->password)
         ]));
 
@@ -70,6 +79,7 @@ class AdminController extends Controller
         }
 
         $update_admin = $admin->update(array_merge($data, [
+            'is_approved' => in_array($request->role, ['super_admin', 'admin', 'bus_operator']) ? true : false,
             'admin_profile' => $file_name
         ]));
 

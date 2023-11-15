@@ -18,6 +18,7 @@
                                 <th>Username</th>
                                 <th>Email</th>
                                 <th>Role</th>
+                                <th>Is Approved</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -51,6 +52,10 @@
                     {
                         data: 'role',
                         name: 'role'
+                    },
+                    {
+                        data: 'is_approved',
+                        name: 'is_approved'
                     },
                     {
                         data: 'actions',

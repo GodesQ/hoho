@@ -276,7 +276,8 @@
                         @endcan
                     @endauth
 
-                    
+                    @auth('admin')
+                        @can('view_carts_list')
                             <li
                                 class="menu-item {{ preg_match('/admin\/carts/', Request::path()) ? 'active' : null }}">
                                 <a href="{{ route('admin.carts.list') }}" class="menu-link">
@@ -284,6 +285,8 @@
                                     <div data-i18n="Carts">Carts</div>
                                 </a>
                             </li>
+                        @endcan
+                    @endauth
 
                     @auth('admin')
                         @canany(['view_transactions_list', 'view_sales_report'])

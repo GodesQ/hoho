@@ -26,6 +26,7 @@ class Admin extends Authenticatable
         'role',
         'is_active',
         'is_merchant',
+        'is_approved',
         'merchant_data_id'
     ];
     protected $hidden = ['password'];
