@@ -36,7 +36,7 @@ class AdminAuthController extends Controller
                 return $this->checkAdminRoleForMerchant($admin);
             } 
 
-            if($admin->is_approved) {
+            if(!$admin->is_approved) {
                 Auth::logout();
                 return back()->with('fail', 'This account has not been approved yet. Please await approval from the administrator.');
             }
