@@ -123,6 +123,10 @@ class AdminAuthController extends Controller
         if ($merchant_data) {
             return redirect()->route('admin.dashboard')->with('success', 'Login Successfully');
         } else {
+            if(!$admin->is_approved) {
+                Auth::logout();
+                return back()->with('fail', 'This account has not been approved yet. Please await approval from the administrator.');
+            }
             return redirect()->route('merchant_form', $type)->withSuccess('Login Successfully. Please complete this form to continue.');
         }
     }

@@ -48,7 +48,7 @@ class AdminController extends Controller
         $data = $request->except('_token', 'password');
 
         $admin = Admin::create(array_merge($data, [
-            'is_approved' => in_array($request->role, ['super_admin', 'admin', 'bus_operator']) ? true : false,
+            'is_approved' => $request->has('is_approved') ? true : false,
             'password' => Hash::make($request->password)
         ]));
 
@@ -79,7 +79,7 @@ class AdminController extends Controller
         }
 
         $update_admin = $admin->update(array_merge($data, [
-            'is_approved' => in_array($request->role, ['super_admin', 'admin', 'bus_operator']) ? true : false,
+            'is_approved' => $request->has('is_approved') ? true : false,
             'admin_profile' => $file_name
         ]));
 

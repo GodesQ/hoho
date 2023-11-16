@@ -161,6 +161,8 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::post('tour_reservations/update/{id}', [TourReservationController::class, 'update'])->name('tour_reservations.update');
     Route::delete('tour_reservations/destroy', [TourReservationController::class, 'destroy'])->name('tour_reservations.destroy');
 
+    Route::get('tour_reservations/reservation_codes/{reservation_id}', [TourReservationController::class, 'get_tour_reservation_codes'])->name('tour_reservations.reservation_codes');
+
     Route::get('merchants', [MerchantController::class, 'list'])->name('merchants.list');
     Route::get('merchants/create', [MerchantController::class, 'create'])->name('merchants.create');
     Route::post('merchants/store', [MerchantController::class, 'store'])->name('merchants.store');

@@ -72,7 +72,8 @@ class TourReservationController extends Controller
     }
 
     public function edit(Request $request) {
-        $reservation = TourReservation::where('id', $request->id)->with('user', 'tour', 'transaction')->firstOrFail();
+        $reservation = TourReservation::where('id', $request->id)->with('user', 'tour', 'transaction', 'reservation_codes')->firstOrFail();
+        // dd($reservation);
         $ticket_passes = TicketPass::get();
         return view('admin-page.tour_reservations.edit-tour-reservation', compact('reservation', 'ticket_passes'));
     }
@@ -138,6 +139,15 @@ class TourReservationController extends Controller
         return response([
             'status'=> true,
             'message' => 'Reservation Deleted Successfully'
+        ]);
+    }
+
+    public function get_tour_reservation_codes(Request $request) {
+        $tour_reservation_codes = ReservationUserCode::where('reservation_id', $request->reservation_id)->get();
+
+        return response([
+            'status' => TRUE,
+            'reservation_codes' => $tour_reservation_codes
         ]);
     }
 
