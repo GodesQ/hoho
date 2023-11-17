@@ -68,6 +68,7 @@ Route::get('test_location2', [DashboardController::class, 'testLocation2']);
 Route::get('/send_message', [AdminController::class, 'sendMessageWithSemaphore']);
 
 Route::view('user/success_verification_message', 'misc.success_verification_message')->name('user.success_verification_message');
+Route::view('merchant-account-registered-message', 'misc.merchant-registered-message')->name('merchant_account_registered_message');
 
 Route::get('aqwire/payment/success/{id}', [AqwireController::class, 'success']);
 Route::get('aqwire/payment/view_success', [AqwireController::class, 'viewSuccess']);
@@ -79,7 +80,7 @@ Route::post('aqwire/payment/callback/{id}', [AqwireController::class, 'callback'
 
 Route::get('user/verify_email', [UserAuthController::class, 'verifyEmail']);
 
-Route::view('test_email', 'emails.invoice-email');
+Route::view('test_email', 'emails.new-merchant-registered-email');
 
 Route::get('user/reset_password_form', [ForgotPasswordController::class, 'resetPasswordForm'])->name('user.reset_password_form');
 Route::post('user/reset_password_form', [ForgotPasswordController::class, 'postResetPasswordForm'])->name('user.post_reset_password_form');

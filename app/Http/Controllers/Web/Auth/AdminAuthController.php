@@ -7,8 +7,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 use App\Http\Requests\AdminAuth\LoginRequest;
+
+use App\Mail\NewRegisteredMerchantNotification;
 
 use App\Models\Admin;
 use App\Models\MerchantHotel;
@@ -62,25 +65,19 @@ class AdminAuthController extends Controller
             'is_merchant' => TRUE
         ]));
 
+    
         if ($admin_user) {
+            $details = [
+                'email' => $admin_user->email,
+                'registered_date' => date('F d, Y')
+            ];
+
+            $receiver = env('APP_ENVIRONMENT') == 'LIVE' ? 'philippinehoho@tourism.gov.ph' : 'james@godesq.com';
+    
+            Mail::to($receiver)->send(new NewRegisteredMerchantNotification($details));
+
             // Login to create a session
-            Auth::guard('admin')->attempt(['username' => $request->username, 'password' => $request->password]);
-
-            $role = $request->role;
-
-            switch ($role) {
-                case 'merchant_hotel_admin':
-                    return redirect()->route('merchant_form', 'hotel')->withSuccess('Register Successfully. Please fill out all these fields to continue.');
-                case 'merchant_store_admin':
-                    return redirect()->route('merchant_form', 'store')->withSuccess('Register Successfully. Please fill out all these fields to continue.');
-                case 'merchant_restaurant_admin':
-                    return redirect()->route('merchant_form', 'restaurant')->withSuccess('Register Successfully. Please fill out all these fields to continue.');
-                case 'tour_operator_admin':
-                    return redirect()->route('merchant_form', 'tour_provider')->withSuccess('Register Successfully. Please fill out all these fields to continue.');
-
-                default:
-                    return redirect()->route('merchant_form', '')->withSuccess('Register Successfully. Please fill out all these fields to continue.');
-            }
+            return redirect()->route('merchant_account_registered_message');
         }
     }
 
@@ -111,7 +108,7 @@ class AdminAuthController extends Controller
             case 'tour_operator_admin':
                 $merchant_data = MerchantTourProvider::where('id', $admin->merchant_data_id)->exists();
                 $type = 'tour_provider';
-                break;
+                break;  
 
             default:
                 $merchant_data = false;

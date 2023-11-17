@@ -7,11 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\MerchantAccountApprove;
+use App\Mail\NewRegisteredMerchantNotification;
 
 use App\Models\Admin;
 use App\Models\Role;
 
 use Yajra\DataTables\DataTables;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -57,7 +61,7 @@ class AdminController extends Controller
 
     public function edit(Request $request) {
         $roles = Role::get();
-        $admin = Admin::where('id', $request->id)->first();
+        $admin = Admin::where('id', $request->id)->firstOrFail();
 
         return view('admin-page.admins.edit-admin', compact('admin', 'roles'));
     }
@@ -82,6 +86,19 @@ class AdminController extends Controller
             'is_approved' => $request->has('is_approved') ? true : false,
             'admin_profile' => $file_name
         ]));
+
+        if($request->has('is_approved') && !$admin->email_approved_at) {
+            $details = [
+                'email' => $request->email,
+                'registered_date' => date('F d, Y')
+            ];
+
+            Mail::to($request->email)->send(new MerchantAccountApprove($details));
+
+            $admin->update([
+                'merchant_email_approved_at' => Carbon::now()
+            ]);
+        }
 
         return back()->withSuccess('Admin updated successfully');
     }
