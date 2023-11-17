@@ -15,6 +15,7 @@
                 <table class="table   data-table">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>Name</th>
                             <th>Nature Of Business</th>
                             <th>Interests</th>
@@ -40,6 +41,10 @@
                     url: "{{ route('admin.merchants.tour_providers.list') }}"
                 },
                 columns: [
+                    {
+                        data: 'featured_image',
+                        name: 'featured_image',
+                    },
                     {
                         data: 'name',
                         name: 'name',

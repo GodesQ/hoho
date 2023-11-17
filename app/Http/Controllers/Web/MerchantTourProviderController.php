@@ -12,7 +12,7 @@ use App\Models\Merchant;
 
 use App\Services\MerchantTourProviderService;
 
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 class MerchantTourProviderController extends Controller
 {   
@@ -27,6 +27,20 @@ class MerchantTourProviderController extends Controller
             $data = MerchantTourProvider::latest()->with('merchant');
             return DataTables::of($data)
                     ->addIndexColumn()
+                    ->addColumn('featured_image', function($row) {
+                        if($row->merchant) {
+                            if($row->merchant->featured_image) {
+                                $path = '../../../assets/img/tour_providers/' . $row->merchant->id . '/' . $row->merchant->featured_image;
+                                return '<img src="' .$path. '" width="50" height="50" style="object-fit: cover;" />';
+                            } else {
+                                $path = '../../../assets/img/' . 'default-image.jpg';
+                                return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
+                            }
+                        } else {
+                            $path = '../../../assets/img/' . 'default-image.jpg';
+                            return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
+                        }
+                    })
                     ->addColumn('name', function ($row) {
                         return optional($row->merchant)->name;
                     })
@@ -39,7 +53,7 @@ class MerchantTourProviderController extends Controller
                                     <button id="'. $row->id .'" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
                                 </div>';
                     })
-                    ->rawColumns(['actions'])
+                    ->rawColumns(['actions', 'featured_image'])
                     ->make(true);
         }
         return view('admin-page.merchants.tour_providers.list-tour-provider');

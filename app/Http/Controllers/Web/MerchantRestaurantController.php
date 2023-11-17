@@ -38,11 +38,11 @@ class MerchantRestaurantController extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('organization', function($row) {
-                    if($row->merchant->organization) {
-                        if($row->merchant->organization->icon) {
-                            $path = '../../../assets/img/organizations/' . $row->merchant->organization->id . '/' . $row->merchant->organization->icon;
-                            return '<img src="' .$path. '" width="50" height="50" />';
+                ->addColumn('featured_image', function($row) {
+                    if($row->merchant) {
+                        if($row->merchant->featured_image) {
+                            $path = '../../../assets/img/restaurants/' . $row->merchant->id . '/' . $row->merchant->featured_image;
+                            return '<img src="' .$path. '" width="50" height="50" style="object-fit: cover;" />';
                         } else {
                             $path = '../../../assets/img/' . 'default-image.jpg';
                             return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
@@ -71,7 +71,7 @@ class MerchantRestaurantController extends Controller
                                     <a href="javascript:void(0);" id=" ' . $row->id . ' " class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                 })
-                ->rawColumns(['actions', 'organization', 'is_featured'])
+                ->rawColumns(['actions', 'featured_image', 'is_featured'])
                 ->make(true);
         }
 

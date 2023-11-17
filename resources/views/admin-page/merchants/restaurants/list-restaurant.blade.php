@@ -15,7 +15,7 @@
                 <table class="table   data-table">
                     <thead>
                         <tr>
-                            <th>Organization</th>
+                            <th></th>
                             <th>Name</th>
                             <th>Nature Of Business</th>
                             <th>Is Featured</th>
@@ -45,8 +45,8 @@
                 },
                 columns: [
                     {
-                        data: 'organization',
-                        name: 'organization',
+                        data: 'featured_image',
+                        name: 'featured_image',
                     },
                     {
                         data: 'name',
