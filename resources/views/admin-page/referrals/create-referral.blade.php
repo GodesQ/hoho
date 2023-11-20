@@ -48,12 +48,18 @@
                         </div>
                         <div class="mb-3">
                             <label for="merchant_id" class="form-label">Merchant</label>
-                            <select name="merchant_id" id="merchant_id" class="select2" {{ auth('admin')->user()->is_merchant ? 'disabled' : null }}>
-                                <option value="">--- SELECT MERCHANT ---</option>
-                                @foreach ($merchants as $merchant)
-                                    <option value="{{ $merchant->id }}">{{ $merchant->name }} ({{ $merchant->type }})</option>
-                                @endforeach
-                            </select>
+                            @if(auth('admin')->user()->is_merchant)
+                                <input type="text" class="form-control" value="{{ auth('admin')->user()->merchant_hotel->merchant->name }}" readonly>
+                                <input type="hidden" name="merchant_id" value="{{ auth('admin')->user()->merchant_hotel->merchant->id }}">
+                            @else
+                                <select name="merchant_id" id="merchant_id" class="select2">
+                                    <option value="">--- SELECT MERCHANT ---</option>
+                                    @foreach ($merchants as $merchant)
+                                        <option value="{{ $merchant->id }}">{{ $merchant->name }} ({{ $merchant->type }})</option>
+                                    @endforeach
+                                </select>
+                            @endif
+                            
                         </div>
                     </div>
                     <div class="col-lg-6">
