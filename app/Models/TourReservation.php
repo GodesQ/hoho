@@ -9,6 +9,7 @@ class TourReservation extends Model
 {
     use HasFactory;
     protected $table = 'tour_reservations';
+    
     protected $fillable = [
         'tour_id',
         'type',
@@ -29,7 +30,10 @@ class TourReservation extends Model
         'referral_code',
         'promo_code',
         'requirement_file_path',
-        'discount_amount'
+        'discount_amount',
+        'created_by',
+        'created_user_type',
+        'updated_by'
     ];
 
     protected $casts = [

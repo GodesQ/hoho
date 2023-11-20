@@ -8,8 +8,9 @@
             <h4 class="fw-bold py-3 mb-4">Tour Reservations List</h4>
             @auth('admin')
                 @can('book_tour')
-                    <a href="{{ route('admin.tour_reservations.create') }}" class="btn btn-primary">Add Reservation <i
-                            class="bx bx-plus"></i></a>
+                    <a href="{{ route('admin.tour_reservations.create') }}" class="btn btn-primary">
+                        Add Reservation <i class="bx bx-plus"></i>
+                    </a>
                 @endcan
             @endauth
         </div>

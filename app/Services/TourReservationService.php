@@ -11,8 +11,13 @@ use Yajra\DataTables\DataTables;
 class TourReservationService
 {
     public function RetrieveAllTourReservationsList(Request $request)
-    {
+    {   
+        $current_user = Auth::guard('admin')->user();
+
         $data = TourReservation::with('user', 'tour')
+            ->when(!in_array($current_user->role, ['super_admin', 'admin']), function($query) use ($current_user) {
+                $query->where('created_by', $current_user->id);
+            })
             ->when(!empty($request->get('search')), function ($query) use ($request) {
                 $searchQuery = $request->get('search');
                 $query->whereHas('user', function ($userQuery) use ($searchQuery) {

@@ -302,6 +302,8 @@ class BookingService
             'payment_method' => $request->payment_method,
             'referral_code' => $request->referral_code,
             'promo_code' => $request->promo_code,
+            'created_by' => Auth::guard('admin')->user()->id,
+            'created_user_type' => Auth::guard('admin')->user()->role,
         ]);
 
         return $reservation;
@@ -344,7 +346,9 @@ class BookingService
                 'ticket_pass' => $item['type'] == 'DIY' ? $item['ticket_pass'] : null,
                 'promo_code' => $request->promo_code,
                 'requirement_file_path' => null,
-                'discount_amount' => $subAmount - $totalOfDiscount
+                'discount_amount' => $subAmount - $totalOfDiscount,
+                'created_by' => $request->reserved_user_id,
+                'created_user_type' => 'guest'
             ]);
 
             if ($request->has('requirement') && $request->file('requirement')->isValid()) {
@@ -374,17 +378,11 @@ class BookingService
                 'tour_name' => $tour->name
             ];
 
-            if ($tour) {
-                if ($tour->tour_provider) {
-                    if ($tour->tour_provider->contact_email) {
-                        if (env('APP_ENVIRONMENT') == 'LIVE') {
-                            Mail::to($tour->tour_provider->contact_email)->send(new TourProviderBookingNotification($details));
-                        } else {
-                            Mail::to('james@godesq.com')->send(new TourProviderBookingNotification($details));
-                        }
-                    }
-                }
+            if ($tour?->tour_provider?->contact_email) {
+                $recipientEmail = env('APP_ENVIRONMENT') == 'LIVE' ? $tour->tour_provider->contact_email : 'james@godesq.com';
+                Mail::to($recipientEmail)->send(new TourProviderBookingNotification($details));
             }
+            
         }
     }
 

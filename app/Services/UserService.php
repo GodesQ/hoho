@@ -22,6 +22,9 @@ class UserService
     {
         return DataTables::of($data)
             ->addIndexColumn()
+            ->addColumn("contact_no", function ($row) {
+                return "+$row->countryCode$row->contact_no ($row->isoCode)";
+            })
             ->addColumn('status', function ($row) {
                 if ($row->status == 'active') {
                     return '<span class="badge bg-label-success me-1">Active</span>';

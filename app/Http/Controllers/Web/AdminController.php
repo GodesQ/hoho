@@ -90,7 +90,6 @@ class AdminController extends Controller
         if($request->has('is_approved') && !$admin->email_approved_at) {
             $details = [
                 'email' => $request->email,
-                'registered_date' => date('F d, Y')
             ];
 
             Mail::to($request->email)->send(new MerchantAccountApprove($details));
