@@ -19,6 +19,7 @@ class Tour extends Model
         'name',
         'type',
         'bypass_days',
+        'disabled_days',
         'minimum_pax',
         'description',
         'contact_no',

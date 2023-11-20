@@ -68,6 +68,7 @@ class TourController extends Controller
 
         $tour = Tour::create(array_merge($data, [
             'attractions_assignments_ids' => $request->has('attractions_assignments_ids') ? json_encode($request->attractions_assignments_ids) : null,
+            'disabled_days' => $request->has('disabled_days') ? json_encode($request->disabled_days) : null,
             'is_cancellable' => $request->has('is_cancellable'),
             'is_refundable' => $request->has('is_refundable'),
         ]));
@@ -104,6 +105,7 @@ class TourController extends Controller
 
         $update_tour = $tour->update(array_merge($data, [
             'attractions_assignments_ids' => $request->has('attractions_assignments_ids') ? json_encode($request->attractions_assignments_ids) : null,
+            'disabled_days' => $request->has('disabled_days') ? json_encode($request->disabled_days) : null,
             'start_date_duration' => $request->has('start_date_duration') ? Carbon::create($request->start_date_duration) : null,
             'end_date_duration' => $request->has('end_date_duration') ? Carbon::create($request->end_date_duration) : null,
             'is_cancellable' => $request->has('is_cancellable'),

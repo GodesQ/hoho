@@ -78,13 +78,29 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-4">
                                             <div class="mb-3">
-                                                <label for="bypass_days" class="form-label">ByPass Days</label>
+                                                <label for="bypass_days" class="form-label">Number of ByPass Days</label>
                                                 <input type="number" name="bypass_days" id="bypass_days" class="form-control" value="{{ $tour->bypass_days }}">
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-4">
+                                            <div class="mb-3">
+                                                <?php $disabled_days = $tour->disabled_days ? json_decode($tour->disabled_days) : [] ?>
+                                                <label for="bypass_days" class="form-label">Disabled Days</label>
+                                                <select name="disabled_days[]" id="disabled_days" class="select2" multiple>
+                                                    <option {{ in_array(1, $disabled_days) ? 'selected' : null }} value="1">Monday</option>
+                                                    <option {{ in_array(2, $disabled_days) ? 'selected' : null }} value="2">Tuesday</option>
+                                                    <option {{ in_array(3, $disabled_days) ? 'selected' : null }} value="3">Wednesday</option>
+                                                    <option {{ in_array(4, $disabled_days) ? 'selected' : null }} value="4">Thursday</option>
+                                                    <option {{ in_array(5, $disabled_days) ? 'selected' : null }} value="5">Friday</option>
+                                                    <option {{ in_array(6, $disabled_days) ? 'selected' : null }} value="6">Saturday</option>
+                                                    <option {{ in_array(7, $disabled_days) ? 'selected' : null }} value="7">Sunday</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
                                             <div class="mb-3">
                                                 <label for="minimum_pax" class="form-label">Minimum Pax</label>
                                                 <input type="number" name="minimum_pax" id="minimum_pax" class="form-control" value="{{ $tour->minimum_pax }}">

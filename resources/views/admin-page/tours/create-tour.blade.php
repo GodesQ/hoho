@@ -74,13 +74,28 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-6">
+                                            <div class="col-lg-4">
                                                 <div class="mb-3">
-                                                    <label for="bypass_days" class="form-label">ByPass Days</label>
+                                                    <label for="bypass_days" class="form-label">Number of ByPass Days</label>
                                                     <input type="number" name="bypass_days" id="bypass_days" class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="col-lg-6">
+                                            <div class="col-lg-4">
+                                                <div class="mb-3">
+                                                    <label for="bypass_days" class="form-label">Disabled Days</label>
+                                                    <select name="disabled_days[]" id="disabled_days" class="select2" multiple>
+                                                        <option value="1">Monday</option>
+                                                        <option value="2">Tuesday</option>
+                                                        <option value="3">Wednesday</option>
+                                                        <option value="4">Thursday</option>
+                                                        <option value="5">Friday</option>
+                                                        <option value="6">Saturday</option>
+                                                        <option value="7">Sunday</option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
                                                 <div class="mb-3">
                                                     <label for="minimum_pax" class="form-label">Minimum Pax</label>
                                                     <input type="number" name="minimum_pax" id="minimum_pax" class="form-control">
