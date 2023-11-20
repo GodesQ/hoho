@@ -202,7 +202,12 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h6>Preview of Featured Image</h6>
-                                    <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt="" id="previewImage" style="border-radius: 10px;" width="100%">
+                                    @if($admin->merchant_hotel && $admin->merchant_hotel->merchant->featured_image)
+                                        <img src="{{ URL::asset('/assets/img/hotels/' . $admin->merchant_hotel->merchant->id . '/' . $admin->merchant_hotel->merchant->featured_image) }}"
+                                         alt="" style="border-radius: 10px;" width="100%" id="previewImage">
+                                    @else
+                                        <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt="" id="previewImage" style="border-radius: 10px;" width="100%">
+                                    @endif
                                 </div>
                             </div>
                         </div>
