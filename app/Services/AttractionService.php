@@ -90,10 +90,10 @@ class AttractionService
                 'featured_image' => $file_name,
                 'interest_ids' => $request->has('interests') ? json_encode($request->interests) : null,
                 'product_category_ids' => $request->has('product_categories') ? json_encode($request->product_categories) : $attraction->product_category_ids,
-                'nearest_attraction_ids' => $request->has('nearest_attraction_ids') ? json_encode($request->nearest_attraction_ids) : $attraction->nearest_attraction_ids,
-                'nearest_store_ids' => $request->has('nearest_store_ids') ? json_encode($request->nearest_store_ids) : $attraction->nearest_store_ids,
-                'nearest_restaurant_ids' => $request->has('nearest_restaurant_ids') ? json_encode($request->nearest_restaurant_ids) : $attraction->nearest_restaurant_ids,
-                'nearest_hotel_ids' => $request->has('nearest_hotel_ids') ? json_encode($request->nearest_hotel_ids) : $attraction->nearest_hotel_ids,
+                'nearest_attraction_ids' => $request->has('nearest_attraction_ids') ? json_encode($request->nearest_attraction_ids) : null,
+                'nearest_store_ids' => $request->has('nearest_store_ids') ? json_encode($request->nearest_store_ids) : null,
+                'nearest_restaurant_ids' => $request->has('nearest_restaurant_ids') ? json_encode($request->nearest_restaurant_ids) : null,
+                'nearest_hotel_ids' => $request->has('nearest_hotel_ids') ? json_encode($request->nearest_hotel_ids) : null,
                 'images' => count($images) > 0 ? json_encode($images) : $attraction->images,
                 'is_cancellable' => $request->has('is_cancellable'),
                 'is_refundable' => $request->has('is_refundable'),
@@ -143,6 +143,7 @@ class AttractionService
     }
 
     public function generateDataTables($data) {
+        // dd($data);
         return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('organization_logo', function ($row) {
