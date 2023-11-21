@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="card">
-                    <img class="card-img-top" style="max-height: 400px; object-fit: cover;" src="{{ URL::asset('assets/img/' . $type . 's/' . $merchantInfo->merchant_id . '/merchant_hotel_test.jpg') }}">
+                    <img class="card-img-top" style="max-height: 400px; object-fit: cover;" src="{{ URL::asset('assets/img/' . $type . 's/' . $merchantInfo->merchant_id . '/' . ($merchantInfo->merchant->featured_image ?? '')) }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ $merchantInfo->merchant->name }}</h5>
                         <p class="card-text">
@@ -26,7 +26,7 @@
                     </div>
                     <div class="card-body">
                         <ul class="p-0 m-0">
-                            @foreach ($recentTourReservations as $recentTourReservation)
+                            @forelse ($recentTourReservations as $recentTourReservation)
                                 <li class="d-flex mb-4 pb-1">
                                     <div class="avatar flex-shrink-0 me-3">
                                         @if ($recentTourReservation->status == 'approved')
@@ -51,7 +51,9 @@
                                         </div>
                                     </div>
                                 </li>
-                            @endforeach
+                                @empty
+                                <li>No Tour Reservations Found</li>
+                            @endforelse
                         </ul>
                     </div>
                 </div>
