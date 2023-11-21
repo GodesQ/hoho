@@ -167,7 +167,7 @@
                     </div>
                     <div class="card-body">
                         <ul class="p-0 m-0">
-                            @foreach ($recent_transactions as $recent_transaction)
+                            @foreach ($recentTransactions as $recent_transaction)
                                 <li class="d-flex mb-4 pb-1">
                                     <div class="avatar flex-shrink-0 me-3">
                                         @if ($recent_transaction->payment_status == 'success')

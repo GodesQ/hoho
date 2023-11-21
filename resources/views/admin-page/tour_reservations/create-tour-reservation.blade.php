@@ -159,6 +159,11 @@
                                     id="promo_code" />
                                 <button class="btn btn-primary" type="button" id="apply-promocode-btn">Apply</button>
                             </div>
+                            <h6 class="mt-3" style="font-weight: 600;">Referral Code</h6>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Apply Referral Code" name="referral_code"
+                                    id="referral_code" />
+                            </div>
                         </div>
                     </div>
                     <div class="card">

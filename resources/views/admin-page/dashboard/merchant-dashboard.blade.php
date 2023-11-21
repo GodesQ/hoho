@@ -1,0 +1,61 @@
+@extends('layouts.admin.layout')
+
+@section('title', 'Merchant Dashboard')
+
+@section('content')
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <h3 class="card-title text-primary">Good Day,
+            {{ ucwords(str_replace('_', ' ', Auth::guard('admin')->user()->username)) }}! 🎉</h3>
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <img class="card-img-top" style="max-height: 400px; object-fit: cover;" src="{{ URL::asset('assets/img/' . $type . 's/' . $merchantInfo->merchant_id . '/merchant_hotel_test.jpg') }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ $merchantInfo->merchant->name }}</h5>
+                        <p class="card-text">
+                            {{ substr($merchantInfo->merchant->description, 0, 250) }}...
+                        </p>
+                        <a href="{{ route('merchant_form', $type) }}" class="btn btn-outline-primary">Go to Merchant Profile</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Recent Book Reservation</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="p-0 m-0">
+                            @foreach ($recentTourReservations as $recentTourReservation)
+                                <li class="d-flex mb-4 pb-1">
+                                    <div class="avatar flex-shrink-0 me-3">
+                                        @if ($recentTourReservation->status == 'approved')
+                                            <img src="{{ URL::asset('assets/img/icons/unicons/transaction-success.png') }}"
+                                                alt="User" class="rounded" />
+                                        @else
+                                            <img src="{{ URL::asset('assets/img/icons/unicons/transaction-warning.png') }}"
+                                                alt="User" class="rounded" />
+                                        @endif
+                                    </div>
+                                    <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                        <div class="me-2">
+                                            <small
+                                                class="text-muted d-block mb-1">{{ $recentTourReservation->user ? $recentTourReservation->user->email : 'Deleted User' }}</small>
+                                            <h6 class="mb-0">
+                                                <a href="{{ route('admin.tour_reservations.edit', $recentTourReservation->id) }}">{{ $recentTourReservation->tour->name ?? null }}</a>
+                                            </h6>
+                                        </div>
+                                        <div class="user-progress d-flex align-items-center gap-1">
+                                            <h6 class="mb-0">{{ number_format($recentTourReservation->amount,2) }}</h6>
+                                            {{-- <span class="text-muted">USD</span> --}}
+                                        </div>
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection

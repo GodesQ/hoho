@@ -12,14 +12,58 @@ use App\Http\Requests\User\ChangeUserPasswordRequest;
 
 use App\Models\Admin;
 use App\Models\Transaction;
+use App\Models\MerchantHotel;
+use App\Models\MerchantStore;
+use App\Models\MerchantRestaurant;
+use App\Models\MerchantTourProvider;
+use App\Models\TourReservation;
+
 
 class DashboardController extends Controller
 {
     public function dashboard(Request $request) {
-        $recent_transactions = Transaction::select('reference_no', 'id', 'transaction_by_id', 'payment_status', 'aqwire_totalAmount', 'aqwire_paymentMethodCode')->where('payment_status', 'success')->with('user')->latest()->limit(6)->get();
-        // dd($recent_transactions);
-        return view('admin-page.dashboard.dashboard', compact('recent_transactions'));
-    }
+        $user = Auth::guard('admin')->user();
+    
+        if ($user->is_merchant) {
+            $merchantInfo = null;
+            $type = null;
+            
+            $recentTourReservations = TourReservation::with('user', 'tour')->where('created_by', $user->id)->with('tour', 'user')->latest()->limit(5)->get();
+
+            switch ($user->role) {
+                case 'merchant_hotel_admin':
+                    $merchantInfo = MerchantHotel::where('id', $user->merchant_data_id)->with('merchant')->first();
+                    $type = 'hotel';
+                    break;
+    
+                case 'merchant_store_admin':
+                    $merchantInfo = MerchantStore::where('id', $user->merchant_data_id)->with('merchant')->first();
+                    $type = 'store';
+                    break;
+    
+                case 'merchant_restaurant_admin':
+                    $merchantInfo = MerchantRestaurant::where('id', $user->merchant_data_id)->with('merchant')->first();
+                    $type = 'restaurant';
+                    break;
+    
+                case 'tour_operator_admin':
+                    $merchantInfo = MerchantTourProvider::where('id', $user->merchant_data_id)->with('merchant')->first();
+                    $type = 'tour_provider';
+                    break;
+            }
+    
+            return view('admin-page.dashboard.merchant-dashboard', compact('merchantInfo', 'type', 'recentTourReservations'));
+        }
+    
+        $recentTransactions = Transaction::select('reference_no', 'id', 'transaction_by_id', 'payment_status', 'aqwire_totalAmount', 'aqwire_paymentMethodCode')
+            ->where('payment_status', 'success')
+            ->with('user')
+            ->latest()
+            ->limit(6)
+            ->get();
+    
+        return view('admin-page.dashboard.dashboard', compact('recentTransactions'));
+    }    
 
     public function testLocation() {
         return view('misc.test-location');
