@@ -52,7 +52,7 @@
                                     </div>
                                 </li>
                                 @empty
-                                <li>No Tour Reservations Found</li>
+                                <li class="d-flex mb-4 pb-1">No Tour Reservations Found</li>
                             @endforelse
                         </ul>
                     </div>
