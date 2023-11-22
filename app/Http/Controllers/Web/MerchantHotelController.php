@@ -30,12 +30,19 @@ class MerchantHotelController extends Controller
 
         if($request->ajax()) {
             $search = $request->search;
+            $organization_id = $request->organization_id;
 
             $data = MerchantHotel::when($search, function($query) use ($search) {
                 $query->whereHas('merchant', function ($merchantQuery) use ($search) {
                     $merchantQuery->where('name', 'LIKE', '%' . $search . '%');
                 });
-            })->with('merchant');
+            })
+            ->when($organization_id, function ($query) use ($organization_id) {
+                $query->whereHas('merchant', function($q) use ($organization_id) {
+                    $q->where('organization_id', $organization_id);
+                });
+            })
+            ->with('merchant');
 
             return DataTables::of($data)
                     ->addIndexColumn()
@@ -76,7 +83,9 @@ class MerchantHotelController extends Controller
                     ->make(true);
         }
 
-        return view('admin-page.merchants.hotels.list-hotel');
+        $organizations = Organization::get();
+
+        return view('admin-page.merchants.hotels.list-hotel', compact('organizations'));
     }
 
     public function create(Request $request) {

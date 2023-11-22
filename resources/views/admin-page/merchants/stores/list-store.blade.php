@@ -11,8 +11,25 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="table-responsive-lg text-nowrap">
-                <table class="table   data-table">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label for="" class="form-label">Organization</label>
+                        <select name="organization_id" id="organization_id" class="form-select">
+                            <option value="">--- ALL ---</option>
+                            @foreach ($organizations as $organization)
+                                <option value="{{ $organization->id }}">{{ $organization->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive text-nowrap">
+                <table class="table data-table">
                     <thead>
                         <tr>
                             <th></th>
@@ -31,16 +48,18 @@
 
 @push('scripts')
     <script>
+        let table;
         function loadTable() {
-            let table = $('.data-table').DataTable({
+            table = $('.data-table').DataTable({
                 processing: true,
                 pageLength: 10,
                 responsive: true,
-                serverSide: false,
+                serverSide: true,
                 ajax: {
                     url: "{{ route('admin.merchants.stores.list') }}",
                     data: function (d) {
                         d.search = $('input[type="search"]').val();
+                        d.organization_id = $('#organization_id').val();
                     }
                 },
                 columns: [
@@ -110,6 +129,12 @@
                     })
                 }
             })
+        });
+
+        $('#organization_id').change(function() {
+            if (table) {
+                table.draw();
+            }
         });
 
         loadTable();
