@@ -29,10 +29,16 @@ class MerchantRestaurantController extends Controller
     {
         if ($request->ajax()) {
             $search = $request->search;
+            $organization_id = $request->organization_id;
 
             $data = MerchantRestaurant::when($search, function($query) use ($search) {
                 $query->whereHas('merchant', function ($merchantQuery) use ($search) {
                     $merchantQuery->where('name', 'LIKE', '%' . $search . '%');
+                });
+            })
+            ->when($organization_id, function ($query) use ($organization_id) {
+                $query->whereHas('merchant', function($q) use ($organization_id) {
+                    $q->where('organization_id', $organization_id);
                 });
             })->with('merchant');
 
@@ -75,7 +81,9 @@ class MerchantRestaurantController extends Controller
                 ->make(true);
         }
 
-        return view('admin-page.merchants.restaurants.list-restaurant');
+        $organizations = Organization::get();
+
+        return view('admin-page.merchants.restaurants.list-restaurant', compact('organizations'));
     }
 
     public function create(Request $request)

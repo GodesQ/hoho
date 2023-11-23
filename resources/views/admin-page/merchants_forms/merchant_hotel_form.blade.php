@@ -6,6 +6,9 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="card">
             <div class="card-body">
+                @if (Session::get('fail'))
+                    <div class="alert alert-danger">{{ Session::get('fail') }}</div>
+                @endif
                 <form enctype="multipart/form-data"
                     action="{{ $admin->merchant_hotel ? route('admin.merchants.hotels.update', optional($admin->merchant_hotel)->id) : route('admin.merchants.hotels.store') }}"
                     method="post">

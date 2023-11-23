@@ -219,6 +219,22 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-xl-6">
+                                            <h6 class="text-primary">Promo Code</h6>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <h6 id="#">{{ $reservation->promo_code ?? 'No Promo Code Found' }}</h6>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xl-6">
+                                            <h6 class="text-primary">Referral Code</h6>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <h6 id="#">{{ $reservation->referral_code ?? 'No Referral Code Found' }}</h6>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xl-6">
                                             <h6 class="text-primary">Sub Amount</h6>
                                         </div>
                                         <div class="col-xl-6">

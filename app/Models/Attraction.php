@@ -48,17 +48,31 @@ class Attraction extends Model
 
     protected $appends = ['nearest_attractions', 'nearest_stores', 'nearest_hotels', 'nearest_restaurants'];
 
-    public function getNearestAttractionsAttribute() {
-        $nearest_attractions = $this->nearest_attraction_ids ? json_decode($this->nearest_attraction_ids, true) : [];
+    protected static $loadingNearestAttractions = false;
 
+    public function getNearestAttractionsAttribute() {
+        // Check if already loading the nearest attractions to prevent infinite loop
+        if (self::$loadingNearestAttractions) {
+            return [];
+        }
+    
+        self::$loadingNearestAttractions = true;
+    
+        $nearest_attractions = $this->nearest_attraction_ids ? json_decode($this->nearest_attraction_ids, true) : [];
+    
         if (is_array($nearest_attractions) && !empty($nearest_attractions)) {
             $data = Attraction::whereIn('id', $nearest_attractions)
                 ->get()
                 ->toArray();
-            if (!empty($data)) {
-                return $data;
-            }
+    
+            self::$loadingNearestAttractions = false; // Reset the flag after loading
+    
+            return $data;
         }
+    
+        self::$loadingNearestAttractions = false; // Reset the flag if no nearest attractions found
+    
+        return [];
     }
 
     public function getNearestStoresAttribute() {

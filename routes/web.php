@@ -90,7 +90,7 @@ Route::get('merchant_form/{type}', [MerchantController::class, 'merchant_form'])
 
 Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function(){
     Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
-    Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard')->middleware('merchant_created');
     Route::get('profile', [DashboardController::class, 'adminProfile'])->name('profile');
     Route::post('profile', [DashboardController::class, 'saveProfile'])->name('profile.post');
     Route::post('change_password', [DashboardController::class, 'changePassword'])->name('change_password.post');
@@ -120,13 +120,13 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::delete('organizations/destroy', [OrganizationController::class, 'destroy'])->name('organizations.destroy')->can('delete_organization');
     Route::delete('organizations/remove_image', [OrganizationController::class, 'removeImage'])->name('organizations.remove_image')->can('update_organization');
 
-    Route::get('tours', [TourController::class, 'list'])->name('tours.list')->can('view_tours_list');
-    Route::get('tours/diy', [TourController::class, 'getDiyTours'])->name('tours.diy');
-    Route::get('tours/guided', [TourController::class, 'getGuidedTours'])->name('tours.guided');
-    Route::get('tours/create', [TourController::class, 'create'])->name('tours.create');
-    Route::post('tours/store', [TourController::class, 'store'])->name('tours.store');
-    Route::get('tours/edit/{id}', [TourController::class, 'edit'])->name('tours.edit');
-    Route::post('tours/update/{id}', [TourController::class, 'update'])->name('tours.update');
+    Route::get('tours', [TourController::class, 'list'])->name('tours.list')->can('view_tours_list')->middleware('merchant_created');
+    Route::get('tours/diy', [TourController::class, 'getDiyTours'])->name('tours.diy')->middleware('merchant_created');
+    Route::get('tours/guided', [TourController::class, 'getGuidedTours'])->name('tours.guided')->middleware('merchant_created');
+    Route::get('tours/create', [TourController::class, 'create'])->name('tours.create')->middleware('merchant_created');
+    Route::post('tours/store', [TourController::class, 'store'])->name('tours.store')->middleware('merchant_created');
+    Route::get('tours/edit/{id}', [TourController::class, 'edit'])->name('tours.edit')->middleware('merchant_created');
+    Route::post('tours/update/{id}', [TourController::class, 'update'])->name('tours.update')->middleware('merchant_created');
     Route::delete('tours/destroy', [TourController::class, 'destroy'])->name('tours.destroy');
 
     Route::get('tour_badges', [TourBadgeController::class, 'list'])->name('tour_badges.list');
@@ -155,8 +155,8 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::delete('attractions/remove_image', [AttractionController::class, 'removeImage'])->name('attractions.remove_image');
     // Route::get('attractions/update_attractions', [AttractionController::class, 'update_attractions']);
 
-    Route::get('tour_reservations', [TourReservationController::class, 'list'])->name('tour_reservations.list')->can('view_tour_reservations_list');
-    Route::get('tour_reservations/create', [TourReservationController::class, 'create'])->name('tour_reservations.create');
+    Route::get('tour_reservations', [TourReservationController::class, 'list'])->name('tour_reservations.list')->can('view_tour_reservations_list')->middleware('merchant_created');
+    Route::get('tour_reservations/create', [TourReservationController::class, 'create'])->name('tour_reservations.create')->middleware('merchant_created');
     Route::post('tour_reservations/store', [TourReservationController::class, 'store'])->name('tour_reservations.store');
     Route::get('tour_reservations/edit/{id}', [TourReservationController::class, 'edit'])->name('tour_reservations.edit');
     Route::post('tour_reservations/update/{id}', [TourReservationController::class, 'update'])->name('tour_reservations.update');
@@ -250,11 +250,11 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::post('carts/update/{id}', [CartController::class, 'update'])->name('carts.update');
     Route::delete('carts/destroy', [CartController::class, 'destroy'])->name('carts.destroy');
 
-    Route::get('referrals', [ReferralController::class, 'list'])->name('referrals.list')->can('view_referrals_list');
-    Route::get('referrals/create', [ReferralController::class, 'create'])->name('referrals.create');
-    Route::post('referrals/store', [ReferralController::class, 'store'])->name('referrals.store');
-    Route::get('referrals/edit/{id}', [ReferralController::class, 'edit'])->name('referrals.edit');
-    Route::post('referrals/update/{id}', [ReferralController::class, 'update'])->name('referrals.update');
+    Route::get('referrals', [ReferralController::class, 'list'])->name('referrals.list')->can('view_referrals_list')->middleware('merchant_created');
+    Route::get('referrals/create', [ReferralController::class, 'create'])->name('referrals.create')->middleware('merchant_created');
+    Route::post('referrals/store', [ReferralController::class, 'store'])->name('referrals.store')->middleware('merchant_created');
+    Route::get('referrals/edit/{id}', [ReferralController::class, 'edit'])->name('referrals.edit')->middleware('merchant_created');
+    Route::post('referrals/update/{id}', [ReferralController::class, 'update'])->name('referrals.update')->middleware('merchant_created');
     Route::delete('referrals/destroy', [ReferralController::class, 'destroy'])->name('referrals.destroy');
     Route::get('referrals/generate_csv', [ReferralController::class, 'generateCSV'])->name('referrals.generate_csv');
     Route::get('referrals/tour_reservations/{code}', [ReferralController::class, 'getReservationsByRefCode'])->name('referrals.tour_reservations.list');
