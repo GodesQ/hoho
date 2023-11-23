@@ -124,7 +124,7 @@
                         <div class="col-lg-8">
                             <h6>Preview Featured Image</h6>
                             @if($organization->featured_image)
-                                <img src="{{ URL::asset('assets/img/organizations/' . $organization->id . '/' . $organization->featured_image) }}" alt="{{ $organization->featured_image }}" id="previewImage" style="border-radius: 10px" width="100%">
+                                <img src="{{ URL::asset('assets/img/organizations/' . $organization->id . '/' . $organization->featured_image) }}?updated_at={{$organization->updated_at}}" alt="{{ $organization->featured_image }}" id="previewImage" style="border-radius: 10px" width="100%">
                             @else
                                 <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt="Default Image" id="previewImage" style="border-radius: 10px" width="100%">
                             @endif
