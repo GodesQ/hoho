@@ -18,6 +18,7 @@ use App\Models\MerchantRestaurant;
 use App\Models\MerchantTourProvider;
 use App\Models\TourReservation;
 
+use DB;
 
 class DashboardController extends Controller
 {
@@ -61,8 +62,25 @@ class DashboardController extends Controller
             ->latest()
             ->limit(6)
             ->get();
-    
-        return view('admin-page.dashboard.dashboard', compact('recentTransactions'));
+        
+        $currentMonth = now()->format('Y-m');
+
+        $totalProfit = Transaction::where('payment_status', 'success')
+        ->where(DB::raw('DATE_FORMAT(payment_date, "%Y-%m")'), $currentMonth)
+        ->sum('payment_amount');
+
+        $topSellingTours = TourReservation::select('tour_id', DB::raw('count(*) as total_reservations'), DB::raw('sum(amount) as total_amount'))
+        ->where('status', 'approved')
+        ->where(DB::raw('DATE_FORMAT(created_at, "%Y-%m")'), $currentMonth)
+        ->groupBy('tour_id')
+        ->orderBy('total_reservations', 'desc')
+        ->take(4)
+        ->with('tour')
+        ->get();
+
+        // dd($topSellingTours);
+
+        return view('admin-page.dashboard.dashboard', compact('recentTransactions', 'totalProfit', 'topSellingTours'));
     }    
 
     public function testLocation() {
