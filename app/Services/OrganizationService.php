@@ -124,6 +124,15 @@ class OrganizationService
     {
         return DataTables::of($data)
             ->addIndexColumn()
+            ->addColumn('logo', function ($row) {
+                if($row->icon) {
+                        $path = '../../../assets/img/organizations/' . $row->id . '/' . $row->icon;
+                        return '<img src="' .$path. '" width="50" height="50" style="object-fit: cover;" />';
+                } else {
+                    $path = '../../../assets/img/' . 'default-image.jpg';
+                    return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
+                }
+            })
             ->addColumn('status', function ($row) {
                 if ($row->is_active) {
                     return '<span class="badge bg-label-success me-1">Active</span>';
@@ -137,7 +146,7 @@ class OrganizationService
                                     <a href="javascript:void(0);" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
             })
-            ->rawColumns(['actions', 'status'])
+            ->rawColumns(['actions', 'status', 'logo'])
             ->make(true);
     }
 

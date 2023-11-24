@@ -19,6 +19,15 @@ class TourService
         $data = Tour::latest('id');
         return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('tour_image', function ($row) {
+                    if($row->featured_image) {
+                            $path = '../../../assets/img/tours/' . $row->id . '/' . $row->featured_image;
+                            return '<img src="' .$path. '" width="50" height="50" style="object-fit: cover;" />';
+                    } else {
+                        $path = '../../../assets/img/' . 'default-image.jpg';
+                        return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
+                    }
+                })
                 ->addColumn('actions', function ($row) {
                     return '<div class="dropdown">
                                 <a href="/admin/tours/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
@@ -33,7 +42,7 @@ class TourService
 
                     }
                 })
-                ->rawColumns(['actions', 'status'])
+                ->rawColumns(['actions', 'status', 'tour_image'])
                 ->make(true);
     }
 

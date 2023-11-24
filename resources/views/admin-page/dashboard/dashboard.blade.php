@@ -139,7 +139,7 @@
                                             </h6>
                                         </div>
                                         <div class="user-progress d-flex align-items-center gap-1">
-                                            <h6 class="mb-0">{{ $recent_transaction->aqwire_totalAmount }}</h6>
+                                            <h6 class="mb-0">₱ {{ number_format($recent_transaction->payment_amount, 2) }}</h6>
                                             {{-- <span class="text-muted">USD</span> --}}
                                         </div>
                                     </div>

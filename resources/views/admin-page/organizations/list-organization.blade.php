@@ -16,6 +16,7 @@
                     <table class="table data-table">
                         <thead>
                             <tr>
+                                <th>Logo</th>
                                 <th>Name</th>
                                 <th>Acronym</th>
                                 <th>Status</th>
@@ -40,7 +41,12 @@
                 ajax: {
                     url: "{{ route('admin.organizations.list') }}"
                 },
-                columns: [{
+                columns: [
+                    {
+                        data: 'logo',
+                        name: 'logo'
+                    },
+                    {
                         data: 'name',
                         name: 'name'
                     },
@@ -64,7 +70,7 @@
                     }
                 ],
                 order: [
-                    [0, 'desc'] // Sort by the first column (index 0) in descending order
+                    [1, 'desc'] // Sort by the first column (index 0) in descending order
                 ]
             });
         }

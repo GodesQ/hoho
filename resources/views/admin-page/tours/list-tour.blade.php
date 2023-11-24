@@ -16,6 +16,7 @@
                     <thead>
                         <tr>
                             <th>Id</th>
+                            <th></th>
                             <th>Tour</th>
                             <th>Type</th>
                             <th>Status</th>
@@ -43,6 +44,10 @@
                 columns: [{
                         data: 'id',
                         name: 'id'
+                    },
+                    {
+                        data: 'tour_image',
+                        name: 'tour_image'
                     },
                     {
                         data: 'name',

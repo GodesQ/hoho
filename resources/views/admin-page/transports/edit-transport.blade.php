@@ -121,21 +121,15 @@
                                     <textarea name="description" id="description" cols="30" rows="5" class="form-control">{{ $transport->description }}</textarea>
                                 </div>
                             </div>
-                            <div class="col-lg-4">
+                            <div class="col-lg-6">
                                 <div class="mb-4">
-                                    <label for="previous_location" class="form-label">Previous Location</label>
-                                    <input type="text" class="form-control" name="previous_location" id="previous_location" readonly value="{{ $transport->previous_location }}">
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="mb-4">
-                                    <label for="current_location" class="form-label">Current Location</label>
+                                    <label for="current_location" class="form-label">Current Trip</label>
                                     <input type="text" class="form-control" name="current_location" id="current_location" readonly value="{{ $transport->current_location }}">
                                 </div>
                             </div>
-                            <div class="col-lg-4">
+                            <div class="col-lg-6">
                                 <div class="mb-4">
-                                    <label for="next_location" class="form-label">Next Location</label>
+                                    <label for="next_location" class="form-label">Next Trip</label>
                                     <input type="text" class="form-control" name="next_location" id="next_location" readonly value="{{ $transport->next_location }}">
                                 </div>
                             </div>

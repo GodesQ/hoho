@@ -9,14 +9,14 @@
             <a href="{{ route('admin.tours.list') }}" class="btn btn-dark"><i class="bx bx-undo"></i> Back to List</a>
         </div>
 
-        <ul class="nav nav-pills mb-3" role="tablist">
+        {{-- <ul class="nav nav-pills mb-3" role="tablist">
             <li class="nav-item">
                 <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
                     data-bs-target="#navs-pills-top-home" aria-controls="navs-pills-top-home" aria-selected="true">
                     Tour
                 </button>
             </li>
-        </ul>
+        </ul> --}}
 
         <div class="tab-content">
             <div class="tab-pane fade show active" id="navs-pills-top-home" role="tabpanel">
