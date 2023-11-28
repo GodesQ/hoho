@@ -67,8 +67,10 @@ class AttractionService
             $attraction = Attraction::findOrFail($request->id);
 
             if($request->hasFile('featured_image')) {
+                $uniqueId = Str::random(5);
+
                 $file = $request->file('featured_image');
-                $file_name = Str::snake(Str::lower($request->name)) . '_featured_image' . '.' . $file->getClientOriginalExtension();
+                $file_name = Str::snake(Str::lower($request->name)) . '_featured_image_' . $uniqueId . '.' . $file->getClientOriginalExtension();
 
                 $old_upload_image = public_path('assets/img/attractions/') . $attraction->id . '/' . $attraction->featured_image;
 
@@ -88,7 +90,7 @@ class AttractionService
                     $uniqueId = Str::random(5);
                     $image_file = $image;
                     $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $uniqueId . '.' . $image_file->getClientOriginalExtension();
-                    $save_file = $image_file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $image_file_name);
+                    $image_file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $image_file_name);
                     array_push($images, $image_file_name);
                 }
             }
@@ -137,10 +139,8 @@ class AttractionService
                 }
             }
 
-            // Now try to remove the directory
-            if (is_dir($directory)) {
-                @rmdir($directory);
-            }
+            // Now remove the directory
+            if (is_dir($directory)) @rmdir($directory);
     
             return $attraction->delete();
             
