@@ -69,6 +69,13 @@ class AttractionService
             if($request->hasFile('featured_image')) {
                 $file = $request->file('featured_image');
                 $file_name = Str::snake(Str::lower($request->name)) . '.' . $file->getClientOriginalExtension();
+
+                $old_upload_image = public_path('assets/img/attractions/') . $attraction->id . '/' . $attraction->featured_image;
+
+                if ($old_upload_image) {
+                    @unlink($old_upload_image);
+                }
+
                 $file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $file_name);
             } else {
                 $file_name = $attraction->featured_image;

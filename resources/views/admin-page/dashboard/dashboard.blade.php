@@ -74,7 +74,7 @@
                                             </div>
                                         </li>
                                     @empty
-                                        
+                                        <h6 class="text-center">No Tour Reservations Found</h6>
                                     @endforelse
                                 </ul>
                             </div>
