@@ -25,6 +25,7 @@ class Tour extends Model
         'contact_no',
         'featured_image',
         'images',
+        'interests',
         'operating_hours',
         'is_cancellable',
         'is_refundable',

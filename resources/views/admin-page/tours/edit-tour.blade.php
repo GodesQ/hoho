@@ -57,14 +57,14 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-4">
                                             <div class="mb-3">
                                                 <label for="featured_image" class="form-label">Featured Image</label>
                                                 <input type="file" class="form-control" name="featured_image"
                                                     id="featured_image" accept="image/*">
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-4">
                                             <div class="mb-3">
                                                 <label for="tour_provider" class="form-label">Tour Provider</label>
                                                 <select name="tour_provider_id" id="tour_provider" class="form-select">
@@ -74,6 +74,22 @@
                                                             {{ $tour_provider->id == $tour->tour_provider_id ? 'selected' : null }}>
                                                             {{ $tour_provider->merchant->name }}
                                                         </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <?php
+                                                $tour_interests = $tour->interests ? json_decode($tour->interests) : [];
+                                                if(!is_array($tour_interests)) {
+                                                    $tour_interests = [];
+                                                }
+                                            ?>
+                                            <div class="mb-3">
+                                                <label for="interests" class="form-label">Interests</label>
+                                                <select name="interests[]" id="interests" class="select2" multiple>
+                                                    @foreach ($interests as $interest)
+                                                        <option value="{{ $interest->id }}" {{ in_array($interest->id, $tour_interests) ? 'selected' : null }} >{{ $interest->name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>

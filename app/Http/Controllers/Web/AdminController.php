@@ -21,7 +21,7 @@ class AdminController extends Controller
 {
     public function list(Request $request) {
         if($request->ajax()) {
-            $data = Admin::get();
+            $data = Admin::get(); 
             return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('is_approved', function($row) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Interest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -52,6 +53,7 @@ class TourController extends Controller
 
     public function create(Request $request) {
         $attractions = Attraction::get();
+        $interests = Interest::get();
         $admin =  Auth::guard('admin')->user();
 
         if(in_array($admin->role, ['tour_operator_admin', 'tour_operator_employee'])) {
@@ -60,13 +62,14 @@ class TourController extends Controller
             $tour_providers = MerchantTourProvider::get();
         }
 
-        return view('admin-page.tours.create-tour', compact('attractions', 'tour_providers'));
+        return view('admin-page.tours.create-tour', compact('attractions', 'tour_providers', 'interests'));
     }
 
     public function store(Request $request) {
         $data = $request->except('_token', 'featured_image');
 
         $tour = Tour::create(array_merge($data, [
+            'interests' => $request->has('interests') ? json_encode($request->interests) : null,
             'attractions_assignments_ids' => $request->has('attractions_assignments_ids') ? json_encode($request->attractions_assignments_ids) : null,
             'disabled_days' => $request->has('disabled_days') ? json_encode($request->disabled_days) : null,
             'is_cancellable' => $request->has('is_cancellable'),
@@ -95,8 +98,9 @@ class TourController extends Controller
         $tour = Tour::where('id', $request->id)->firstOrFail();
         $tour_providers = MerchantTourProvider::get();
         $tour_badges = TourBadge::where('tour_id', $tour->id)->get();
+        $interests = Interest::get();
 
-        return view('admin-page.tours.edit-tour', compact('tour', 'attractions', 'tour_providers', 'tour_badges'));
+        return view('admin-page.tours.edit-tour', compact('tour', 'attractions', 'tour_providers', 'tour_badges', 'interests'));
     }
 
     public function update(Request $request) {
@@ -104,6 +108,7 @@ class TourController extends Controller
         $tour = Tour::where('id', $request->id)->firstOrFail();
 
         $update_tour = $tour->update(array_merge($data, [
+            'interests' => $request->has('interests') ? json_encode($request->interests) : null,
             'attractions_assignments_ids' => $request->has('attractions_assignments_ids') ? json_encode($request->attractions_assignments_ids) : null,
             'disabled_days' => $request->has('disabled_days') ? json_encode($request->disabled_days) : null,
             'start_date_duration' => $request->has('start_date_duration') ? Carbon::create($request->start_date_duration) : null,
