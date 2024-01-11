@@ -23,11 +23,10 @@
             </li>
         @endcan
     @endauth
-        
+
     @auth('admin')
         @can('view_organizations_list')
-            <li
-                class="menu-item {{ preg_match('/admin\/organizations/', Request::path()) ? 'active' : null }}">
+            <li class="menu-item {{ preg_match('/admin\/organizations/', Request::path()) ? 'active' : null }}">
                 <a href="{{ route('admin.organizations.list') }}" class="menu-link">
                     <i class='bx bx-globe menu-icon'></i>
                     <div data-i18n="Organizations">Organizations</div>
@@ -47,11 +46,10 @@
         @endcan
     @endauth
 
-    <li
-        class="menu-item {{ preg_match('/admin\/merchants/', Request::path()) ? 'active open' : null }}">
+    <li class="menu-item {{ preg_match('/admin\/merchants/', Request::path()) ? 'active open' : null }}">
         @auth('admin')
-            @canany(['view_merchant_stores_list', 'view_merchant_restaurants_list',
-                'view_merchant_hotels_list', 'view_merchant_tour_providers_list'])
+            @canany(['view_merchant_stores_list', 'view_merchant_restaurants_list', 'view_merchant_hotels_list',
+                'view_merchant_tour_providers_list'])
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-cube-alt"></i>
                     <div data-i18n="Merchants">Merchants</div>
@@ -62,8 +60,7 @@
         <ul class="menu-sub">
             @auth('admin')
                 @can('view_merchant_stores_list')
-                    <li
-                        class="menu-item {{ preg_match('/admin\/merchants\/stores/', Request::path()) ? 'active' : null }}">
+                    <li class="menu-item {{ preg_match('/admin\/merchants\/stores/', Request::path()) ? 'active' : null }}">
                         <a href="{{ route('admin.merchants.stores.list') }}" class="menu-link">
                             <div data-i18n="Stores">Stores</div>
                         </a>
@@ -84,8 +81,7 @@
 
             @auth('admin')
                 @can('view_merchant_hotels_list')
-                    <li
-                        class="menu-item {{ preg_match('/admin\/merchants\/hotels/', Request::path()) ? 'active' : null }}">
+                    <li class="menu-item {{ preg_match('/admin\/merchants\/hotels/', Request::path()) ? 'active' : null }}">
                         <a href="{{ route('admin.merchants.hotels.list') }}" class="menu-link">
                             <div data-i18n="Hotels">Hotels</div>
                         </a>
@@ -107,9 +103,66 @@
         </ul>
     </li>
 
+    <li class="menu-header small text-uppercase">
+        <span class="menu-header-text">Merchants</span>
+    </li>
+
+    <li class="menu-item">
+        <a href="" class="menu-link">
+            <i class="menu-icon bx bx-product"></i>
+            <div data-i18n="Products">Products</div>
+        </a>
+    </li>
+
+    <li class="menu-item">
+        <a href="" class="menu-link">
+            <i class="menu-icon bx bx-door"></i>
+            <div data-i18n="Rooms">Rooms</div>
+        </a>
+    </li>
+
+    <li class="menu-item {{ preg_match('/admin\/foods/', Request::path()) ? 'active' : null }}">
+        <a href="{{ route('admin.foods.index') }}" class="menu-link">
+            <i class="menu-icon bx bx-door"></i>
+            <div data-i18n="Foods">Foods</div>
+        </a>
+    </li>
+
+    <li class="menu-item {{ preg_match('/admin\/food-categories/', Request::path()) ? 'active' : null }}">
+        <a href="{{ route('admin.food_categories.index') }}" class="menu-link">
+            <i class="menu-icon bx bx-door"></i>
+            <div data-i18n="Food Categories">Food Categories</div>
+        </a>
+    </li>
+
+    <li class="menu-header small text-uppercase">
+        <span class="menu-header-text">Reservations</span>
+    </li>
+
+    <li class="menu-item {{ preg_match('/admin\/tour_reservations/', Request::path()) ? 'active' : null }}">
+        <a href="{{ route('admin.tour_reservations.list') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-file"></i>
+            <div data-i18n="Tour Reservations">Tour Reservations</div>
+        </a>
+    </li>
+
+    <li class="menu-item">
+        <a href="" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-file"></i>
+            <div data-i18n="Hotel Reservations">Hotel Reservations</div>
+        </a>
+    </li>
+
+    <li class="menu-item">
+        <a href="" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-file"></i>
+            <div data-i18n="Restaurant Reservations">Restaurant Reservations</div>
+        </a>
+    </li>
+    
+
     @auth('admin')
-        @canany(['view_tours_list', 'view_attractions_list', 'view_transports_list',
-            'view_tour_reservations_list'])
+        @canany(['view_tours_list', 'view_attractions_list', 'view_transports_list'])
             <li class="menu-header small text-uppercase"><span class="menu-header-text">Tours</span></li>
         @endcanany
     @endauth
@@ -125,7 +178,7 @@
             </li>
         @endcan
     @endauth
-    
+
     @auth('admin')
         @can('view_tour_badges_list')
             <li class="menu-item {{ preg_match('/admin\/tour_badges/', Request::path()) ? 'active' : null }}">
@@ -172,22 +225,20 @@
         @endcan
     @endauth
 
-    @auth('admin')
+    {{-- @auth('admin')
         @can('view_tour_reservations_list')
-            <li
-                class="menu-item {{ preg_match('/admin\/tour_reservations/', Request::path()) ? 'active' : null }}">
+            <li class="menu-item {{ preg_match('/admin\/tour_reservations/', Request::path()) ? 'active' : null }}">
                 <a href="{{ route('admin.tour_reservations.list') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-file"></i>
                     <div data-i18n="Tour Reservations">Tour Reservations</div>
                 </a>
             </li>
         @endcan
-    @endauth
+    @endauth --}}
 
     @auth('admin')
         @can('view_carts_list')
-            <li
-                class="menu-item {{ preg_match('/admin\/carts/', Request::path()) ? 'active' : null }}">
+            <li class="menu-item {{ preg_match('/admin\/carts/', Request::path()) ? 'active' : null }}">
                 <a href="{{ route('admin.carts.list') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-cart"></i>
                     <div data-i18n="Carts">Carts</div>
@@ -205,8 +256,7 @@
 
     @auth('admin')
         @can('view_transactions_list')
-            <li
-                class="menu-item {{ preg_match('/admin\/transactions/', Request::path()) ? 'active' : null }}">
+            <li class="menu-item {{ preg_match('/admin\/transactions/', Request::path()) ? 'active' : null }}">
                 <a href="{{ route('admin.transactions.list') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-money"></i>
                     <div data-i18n="Booking Transactions">Booking Transactions</div>
@@ -215,8 +265,7 @@
         @endcan
     @endauth
 
-    <li
-        class="menu-item {{ preg_match('/admin\/reports/', Request::path()) ? 'active open' : null }}">
+    <li class="menu-item {{ preg_match('/admin\/reports/', Request::path()) ? 'active open' : null }}">
         @auth('admin')
             @canany(['view_sales_report'])
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -255,8 +304,7 @@
 
 
     @auth('admin')
-        @canany(['view_interests_list', 'view_referrals_list', 'view_promo_codes_list',
-            'view_product_categories_list'])
+        @canany(['view_interests_list', 'view_referrals_list', 'view_promo_codes_list', 'view_product_categories_list'])
             <li class="menu-header small text-uppercase"><span class="menu-header-text">Others</span></li>
         @endcanany
     @endauth
@@ -297,8 +345,7 @@
 
     @auth('admin')
         @can('view_product_categories_list')
-            <li
-                class="menu-item {{ preg_match('/admin\/product_categories/', Request::path()) ? 'active' : null }}">
+            <li class="menu-item {{ preg_match('/admin\/product_categories/', Request::path()) ? 'active' : null }}">
                 <a href="{{ route('admin.product_categories.list') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-box"></i>
                     <div data-i18n="Product Categories">Product Categories</div>
@@ -306,7 +353,7 @@
             </li>
         @endcan
     @endauth
-    
+
     @auth('admin')
         @can('view_announcements_list')
             <li class="menu-item {{ preg_match('/admin\/announcements/', Request::path()) ? 'active' : null }}">
@@ -368,29 +415,29 @@
     @auth('admin')
         @can('view_merchant_form')
             <?php
-                if(auth('admin')->user()->role == 'merchant_store_admin' || auth('admin')->user()->role == 'merchant_store_employee') {
-                    $type = 'store';
-                }
-
-                if(auth('admin')->user()->role == 'merchant_restaurant_admin' || auth('admin')->user()->role == 'merchant_restaurant_employee') {
-                    $type = 'restaurant';
-                }
-
-                if(auth('admin')->user()->role == 'merchant_hotel_admin' || auth('admin')->user()->role == 'merchant_hotel_employee') {
-                    $type = 'hotel';
-                }
-
-                if(auth('admin')->user()->role == 'tour_operator_admin' || auth('admin')->user()->role == 'tour_operator_employee') {
-                    $type = 'tour_provider';
-                }
+            if (auth('admin')->user()->role == 'merchant_store_admin' || auth('admin')->user()->role == 'merchant_store_employee') {
+                $type = 'store';
+            }
+            
+            if (auth('admin')->user()->role == 'merchant_restaurant_admin' || auth('admin')->user()->role == 'merchant_restaurant_employee') {
+                $type = 'restaurant';
+            }
+            
+            if (auth('admin')->user()->role == 'merchant_hotel_admin' || auth('admin')->user()->role == 'merchant_hotel_employee') {
+                $type = 'hotel';
+            }
+            
+            if (auth('admin')->user()->role == 'tour_operator_admin' || auth('admin')->user()->role == 'tour_operator_employee') {
+                $type = 'tour_provider';
+            }
             ?>
 
-                <li class="menu-item {{ preg_match('/merchant_form/', Request::path()) ? 'active' : null }}">
-                    <a href="{{ route('merchant_form', $type) }}" class="menu-link">
-                        <i class="menu-icon tf-icons bx bx-user"></i>
-                        <div data-i18n="Merchant Profile">Merchant Profile</div>
-                    </a>
-                </li>
+            <li class="menu-item {{ preg_match('/merchant_form/', Request::path()) ? 'active' : null }}">
+                <a href="{{ route('merchant_form', $type) }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-user"></i>
+                    <div data-i18n="Merchant Profile">Merchant Profile</div>
+                </a>
+            </li>
         @endcan
     @endauth
 

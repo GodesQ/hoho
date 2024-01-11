@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Web\CartController;
+use App\Http\Controllers\Web\FoodCategoryController;
+use App\Http\Controllers\Web\FoodController;
 use App\Http\Controllers\Web\TourBadgeController;
 use Illuminate\Support\Facades\Route;
 
@@ -206,6 +208,20 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
         Route::delete('stores/remove_image', [MerchantStoreController::class, 'removeImage'])->name('stores.remove_image');
         Route::get('stores/update_stores', [MerchantStoreController::class, 'update_stores'])->name('merchants.update_stores');
     });
+
+    Route::get('food-categories', [FoodCategoryController::class,'index'])->name('food_categories.index');
+    Route::get('food-categories/create', [FoodCategoryController::class,'create'])->name('food_categories.create');
+    Route::post('food-categories/store', [FoodCategoryController::class,'store'])->name('food_categories.store');
+    Route::get('food-categories/edit/{id}', [FoodCategoryController::class,'edit'])->name('food_categories.edit');
+    Route::post('food-categories/update/{id}', [FoodCategoryController::class,'update'])->name('food_categories.update');
+    Route::delete('food-categories/destroy/{id?}', [FoodCategoryController::class,'destroy'])->name('food_categories.destroy');
+
+    Route::get('foods', [FoodController::class,'index'])->name('foods.index');
+    Route::get('foods/create', [FoodController::class,'create'])->name('foods.create');
+    Route::post('foods/store', [FoodController::class,'store'])->name('foods.store');
+    Route::get('foods/edit/{id}', [FoodController::class,'edit'])->name('foods.edit');
+    Route::post('foods/update/{id}', [FoodController::class,'update'])->name('foods.update');
+    Route::delete('foods/destroy/{id?}', [FoodController::class,'destroy'])->name('foods.destroy');
 
     Route::get('interests', [InterestController::class, 'list'])->name('interests.list')->can('view_interests_list');
     Route::get('interests/create', [InterestController::class, 'create'])->name('interests.create');
