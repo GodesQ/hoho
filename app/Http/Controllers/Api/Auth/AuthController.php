@@ -59,8 +59,7 @@ class AuthController extends Controller
             }
         }
 
-
-
+        # Check if the password is correct and determined if the user is old user
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response([
                 'status' => false,

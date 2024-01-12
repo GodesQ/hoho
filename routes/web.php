@@ -3,6 +3,8 @@
 use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\FoodCategoryController;
 use App\Http\Controllers\Web\FoodController;
+use App\Http\Controllers\Web\ProductController;
+use App\Http\Controllers\Web\RoomController;
 use App\Http\Controllers\Web\TourBadgeController;
 use Illuminate\Support\Facades\Route;
 
@@ -215,6 +217,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('food-categories/edit/{id}', [FoodCategoryController::class,'edit'])->name('food_categories.edit');
     Route::post('food-categories/update/{id}', [FoodCategoryController::class,'update'])->name('food_categories.update');
     Route::delete('food-categories/destroy/{id?}', [FoodCategoryController::class,'destroy'])->name('food_categories.destroy');
+    Route::get('food-categories/select/{merchant_id?}', [FoodCategoryController::class, 'getFoodCategorySelect'])->name('food_categories.select');
 
     Route::get('foods', [FoodController::class,'index'])->name('foods.index');
     Route::get('foods/create', [FoodController::class,'create'])->name('foods.create');
@@ -222,6 +225,20 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('foods/edit/{id}', [FoodController::class,'edit'])->name('foods.edit');
     Route::post('foods/update/{id}', [FoodController::class,'update'])->name('foods.update');
     Route::delete('foods/destroy/{id?}', [FoodController::class,'destroy'])->name('foods.destroy');
+
+    Route::get('rooms', [RoomController::class,'index'])->name('rooms.index');
+    Route::get('rooms/create', [RoomController::class,'create'])->name('rooms.create');
+    Route::post('rooms/store', [RoomController::class,'store'])->name('rooms.store');
+    Route::get('rooms/edit/{id}', [RoomController::class,'edit'])->name('rooms.edit');
+    Route::post('rooms/update/{id}', [RoomController::class,'update'])->name('rooms.update');
+    Route::delete('rooms/destroy/{id?}', [RoomController::class,'destroy'])->name('rooms.destroy');
+    
+    Route::get('products', [ProductController::class,'index'])->name('products.index');
+    Route::get('products/create', [ProductController::class,'create'])->name('products.create');
+    Route::post('products/store', [ProductController::class,'store'])->name('products.store');
+    Route::get('products/edit/{id}', [ProductController::class,'edit'])->name('products.edit');
+    Route::post('products/update/{id}', [ProductController::class,'update'])->name('products.update');
+    Route::delete('products/destroy/{id?}', [ProductController::class,'destroy'])->name('products.destroy');
 
     Route::get('interests', [InterestController::class, 'list'])->name('interests.list')->can('view_interests_list');
     Route::get('interests/create', [InterestController::class, 'create'])->name('interests.create');

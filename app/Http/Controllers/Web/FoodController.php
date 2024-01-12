@@ -61,6 +61,7 @@ class FoodController extends Controller
 
     public function show($id)
     {
+        
     }
 
     public function edit(Request $request, $id)
@@ -94,3 +95,4 @@ class FoodController extends Controller
         ]);
     }
 }
+           

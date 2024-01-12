@@ -16,54 +16,56 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="title" class="form-label">Title</label>
-                                <input type="text" class="form-control" name="title" id="title">
+                                <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="title" id="title" value="{{ old('title') }}">
+                                <span>@error('title'){{ $message }}@enderror</span>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="merchant_id" class="form-label">Merchant</label>
+                                <label for="merchant_id" class="form-label">Merchant <span class="text-danger">*</span></label>
                                 <select name="merchant_id" id="merchant_id" class="select2">
+                                    <option value="">--- SELECT MERCHANT ---</option>
                                     @foreach ($merchants as $merchant)
                                         <option value="{{ $merchant->id }}">{{ $merchant->name }}</option>
                                     @endforeach
                                 </select>
+                                <span>@error('merchant_id'){{ $message }}@enderror</span>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="price" class="form-label">Price</label>
-                                <input type="int" class="form-control" name="price" id="price">
+                                <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
+                                <input type="int" class="form-control" name="price" id="price" value="{{ old('price') }}">
+                                <span>@error('merchant_id'){{ $message }}@enderror</span>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="food_category_id" class="form-label">Food Category</label>
-                                <select name="food_category_id" id="food_category_id" class="select2">
-                                        <option value="">-- SELECT FOOD CATEGORY --</option>
-                                    @foreach ($foodCategories as $foodCategory)
-                                        <option value="{{ $foodCategory->id }}">{{ $foodCategory->title }} ({{ $foodCategory->merchant->name }})</option>
-                                    @endforeach
+                                <label for="food_category_id" class="form-label">Food Category <span class="text-danger">*</span></label>
+                                <select name="food_category_id" id="food_category_id" class="food-category">
+                                    {{-- <option value="">-- SELECT MERCHANT FIRST BEFORE FOOD CATEGORY --</option> --}}
                                 </select>
+                                <span>@error('merchant_id'){{ $message }}@enderror</span>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
-                                <textarea name="description" id="description" cols="30" rows="3" class="form-control"></textarea>
+                                <textarea name="description" id="description" cols="30" rows="3" class="form-control">{{ old('description') }}</textarea>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
                                 <label for="note" class="form-label">Note</label>
-                                <input type="text" class="form-control" name="note" id="note">
+                                <input type="text" class="form-control" name="note" id="note" value="{{ old('note') }}">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
                                 <div class="form-check form-switch mb-2">
-                                    <input class="form-check-input" type="checkbox" id="isActive"
-                                        name="is_active" checked />
+                                    <input class="form-check-input" type="checkbox" id="isActive" name="is_active"
+                                        checked />
                                     <label class="form-check-label" for="isActive">Is Active</label>
                                 </div>
                             </div>
@@ -75,4 +77,38 @@
             </div>
         </form>
     </div>
+
+    @push('scripts')
+        <script>
+            $('#merchant_id').on('change', function(e) {
+                let merchant_id = e.target.value;
+                foodCategorySelect2(merchant_id);
+            })
+
+            function foodCategorySelect2(merchant_id) {
+                $('.food-category').select2({
+                    width: '100%',
+                    ajax: {
+                        url: "{{ route('admin.food_categories.select') }}" + '/' + merchant_id,
+                        processResults: function(data) {
+                            data = data.map(d => {
+                                return {
+                                    id: d.id,
+                                    text: d.text,
+                                    selected: d.id == 3
+                                }
+                            });
+
+                            return {
+                                results: data
+                            }
+                        }
+                    },
+                });
+            }
+
+            
+            foodCategorySelect2($('#merchant_id').val());
+        </script>
+    @endpush
 @endsection

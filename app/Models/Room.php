@@ -23,4 +23,8 @@ class Room extends Model
         "is_refundable",
         "is_active",
     ];
+
+    public function merchant() {
+        return $this->belongsTo(Merchant::class, "merchant_id");
+    }
 }
