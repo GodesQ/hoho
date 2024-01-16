@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Room;
+namespace App\Http\Requests\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,13 +24,12 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            "room_name" => "required",
-            "merchant_id" => "required",
-            "image" => "required|image|max:2000",
-            "price" => "required|numeric",
-            "available_pax"=> "required",
-            "description" => "required",
-            "amenities" => "nullable",
+            'name' => 'required',
+            'merchant_id' => 'required',
+            'price' => 'required|numeric',
+            'image' => 'required|image|max:2000',
+            'quantity' => 'required|numeric',
+            'description' => 'nullable|max:250'
         ];
     }
 }

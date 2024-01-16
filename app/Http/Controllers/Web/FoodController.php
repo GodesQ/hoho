@@ -26,6 +26,13 @@ class FoodController extends Controller
                 ->addColumn('food_category', function ($row) {
                     return optional($row->food_category)->title;
                 })
+                ->addColumn('status', function ($row) {
+                    if($row->is_active) {
+                        return '<span class="badge bg-success">Active</span>';
+                    } else {
+                        return '<span class="badge bg-warning">Inactive</span>';
+                    }
+                })
                 ->addColumn('actions', function ($row) {
                     return '<div class="dropdown">
                                     <a href="/admin/foods/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>

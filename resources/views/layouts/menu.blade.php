@@ -107,30 +107,30 @@
         <span class="menu-header-text">Merchants</span>
     </li>
 
-    <li class="menu-item">
-        <a href="" class="menu-link">
-            <i class="menu-icon bx bx-product"></i>
+    <li class="menu-item {{ preg_match('/admin\/products/', Request::path()) ? 'active' : null }}">
+        <a href="{{ route('admin.products.index') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-cube-alt"></i>
             <div data-i18n="Products">Products</div>
         </a>
     </li>
 
     <li class="menu-item {{ preg_match('/admin\/rooms/', Request::path()) ? 'active' : null }}">
         <a href="{{ route('admin.rooms.index') }}" class="menu-link">
-            <i class="menu-icon bx bx-door"></i>
+            <i class="menu-icon tf-icons bx bx-cube-alt"></i>
             <div data-i18n="Rooms">Rooms</div>
         </a>
     </li>
 
     <li class="menu-item {{ preg_match('/admin\/foods/', Request::path()) ? 'active' : null }}">
         <a href="{{ route('admin.foods.index') }}" class="menu-link">
-            <i class="menu-icon bx bx-door"></i>
+            <i class="menu-icon tf-icons bx bx-cube-alt"></i>
             <div data-i18n="Foods">Foods</div>
         </a>
     </li>
 
     <li class="menu-item {{ preg_match('/admin\/food-categories/', Request::path()) ? 'active' : null }}">
         <a href="{{ route('admin.food_categories.index') }}" class="menu-link">
-            <i class="menu-icon bx bx-door"></i>
+            <i class="menu-icon tf-icons bx bx-cube-alt"></i>
             <div data-i18n="Food Categories">Food Categories</div>
         </a>
     </li>

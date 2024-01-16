@@ -18,6 +18,7 @@
                         <th>Merchant</th>
                         <th>Room Name</th>
                         <th>Price</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -54,12 +55,16 @@
                             name: 'price'
                         },
                         {
+                            data: 'status',
+                            name: 'status'
+                        },
+                        {
                             data: 'actions',
                             name: 'actions'
                         }
                     ],
                     order: [
-                        [0, 'asc'] // Sort by the first column (index 0) in descending order
+                        [0, 'asc'] 
                     ]
             });
         }
@@ -69,7 +74,7 @@
                     let id = $(this).attr("id");
                     Swal.fire({
                         title: 'Are you sure?',
-                        text: "Remove food from list",
+                        text: "Remove room from list",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
@@ -77,7 +82,7 @@
                         confirmButtonText: 'Yes, remove it!'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            let url = `{{ route('admin.foods.destroy') }}` + '/' + id;
+                            let url = `{{ route('admin.rooms.destroy') }}` + '/' + id;
                             $.ajax({
                                 url: url,
                                 method: "DELETE",
@@ -103,7 +108,7 @@
                 });
             })
 
-        // loadTable();
+        loadTable();
     </script>    
 @endpush
 

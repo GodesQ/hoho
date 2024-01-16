@@ -19,4 +19,8 @@ class Product extends Model
         'other_images',
         'is_active'
     ];
+
+    public function merchant() {
+        return $this->belongsTo(Merchant::class, "merchant_id");
+    }
 }

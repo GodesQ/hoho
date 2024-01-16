@@ -121,13 +121,13 @@ class MerchantRestaurantService
                 $file_name = $restaurant->merchant->featured_image;
             }
 
-            if($request->hasFile('main_featured_image')) {
+            if ($request->hasFile('main_featured_image')) {
                 $file = $request->file('main_featured_image');
                 $name = Str::snake(Str::lower($request->name)) . '_main_featured_image';
                 $main_featured_file_name = $name . '.' . $file->getClientOriginalExtension();
                 $old_upload_image = public_path('assets/img/restaurants/') . $restaurant->merchant->id . '/' . $restaurant->merchant->main_featured_image;
 
-                if($old_upload_image) {
+                if ($old_upload_image) {
                     $remove_image = @unlink($old_upload_image);
                 }
 
@@ -137,7 +137,7 @@ class MerchantRestaurantService
             }
 
             $update_merchant = $restaurant->merchant->update(array_merge($data, [
-                'featured_image' => $file_name, 
+                'featured_image' => $file_name,
                 'main_featured_image' => $main_featured_file_name,
                 'is_active' => $request->has('is_active'),
                 'is_featured' => $request->has('is_featured'),

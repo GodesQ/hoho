@@ -4,7 +4,7 @@ namespace App\Http\Requests\Room;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,7 +26,6 @@ class StoreRequest extends FormRequest
         return [
             "room_name" => "required",
             "merchant_id" => "required",
-            "image" => "required|image|max:2000",
             "price" => "required|numeric",
             "available_pax"=> "required",
             "description" => "required",

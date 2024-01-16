@@ -132,6 +132,7 @@ class AttractionService
 
             // Remove all files from the directory
             $directory = public_path('assets/img/attractions/') . $attraction->id;
+            
             $files = glob($directory . '/*');
             foreach ($files as $file) {
                 if (is_file($file)) {

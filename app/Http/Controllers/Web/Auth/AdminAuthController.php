@@ -47,7 +47,7 @@ class AdminAuthController extends Controller
             return redirect()->route('admin.dashboard')->with('success', 'Login Successful');
 
         } else {
-            return back()->with('fail', 'Invalid Credentials.');
+            return back()->with('fail', 'Invalid Credentials');
         }
     }
 
