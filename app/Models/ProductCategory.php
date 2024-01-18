@@ -19,6 +19,8 @@ class ProductCategory extends Model
     protected $appendOrganizations = true;
 
     protected $appends = ['organizations'];
+    protected $hidden = ['created_at', 'updated_at'];
+
 
     public function getOrganizationsAttribute() {
         $organization_ids = json_decode($this->organization_ids, true);

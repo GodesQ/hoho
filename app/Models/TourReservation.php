@@ -35,6 +35,8 @@ class TourReservation extends Model
         'created_user_type',
         'updated_by'
     ];
+    
+    protected $hidden = ['created_at', 'updated_at'];
 
     protected $casts = [
         'tour_id' => 'integer',

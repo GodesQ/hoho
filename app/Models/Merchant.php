@@ -24,7 +24,7 @@ class Merchant extends Model
         'is_active',
         'is_featured'
     ];
-
+    protected $hidden = ['created_at', 'updated_at'];
     protected $casts = [
         'is_active' => 'integer',
         'is_featured' => 'integer',

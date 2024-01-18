@@ -45,6 +45,8 @@ class Tour extends Model
         'transport_id'
     ];
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     protected $casts = [
         'merchant_id' => 'integer',
         'tour_duration' => 'integer',

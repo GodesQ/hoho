@@ -31,24 +31,25 @@ class AdminAuthController extends Controller
     public function saveLogin(LoginRequest $request)
     {
         $credentials = $request->validated();
-        if (Auth::guard('admin')->attempt(array_merge($credentials))) {
 
+        if (Auth::guard('admin')->attempt(array_merge($credentials))) {
             $admin = Auth::guard('admin')->user();
 
-            if ($admin->is_merchant) {
-                return $this->checkAdminRoleForMerchant($admin);
-            } 
-
-            if(!$admin->is_approved) {
+            // After login, check if the account has been approved by administrator
+            if (!$admin->is_approved) {
                 Auth::logout();
                 return back()->with('fail', 'This account has not been approved yet. Please await approval from the administrator.');
             }
 
-            return redirect()->route('admin.dashboard')->with('success', 'Login Successful');
+            // Check if this login account is merchant
+            if ($admin->is_merchant) $this->checkMerchantRole($admin);
 
-        } else {
-            return back()->with('fail', 'Invalid Credentials');
-        }
+            return redirect()->route('admin.dashboard')->withSuccess('Login Successfully');
+
+        } 
+        
+        // Return back to login if failed
+        return back()->with('fail', 'Invalid Credentials');
     }
 
     public function register(Request $request)
@@ -65,15 +66,14 @@ class AdminAuthController extends Controller
             'is_merchant' => TRUE
         ]));
 
-    
         if ($admin_user) {
             $details = [
                 'email' => $admin_user->email,
                 'registered_date' => date('F d, Y')
             ];
 
-            $receiver = env('APP_ENVIRONMENT') == 'LIVE' ? 'philippinehoho@tourism.gov.ph' : 'james@godesq.com';
-    
+            $receiver = env('APP_ENVIRONMENT') == 'LIVE' ? env('MAIL_ADMIN_RECEIVER') : 'james@godesq.com';
+
             Mail::to($receiver)->send(new NewRegisteredMerchantNotification($details));
 
             // Login to create a session
@@ -87,7 +87,7 @@ class AdminAuthController extends Controller
         return redirect()->route('admin.login');
     }
 
-    private function checkAdminRoleForMerchant($admin)
+    private function checkMerchantRole($admin)
     {
 
         switch ($admin->role) {
@@ -108,7 +108,7 @@ class AdminAuthController extends Controller
             case 'tour_operator_admin':
                 $merchant_data = MerchantTourProvider::where('id', $admin->merchant_data_id)->exists();
                 $type = 'tour_provider';
-                break;  
+                break;
 
             default:
                 $merchant_data = false;
@@ -116,15 +116,8 @@ class AdminAuthController extends Controller
                 break;
         }
 
-
-        if ($merchant_data) {
-            return redirect()->route('admin.dashboard')->with('success', 'Login Successfully');
-        } else {
-            if(!$admin->is_approved) {
-                Auth::logout();
-                return back()->with('fail', 'This account has not been approved yet. Please await approval from the administrator.');
-            }
+        // Redirect to merchant form if no merchant data found
+        if (!$merchant_data)
             return redirect()->route('merchant_form', $type)->withSuccess('Login Successfully. Please complete this form to continue.');
-        }
     }
 }

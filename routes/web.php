@@ -239,6 +239,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('products/edit/{id}', [ProductController::class,'edit'])->name('products.edit');
     Route::post('products/update/{id}', [ProductController::class,'update'])->name('products.update');
     Route::delete('products/destroy/{id?}', [ProductController::class,'destroy'])->name('products.destroy');
+    Route::delete('products/remove_image', [ProductController::class, 'removeImage'])->name('products.remove_image');
 
     Route::get('interests', [InterestController::class, 'list'])->name('interests.list')->can('view_interests_list');
     Route::get('interests/create', [InterestController::class, 'create'])->name('interests.create');

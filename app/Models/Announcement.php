@@ -19,6 +19,8 @@ class Announcement extends Model
         'is_important'
     ];
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     protected $casts = [
         'is_active' => 'integer',
         'is_important' => 'integer'

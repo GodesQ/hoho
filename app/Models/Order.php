@@ -10,4 +10,6 @@ class Order extends Model
     use HasFactory;
     protected $table = "orders";
     protected $fillable = ["product_id", "buyer_id", "transaction_id", "reference_code", "quantity", "sub_amount", "total_amount", "payment_method", "status", "order_date"];
+    protected $hidden = ['created_at', 'updated_at'];
+
 }

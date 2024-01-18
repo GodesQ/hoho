@@ -42,6 +42,8 @@ class Transaction extends Model
         'total_discount' => 'double',
     ];
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     public function user() {
         return $this->hasOne(User::class, 'id', 'transaction_by_id');
     }

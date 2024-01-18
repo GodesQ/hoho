@@ -10,4 +10,6 @@ class TourUnavailableDate extends Model
     use HasFactory;
     protected $table = "tour_unavailable_dates";
     protected $fillable = ['unavailable_date', 'reason'];
+    protected $hidden = ['created_at', 'updated_at'];
+
 }

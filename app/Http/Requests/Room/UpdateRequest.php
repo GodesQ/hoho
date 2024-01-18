@@ -30,6 +30,7 @@ class UpdateRequest extends FormRequest
             "available_pax"=> "required",
             "description" => "required",
             "amenities" => "nullable",
+            'other_images.*' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
         ];
     }
 }

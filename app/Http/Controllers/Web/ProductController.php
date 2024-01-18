@@ -52,7 +52,7 @@ class ProductController extends Controller
 
     public function store(StoreRequest $request)
     {
-        $data = $request->except('image');
+        $data = $request->except('image', 'other_images');
 
         $product = Product::create(array_merge($data, ['is_active' => $request->has('is_active')]));
 
@@ -64,6 +64,22 @@ class ProductController extends Controller
 
             $product->update([
                 'image' => $filename,
+            ]);
+        }
+
+        $images = [];
+
+        if($request->has('other_images')) {
+            foreach ($request->other_images as $key => $image) {
+                $name = Str::snake(Str::lower($request->name)) . '_' . 'other_image' . '_'  . time();
+                $filename = $name . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path() . '/assets/img/products/' . $product->id, $filename);
+
+                array_push($images, $filename);
+            }
+
+            $product->update([
+                'other_images' => count($images) > 0 ? json_encode($images) : null,
             ]);
         }
 
@@ -85,13 +101,14 @@ class ProductController extends Controller
 
     public function update(UpdateRequest $request, $id)
     {
-        $data = $request->except('image');
+        $data = $request->except('image', 'other_images');
         $product = Product::where('id', $id)->firstOrFail();
 
         $product->update(array_merge($data, [
             'is_active' => $request->has('is_active')
         ]));
 
+        // Primary Image
         if ($request->has('image')) {
             // remove old image
             $old_upload_image = public_path('assets/img/products/') . $product->id . '/' . $product->image;
@@ -104,6 +121,23 @@ class ProductController extends Controller
 
             $product->update([
                 'image' => $filename,
+            ]);
+        }
+
+        $images = $product->other_images ? json_decode($product->other_images) : [];
+
+        // Other Images
+        if($request->has('other_images')) {
+            foreach ($request->other_images as $key => $image) {
+                $name = Str::snake(Str::lower($request->name)) . '_' . 'other_image' . '_'  . time();
+                $filename = $name . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path() . '/assets/img/products/' . $product->id, $filename);
+
+                is_array($images) ? array_push($images, $filename) : false;
+            }
+
+            $product->update([
+                'other_images' => count($images) > 0 ? json_encode($images) : null,
             ]);
         }
 
@@ -134,5 +168,32 @@ class ProductController extends Controller
             'message' => 'Product Deleted Successfully'
         ];
     }
+
+    public function removeImage(Request $request) {
+        $product = Product::where('id', $request->id)->first();
+        $images = json_decode($product->other_images);
+        $image_path = $request->image_path;
+
+        // dd(array_search($image_path, $images));
+
+        if(is_array($images)) {
+            if (($key = array_search($image_path, $images)) !== false) {
+                unset($images[$key]);
+                $old_upload_image = public_path('/assets/img/products/') . $product->id . '/' . $image_path;
+                @unlink($old_upload_image);
+            }
+        }
+
+        $update = $product->update([
+            'other_images' => is_array($images) && count($images) > 0 ? json_encode(array_values($images)) : null,
+        ]);
+
+        if($update) {
+            return response([
+                'status' => TRUE,
+                'message' => 'Image successfully remove'
+            ]);
+        }
+    } 
 
 }

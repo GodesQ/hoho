@@ -19,6 +19,8 @@ class Cart extends Model
         'amount'
     ];
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     protected $casts = [
         'amount' => 'double',
         'user_id' => 'integer',

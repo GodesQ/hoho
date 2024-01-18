@@ -79,7 +79,7 @@
                                 <div class="form-check form-switch mb-2">
                                     <input class="form-check-input" type="checkbox" id="isApproved"
                                         name="is_approved" />
-                                    <label class="form-check-label" for="isApproved">Approved</label>
+                                    <label class="form-check-label" for="isApproved">Approve</label>
                                 </div>
                             </div>
                         </div>

@@ -9,6 +9,7 @@ class Interest extends Model
 {
     use HasFactory;
     protected $table = 'interests';
-
     protected $fillable = ['name', 'image'];
+    protected $hidden = ['created_at', 'updated_at'];
+
 }

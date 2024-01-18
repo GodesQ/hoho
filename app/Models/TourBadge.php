@@ -22,6 +22,8 @@ class TourBadge extends Model
         'tour_id'=> 'integer',
     ];
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     public function tour() {
         return $this->belongsTo(Tour::class, 'tour_id');
     }

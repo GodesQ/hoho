@@ -23,7 +23,7 @@ class Room extends Model
         "is_refundable",
         "is_active",
     ];
-
+    protected $hidden = ['created_at', 'updated_at'];
     public function merchant() {
         return $this->belongsTo(Merchant::class, "merchant_id");
     }

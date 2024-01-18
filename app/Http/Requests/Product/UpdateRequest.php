@@ -28,7 +28,8 @@ class UpdateRequest extends FormRequest
             'merchant_id' => 'required',
             'price' => 'required|numeric',
             'quantity' => 'required|numeric',
-            'description' => 'nullable|max:250'
+            'description' => 'nullable|max:250',
+            'other_images.*' => 'nullable|image|mimes:png,jpg,jpeg|max:2048'
         ];
     }
 }

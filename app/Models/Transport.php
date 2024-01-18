@@ -53,6 +53,9 @@ class Transport extends Model
         'is_active' => 'integer'
     ];
 
+    protected $hidden = ['created_at', 'updated_at'];
+
+
     public function getTourAssignmentIdsAttribute($value)
     {
         return json_decode($value, true);

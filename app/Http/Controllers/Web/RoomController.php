@@ -78,6 +78,22 @@ class RoomController extends Controller
             ]);
         }
 
+        $images = [];
+
+        if($request->has('other_images')) {
+            foreach ($request->other_images as $key => $image) {
+                $name = Str::snake(Str::lower($request->name)) . '_' . 'other_image' . '_'  . time();
+                $filename = $name . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path() . '/assets/img/rooms/' . $room->id, $filename);
+
+                array_push($images, $filename);
+            }
+
+            $room->update([
+                'other_images' => count($images) > 0 ? json_encode($images) : null,
+            ]);
+        }
+
         return redirect()->route('admin.rooms.edit', $room->id)->with('success', 'Room Added Successfully');
 
     }

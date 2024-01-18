@@ -25,6 +25,7 @@ class ReservationUserCode extends Model
         'start_datetime' => 'datetime',
         'end_datetime' => 'datetime'
     ];
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function tour_reservation() {
         return $this->hasOne(TourReservation::class, 'id', 'reservation_id');

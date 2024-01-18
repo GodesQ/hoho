@@ -10,4 +10,6 @@ class TicketPass extends Model
     use HasFactory;
     protected $table = 'ticket_passes';
     protected $fillable = ['name', 'ticket_image', 'price'];
+    protected $hidden = ['created_at', 'updated_at'];
+
 }

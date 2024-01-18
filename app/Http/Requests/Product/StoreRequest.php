@@ -29,7 +29,22 @@ class StoreRequest extends FormRequest
             'price' => 'required|numeric',
             'image' => 'required|image|max:2000',
             'quantity' => 'required|numeric',
-            'description' => 'nullable|max:250'
+            'description' => 'nullable|max:250',
+            'other_images.*' => 'nullable|image|mimes:png,jpg,jpeg|max:2048'
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages()
+    {
+        return [
+            'other_images.*.image' => 'The :attribute at position :array_position must be an image.',
+            'other_images.*.mimes' => 'The :attribute at position :array_position must be a file of type: :values.',
+            'other_images.*.max' => 'The :attribute at position :array_position may not be greater than :max kilobytes.',
         ];
     }
 }

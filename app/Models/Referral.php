@@ -18,6 +18,8 @@ class Referral extends Model
         'commision'
     ];
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     protected $casts = [
         'merchant_id' => 'integer',
         'commision' => 'integer'

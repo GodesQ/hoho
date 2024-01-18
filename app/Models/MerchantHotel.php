@@ -21,7 +21,7 @@ class MerchantHotel extends Model
         'location',
         'business_hours',
     ];
-
+    protected $hidden = ['created_at', 'updated_at'];
     protected $casts = [
         'merchant_id' => 'integer'
     ];

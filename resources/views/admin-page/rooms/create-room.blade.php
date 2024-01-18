@@ -128,6 +128,44 @@
                                 </div>
                             </div>
                             <hr>
+                            <h4><i class="bx bx-images"></i> Images <span style="font-size: 14px;">( Max File Size: 2MB )</span></h4>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="mb-3">
+                                                <input type="file" class="form-control mb-2 image-input" accept="image/*"
+                                                    name="other_images[]" id="image_1"
+                                                    onchange="handlePreviewImage(this, 'previewImage1')">
+                                                <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
+                                                    id="previewImage1" alt="Default Image" width="100%" height="200px"
+                                                    style="border-radius: 10px; object-fit: cover;">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="mb-3">
+                                                <input type="file" class="form-control mb-2 image-input"
+                                                    accept="image/*" name="other_images[]" id="image_2"
+                                                    onchange="handlePreviewImage(this, 'previewImage2')">
+                                                <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
+                                                    id="previewImage2" alt="Default Image" width="100%" height="200px"
+                                                    style="border-radius: 10px; object-fit: cover;">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="mb-3">
+                                                <input type="file" class="form-control mb-2 image-input"
+                                                    accept="image/*" name="other_images[]" id="image_3"
+                                                    onchange="handlePreviewImage(this, 'previewImage3')">
+                                                <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
+                                                    id="previewImage3" alt="Default Image" width="100%" height="200px"
+                                                    style="border-radius: 10px; object-fit: cover;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
                             <button class="btn btn-primary">Save Room</button>
                         </div>
                     </div>

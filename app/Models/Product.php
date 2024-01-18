@@ -19,7 +19,7 @@ class Product extends Model
         'other_images',
         'is_active'
     ];
-
+    protected $hidden = ['created_at', 'updated_at'];
     public function merchant() {
         return $this->belongsTo(Merchant::class, "merchant_id");
     }

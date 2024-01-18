@@ -1,6 +1,6 @@
 @extends('layouts.admin.layout')
 
-@section('title', 'Admins List')
+@section('title', 'Admins List - Philippine Hop On Hop Off')
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
@@ -15,6 +15,7 @@
                     <table class="table   data-table">
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>Username</th>
                                 <th>Email</th>
                                 <th>Role</th>
@@ -41,7 +42,12 @@
                 ajax: {
                     url: "{{ route('admin.admins.list') }}"
                 },
-                columns: [{
+                columns: [
+                    {
+                        data: 'id',
+                        name: 'id'
+                    },
+                    {
                         data: 'username',
                         name: 'username'
                     },

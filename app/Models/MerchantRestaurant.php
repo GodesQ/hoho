@@ -23,11 +23,11 @@ class MerchantRestaurant extends Model
         'address',
         'atmosphere',
     ];
+    protected $hidden = ['created_at', 'updated_at'];
 
     protected $casts = [
         'merchant_id' => 'integer'
     ];
-
     public function merchant() {
         return $this->belongsTo(Merchant::class, 'merchant_id');
     }

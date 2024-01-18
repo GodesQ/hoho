@@ -17,6 +17,8 @@ class UserTourBadge extends Model
         'badge_id' => 'integer',
     ];
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     public function tour_badge() {
         return $this->hasOne(TourBadge::class, 'id', 'badge_id');
     }

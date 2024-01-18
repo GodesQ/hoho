@@ -46,6 +46,8 @@ class Attraction extends Model
         'status' => 'integer'
     ];
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     protected $appends = ['nearest_attractions', 'nearest_stores', 'nearest_hotels', 'nearest_restaurants'];
 
     protected static $loadingNearestAttractions = false;
@@ -119,6 +121,6 @@ class Attraction extends Model
 
     public function organization()
     {
-        return $this->hasOne(Organization::class, 'id', 'organization_id');
+        return $this->hasOne(Organization::class, 'id', 'organization_id')->select('id', 'name', 'acronym', 'region', 'icon', 'featured_image', 'images', 'description', 'visibility', 'is_active');
     }
 }

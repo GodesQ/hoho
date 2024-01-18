@@ -15,6 +15,17 @@
                 <div class="col-lg-8">
                     <div class="card">
                         <div class="card-body">
+
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="mb-3">
@@ -70,6 +81,92 @@
                                 </div>
                             </div>
                             <hr>
+                            <h4>Images <span style="font-size: 14px;">( Max File Size: 2MB )</span></h4>
+                            <?php $product_images = $product->other_images ? json_decode($product->other_images) : []; ?>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        @if (count($product_images) > 0 && isset($product_images[0]))
+                                            @fileExists('assets/img/products/' . $product->id . '/' . $product_images[0])
+                                                <img src="{{ URL::asset('assets/img/products/' . $product->id . '/' . $product_images[0]) }}"
+                                                    id="previewImage1" alt="Default Image" width="100%" height="200px"
+                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                            @elsefileExists
+                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                    id="previewImage1" alt="Default Image" width="100%" height="210px"
+                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                            @endfileExists
+                                            <button type="button"
+                                                style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
+                                                class="btn btn-primary"
+                                                onclick="removeImageBtn({{ $product->id }}, '{{ $product_images[0] }}')">Remove
+                                                <i class="bx bx-trash"></i></button>
+                                        @else
+                                            <input type="file" class="form-control mb-2 image-input" accept="image/*"
+                                                name="other_images[]" id="image_1"
+                                                onchange="handlePreviewImage(this, 'previewImage1')">
+                                            <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
+                                                id="previewImage1" alt="Default Image" width="100%" height="200px"
+                                                style="border-radius: 10px; object-fit: cover;">
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        @if (count($product_images) > 0 && isset($product_images[1]))
+                                            @fileExists('assets/img/products/' . $product->id . '/' . $product_images[1])
+                                                <img src="{{ URL::asset('assets/img/products/' . $product->id . '/' . $product_images[1]) }}"
+                                                    id="previewImage2" alt="Default Image" width="100%" height="200px"
+                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                            @elsefileExists
+                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                    id="previewImage2" alt="Default Image" width="100%" height="210px"
+                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                            @endfileExists
+                                            <button type="button"
+                                                style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
+                                                class="btn btn-primary"
+                                                onclick="removeImageBtn({{ $product->id }}, '{{ $product_images[1] }}')">Remove
+                                                <i class="bx bx-trash"></i></button>
+                                        @else
+                                            <input type="file" class="form-control mb-2 image-input" accept="image/*"
+                                                name="other_images[]" id="image_2"
+                                                onchange="handlePreviewImage(this, 'previewImage2')">
+                                            <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
+                                                id="previewImage2" alt="Default Image" width="100%" height="200px"
+                                                style="border-radius: 10px; object-fit: cover;">
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        @if (count($product_images) > 0 && isset($product_images[2]))
+                                            @fileExists('assets/img/products/' . $product->id . '/' . $product_images[2])
+                                                <img src="{{ URL::asset('assets/img/products/' . $product->id . '/' . $product_images[2]) }}"
+                                                    id="previewImage3" alt="Default Image" width="100%" height="200px"
+                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                            @elsefileExists
+                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                    id="previewImage3" alt="Default Image" width="100%" height="210px"
+                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                            @endfileExists
+                                            <button type="button"
+                                                style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
+                                                class="btn btn-primary"
+                                                onclick="removeImageBtn({{ $product->id }}, '{{ $product_images[2] }}')">Remove
+                                                <i class="bx bx-trash"></i></button>
+                                        @else
+                                            <input type="file" class="form-control mb-2 image-input" accept="image/*"
+                                                name="other_images[]" id="image_3"
+                                                onchange="handlePreviewImage(this, 'previewImage3')">
+                                            <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
+                                                id="previewImage3" alt="Default Image" width="100%" height="200px"
+                                                style="border-radius: 10px; object-fit: cover;">
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
                             <button class="btn btn-primary">Save Product</button>
                         </div>
                     </div>
@@ -80,10 +177,11 @@
                             <h6>Preview of Main Image</h6>
                             @if ($product->image)
                                 <img src="{{ URL::asset('assets/img/products/' . $product->id . '/' . $product->image) }}"
-                                    alt="{{ $product->name }}" style="border-radius: 10px !important;" id="previewImage" width="100%">
+                                    alt="{{ $product->name }}" style="border-radius: 10px !important;" id="previewImage"
+                                    width="100%">
                             @else
                                 <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt="Default Image"
-                                style="border-radius: 10px !important;" id="previewImage" width="100%">
+                                    style="border-radius: 10px !important;" id="previewImage" width="100%">
                             @endif
                         </div>
                     </div>
@@ -104,6 +202,55 @@
                 };
                 reader.readAsDataURL(file);
             }
+        }
+
+        function handlePreviewImage(event, previewImageId) {
+            const file = event.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const previewImage = document.getElementById(previewImageId);
+                    console.log(previewImage);
+                    previewImage.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImageBtn(id, image_path) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Remove product image",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, remove it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `{{ route('admin.products.remove_image') }}`,
+                        method: "DELETE",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            id: id,
+                            image_path: image_path
+                        },
+                        success: function(response) {
+                            if (response.status) {
+                                Swal.fire('Removed!', response.message, 'success').then(
+                                    result => {
+                                        if (result.isConfirmed) {
+                                            toastr.success(response.message, 'Success');
+                                            location.reload();
+                                        }
+                                    })
+                            }
+                        }
+                    })
+                }
+            })
         }
 
         let mainImageInput = document.querySelector('#image');

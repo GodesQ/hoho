@@ -24,6 +24,8 @@ class Organization extends Model
     protected $casts = [
         'is_active' => 'integer'
     ];
+    protected $hidden = ['created_at', 'updated_at'];
+
 
     public function attractions() {
         return $this->hasMany(Attraction::class, 'organization_id')->where('status', 1);
