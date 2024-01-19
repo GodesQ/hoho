@@ -170,4 +170,22 @@ class RoomController extends Controller
         ];
     }
 
+    public function lookup(Request $request) {
+        $type = $request->type;
+
+        $rooms = Room::where('room_name', $request->q)->where('is_active', true)->get();
+
+        // Look up by merchant
+        if($type == 'merchant') {
+            $rooms = Room::where('merchant_id', $request->q)->where('is_active', true)->get();
+        }
+
+        return response([
+            'status' => TRUE,
+            'rooms' => $rooms
+        ]);
+
+
+    }
+
 }

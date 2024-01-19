@@ -146,8 +146,8 @@
         </a>
     </li>
 
-    <li class="menu-item">
-        <a href="" class="menu-link">
+    <li class="menu-item {{ preg_match('/admin\/hotel-reservations/', Request::path()) ? 'active' : null }}">
+        <a href="{{ route('admin.hotel_reservations.index') }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-file"></i>
             <div data-i18n="Hotel Reservations">Hotel Reservations</div>
         </a>

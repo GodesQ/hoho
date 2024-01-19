@@ -3,6 +3,7 @@
 use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\FoodCategoryController;
 use App\Http\Controllers\Web\FoodController;
+use App\Http\Controllers\Web\HotelReservationController;
 use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\RoomController;
 use App\Http\Controllers\Web\TourBadgeController;
@@ -232,7 +233,9 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('rooms/edit/{id}', [RoomController::class,'edit'])->name('rooms.edit');
     Route::post('rooms/update/{id}', [RoomController::class,'update'])->name('rooms.update');
     Route::delete('rooms/destroy/{id?}', [RoomController::class,'destroy'])->name('rooms.destroy');
-    
+
+    Route::get('rooms/lookup/{q?}', [RoomController::class,'lookup'])->name('rooms.lookup');
+
     Route::get('products', [ProductController::class,'index'])->name('products.index');
     Route::get('products/create', [ProductController::class,'create'])->name('products.create');
     Route::post('products/store', [ProductController::class,'store'])->name('products.store');
@@ -240,6 +243,13 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::post('products/update/{id}', [ProductController::class,'update'])->name('products.update');
     Route::delete('products/destroy/{id?}', [ProductController::class,'destroy'])->name('products.destroy');
     Route::delete('products/remove_image', [ProductController::class, 'removeImage'])->name('products.remove_image');
+
+    Route::get('hotel-reservations', [HotelReservationController::class,'index'])->name('hotel_reservations.index');
+    Route::get('hotel-reservations/create', [HotelReservationController::class,'create'])->name('hotel_reservations.create');
+    Route::post('hotel-reservations/store', [HotelReservationController::class,'store'])->name('hotel_reservations.store');
+    Route::get('hotel-reservations/edit/{id}', [HotelReservationController::class,'edit'])->name('hotel_reservations.edit');
+    Route::get('hotel-reservations/update/{id}', [HotelReservationController::class,'update'])->name('hotel_reservations.update');
+    Route::get('hotel-reservations/destroy/{id}', [HotelReservationController::class,'destroy'])->name('hotel_reservations.destroy');
 
     Route::get('interests', [InterestController::class, 'list'])->name('interests.list')->can('view_interests_list');
     Route::get('interests/create', [InterestController::class, 'create'])->name('interests.create');
