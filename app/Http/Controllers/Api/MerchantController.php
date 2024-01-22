@@ -14,12 +14,15 @@ use App\Models\MerchantTourProvider;
 class MerchantController extends Controller
 {
     public function getMerchant(Request $request) {
-        $merchant = Merchant::where('id', $request->id)->firstOr(function () {
+        $merchant = Merchant::where('id', $request->id)->first();
+
+        if (!$merchant) {
             return response([
                 'status' => FALSE,
-                'message' => 'Merchant not found.'
-            ], 404);
-        });
+                'message'=> 'No Merchant Found'
+            ], 400);
+        }
+        // return response($merchant);
 
         switch ($merchant->type) {
             case 'Store':

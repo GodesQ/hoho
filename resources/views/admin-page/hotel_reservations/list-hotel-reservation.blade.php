@@ -64,7 +64,8 @@
                         data: 'actions',
                         name: 'actions'
                     },
-                ]
+                ],
+
             });
         }
 

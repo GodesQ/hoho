@@ -66,15 +66,6 @@ class Admin extends Authenticatable
 
     public function merchant_data()
     {
-
-        if ($this->merchant_hotel) {
-            return $this->merchant_hotel;
-        } else if ($this->merchant_restaurant) {
-            return $this->merchant_restaurant;
-        } else if ($this->merchant_store) {
-            return $this->merchant_store;
-        } else {
-            return null;
-        }
+        return $this->merchant_hotel ?? $this->merchant_restaurant ?? $this->merchant_store ?? null;
     }
 }

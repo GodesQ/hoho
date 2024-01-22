@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\HotelReservation\StoreRequest;
+use App\Http\Requests\HotelReservation\UpdateRequest;
 use App\Models\HotelReservation;
 use App\Models\Merchant;
 use App\Models\User;
@@ -40,13 +41,19 @@ class HotelReservationController extends Controller
                     if ($row->status == 'declined') {
                         return '<div class="badge bg-success">Declined</div>';
                     }
-
                 })
                 ->addColumn('actions', function ($row) {
-                    return '<div class="dropdown">
-                                    <a href="/admin/hotel-reservations/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
-                                </div>';
+                    $output = '<div class="dropdown">';
+                        
+                    $output .= '<a href="/admin/hotel-reservations/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>';
+
+                    if($row->status != 'approved') {
+                        $output .= '<button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>';
+                    }
+                    
+                    $output .= '</div>';
+
+                    return $output;
                 })
                 ->rawColumns(['actions', 'status'])
                 ->make(true);
@@ -79,9 +86,17 @@ class HotelReservationController extends Controller
         return view('admin-page.hotel_reservations.edit-hotel-reservation', compact('reservation', 'merchant_hotels'));
     }
 
-    public function update(Request $request, $id)
-    {
+    public function update(UpdateRequest $request, $id)
+    {   
+        $data = $request->validated();
 
+        $reservation = HotelReservation::where('id', $id)->firstOrFail();
+
+        $reservation->update(array_merge($data, [
+            'approved_date' => $request->status == 'approved' ? date('Y-m-d') : null,
+        ]));
+
+        return back()->withSuccess('Hotel reservation updated successfully');
     }
 
     public function destroy(Request $request, $id)

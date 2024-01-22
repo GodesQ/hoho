@@ -14,7 +14,7 @@ class UserService
 {
     public function getUsersList(Request $request)
     {
-        $users = User::latest();
+        $users = User::query();
         return $users;
     }
 
@@ -53,7 +53,7 @@ class UserService
                                 </div>';
             })
             ->rawColumns(['status', 'username', 'email_verify', 'actions'])
-            ->make(true);
+            ->toJson();
     }
 
     public function lookupUsers($searchQuery)

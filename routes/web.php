@@ -248,7 +248,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('hotel-reservations/create', [HotelReservationController::class,'create'])->name('hotel_reservations.create');
     Route::post('hotel-reservations/store', [HotelReservationController::class,'store'])->name('hotel_reservations.store');
     Route::get('hotel-reservations/edit/{id}', [HotelReservationController::class,'edit'])->name('hotel_reservations.edit');
-    Route::get('hotel-reservations/update/{id}', [HotelReservationController::class,'update'])->name('hotel_reservations.update');
+    Route::put('hotel-reservations/update/{id}', [HotelReservationController::class,'update'])->name('hotel_reservations.update');
     Route::get('hotel-reservations/destroy/{id}', [HotelReservationController::class,'destroy'])->name('hotel_reservations.destroy');
 
     Route::get('interests', [InterestController::class, 'list'])->name('interests.list')->can('view_interests_list');

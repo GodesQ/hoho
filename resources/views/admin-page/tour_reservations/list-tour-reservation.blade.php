@@ -127,7 +127,7 @@
                 
                 columnDefs: [
                     {
-                    targets: [6], // Index of the column you want to disable sorting for
+                    targets: [4, 5, 6], // Index of the column you want to disable sorting for
                     orderable: false
                     }
                 ],

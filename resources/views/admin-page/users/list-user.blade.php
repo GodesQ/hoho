@@ -39,8 +39,7 @@
                 processing: true,
                 pageLength: 25,
                 responsive: true,
-                serverSide: false,
-                
+                serverSide: true,
                 ajax: {
                     url: "{{ route('admin.users.list') }}"
                 },
@@ -51,6 +50,7 @@
                     {
                         data: 'username',
                         name: 'username',
+                        orderable: true,
                     },
                     {
                         data: 'email',

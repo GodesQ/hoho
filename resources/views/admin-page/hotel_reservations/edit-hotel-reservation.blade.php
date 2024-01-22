@@ -14,6 +14,7 @@
             <div class="card-body">
                 <form action="{{ route('admin.hotel_reservations.update', $reservation->id) }}" method="post">
                     @csrf
+                    @method('PUT')
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="mb-3">
@@ -43,7 +44,7 @@
                             </div>
                         </div>
                         <div class="col-lg-6">
-                            <div class="mb-3">
+                            <div class="mb-3">0
                                 <label for="reservation-date-field" class="form-label">Reservation Date <span class="text-danger">*</span></label>
                                 <input type="date" name="reservation_date" id="reservation-date-field" class="form-control" value="{{ $reservation->reservation_date }}">
                                 <div class="text-danger">@error('reservation_date'){{ $message }}@enderror</div>

@@ -95,6 +95,15 @@ class TourReservationService
             ->addColumn('tour', function ($row) {
                 return optional($row->tour)->name ?? "Deleted Tour";
             })
+            ->addColumn('status', function ($row) {
+                if($row->status == 'approved') {
+                    return '<div class="badge bg-success">Approved</div>';
+                } else if($row->status == 'pending') {
+                    return '<div class="badge bg-warning">Pending</div>';
+                } else if($row->status == 'cancelled') {
+                    return '<div class="badge bg-warning">Cancelled</div>';
+                }
+            })
             ->addColumn('actions', function ($row) {
                 $output = '<div class="dropdown">
                     <a href="/admin/tour_reservations/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>';
@@ -104,7 +113,7 @@ class TourReservationService
                 $output .= '</div>';
                 return $output;
             })            
-            ->rawColumns(['actions'])
+            ->rawColumns(['actions', 'status'])
             ->make(true);
     }
 
