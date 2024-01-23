@@ -64,6 +64,10 @@
                             <div class="alert alert-danger">{{ Session::get('fail') }}</div>
                         @endif
 
+                        @if(Session::get('success'))
+                            <div class="alert alert-success">{{ Session::get('success') }}</div>
+                        @endif
+
                         <form id="formAuthentication" class="mb-3" action="{{ route('admin.saveLogin') }}"
                             method="POST">
                             @csrf

@@ -50,7 +50,7 @@
                         <div class="app-brand justify-content-center">
                             <a href="" class="app-brand-link gap-2">
                                 <span class="app-brand-logo demo">
-                                    <img src="https://pepmedia.s3.ap-southeast-1.amazonaws.com/clients/hoho.jpg"
+                                    <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-1024x1024.jpg"
                                         style="width: 50px; border-radius: 5px;" alt="">
                                 </span>
                                 <span class="app-brand-text demo text-body fw-bolder"

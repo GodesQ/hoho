@@ -57,15 +57,31 @@
                                     style="text-transform: capitalize;">Hop On Hop Off</span>
                             </a>
                         </div>
-                        <div class="text-center">
-                            <h4 class="mb-2">Account Registration Successful - Awaiting Approval</h4><br>
-                            <p class="mb-4"> 
-                                Thank you for registering with Philippine Hop On Hop Off. Your account has been successfully created, and we appreciate your interest in becoming a part of our platform.
-                                <br><br>
-                                Please note that your account is currently under review by our administrators. Once approved, you will receive a confirmation email at the address you provided during registration. This email will contain further instructions on how to access your account and start utilizing our services.
-                            </p>
-                            <a href="{{ route('admin.login') }}" class="btn btn-primary">Back to Login</a>
-                        </div>
+                        <h4 class="mb-2">Delete Account 🗑️</h4>
+                        <p>Deleting your account will remove all of your account information from our database. This cannot be undone.</p>
+                        @if(Session::get('success'))
+                            <div class="alert alert-success">{{ Session::get('success') }}</div>
+                        @endif
+
+
+                        <form id="formAuthentication" class="mb-3" action="{{ route('delete-account.otp.confirm') }}"
+                            method="POST">
+                            @csrf
+                            <input type="hidden" name="email" value="{{ $email }}"> 
+                            <div class="mb-3">
+                                <label for="code" class="form-label">Code</label>
+                                <input type="text" class="form-control" id="code" name="code"
+                                    placeholder="Enter your code" autofocus />
+                            </div>
+                            <div class="mt-1 mb-3 danger text-danger">
+                                @error('code')
+                                    {{ $message }}
+                                @enderror
+                            </div>
+                            <div class="mb-3">
+                                <button class="btn btn-primary d-grid w-100" type="submit">Submit</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

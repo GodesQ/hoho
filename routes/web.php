@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\CartController;
+use App\Http\Controllers\Web\DeleteAccountController;
 use App\Http\Controllers\Web\FoodCategoryController;
 use App\Http\Controllers\Web\FoodController;
 use App\Http\Controllers\Web\HotelReservationController;
@@ -61,6 +62,13 @@ Route::get('/', function () {
     }
 });
 
+Route::get('delete-account', [DeleteAccountController::class, 'index'])->name('delete-account.index');
+Route::post('delete-account', [DeleteAccountController::class,'confirmDeleteAccountEmail'])->name('delete-account.post');
+Route::get('delete-account/otp/{token}/{email}', [DeleteAccountController::class,'showOTPInputForm'])->name('delete-account.otp');
+Route::post('delete-account/otp/confirm', [DeleteAccountController::class,'confirmOTP'])->name('delete-account.otp.confirm');
+
+Route::view('deleted-account/message', 'misc.deleted-account-message')->name('delete-account.message');
+
 Route::get('admin/login', [AdminAuthController::class, 'login'])->name('admin.login');
 Route::post('admin/login', [AdminAuthController::class, 'saveLogin'])->name('admin.saveLogin');
 
@@ -85,7 +93,7 @@ Route::post('aqwire/payment/callback/{id}', [AqwireController::class, 'callback'
 
 Route::get('user/verify_email', [UserAuthController::class, 'verifyEmail']);
 
-Route::view('test_email', 'emails.new-merchant-registered-email');
+Route::view('test_email', 'emails.delete-account-otp');
 
 Route::get('user/reset_password_form', [ForgotPasswordController::class, 'resetPasswordForm'])->name('user.reset_password_form');
 Route::post('user/reset_password_form', [ForgotPasswordController::class, 'postResetPasswordForm'])->name('user.post_reset_password_form');

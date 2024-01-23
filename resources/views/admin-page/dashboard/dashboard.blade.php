@@ -1,6 +1,6 @@
 @extends('layouts.admin.layout')
 
-@section('title', 'Hop On Hop Off - Dashboard')
+@section('title', 'Dashboard - Philippine Hop On Hop Off')
 
 @section('content')
     <style>
@@ -37,8 +37,8 @@
                         </div>
                         <div class="col-sm-6 text-center text-sm-left">
                             <div class="card-body pb-0 px-0" style="padding: 4px !important;">
-                                <img src="https://metrohoho.s3.ap-southeast-1.amazonaws.com/hoho_bus.png"
-                                    class="dashboard-img" alt="View Badge User"
+                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/newbus-copy2-1.png"
+                                    class="dashboard-img" alt="HOHO"
                                     data-app-dark-img="illustrations/man-with-laptop-dark.png"
                                     data-app-light-img="illustrations/man-with-laptop-light.png" />
                             </div>

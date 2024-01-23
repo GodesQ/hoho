@@ -135,6 +135,92 @@
                                 </div>
                             </div>
                             <hr>
+                            <h4>Images <span style="font-size: 14px;">( Max File Size: 2MB )</span></h4>
+                            <?php $room_images = $room->other_images ? json_decode($room->other_images) : []; ?>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        @if (count($room_images) > 0 && isset($room_images[0]))
+                                            @fileExists('assets/img/rooms/' . $room->id . '/' . $room_images[0])
+                                                <img src="{{ URL::asset('assets/img/rooms/' . $room->id . '/' . $room_images[0]) }}"
+                                                    id="previewImage1" alt="Default Image" width="100%" height="200px"
+                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                            @elsefileExists
+                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                    id="previewImage1" alt="Default Image" width="100%" height="210px"
+                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                            @endfileExists
+                                            <button type="button"
+                                                style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
+                                                class="btn btn-primary"
+                                                onclick="removeImageBtn({{ $room->id }}, '{{ $room_images[0] }}')">Remove
+                                                <i class="bx bx-trash"></i></button>
+                                        @else
+                                            <input type="file" class="form-control mb-2 image-input" accept="image/*"
+                                                name="other_images[]" id="image_1"
+                                                onchange="handlePreviewImage(this, 'previewImage1')">
+                                            <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
+                                                id="previewImage1" alt="Default Image" width="100%" height="200px"
+                                                style="border-radius: 10px; object-fit: cover;">
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        @if (count($room_images) > 0 && isset($room_images[1]))
+                                            @fileExists('assets/img/rooms/' . $room->id . '/' . $room_images[1])
+                                                <img src="{{ URL::asset('assets/img/rooms/' . $room->id . '/' . $room_images[1]) }}"
+                                                    id="previewImage2" alt="Default Image" width="100%" height="200px"
+                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                            @elsefileExists
+                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                    id="previewImage2" alt="Default Image" width="100%" height="210px"
+                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                            @endfileExists
+                                            <button type="button"
+                                                style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
+                                                class="btn btn-primary"
+                                                onclick="removeImageBtn({{ $room->id }}, '{{ $room_images[1] }}')">Remove
+                                                <i class="bx bx-trash"></i></button>
+                                        @else
+                                            <input type="file" class="form-control mb-2 image-input" accept="image/*"
+                                                name="other_images[]" id="image_2"
+                                                onchange="handlePreviewImage(this, 'previewImage2')">
+                                            <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
+                                                id="previewImage2" alt="Default Image" width="100%" height="200px"
+                                                style="border-radius: 10px; object-fit: cover;">
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        @if (count($room_images) > 0 && isset($room_images[2]))
+                                            @fileExists('assets/img/rooms/' . $room->id . '/' . $room_images[2])
+                                                <img src="{{ URL::asset('assets/img/rooms/' . $room->id . '/' . $room_images[2]) }}"
+                                                    id="previewImage3" alt="Default Image" width="100%" height="200px"
+                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                            @elsefileExists
+                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                    id="previewImage3" alt="Default Image" width="100%" height="210px"
+                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                            @endfileExists
+                                            <button type="button"
+                                                style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
+                                                class="btn btn-primary"
+                                                onclick="removeImageBtn({{ $room->id }}, '{{ $room_images[2] }}')">Remove
+                                                <i class="bx bx-trash"></i></button>
+                                        @else
+                                            <input type="file" class="form-control mb-2 image-input" accept="image/*"
+                                                name="other_images[]" id="image_3"
+                                                onchange="handlePreviewImage(this, 'previewImage3')">
+                                            <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
+                                                id="previewImage3" alt="Default Image" width="100%" height="200px"
+                                                style="border-radius: 10px; object-fit: cover;">
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
                             <button class="btn btn-primary">Save Room</button>
                         </div>
                     </div>
