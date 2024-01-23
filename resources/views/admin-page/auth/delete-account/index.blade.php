@@ -9,7 +9,7 @@
 
     <link rel="apple-touch-icon" href="{{ URL::asset('assets/img/logo/hoho.jpg') }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ URL::asset('assets/img/logo/hoho.jpg') }}">
-    <title>Hop On Hop Off - Admin Login</title>
+    <title>Hop On Hop Off - Delete Account</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
