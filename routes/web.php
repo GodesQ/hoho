@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\FoodCategoryController;
 use App\Http\Controllers\Web\FoodController;
 use App\Http\Controllers\Web\HotelReservationController;
 use App\Http\Controllers\Web\ProductController;
+use App\Http\Controllers\Web\RestaurantReservationController;
 use App\Http\Controllers\Web\RoomController;
 use App\Http\Controllers\Web\TourBadgeController;
 use Illuminate\Support\Facades\Route;
@@ -258,6 +259,13 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('hotel-reservations/edit/{id}', [HotelReservationController::class,'edit'])->name('hotel_reservations.edit');
     Route::put('hotel-reservations/update/{id}', [HotelReservationController::class,'update'])->name('hotel_reservations.update');
     Route::get('hotel-reservations/destroy/{id}', [HotelReservationController::class,'destroy'])->name('hotel_reservations.destroy');
+
+    Route::get('restaurant-reservations', [RestaurantReservationController::class,'index'])->name('restaurant_reservations.index');
+    Route::get('restaurant-reservations/create', [RestaurantReservationController::class,'create'])->name('restaurant_reservations.create');
+    Route::post('restaurant-reservations/store', [RestaurantReservationController::class,'store'])->name('restaurant_reservations.store');
+    Route::get('restaurant-reservations/edit/{id}', [RestaurantReservationController::class,'edit'])->name('restaurant_reservations.edit');
+    Route::put('restaurant-reservations/update/{id}', [RestaurantReservationController::class,'update'])->name('restaurant_reservations.update');
+    Route::get('restaurant-reservations/destroy/{id}', [RestaurantReservationController::class,'destroy'])->name('restaurant_reservations.destroy');
 
     Route::get('interests', [InterestController::class, 'list'])->name('interests.list')->can('view_interests_list');
     Route::get('interests/create', [InterestController::class, 'create'])->name('interests.create');
