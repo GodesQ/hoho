@@ -64,6 +64,7 @@
                 ]
             });
         }
+        loadTable();
     </script>    
 @endpush
 
