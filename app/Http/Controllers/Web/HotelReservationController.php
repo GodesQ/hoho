@@ -21,10 +21,10 @@ class HotelReservationController extends Controller
             return DataTables::of($hotel_reservations)
                 ->addIndexColumn()
                 ->addColumn('reserved_user_id', function ($row) {
-                    return $row->reserved_user->email;
+                    return $row->reserved_user->email ?? null;
                 })
                 ->editColumn('room_id', function ($row) {
-                    return $row->room->room_name . ' ( ' . $row->room->merchant->name . ' ) ';
+                    return ( $row->room->room_name ?? null )  . ' ( ' . ($row->room->merchant->name ?? null) . ' ) ';
                 })
                 ->editColumn('number_of_pax', function ($row) {
                     return $row->number_of_pax . ' Pax';
@@ -101,6 +101,13 @@ class HotelReservationController extends Controller
 
     public function destroy(Request $request, $id)
     {
+        $reservation = HotelReservation::findOrFail($id);
 
+        $reservation->delete();
+
+        return response([
+            'status' => TRUE,
+            'message' => 'Hotel Reservation deleted successfully'
+        ]);
     }
 }
