@@ -23,8 +23,8 @@ class IsMerchantCreated
     public function handle(Request $request, Closure $next)
     {   
         $user = Auth::guard('admin')->user();
-        if($user->is_merchant) {
-            if(!$user->merchant_data_id) {
+        if(in_array($user->role, merchant_roles())) {
+            if(!$user->merchant_id) {
                 $type = '0';
                 switch ($user->role) {
                     case 'merchant_store_admin':

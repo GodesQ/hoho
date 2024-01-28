@@ -26,7 +26,7 @@ class ReferralController extends Controller
     public function list(Request $request) {
         if($request->ajax()) {
             $current_user = Auth::guard('admin')->user();
-            if($current_user->is_merchant) {
+            if(in_array($current_user->role, merchant_roles())) {
                 return $this->referralService->RetrieveMerchantReferralsList($request);
             } else {
                 return $this->referralService->RetrieveAllReferralsList($request);

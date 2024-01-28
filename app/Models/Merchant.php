@@ -43,6 +43,10 @@ class Merchant extends Model
         return $this->hasMany(MerchantStore::class, 'merchant_id');
     }
 
+    public function restaurants() {
+        return $this->hasMany(MerchantRestaurant::class, 'merchant_id');
+    }
+
     public function store_info() {
         return $this->hasOne(MerchantStore::class, 'merchant_id');
     }
@@ -53,6 +57,10 @@ class Merchant extends Model
 
     public function hotel_info() {
         return $this->hasOne(MerchantHotel::class, 'merchant_id');
+    }
+
+    public function tour_provider_info() {
+        return $this->hasOne(MerchantTourProvider::class, 'merchant_id');
     }
 
 }

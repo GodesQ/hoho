@@ -123,9 +123,9 @@ class MerchantStoreController extends Controller
             if ($previousPath === '/merchant_form/store') {
                 $admin = Auth::guard('admin')->user();
 
-                if($admin->is_merchant) {
+                if(in_array($admin->role, merchant_roles())) {
                     $admin->update([
-                        'merchant_data_id' =>  $result['merchant_store']->id
+                        'merchant_id' => $result['merchant']->id,
                     ]);
                 }
 

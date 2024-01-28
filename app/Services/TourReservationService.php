@@ -51,7 +51,7 @@ class TourReservationService
 
         $data = TourReservation::with('user', 'tour', 'transaction')
             ->whereHas('tour', function ($query) use ($admin) {
-                return $query->where('tour_provider_id', $admin->merchant_data_id);
+                return $query->where('tour_provider_id', $admin->merchant->tour_provider_info->id);
             })
             ->when(!empty($request->get('search')), function ($query) use ($request) {
                 $searchQuery = $request->get('search');

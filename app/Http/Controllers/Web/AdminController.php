@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\MerchantHotel;
+use App\Models\MerchantRestaurant;
+use App\Models\MerchantStore;
+use App\Models\MerchantTourProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -103,6 +107,48 @@ class AdminController extends Controller
     }
 
     public function destroy(Request $request) {
+
+    }
+
+    public function merchantAdmins() {
+        $results = Admin::whereNotNull('merchant_data_id')->get();
+        foreach ($results as $key => $result) {
+
+            switch ($result->role) {
+                case 'merchant_store_admin':
+                    $merchant_data = MerchantStore::where('id', $result->merchant_data_id)->first();
+                    break;
+                case 'merchant_restaurant_admin':
+                    $merchant_data = MerchantRestaurant::where('id', $result->merchant_data_id)->first();
+                    break;
+                case 'merchant_hotel_admin':
+                    $merchant_data = MerchantHotel::where('id', $result->merchant_data_id)->first();
+                    break;
+                case 'tour_operator_admin':
+                    $merchant_data = MerchantTourProvider::where('id', $result->merchant_data_id)->first();
+                    break;
+                default:
+                    $merchant_data = null;
+                    break;
+            }
+        
+            $result->update([
+                'merchant_id' => $merchant_data->merchant_id ?? null
+            ]);
+        }
+
+        echo "Success";
+    }
+
+    public function operatorAdmins() {
+        $admins = Admin::whereHas('transport')->with('transport')->get();
+        foreach ($admins as $key => $admin) {
+            $admin->update([
+                'transport_id' => $admin->transport->id
+            ]);
+        }
+
+        echo "Success";
 
     }
 

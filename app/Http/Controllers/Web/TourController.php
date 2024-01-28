@@ -57,7 +57,7 @@ class TourController extends Controller
         $admin =  Auth::guard('admin')->user();
 
         if(in_array($admin->role, ['tour_operator_admin', 'tour_operator_employee'])) {
-            $tour_providers = MerchantTourProvider::where('id', $admin->merchant_data_id)->get();
+            $tour_providers = MerchantTourProvider::where('id', $admin->merchant->tour_provider_info->id)->get();
         } else {
             $tour_providers = MerchantTourProvider::get();
         }

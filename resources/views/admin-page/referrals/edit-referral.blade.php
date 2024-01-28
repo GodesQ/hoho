@@ -79,7 +79,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="merchant_id" class="form-label">Merchant</label>
-                            <select name="merchant_id" id="merchant_id" class="select2" {{ auth('admin')->user()->is_merchant ? 'disabled' : null }}>
+                            <select name="merchant_id" id="merchant_id" class="select2" {{ in_array(auth('admin')->user()->role, merchant_roles()) ? 'disabled' : null }}>
                                 <option value="">--- SELECT MERCHANT ---</option>
                                 @foreach ($merchants as $merchant)
                                     <option {{ $merchant->id == $referral->merchant_id ? 'selected' : null }} value="{{ $merchant->id }}">{{ $merchant->name }} ({{ $merchant->type }})</option>

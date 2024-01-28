@@ -28,6 +28,8 @@ class Admin extends Authenticatable
         'is_merchant',
         'is_approved',
         'merchant_data_id',
+        'merchant_id',
+        'transport_id',
         'merchant_email_approved_at'
     ];
     protected $hidden = ['password'];
@@ -45,27 +47,11 @@ class Admin extends Authenticatable
         })->select('id', 'capacity', 'operator_id', 'tour_assigned_id', 'tour_assignment_ids', 'latitude', 'longitude', 'name', 'current_location', 'next_location', 'previous_location')->with('assigned_tour');
     }
 
-    public function tour_provider()
-    {   
-        return $this->hasOne(MerchantTourProvider::class, 'id', 'merchant_data_id')->with('merchant');
+    public function bus_transport() {
+        return $this->belongsTo(Transport::class, 'transport_id')->select('id', 'capacity', 'operator_id', 'tour_assigned_id', 'tour_assignment_ids', 'latitude', 'longitude', 'name', 'current_location', 'next_location', 'previous_location')->with('assigned_tour');
     }
 
-    public function merchant_store()
-    {   
-        return $this->hasOne(MerchantStore::class, 'id', 'merchant_data_id')->with('merchant');
-    }
-
-    public function merchant_hotel()
-    {   
-        return $this->hasOne(MerchantHotel::class, 'id', 'merchant_data_id')->with('merchant');
-    }
-    public function merchant_restaurant()
-    {   
-        return $this->hasOne(MerchantRestaurant::class, 'id', 'merchant_data_id')->with('merchant');
-    }
-
-    public function merchant_data()
-    {
-        return $this->merchant_hotel ?? $this->merchant_restaurant ?? $this->merchant_store ?? null;
+    public function merchant() {
+        return $this->belongsTo(Merchant::class, 'merchant_id');
     }
 }

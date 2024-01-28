@@ -49,7 +49,7 @@ class TourService
     public function RetrieveTourProviderToursList(Request $request) {
         $admin = Auth::guard('admin')->user();
 
-        $data = Tour::where('tour_provider_id', $admin->merchant_data_id)->latest('id')->get();
+        $data = Tour::where('tour_provider_id', $admin->merchant->tour_provider_info->id)->latest('id')->get();
         return DataTables::of($data)
         ->addIndexColumn()
         ->addColumn('actions', function ($row) {

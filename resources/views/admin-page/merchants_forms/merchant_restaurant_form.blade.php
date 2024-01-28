@@ -7,7 +7,7 @@
         <div class="card">
             <div class="card-body">
                 <form enctype="multipart/form-data"
-                    action="{{ $admin->merchant_restaurant ? route('admin.merchants.restaurants.update', optional($admin->merchant_restaurant)->id) : route('admin.merchants.restaurants.store') }}"
+                    action="{{ $admin->merchant ? route('admin.merchants.restaurants.update', optional($admin->merchant->restaurant_info)->id) : route('admin.merchants.restaurants.store') }}"
                     method="post">
                     @csrf
                     <div class="row">
@@ -26,7 +26,7 @@
                                                 <label for="name" class="form-label">Merchant Name <span
                                                         class="text-danger">*</span></label>
                                                 <input type="text" class="form-control" name="name" id="name"
-                                                    value="{{ $admin->merchant_restaurant->merchant->name ?? '' }}"
+                                                    value="{{ $admin->merchant->name ?? '' }}"
                                                     required>
                                             </div>
                                         </div>
@@ -34,7 +34,7 @@
                                             <div class="mb-3">
                                                 <label for="code" class="form-label">Merchant Code</label>
                                                 <input type="text" class="form-control" name="code" id="code"
-                                                    value="{{ $admin->merchant_restaurant->merchant->code ?? '' }}">
+                                                    value="{{ $admin->merchant->code ?? '' }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -59,7 +59,7 @@
                                                     Business</label>
                                                 <input type="text" class="form-control" name="nature_of_business"
                                                     id="nature_of_business"
-                                                    value="{{ $admin->merchant_restaurant->merchant->nature_of_business ?? '' }}">
+                                                    value="{{ $admin->merchant->nature_of_business ?? '' }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -69,7 +69,7 @@
                                                     class="select2 form-select">
                                                     @foreach ($organizations as $organization)
                                                         <option value="{{ $organization->id }}"
-                                                            {{ ($admin->merchant_restaurant->merchant->organization_id ?? null) == $organization->id ? 'selected' : null }}>
+                                                            {{ ($admin->merchant->organization_id ?? null) == $organization->id ? 'selected' : null }}>
                                                             {{ $organization->name }}</option>
                                                     @endforeach
                                                 </select>
@@ -79,7 +79,7 @@
                                             <div class="mb-3">
                                                 <label for="address" class="form-label">Address</label>
                                                 <input type="text" class="form-control" name="address" id="address"
-                                                    value="{{ $admin->merchant_restaurant->merchant->address ?? null }}">
+                                                    value="{{ $admin->merchant->address ?? null }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -89,7 +89,7 @@
                                                         <label action="latitude" class="form-label">Latitude</label>
                                                         <input type="text" class="form-control" name="latitude"
                                                             id="latitude"
-                                                            value="{{ $admin->merchant_restaurant->merchant->latitude ?? null }}">
+                                                            value="{{ $admin->merchant->latitude ?? null }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6">
@@ -97,7 +97,7 @@
                                                         <label action="longitude" class="form-label">longitude</label>
                                                         <input type="text" class="form-control" name="longitude"
                                                             id="longitude"
-                                                            value="{{ $admin->merchant_restaurant->merchant->longitude ?? null }}">
+                                                            value="{{ $admin->merchant->longitude ?? null }}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -105,7 +105,7 @@
                                         <div class="col-lg-12">
                                             <div class="mb-3">
                                                 <label for="description" class="form-label">Description</label>
-                                                <textarea name="description" id="description" cols="30" rows="5" class="form-control">{{ $admin->merchant_restaurant->merchant->description ?? null }}</textarea>
+                                                <textarea name="description" id="description" cols="30" rows="5" class="form-control">{{ $admin->merchant->description ?? null }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -130,7 +130,7 @@
                                                     Options</label>
                                                 <input type="text" class="form-control" name="payment_options"
                                                     id="payment_options"
-                                                    value="{{ $admin->merchant_restaurant->payment_options ?? null }}">
+                                                    value="{{ $admin->merchant->restaurant_info->payment_options ?? null }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -138,7 +138,7 @@
                                                 <label for="contact_number" class="form-label">Contact Number</label>
                                                 <input type="text" name="contact_number" id="contact_number"
                                                     class="form-control"
-                                                    value="{{ $admin->merchant_restaurant->contact_number ?? null }}">
+                                                    value="{{ $admin->merchant->restaurant_info->contact_number ?? null }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -146,19 +146,19 @@
                                                 <label for="contact_email" class="form-label">Contact Email</label>
                                                 <input type="text" name="contact_email" id="contact_email"
                                                     class="form-control"
-                                                    value="{{ $admin->merchant_restaurant->contact_email ?? null }}">
+                                                    value="{{ $admin->merchant->restaurant_info->contact_email ?? null }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="business_hours" class="form-label">Business Hours</label>
-                                                <textarea name="business_hours" id="business_hours" cols="30" rows="5" class="form-control">{{ $admin->merchant_restaurant->business_hours ?? null }}</textarea>
+                                                <textarea name="business_hours" id="business_hours" cols="30" rows="5" class="form-control">{{ $admin->merchant->restaurant_info->business_hours ?? null }}</textarea>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="tags" class="form-label">Tags</label>
-                                                <textarea name="tags" id="tags" cols="30" rows="5" class="form-control">{{ $admin->merchant_restaurant->tags ?? null }}</textarea>
+                                                <textarea name="tags" id="tags" cols="30" rows="5" class="form-control">{{ $admin->merchant->restaurant_info->tags ?? null }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -166,19 +166,19 @@
                                     <h4>Images</h4>
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            <?php $restaurant_images = ($admin->merchant_restaurant->images ?? false) ? json_decode($admin->merchant_restaurant->images) : []; ?>
+                                            <?php $restaurant_images = ($admin->merchant->restaurant_info->images ?? false) ? json_decode($admin->merchant->restaurant_info->images) : []; ?>
                                             <div class="row">
                                                 <div class="col-lg-4">
                                                     <div class="mb-3">
-                                                        @if ($admin->merchant_restaurant && count($restaurant_images) > 0 && isset($restaurant_images[0]))
-                                                            <img src="{{ URL::asset('assets/img/restaurants/' . $admin->merchant_restaurant->merchant->id . '/' . $restaurant_images[0]) }}"
+                                                        @if (($admin->merchant->restaurant_info ?? false) && count($restaurant_images) > 0 && isset($restaurant_images[0]))
+                                                            <img src="{{ URL::asset('assets/img/restaurants/' . $admin->merchant->id . '/' . $restaurant_images[0]) }}"
                                                                 id="previewImage1" alt="Default Image" width="100%"
                                                                 height="200px"
                                                                 style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                             <button type="button"
                                                                 style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                                 class="btn btn-primary"
-                                                                onclick="removeImageBtn({{ $admin->merchant_restaurant->id }}, '{{ $restaurant_images[0] }}')">Remove
+                                                                onclick="removeImageBtn({{ $admin->merchant->restaurant_info->id }}, '{{ $restaurant_images[0] }}')">Remove
                                                                 <i class="bx bx-trash"></i></button>
                                                         @else
                                                             <input type="file" class="form-control mb-2 image-input"
@@ -193,15 +193,15 @@
                                                 </div>
                                                 <div class="col-lg-4">
                                                     <div class="mb-3">
-                                                        @if ($admin->merchant_restaurant && count($restaurant_images) > 0 && isset($restaurant_images[1]))
-                                                            <img src="{{ URL::asset('assets/img/restaurants/' . $admin->merchant_restaurant->merchant->id . '/' . $restaurant_images[1]) }}"
+                                                        @if (($admin->merchant->restaurant_info ?? false) && count($restaurant_images) > 0 && isset($restaurant_images[1]))
+                                                            <img src="{{ URL::asset('assets/img/restaurants/' . $admin->merchant->id . '/' . $restaurant_images[1]) }}"
                                                                 id="previewImage2" alt="Default Image" width="100%"
                                                                 height="200px"
                                                                 style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                             <button type="button"
                                                                 style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                                 class="btn btn-primary"
-                                                                onclick="removeImageBtn({{ $admin->merchant_restaurant->id }}, '{{ $restaurant_images[1] }}')">Remove
+                                                                onclick="removeImageBtn({{ $admin->merchant->restaurant_info->id }}, '{{ $restaurant_images[1] }}')">Remove
                                                                 <i class="bx bx-trash"></i></button>
                                                         @else
                                                             <input type="file" class="form-control mb-2 image-input"
@@ -216,15 +216,15 @@
                                                 </div>
                                                 <div class="col-lg-4">
                                                     <div class="mb-3">
-                                                        @if ($admin->merchant_restaurant && count($restaurant_images) > 0 && isset($restaurant_images[2]))
-                                                            <img src="{{ URL::asset('assets/img/restaurants/' . $admin->merchant_restaurant->merchant->id . '/' . $restaurant_images[2]) }}"
+                                                        @if (($admin->merchant->restaurant_info ?? false) && count($restaurant_images) > 0 && isset($restaurant_images[2]))
+                                                            <img src="{{ URL::asset('assets/img/restaurants/' . $admin->merchant->id . '/' . $restaurant_images[2]) }}"
                                                                 id="previewImage3" alt="Default Image" width="100%"
                                                                 height="200px"
                                                                 style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                             <button type="button"
                                                                 style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                                 class="btn btn-primary"
-                                                                onclick="removeImageBtn({{ $admin->merchant_restaurant->id }}, '{{ $restaurant_images[2] }}')">Remove
+                                                                onclick="removeImageBtn({{ $admin->merchant->restaurant_info->id }}, '{{ $restaurant_images[2] }}')">Remove
                                                                 <i class="bx bx-trash"></i></button>
                                                         @else
                                                             <input type="file" class="form-control mb-2 image-input"
@@ -247,8 +247,8 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h6>Preview of Featured Image</h6>
-                                    @if ($admin->merchant_restaurant && $admin->merchant_restaurant->merchant->featured_image)
-                                        <img src="{{ URL::asset('/assets/img/restaurants/' . $admin->merchant_restaurant->merchant->id . '/' . $admin->merchant_restaurant->merchant->featured_image) }}"
+                                    @if (($admin->merchant->restaurant_info ?? false) && $admin->merchant->featured_image)
+                                        <img src="{{ URL::asset('/assets/img/restaurants/' . $admin->merchant->id . '/' . $admin->merchant->featured_image) }}"
                                             alt="" style="border-radius: 10px;" width="100%" id="previewImage">
                                     @else
                                         <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt=""

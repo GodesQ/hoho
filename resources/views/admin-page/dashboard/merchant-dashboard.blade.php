@@ -9,11 +9,11 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="card">
-                    <img class="card-img-top" style="max-height: 400px; object-fit: cover;" src="{{ URL::asset('assets/img/' . $type . 's/' . $merchantInfo->merchant_id . '/' . ($merchantInfo->merchant->featured_image ?? '')) }}">
+                    <img class="card-img-top" style="max-height: 400px; object-fit: cover;" src="{{ URL::asset('assets/img/' . $type . 's/' . ($merchantInfo->id ?? null) . '/' . ($merchantInfo->featured_image ?? '')) }}">
                     <div class="card-body">
-                        <h5 class="card-title">{{ $merchantInfo->merchant->name }}</h5>
+                        <h5 class="card-title">{{ ($merchantInfo->name ?? null) }}</h5>
                         <p class="card-text">
-                            {{ substr($merchantInfo->merchant->description, 0, 250) }}...
+                            {{ substr(($merchantInfo->description ?? ''), 0, 250) }}...
                         </p>
                         <a href="{{ route('merchant_form', $type) }}" class="btn btn-outline-primary">Go to Merchant Profile</a>
                     </div>

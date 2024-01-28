@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Merchant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -25,33 +26,14 @@ class DashboardController extends Controller
     public function dashboard(Request $request) {
         $user = Auth::guard('admin')->user();
     
-        if ($user->is_merchant) {
-            $merchantInfo = null;
+        if (in_array($user->role, merchant_roles())) {
             $type = null;
             
             $recentTourReservations = TourReservation::with('user', 'tour')->where('created_by', $user->id)->with('tour', 'user')->latest()->limit(5)->get();
 
-            switch ($user->role) {
-                case 'merchant_hotel_admin':
-                    $merchantInfo = MerchantHotel::where('id', $user->merchant_data_id)->with('merchant')->first();
-                    $type = 'hotel';
-                    break;
-    
-                case 'merchant_store_admin':
-                    $merchantInfo = MerchantStore::where('id', $user->merchant_data_id)->with('merchant')->first();
-                    $type = 'store';
-                    break;
-    
-                case 'merchant_restaurant_admin':
-                    $merchantInfo = MerchantRestaurant::where('id', $user->merchant_data_id)->with('merchant')->first();
-                    $type = 'restaurant';
-                    break;
-    
-                case 'tour_operator_admin':
-                    $merchantInfo = MerchantTourProvider::where('id', $user->merchant_data_id)->with('merchant')->first();
-                    $type = 'tour_provider';
-                    break;
-            }
+            $merchantInfo = Merchant::where('id', $user->merchant_id)->first();
+
+            $type = config('roles.' . $user->role, null);
     
             return view('admin-page.dashboard.merchant-dashboard', compact('merchantInfo', 'type', 'recentTourReservations'));
         }

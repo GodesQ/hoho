@@ -21,21 +21,21 @@ class MerchantController extends Controller
         switch ($request->type) {
             case 'hotel':
                 if($admin->role === 'merchant_hotel_admin') {
-                    $admin = Admin::where('id', $admin->id)->with('merchant_hotel')->first();
+                    $admin = Admin::where('id', $admin->id)->with('merchant', 'merchant.hotel_info')->first();
                     return view('admin-page.merchants_forms.merchant_hotel_form', compact('organizations', 'admin'));
                 }
                 abort(404);
 
             case 'store':
                 if($admin->role === 'merchant_store_admin') {
-                    $admin = Admin::where('id', $admin->id)->with('merchant_store')->first();
+                    $admin = Admin::where('id', $admin->id)->with('merchant', 'merchant.store_info')->first();
                     return view('admin-page.merchants_forms.merchant_store_form', compact('organizations', 'admin'));
                 }
                 abort(404);
 
             case 'restaurant':
                 if($admin->role === 'merchant_restaurant_admin') {
-                    $admin = Admin::where('id', $admin->id)->with('merchant_restaurant')->first();
+                    $admin = Admin::where('id', $admin->id)->with('merchant', 'merchant.restaurant_info')->first();
                     // dd($admin);
 
                     return view('admin-page.merchants_forms.merchant_restaurant_form', compact('organizations', 'admin'));
@@ -44,7 +44,7 @@ class MerchantController extends Controller
 
             case 'tour_provider':
                 if($admin->role === 'tour_operator_admin') {
-                    $admin = Admin::where('id', $admin->id)->with('tour_provider')->first();
+                    $admin = Admin::where('id', $admin->id)->with('merchant', 'merchant.tour_provider_info')->first();
                     return view('admin-page.merchants_forms.merchant_tour_provider_form', compact('organizations', 'admin'));
                 }
                 abort(404);

@@ -10,7 +10,7 @@
                     <div class="alert alert-danger">{{ Session::get('fail') }}</div>
                 @endif
                 <form enctype="multipart/form-data"
-                    action="{{ $admin->merchant_hotel ? route('admin.merchants.hotels.update', optional($admin->merchant_hotel)->id) : route('admin.merchants.hotels.store') }}"
+                    action="{{ $admin->merchant ? route('admin.merchants.hotels.update', $admin->merchant->hotel_info->id ?? null) : route('admin.merchants.hotels.store') }}"
                     method="post">
                     @csrf
                     <div class="row">
@@ -18,7 +18,7 @@
                             <div class="row">
                                 <div class="col-lg-12">
                                     <hr>
-                                    <h4>Merchant Information</h4>
+                                        <h4>Merchant Information</h4>
                                     <hr>
                                 </div>
                                 <div class="col-lg-12">
@@ -28,14 +28,14 @@
                                                 <label for="name" class="form-label">Merchant Name <span
                                                         class="text-danger">*</span></label>
                                                 <input type="text" class="form-control" name="name" id="name"
-                                                    value="{{ $admin->merchant_hotel->merchant->name ?? null }}" required>
+                                                    value="{{ $admin->merchant->name ?? null }}" required>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="code" class="form-label">Merchant Code</label>
                                                 <input type="text" class="form-control" name="code" id="code"
-                                                    value="{{ $admin->merchant_hotel->merchant->code ?? null }}">
+                                                    value="{{ $admin->merchant->code ?? null }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -59,7 +59,7 @@
                                                 <label for="nature_of_business" class="form-label">Nature of
                                                     Business</label>
                                                 <input type="text" class="form-control" name="nature_of_business"
-                                                    id="nature_of_business" value="{{ $admin->merchant_hotel->merchant->nature_of_business ?? null }}">
+                                                    id="nature_of_business" value="{{ $admin->merchant->nature_of_business ?? null }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -77,7 +77,7 @@
                                         <div class="col-lg-12">
                                             <div class="mb-3">
                                                 <label for="description" class="form-label">Description</label>
-                                                <textarea name="description" id="description" cols="30" rows="5" class="form-control">{{ $admin->merchant_hotel->merchant->description ?? null }}</textarea>
+                                                <textarea name="description" id="description" cols="30" rows="5" class="form-control">{{ $admin->merchant->description ?? null }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -102,19 +102,19 @@
                                             <div class="mb-3">
                                                 <label for="payment_options" class="form-label">Payment Options</label>
                                                 <input type="text" class="form-control" name="payment_options"
-                                                    id="payment_options" value="{{ $admin->merchant_hotel->payment_options ?? null }}">
+                                                    id="payment_options" value="{{ $admin->merchant->hotel_info->payment_options ?? null }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="business_hours" class="form-label">Business Hours</label>
-                                                <textarea name="business_hours" id="business_hours" cols="30" rows="5" class="form-control">{{ $admin->merchant_hotel->business_hours ?? null }}</textarea>
+                                                <textarea name="business_hours" id="business_hours" cols="30" rows="5" class="form-control">{{ $admin->merchant->hotel_info->business_hours ?? null }}</textarea>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="tags" class="form-label">Tags</label>
-                                                <textarea name="tags" id="tags" cols="30" rows="5" class="form-control">{{ $admin->merchant_hotel->tags ?? null }}</textarea>
+                                                <textarea name="tags" id="tags" cols="30" rows="5" class="form-control">{{ $admin->merchant->hotel_info->tags ?? null }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -124,19 +124,19 @@
                                     <h4>Images</h4>
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            <?php $hotel_images = ($admin->merchant_hotel->images ?? false) ? json_decode($admin->merchant_hotel->images) : []; ?>
+                                            <?php $hotel_images = ($admin->merchant->hotel_info->images ?? false) ? json_decode($admin->merchant->hotel_info->images) : []; ?>
                                             <div class="row">
                                                 <div class="col-lg-4">
                                                     <div class="mb-3">
-                                                        @if ($admin->merchant_hotel && count($hotel_images) > 0 && isset($hotel_images[0]))
-                                                            <img src="{{ URL::asset('assets/img/hotels/' . $admin->merchant_hotel->merchant->id . '/' . $hotel_images[0]) }}"
+                                                        @if (($admin->merchant->hotel_info ?? false) && count($hotel_images) > 0 && isset($hotel_images[0]))
+                                                            <img src="{{ URL::asset('assets/img/hotels/' . $admin->merchant->id . '/' . $hotel_images[0]) }}"
                                                                 id="previewImage1" alt="Default Image" width="100%"
                                                                 height="200px"
                                                                 style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                             <button type="button"
                                                                 style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                                 class="btn btn-primary"
-                                                                onclick="removeImageBtn({{ $admin->merchant_hotel->id }}, '{{ $hotel_images[0] }}')">Remove
+                                                                onclick="removeImageBtn({{ $admin->merchant->hotel_info->id }}, '{{ $hotel_images[0] }}')">Remove
                                                                 <i class="bx bx-trash"></i></button>
                                                         @else
                                                             <input type="file" class="form-control mb-2 image-input"
@@ -151,15 +151,15 @@
                                                 </div>
                                                 <div class="col-lg-4">
                                                     <div class="mb-3">
-                                                        @if ($admin->merchant_hotel && count($hotel_images) > 0 && isset($hotel_images[1]))
-                                                            <img src="{{ URL::asset('assets/img/hotels/' . $admin->merchant_hotel->merchant->id . '/' . $hotel_images[1]) }}"
+                                                        @if (($admin->merchant->hotel_info ?? false) && count($hotel_images) > 0 && isset($hotel_images[1]))
+                                                            <img src="{{ URL::asset('assets/img/hotels/' . $admin->merchant->id . '/' . $hotel_images[1]) }}"
                                                                 id="previewImage2" alt="Default Image" width="100%"
                                                                 height="200px"
                                                                 style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                             <button type="button"
                                                                 style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                                 class="btn btn-primary"
-                                                                onclick="removeImageBtn({{ $admin->merchant_hotel->id }}, '{{ $hotel_images[1] }}')">Remove
+                                                                onclick="removeImageBtn({{ $admin->merchant->hotel_info->id }}, '{{ $hotel_images[1] }}')">Remove
                                                                 <i class="bx bx-trash"></i></button>
                                                         @else
                                                             <input type="file" class="form-control mb-2 image-input"
@@ -174,15 +174,15 @@
                                                 </div>
                                                 <div class="col-lg-4">
                                                     <div class="mb-3">
-                                                        @if ($admin->merchant_hotel && count($hotel_images) > 0 && isset($hotel_images[2]))
-                                                            <img src="{{ URL::asset('assets/img/hotels/' . $admin->merchant_hotel->merchant->id . '/' . $hotel_images[2]) }}"
+                                                        @if (($admin->merchant->hotel_info ?? false) && count($hotel_images) > 0 && isset($hotel_images[2]))
+                                                            <img src="{{ URL::asset('assets/img/hotels/' . $admin->merchant->id . '/' . $hotel_images[2]) }}"
                                                                 id="previewImage3" alt="Default Image" width="100%"
                                                                 height="200px"
                                                                 style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                             <button type="button"
                                                                 style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                                 class="btn btn-primary"
-                                                                onclick="removeImageBtn({{ $admin->merchant_hotel->id }}, '{{ $hotel_images[2] }}')">Remove
+                                                                onclick="removeImageBtn({{ $admin->merchant->hotel_info->id }}, '{{ $hotel_images[2] }}')">Remove
                                                                 <i class="bx bx-trash"></i></button>
                                                         @else
                                                             <input type="file" class="form-control mb-2 image-input"
@@ -205,8 +205,8 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h6>Preview of Featured Image</h6>
-                                    @if($admin->merchant_hotel && $admin->merchant_hotel->merchant->featured_image)
-                                        <img src="{{ URL::asset('/assets/img/hotels/' . $admin->merchant_hotel->merchant->id . '/' . $admin->merchant_hotel->merchant->featured_image) }}"
+                                    @if($admin->merchant && $admin->merchant->featured_image)
+                                        <img src="{{ URL::asset('/assets/img/hotels/' . $admin->merchant->id . '/' . $admin->merchant->featured_image) }}"
                                          alt="" style="border-radius: 10px;" width="100%" id="previewImage">
                                     @else
                                         <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt="" id="previewImage" style="border-radius: 10px;" width="100%">

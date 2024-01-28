@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Auth;
 
 use App\Http\Controllers\Controller;
 
+use App\Models\Merchant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -42,10 +43,9 @@ class AdminAuthController extends Controller
             }
 
             // Check if this login account is merchant
-            if ($admin->is_merchant) $this->checkMerchantRole($admin);
+            if (in_array($admin->role, merchant_roles())) $this->checkMerchantRole($admin);
 
             return redirect()->route('admin.dashboard')->withSuccess('Login Successfully');
-
         } 
         
         // Return back to login if failed
@@ -90,26 +90,21 @@ class AdminAuthController extends Controller
     private function checkMerchantRole($admin)
     {
 
+        $merchant_data = Merchant::where('id', $admin->merchant_id)->exists();
+
         switch ($admin->role) {
             case 'merchant_store_admin':
-                $merchant_data = MerchantStore::where('id', $admin->merchant_data_id)->exists();
                 $type = 'store';
                 break;
             case 'merchant_restaurant_admin':
-                $merchant_data = MerchantRestaurant::where('id', $admin->merchant_data_id)->exists();
                 $type = 'restaurant';
                 break;
-
             case 'merchant_hotel_admin':
-                $merchant_data = MerchantHotel::where('id', $admin->merchant_data_id)->exists();
                 $type = 'hotel';
                 break;
-
             case 'tour_operator_admin':
-                $merchant_data = MerchantTourProvider::where('id', $admin->merchant_data_id)->exists();
                 $type = 'tour_provider';
                 break;
-
             default:
                 $merchant_data = false;
                 $type = '0';

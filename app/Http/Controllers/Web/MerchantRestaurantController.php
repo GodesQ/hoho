@@ -104,9 +104,9 @@ class MerchantRestaurantController extends Controller
             if ($previousPath === '/merchant_form/restaurant') {
                 $admin = Auth::guard('admin')->user();
 
-                if($admin->is_merchant) {
+                if(in_array($admin->role, merchant_roles())) {
                     $admin->update([
-                        'merchant_data_id' =>  $result['merchant_restaurant']->id
+                        'merchant_id' => $result['merchant']->id,
                     ]);
                 }
 

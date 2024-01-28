@@ -115,6 +115,8 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('admins/edit/{id}', [AdminController::class, 'edit'])->name('admins.edit')->can('edit_admin');
     Route::post('admins/update/{id}', [AdminController::class, 'update'])->name('admins.update')->can('update_admin');
     Route::delete('admins/destroy', [AdminController::class, 'destroy'])->name('admins.destroy')->can('delete_admin');
+    Route::get('admins/merchantAdmins', [AdminController::class, 'merchantAdmins']);
+    Route::get('admins/operatorAdmins', [AdminController::class, 'operatorAdmins']);
     
     Route::get('users', [UserController::class, 'list'])->name('users.list')->can('view_users_list');
     Route::get('users/lookup', [UserController::class, 'lookup'])->name('users.lookup');

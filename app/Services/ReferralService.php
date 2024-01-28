@@ -27,11 +27,10 @@ class ReferralService
 
     public function RetrieveMerchantReferralsList(Request $request)
     {
-        $merchant = Auth::guard('admin')->user();
-        $merchant_data = $merchant->merchant_data();
+        $admin = Auth::guard('admin')->user();
         // dd($merchant_data->merchant_id);
 
-        $data = Referral::where('merchant_id', $merchant_data->merchant_id ?? 0)->latest();
+        $data = Referral::where('merchant_id', $admin->merchant_id ?? 0)->latest();
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('actions', function ($row) {
