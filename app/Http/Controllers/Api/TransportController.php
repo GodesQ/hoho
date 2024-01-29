@@ -11,28 +11,34 @@ use App\Events\BusLocationEvent;
 
 class TransportController extends Controller
 {
-    public function getTransports(Request $request) {
+    public function getTransports(Request $request)
+    {
         $transports = Transport::get();
         return response($transports);
     }
 
-    public function getTransport(Request $request) {
-        $transport = Transport::select('id', 'route', 'capacity', 'tour_assigned_id', 'tour_assignment_ids', 'latitude', 'longitude', 'name', 'current_location', 'next_location', 'previous_location')->where('id', $request->id)->with('assigned_tour')->firstOr(function () {
-            return response([
-                'status' => FALSE,
-                'transport' => null
-            ], 404);
-        });
+    public function getTransport(Request $request)
+    {
+        $transport = Transport::where('id', $request->id)
+                        ->with('assigned_tour')
+                        ->firstOr(function () {
+                            return response([
+                                'status' => FALSE,
+                                'transport' => null
+                            ], 404);
+                        });
+        
         return response([
             'status' => TRUE,
             'transport' => $transport
         ]);
     }
 
-    public function updateLocation(Request $request) {
+    public function updateLocation(Request $request)
+    {
         $transport = Transport::where('id', $request->id)->first();
 
-        $update = $transport->update([
+        $transport->update([
             'latitude' => $request->latitude,
             'longitude' => $request->longitude
         ]);
@@ -53,10 +59,11 @@ class TransportController extends Controller
         ]);
     }
 
-    public function updateNextLocation(Request $request) {
+    public function updateNextLocation(Request $request)
+    {
         $transport = Transport::where('id', $request->id)->first();
 
-        if(!$transport) {
+        if (!$transport) {
             return response([
                 'status' => FALSE,
                 'message' => 'Transport Not Foud'
@@ -73,7 +80,7 @@ class TransportController extends Controller
             'next_location' => json_encode($next_location)
         ]);
 
-        if($update_next_location) {
+        if ($update_next_location) {
             return response([
                 'status' => TRUE,
                 'message' => 'Next location updated successfully'
@@ -81,10 +88,11 @@ class TransportController extends Controller
         }
     }
 
-    public function updateCurrentLocation(Request $request) {
+    public function updateCurrentLocation(Request $request)
+    {
         $transport = Transport::where('id', $request->id)->first();
 
-        if(!$transport) {
+        if (!$transport) {
             return response([
                 'status' => FALSE,
                 'message' => 'Transport Not Foud'
@@ -101,7 +109,7 @@ class TransportController extends Controller
             'current_location' => json_encode($current_location)
         ]);
 
-        if($update_current_location) {
+        if ($update_current_location) {
             return response([
                 'status' => TRUE,
                 'message' => 'Current location updated successfully'
@@ -109,7 +117,8 @@ class TransportController extends Controller
         }
     }
 
-    public function updateTracking(Request $request) {
+    public function updateTracking(Request $request)
+    {
 
     }
 }

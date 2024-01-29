@@ -32,12 +32,14 @@ return new class extends Migration
             $table->boolean('is_approved')->default(0);
             $table->date('merchant_email_approved_at')->nullable();
             $table->integer('merchant_data_id')->nullable();
+            $table->unsignedInteger('merchant_id')->nullable()->index('admins_merchant_id_foreign');
+            $table->foreign(['merchant_id'])->references(['id'])->on('merchant')->onUpdate('CASCADE')->onDelete('SET NULL');
             $table->timestamps();
             $table->primary('id');
         });
 
         Schema::create('announcements', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('type');
             $table->string('name');
             $table->string('announcement_image')->nullable();

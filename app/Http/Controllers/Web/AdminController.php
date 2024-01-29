@@ -111,6 +111,8 @@ class AdminController extends Controller
     }
 
     public function merchantAdmins() {
+        
+        // $auth = Auth::user();
         $results = Admin::whereNotNull('merchant_data_id')->get();
         foreach ($results as $key => $result) {
 
