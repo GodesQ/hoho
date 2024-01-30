@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Organization\StoreRequest;
+use App\Http\Requests\Organization\UpdateRequest;
 use App\Models\Organization;
 use App\Services\OrganizationService;
 use Illuminate\Http\Request;
@@ -33,7 +35,7 @@ class OrganizationController extends Controller
         return view('admin-page.organizations.create-organization');
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
         $organization = $this->organizationService->createOrganization($request);
         if ($organization)
@@ -46,7 +48,7 @@ class OrganizationController extends Controller
         return view('admin-page.organizations.edit-organization', compact('organization'));
     }
 
-    public function update(Request $request)
+    public function update(UpdateRequest $request)
     {
         $organization = $this->organizationService->updateOrganization($request);
         if ($organization)

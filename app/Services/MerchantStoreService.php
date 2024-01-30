@@ -21,7 +21,7 @@ class MerchantStoreService {
      * @param Request $request
      * @return array
      */
-    public function CreateMerchantStore(Request $request) {
+    public function CreateMerchantStore($request) {
         return DB::transaction(function () use ($request) {
             $data = $request->except('_token', 'featured_image', 'main_featured_image', 'images');
 

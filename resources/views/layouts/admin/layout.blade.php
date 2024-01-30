@@ -49,6 +49,8 @@
     <link rel="stylesheet" href="{{ URL::asset('assets/css/wizard.css') }}">
     <link rel="stylesheet" href="{{ URL::asset('assets/css/tour-reservation-step-form.css') }}">
 
+    <link rel="stylesheet" href="{{ URL::asset('assets/css/palette-callout.css') }}">
+
     <!-- Page CSS -->
 
     <!-- Helpers -->

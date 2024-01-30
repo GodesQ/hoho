@@ -25,7 +25,11 @@ use App\Http\Requests\AdminAuth\RegisterRequest;
 class AdminAuthController extends Controller
 {
     public function login(Request $request)
-    {
+    {   
+        if(Auth::guard('admin')->check()) {
+            return redirect()->route('admin.dashboard');
+        }
+
         return view('admin-page.auth.login');
     }
 

@@ -3,19 +3,16 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MerchantRestaurant\StoreRequest;
 use App\Services\MerchantRestaurantService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-
 use App\Models\MerchantRestaurant;
-use App\Models\Merchant;
 use App\Models\Organization;
 use App\Models\Interest;
 
+use Illuminate\Support\Facades\URL;
 use Yajra\DataTables\DataTables;
-use DB;
 
 class MerchantRestaurantController extends Controller
 {
@@ -42,43 +39,7 @@ class MerchantRestaurantController extends Controller
                 });
             })->with('merchant');
 
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('featured_image', function($row) {
-                    if($row->merchant) {
-                        if($row->merchant->featured_image) {
-                            $path = '../../../assets/img/restaurants/' . $row->merchant->id . '/' . $row->merchant->featured_image;
-                            return '<img src="' .$path. '" width="50" height="50" style="object-fit: cover;" />';
-                        } else {
-                            $path = '../../../assets/img/' . 'default-image.jpg';
-                            return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
-                        }
-                    } else {
-                        $path = '../../../assets/img/' . 'default-image.jpg';
-                        return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
-                    }
-                })
-                ->addColumn('name', function ($row) {
-                    return optional($row->merchant)->name;
-                })
-                ->addColumn('nature_of_business', function ($row) {
-                    return optional($row->merchant)->nature_of_business;
-                })
-                ->addColumn('is_featured', function($row) {
-                    if ($row->merchant->is_featured) {
-                        return '<span class="badge bg-label-success me-1">Yes</span>';
-                    } else {
-                        return '<span class="badge bg-label-secondary me-1">No</span>';
-                    }
-                })
-                ->addColumn('actions', function ($row) {
-                    return '<div class="dropdown">
-                                    <a href="/admin/merchants/restaurants/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="javascript:void(0);" id=" ' . $row->id . ' " class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
-                                </div>';
-                })
-                ->rawColumns(['actions', 'featured_image', 'is_featured'])
-                ->make(true);
+            return $this->merchantRestaurantService->_generateDataTable($data);
         }
 
         $organizations = Organization::get();
@@ -93,12 +54,12 @@ class MerchantRestaurantController extends Controller
         return view('admin-page.merchants.restaurants.create-restaurant', compact('organizations', 'interests'));
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
         $result = $this->merchantRestaurantService->CreateMerchantRestaurant($request);
 
         if ($result['status']) {
-            $previousUrl = \URL::previous();
+            $previousUrl = URL::previous();
             $previousPath = parse_url($previousUrl, PHP_URL_PATH);
 
             if ($previousPath === '/merchant_form/restaurant') {

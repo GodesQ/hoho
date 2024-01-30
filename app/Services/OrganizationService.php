@@ -22,8 +22,6 @@ class OrganizationService
 
         if ($request->is('api/*')) {
             $data = $data->where('is_active', 1)->get();
-        } else {
-            $data = $data->get();
         }
 
         return $data;
@@ -35,7 +33,7 @@ class OrganizationService
         return $organization;
     }
 
-    public function createOrganization(Request $request)
+    public function createOrganization($request)
     {
         try {
             $data = $request->except('_token', 'featured_image', 'icon', 'images');
@@ -126,8 +124,8 @@ class OrganizationService
             ->addIndexColumn()
             ->addColumn('logo', function ($row) {
                 if($row->icon) {
-                        $path = '../../../assets/img/organizations/' . $row->id . '/' . $row->icon;
-                        return '<img src="' .$path. '" width="50" height="50" style="object-fit: cover;" />';
+                    $path = '../../../assets/img/organizations/' . $row->id . '/' . $row->icon;
+                    return '<img src="' .$path. '" width="50" height="50" style="object-fit: cover;" />';
                 } else {
                     $path = '../../../assets/img/' . 'default-image.jpg';
                     return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
@@ -142,9 +140,9 @@ class OrganizationService
             })
             ->addColumn('actions', function ($row) {
                 return '<div class="dropdown">
-                                    <a href="/admin/organizations/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="javascript:void(0);" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
-                                </div>';
+                            <a href="/admin/organizations/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
+                            <a href="javascript:void(0);" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
+                        </div>';
             })
             ->rawColumns(['actions', 'status', 'logo'])
             ->make(true);

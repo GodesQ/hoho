@@ -24,6 +24,11 @@
             <div class="col-xl-8">
                 <div class="card">
                     <div class="card-body">
+                        @if ($errors->any())
+                            <div class="alert alert-danger my-2" style="border-left: 5px solid red;">
+                                Invalid Fields. Please check all fields before submitting the form.
+                            </div>
+                        @endif
                         <form action="{{ route('admin.merchants.stores.update', $store->id) }}" method="POST"
                             enctype="multipart/form-data">
                             @csrf

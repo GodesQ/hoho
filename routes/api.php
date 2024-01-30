@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\RoomController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -53,8 +54,7 @@ Route::get('featured_merchants', [MerchantController::class, 'getFeaturedMerchan
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
-
-
+    
     Route::get('user', [UserController::class, 'getUser']);
     Route::post('user/profile', [UserController::class, 'updateProfile']);
     Route::post('user/update_interest', [UserController::class, 'updateInterest']);
@@ -102,4 +102,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('tour_badges', [TourBadgeController::class, 'getAllTourBadges']);
     Route::get('tour_badges/user_badges', [TourBadgeController::class,'getUserTourBadges']);
     Route::post('tour_badge/check', [TourBadgeController::class, 'checkBadge']);
+
+    Route::get('rooms/{merchant_id}', [RoomController::class, 'getRooms']);
 });

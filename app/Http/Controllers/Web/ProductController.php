@@ -19,6 +19,7 @@ class ProductController extends Controller
 
         if ($request->ajax()) {
             $products = Product::with('merchant');
+            
             return DataTables::of($products)
                 ->addIndexColumn()
                 ->addColumn('merchant', function ($row) {
@@ -84,11 +85,6 @@ class ProductController extends Controller
         }
 
         return redirect()->route('admin.products.edit', $product->id)->withSuccess('Product Added Successfully');
-
-    }
-
-    public function show($id)
-    {
 
     }
 

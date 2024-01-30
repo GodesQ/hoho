@@ -10,55 +10,65 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-7">
+        <div class="col-lg-7 order-md-2">
             <div class="card">
                 <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger my-2 mb-3" style="border-left: 5px solid red;">Invalid Fields. Please check all fields before submitting the form.</div>
+                    @endif
                     <form action="{{ route('admin.organizations.update', $organization->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Name</label>
+                                    <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="name" id="name" value="{{ $organization->name }}">
+                                    <div class="text-danger">@error('name'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="acronym" class="form-label">Acronym</label>
+                                    <label for="acronym" class="form-label">Acronym <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="acronym" id="acronym" value="{{ $organization->acronym }}">
+                                    <div class="text-danger">@error('acronym'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="region" class="form-label">Region</label>
                                     <input type="text" class="form-control" name="region" id="region" value="{{ $organization->region }}">
+                                    <div class="text-danger">@error('region'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="icon" class="form-label">Icon</label>
+                                    <label for="icon" class="form-label">Icon (Max File Size: 2MB) <span class="text-danger">*</span></label>
                                     <input type="file" class="form-control" name="icon" id="icon" value="{{ $organization->icon }}">
+                                    <div class="text-danger">@error('icon'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="featured_image" class="form-label">Featured Image</label>
+                                    <label for="featured_image" class="form-label">Featured Image (Max File Size: 2MB) <span class="text-danger">*</span></label>
                                     <input type="file" class="form-control" name="featured_image" id="featured_image" value="{{ $organization->featured_image }}">
+                                    <div class="text-danger">@error('featured_image'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="visibility" class="form-label">Visibility</label>
+                                    <label for="visibility" class="form-label">Visibility </label>
                                     <select name="visibility" id="visibility" class="form-select">
                                         <option {{ $organization->visibility == 'Default' ? 'selected' : null }} value="Default">Default</option>
                                         <option {{ $organization->visibility == 'Coming Soon' ? 'selected' : null }} value="Coming Soon">Coming Soon</option>
                                     </select>
+                                    <div class="text-danger">@error('visibility'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-12">
                                 <div class="mb-3">
                                     <label for="description" class="form-label">Description</label>
                                     <textarea name="description" id="description" cols="30" class="form-control" rows="5">{{ $organization->description }}</textarea>
+                                    <div class="text-danger">@error('description'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -117,11 +127,11 @@
             </div>
         </div>
 
-        <div class="col-lg-5">
+        <div class="col-lg-5 order-md-1">
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-lg-8">
+                        <div class="col-lg-8 col-md-6">
                             <h6>Preview Featured Image</h6>
                             @if($organization->featured_image)
                                 <img src="{{ URL::asset('assets/img/organizations/' . $organization->id . '/' . $organization->featured_image) }}?updated_at={{$organization->updated_at}}" alt="{{ $organization->featured_image }}" id="previewImage" style="border-radius: 10px" width="100%">
@@ -129,7 +139,7 @@
                                 <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt="Default Image" id="previewImage" style="border-radius: 10px" width="100%">
                             @endif
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-lg-4 col-md-6">
                             <h6>Preview Icon</h6>
                             @if($organization->icon)
                                 <img src="{{ URL::asset('assets/img/organizations/' . $organization->id . '/' . $organization->icon) }}" alt="{{ $organization->icon }}" id="previewImage" style="border-radius: 10px" width="100%">

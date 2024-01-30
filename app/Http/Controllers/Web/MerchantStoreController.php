@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MerchantStore\StoreRequest;
+use App\Http\Requests\MerchantStore\UpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -112,7 +114,7 @@ class MerchantStoreController extends Controller
      * @param  Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request) {
+    public function store(StoreRequest $request) {
         $result = $this->merchantStoreService->CreateMerchantStore($request);
 
         // Checks if the 'status' key in the $result array is truthy.
@@ -152,7 +154,7 @@ class MerchantStoreController extends Controller
         return view('admin-page.merchants.stores.edit-store', compact('store', 'organizations', 'interests'));
     }
 
-    public function update(Request $request) {
+    public function update(UpdateRequest $request) {
         $result = $this->merchantStoreService->UpdateMerchantStore($request);
 
         if($result['status']) {

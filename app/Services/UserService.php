@@ -75,12 +75,13 @@ class UserService
         return $formattedUsers;
     }
 
-    public function createUser(Request $request)
-    {
+    public function createUser($request)
+    {   
+        $data = $request->validated();
         $account_uid = $this->generateRandomUuid();
 
         $user = User::create(
-            array_merge($request->all(), [
+            array_merge($data, [
                 'account_uid' => $account_uid,
                 'password' => Hash::make($request->password),
                 'interests' => $request->has('interest_ids') ? json_encode($request->interest_ids) : null,
@@ -92,12 +93,13 @@ class UserService
         return $user;
     }
 
-    public function updateUser(Request $request)
+    public function updateUser($request)
     {
         $user = User::where('id', $request->id)->first();
+        $data = $request->validated();
 
         $update_user = $user->update(
-            array_merge($request->all(), [
+            array_merge($data, [
                 'is_verify' => $request->has('is_verify') ? true : false,
                 'is_old_user' => $request->has('is_old_user') ? true : false,
                 'is_first_time_philippines' => $request->has('is_first_time_philippines') ? true : false,

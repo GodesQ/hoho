@@ -16,6 +16,7 @@
                     <table class="table data-table">
                         <thead>
                             <tr>
+                                <th>Id</th>
                                 <th>Logo</th>
                                 <th>Name</th>
                                 <th>Acronym</th>
@@ -42,6 +43,10 @@
                     url: "{{ route('admin.organizations.list') }}"
                 },
                 columns: [
+                    {
+                        data: 'id',
+                        name: 'id'
+                    },
                     {
                         data: 'logo',
                         name: 'logo'
@@ -70,7 +75,7 @@
                     }
                 ],
                 order: [
-                    [1, 'desc'] // Sort by the first column (index 0) in descending order
+                    [0, 'desc'] // Sort by the first column (index 0) in descending order
                 ]
             });
         }

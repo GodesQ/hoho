@@ -31,36 +31,41 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="name" class="form-label">Merchant Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" name="name" id="name" value="" required>
+                                        <input type="text" class="form-control" name="name" id="name" value="">
+                                        <span class="text-danger">@error('name'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="code" class="form-label">Merchant Code</label>
                                         <input type="text" class="form-control" name="code" id="code" value="">
+                                        <span class="text-danger">@error('code'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="type" class="form-label">Merchant Type <span class="text-danger">*</span></label>
-                                        <select name="type" id="type" class="form-select" required>
+                                        <select name="type" id="type" class="form-select">
                                             <option value="Restaurant">Restaurant</option>
                                             <option value="Hotel">Hotel</option>
                                             <option value="Store">Store</option>
                                             <option value="Tour Provider">Tour Provider</option>
                                         </select>
+                                        <span class="text-danger">@error('type'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="featured_image" class="form-label">Featured Image</label>
                                         <input type="file" class="form-control" name="featured_image" id="featured_image" value="" accept="image/*">
+                                        <span class="text-danger">@error('featured_image'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="nature_of_business" class="form-label">Nature of Business</label>
                                         <input type="text" class="form-control" name="nature_of_business" id="nature_of_business" value="">
+                                        <span class="text-danger">@error('nature_of_business'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -71,12 +76,14 @@
                                                 <option value="{{ $organization->id }}">{{ $organization->name }}</option>
                                             @endforeach
                                         </select>
+                                        <span class="text-danger">@error('organization_id'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="address" class="form-label">Address</label>
                                         <input type="text" class="form-control" name="address" id="address">
+                                        <span class="text-danger">@error('address'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -85,12 +92,14 @@
                                             <div class="mb-3">
                                                 <label action="latitude" class="form-label">Latitude</label>
                                                 <input type="text" class="form-control" name="latitude" id="latitude">
+                                                <span class="text-danger">@error('latitude'){{ $message }}@enderror</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label action="longitude" class="form-label">longitude</label>
                                                 <input type="text" class="form-control" name="longitude" id="longitude">
+                                                <span class="text-danger">@error('longitude'){{ $message }}@enderror</span>
                                             </div>
                                         </div>
                                     </div>
@@ -99,6 +108,7 @@
                                     <div class="mb-3">
                                         <label for="description" class="form-label">Description</label>
                                         <textarea name="description" id="description" cols="30" rows="5" class="form-control"></textarea>
+                                        <span class="text-danger">@error('description'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                             </div>
@@ -112,36 +122,42 @@
                                                 <option value="{{ $interest->id }}">{{ $interest->name }}</option>
                                             @endforeach
                                         </select>
+                                        <span class="text-danger">@error('interests'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="payment_options" class="form-label">Payment Options</label>
                                         <input type="text" class="form-control" name="payment_options" id="payment_options" value="">
+                                        <span class="text-danger">@error('payment_options'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="contact_number" class="form-label">Contact Number</label>
                                         <input type="text" name="contact_number" id="contact_number" class="form-control">
+                                        <span class="text-danger">@error('contact_number'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="contact_email" class="form-label">Contact Email</label>
                                         <input type="text" name="contact_email" id="contact_email" class="form-control">
+                                        <span class="text-danger">@error('contact_email'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="business_hours" class="form-label">Business Hours</label>
                                         <textarea name="business_hours" id="business_hours" cols="30" rows="5" class="form-control"></textarea>
+                                        <span class="text-danger">@error('business_hours'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="tags" class="form-label">Tags</label>
                                         <textarea name="tags" id="tags" cols="30" rows="5" class="form-control"></textarea>
+                                        <span class="text-danger">@error('tags'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">

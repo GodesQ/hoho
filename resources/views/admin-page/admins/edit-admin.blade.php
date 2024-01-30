@@ -13,6 +13,11 @@
         <div class="col-lg-9">
             <div class="card">
                 <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger my-2 mb-3" style="border-left: 5px solid red;">
+                            Invalid Fields. Please check all fields before submitting the form.
+                        </div>
+                    @endif
                     <form action="{{ route('admin.admins.update', $admin->id) }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
@@ -20,48 +25,56 @@
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Username</label>
                                     <input type="text" class="form-control" name="username" value="{{ $admin->username }}" readonly>
+                                    <div class="text-danger">@error('username'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
                                     <input type="email" class="form-control" name="email" value="{{ $admin->email }}">
+                                    <div class="text-danger">@error('email'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="admin_profile" class="form-label">Admin Profile</label>
                                     <input type="file" name="admin_profile" id="admin_profile" class="form-control">
+                                    <div class="text-danger">@error('admin_profile'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="firstname" class="form-label">Firstname</label>
                                     <input type="text" class="form-control" name="firstname" value="{{ $admin->firstname }}">
+                                    <div class="text-danger">@error('firstname'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="middlename" class="form-label">Middlename</label>
                                     <input type="text" class="form-control" name="middlename" value="{{ $admin->middlename }}">
+                                    <div class="text-danger">@error('middlename'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="lastname" class="form-label">Lastname</label>
                                     <input type="text" class="form-control" name="lastname" value="{{ $admin->lastname }}">
+                                    <div class="text-danger">@error('lastname'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="birthdate" class="form-label">Birthdate</label>
                                     <input type="date" onchange="FindAge()" class="form-control" name="birthdate" id="birthdate" value="{{ $admin->birthdate }}">
+                                    <div class="text-danger">@error('birthdate'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="age" class="form-label">Age</label>
                                     <input type="int" readonly class="form-control" name="age" id="age" value="{{ $admin->age }}">
+                                    <div class="text-danger">@error('age'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
@@ -73,6 +86,7 @@
                                             <option {{ $admin->role == $role->slug ? 'selected' : null }} value="{{ $role->slug }}">{{ $role->name }}</option>
                                         @endforeach
                                     </select>
+                                    <div class="text-danger">@error('role'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">

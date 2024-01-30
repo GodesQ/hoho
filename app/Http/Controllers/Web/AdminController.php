@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreRequest;
+use App\Http\Requests\Admin\UpdateRequest;
 use App\Models\MerchantHotel;
 use App\Models\MerchantRestaurant;
 use App\Models\MerchantStore;
@@ -28,6 +30,9 @@ class AdminController extends Controller
             $data = Admin::get(); 
             return DataTables::of($data)
                     ->addIndexColumn()
+                    ->addColumn('role', function ($data) {
+                        return Str::title(Str::replace('_',' ', $data->role));
+                    })
                     ->addColumn('is_approved', function($row) {
                         if ($row->is_approved) {
                             return '<span class="badge bg-label-success me-1">Yes</span>';
@@ -52,7 +57,7 @@ class AdminController extends Controller
         return view('admin-page.admins.create-admin', compact('roles'));
     }
 
-    public function store(Request $request) {
+    public function store(StoreRequest $request) {
         $data = $request->except('_token', 'password');
 
         $admin = Admin::create(array_merge($data, [
@@ -70,7 +75,7 @@ class AdminController extends Controller
         return view('admin-page.admins.edit-admin', compact('admin', 'roles'));
     }
 
-    public function update(Request $request) {
+    public function update(UpdateRequest $request) {
         $data = $request->except('_token');
         $admin = Admin::where('id', $request->id)->first();
 

@@ -1,11 +1,11 @@
 @extends('layouts.admin.layout')
 
-@section('title', 'Hop On Hop Off - Create Organization')
+@section('title', 'Hop On Hop Off - Add Organization')
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center">
-        <h4 class="fw-bold py-3 mb-4">Create Organization</h4>
+        <h4 class="fw-bold py-3 mb-4">Add Organization</h4>
         <a href="{{ route('admin.organizations.list') }}" class="btn btn-dark"><i class="bx bx-undo"></i> Back to List</a>
     </div>
 
@@ -13,37 +13,47 @@
         <div class="col-lg-7">
             <div class="card">
                 <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger my-2 mb-3" style="border-left: 5px solid red;">
+                            Invalid Fields. Please check all fields before submitting the form.
+                        </div>
+                    @endif
                     <form action="{{ route('admin.organizations.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Name</label>
-                                    <input type="text" class="form-control" name="name" id="name" value="" required>
+                                    <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="name" id="name" value="">
+                                    <div class="text-danger danger">@error('name'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="acronym" class="form-label">Acronym</label>
+                                    <label for="acronym" class="form-label">Acronym <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="acronym" id="acronym" value="">
+                                    <div class="text-danger danger">@error('acronym'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="region" class="form-label">Region</label>
                                     <input type="text" class="form-control" name="region" id="region" value="">
+                                    <div class="text-danger danger">@error('region'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="icon" class="form-label">Icon</label>
+                                    <label for="icon" class="form-label">Icon <span class="text-danger">*</span></label>
                                     <input type="file" class="form-control" name="icon" id="icon" value="">
+                                    <div class="text-danger danger">@error('icon'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="featured_image" class="form-label">Featured Image</label>
-                                    <input type="file" class="form-control" name="featured_image" id="featured_image" value="" required>
+                                    <label for="featured_image" class="form-label">Featured Image <span class="text-danger">*</span></label>
+                                    <input type="file" class="form-control" name="featured_image" id="featured_image" value="">
+                                    <div class="text-danger danger">@error('featured_image'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -53,12 +63,14 @@
                                         <option value="Default">Default</option>
                                         <option value="Coming Soon">Coming Soon</option>
                                     </select>
+                                    <div class="text-danger danger">@error('visibility'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-12">
                                 <div class="mb-3">
                                     <label for="description" class="form-label">Description</label>
                                     <textarea name="description" id="description" cols="30" class="form-control" rows="5"></textarea>
+                                    <div class="text-danger danger">@error('description'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">

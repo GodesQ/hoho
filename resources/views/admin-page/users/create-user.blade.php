@@ -30,6 +30,9 @@
             <div class="col-xl">
                 <div class="card mb-4">
                     <div class="card-body">
+                        @if ($errors->any())
+                            <div class="alert alert-danger my-2 mb-3" style="border-left: 5px solid red;">Invalid Fields. Please check all fields before submitting the form.</div>
+                        @endif
                         <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <h5 class="card-title"><i class="bx bx-lock"></i> Account Information</h5>
@@ -40,7 +43,8 @@
                                         <label class="form-label" for="username">UserName <span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="username"
-                                            placeholder="Type the username" name="username" required />
+                                            placeholder="Type the username" name="username" value="{{ old('username') }}" />
+                                        <div class="danger text-danger">@error('username'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -48,7 +52,8 @@
                                         <label class="form-label" for="email">Email <span
                                                 class="text-danger">*</span></label>
                                         <input type="email" class="form-control" id="email" name="email"
-                                            placeholder="Type the email" required />
+                                            placeholder="Type the email" />
+                                        <div class="danger text-danger">@error('email'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -56,7 +61,8 @@
                                         <label class="form-label" for="password">Password <span
                                                 class="text-danger">*</span></label>
                                         <input type="password" class="form-control" id="password" name="password"
-                                            placeholder="Type the password" required />
+                                            placeholder="Type the password" />
+                                        <div class="danger text-danger">@error('password'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                             </div>
@@ -70,6 +76,7 @@
                                         <label for="firstname" class="form-label">FirstName</label>
                                         <input type="text" class="form-control" name="firstname" id="firstname"
                                             placeholder="Ex. John">
+                                        <div class="danger text-danger">@error('firstname'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -77,6 +84,7 @@
                                         <label for="middlename" class="form-label">Middlename</label>
                                         <input type="text" class="form-control" name="middlename" id="middlename"
                                             placeholder="Ex. Mid">
+                                        <div class="danger text-danger">@error('middlename'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -84,6 +92,7 @@
                                         <label for="lastname" class="form-label">Lastname</label>
                                         <input type="text" class="form-control" name="lastname" id="lastname"
                                             placeholder="Ex. Doe">
+                                        <div class="danger text-danger">@error('lastname'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
 
@@ -91,6 +100,7 @@
                                     <div class="mb-3">
                                         <label for="birthdate" class="form-label">Birthdate</label>
                                         <input type="date" onchange="FindAge()" class="form-control" name="birthdate" id="birthdate">
+                                        <div class="danger text-danger">@error('birthdate'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -98,6 +108,7 @@
                                         <label for="age" class="form-label">Age</label>
                                         <input type="text" class="form-control" name="age" id="age"
                                             placeholder="Input the birthdate to get the age" readonly>
+                                        <div class="danger text-danger">@error('age'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -108,6 +119,7 @@
                                             <option value="Male">Male</option>
                                             <option value="Female">Female</option>
                                         </select>
+                                        <div class="danger text-danger">@error('gender'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
 
@@ -118,6 +130,7 @@
                                             <select id="countryCode" name="countryCode"></select>
                                             <input type="text" class="form-control" name="contact_no" id="contact_no"
                                             placeholder="Ex. 9123215342" value="">
+                                            <div class="danger text-danger">@error('contact_no'){{ $message }}@enderror</div>
                                         </div>
                                         {{-- <input type="text" class="form-control" name="contact_no" id="contact_no"
                                             placeholder="Ex. 09123215342"> --}}
@@ -131,6 +144,7 @@
                                                 <option value="{{ $interest->id }}">{{ $interest->name }}</option>
                                             @endforeach
                                         </select>
+                                        <div class="danger text-danger">@error('interest_ids'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -154,15 +168,15 @@
                                         <label class="form-check-label" for="isVerify">Is Verify?</label>
                                     </div>
                                     <div class="form-check form-switch mb-2">
-                                        <input class="form-check-input" type="checkbox" id="isOldUser" value="1" name="is_old_user" />
+                                        <input class="form-check-input" type="checkbox" id="isOldUser" checked value="1" name="is_old_user" />
                                         <label class="form-check-label" for="isOldUser">Is Old User?</label>
                                     </div>
                                     <div class="form-check form-switch mb-2">
-                                        <input class="form-check-input" type="checkbox" id="isFirstTimeInPhilippines" value="1" name="is_first_time_philippines" />
+                                        <input class="form-check-input" type="checkbox" checked id="isFirstTimeInPhilippines" value="1" name="is_first_time_philippines" />
                                         <label class="form-check-label" for="isFirstTimeInPhilippines">Is First Time in Philippines?</label>
                                     </div>
                                     <div class="form-check form-switch mb-2">
-                                        <input class="form-check-input" type="checkbox" id="isInternationalTourist" value="1" name="is_international_tourist" />
+                                        <input class="form-check-input" type="checkbox" checked id="isInternationalTourist" value="1" name="is_international_tourist" />
                                         <label class="form-check-label" for="isInternationalTourist">Is International Tourist?</label>
                                     </div>
                                     <div class="my-3">
@@ -183,6 +197,7 @@
                                             <label class="form-check-label" for="statusLocked"> Locked
                                             </label>
                                         </div>
+                                        <div class="danger text-danger">@error('status'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                             </div>

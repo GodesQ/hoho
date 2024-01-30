@@ -30,6 +30,9 @@
             <div class="col-xl">
                 <div class="card mb-4">
                     <div class="card-body">
+                        @if ($errors->any())
+                            <div class="alert alert-danger my-2 mb-3" style="border-left: 5px solid red;">Invalid Fields. Please check all fields before submitting the form.</div>
+                        @endif
                         <form action="{{ route('admin.users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <h5 class="card-title"><i class="bx bx-lock"></i> Account Information</h5>
@@ -40,7 +43,8 @@
                                         <label class="form-label" for="username">UserName <span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="username"
-                                            placeholder="Type the username" name="username" required value="{{ $user->username }}" />
+                                            placeholder="Type the username" name="username" value="{{ $user->username }}" />
+                                        <div class="text-danger danger">@error('username'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -48,7 +52,8 @@
                                         <label class="form-label" for="email">Email <span
                                                 class="text-danger">*</span></label>
                                         <input type="email" class="form-control" id="email" name="email"
-                                            placeholder="Type the email" required value="{{ $user->email }}" />
+                                            placeholder="Type the email" value="{{ $user->email }}" />
+                                        <div class="text-danger danger">@error('email'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -56,7 +61,7 @@
                                         <label class="form-label" for="password">Password <span
                                                 class="text-danger">*</span></label>
                                         <input type="password" class="form-control" id="password" name="password"
-                                            placeholder="Type the password" required value="{{ $user->password }}" disabled />
+                                            placeholder="Type the password" value="{{ $user->password }}" disabled />
                                     </div>
                                 </div>
                             </div>
@@ -70,6 +75,7 @@
                                         <label for="firstname" class="form-label">FirstName</label>
                                         <input type="text" class="form-control" name="firstname" id="firstname"
                                             placeholder="Ex. John" value="{{ $user->firstname }}">
+                                        <div class="text-danger danger">@error('firstname'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -77,6 +83,7 @@
                                         <label for="middlename" class="form-label">Middlename</label>
                                         <input type="text" class="form-control" name="middlename" id="middlename"
                                             placeholder="Ex. Mid" value="{{ $user->middlename }}">
+                                        <div class="text-danger danger">@error('middlename'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -84,6 +91,7 @@
                                         <label for="lastname" class="form-label">Lastname</label>
                                         <input type="text" class="form-control" name="lastname" id="lastname"
                                             placeholder="Ex. Doe" value="{{ $user->lastname }}">
+                                        <div class="text-danger danger">@error('lastname'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
 
@@ -92,6 +100,7 @@
                                         <label for="birthdate" class="form-label">Birthdate</label>
                                         <input type="date" class="form-control" name="birthdate" id="birthdate"
                                             onchange="FindAge()" value="{{ $user->birthdate }}">
+                                        <div class="text-danger danger">@error('birthdate'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -99,6 +108,7 @@
                                         <label for="age" class="form-label">Age</label>
                                         <input type="text" class="form-control" name="age" id="age"
                                             placeholder="Input the birthdate to get the age" readonly value="{{ $user->age }}">
+                                        <div class="text-danger danger">@error('age'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -109,6 +119,7 @@
                                             <option {{ $user->gender == 'Male' ? 'selected' : null }} value="Male">Male</option>
                                             <option {{ $user->gender == 'Female' ? 'selected' : null }} value="Female">Female</option>
                                         </select>
+                                        <div class="text-danger danger">@error('gender'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
 
@@ -119,6 +130,7 @@
                                             <select id="countryCode" name="countryCode"></select>
                                             <input type="text" class="form-control" name="contact_no" id="contact_no"
                                             placeholder="Ex. 9123215342" value="{{ $user->contact_no }}">
+                                            <div class="text-danger danger">@error('contact_no'){{ $message }}@enderror</div>
                                         </div>
                                     </div>
                                 </div>
@@ -129,10 +141,10 @@
                                         <label for="interests" class="form-label">Interests</label>
                                         <select name="interest_ids[]" id="interest_ids" class="select2 form-select" multiple>
                                             @foreach ($interests as $interest)
-                                                
                                                 <option {{ in_array($interest->id, $interest_ids) ? 'selected' : null }} value="{{ $interest->id }}">{{ $interest->name }}</option>
                                             @endforeach
                                         </select>
+                                        <div class="text-danger danger">@error('interest_ids'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -148,6 +160,7 @@
                                                 value="anonymous" id="roleAnonymous" {{ $user->role == 'anonymous' ? 'checked' : null }} />
                                             <label class="form-check-label" for="roleAnonymous"> Anonymous </label>
                                         </div>
+                                        <div class="text-danger danger">@error('role'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -185,6 +198,7 @@
                                             <label class="form-check-label" for="statusLocked"> Locked
                                             </label>
                                         </div>
+                                        <div class="text-danger danger">@error('status'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                             </div>

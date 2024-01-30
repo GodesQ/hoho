@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\StoreRequest;
+use App\Http\Requests\User\UpdateRequest;
 use App\Mail\EmailVerification;
 use App\Models\Admin;
 use App\Models\Interest;
@@ -44,8 +46,8 @@ class UserController extends Controller
         return view('admin-page.users.create-user', compact('interests'));
     }
 
-    public function store(Request $request)
-    {
+    public function store(StoreRequest $request)
+    {   
         $user = $this->userService->createUser($request);
 
         if ($user) {
@@ -62,13 +64,10 @@ class UserController extends Controller
         return view('admin-page.users.edit-user', compact('user', 'interests'));
     }
 
-    public function update(Request $request)
+    public function update(UpdateRequest $request)
     {
-        $update_user = $this->userService->updateUser($request);
-
-        if ($update_user) {
-            return back()->withSuccess('User updated successfully');
-        }
+        $this->userService->updateUser($request);
+        return back()->withSuccess('User updated successfully');
     }
 
     public function destroy(Request $request)

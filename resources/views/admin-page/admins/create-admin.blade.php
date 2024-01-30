@@ -13,49 +13,61 @@
         <div class="col-lg-9">
             <div class="card">
                 <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger my-2 mb-3" style="border-left: 5px solid red;">
+                            Invalid Fields. Please check all fields before submitting the form.
+                        </div>
+                    @endif
                     <form action="{{ route('admin.admins.store') }}" method="post">
                         @csrf
                         <div class="row">
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="username" class="form-label">Username</label>
+                                    <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="username" value="">
+                                    <div class="text-danger">@error('username'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
+                                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                                     <input type="email" class="form-control" name="email" value="">
+                                    <div class="text-danger">@error('email'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="password" class="form-label">password</label>
+                                    <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
                                     <input type="password" class="form-control" name="password" value="">
+                                    <div class="text-danger">@error('password'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="firstname" class="form-label">Firstname</label>
                                     <input type="text" class="form-control" name="firstname" value="">
+                                    <div class="text-danger">@error('firstname'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="middlename" class="form-label">Middlename</label>
                                     <input type="text" class="form-control" name="middlename" value="">
+                                    <div class="text-danger">@error('middlename'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="lastname" class="form-label">Lastname</label>
                                     <input type="text" class="form-control" name="lastname" value="">
+                                    <div class="text-danger">@error('lastname'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="birthdate" class="form-label">Birthdate</label>
                                     <input type="date" onchange="FindAge()"  class="form-control" name="birthdate" id="birthdate">
+                                    <div class="text-danger">@error('birthdate'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
@@ -63,6 +75,7 @@
                                     <label for="age" class="form-label">Age</label>
                                     <input type="text" class="form-control" name="age" id="age"
                                             placeholder="Input the birthdate to get the age" readonly>
+                                    <div class="text-danger">@error('age'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
@@ -73,6 +86,7 @@
                                             <option value="{{ $role->slug }}">{{ $role->name }}</option>
                                         @endforeach
                                     </select>
+                                    <div class="text-danger">@error('role'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -91,7 +105,10 @@
         </div>
         <div class="col-lg-3">
             <div class="card">
-                <div class="card-body"></div>
+                <div class="card-body">
+                    <h6>Preview of Admin Profile</h6>
+                    <img src="{{ URL::asset('assets/img/default-image.jpg') }}" id="previewImage" alt="Default Image" width="100%" height="200px" style="border-radius: 10px; object-fit: cover;">
+                </div>
             </div>
         </div>
     </div>
