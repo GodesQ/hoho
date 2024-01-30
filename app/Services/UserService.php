@@ -15,15 +15,27 @@ class UserService
     public function getUsersList(Request $request)
     {
         $users = User::query();
+
+        if($request->search['value'] && $request->ajax()) {
+            $searchValue = $request->search['value'];
+            $users = $users->where('username', 'LIKE', $searchValue . '%')
+                        ->orWhere('email', 'LIKE', $searchValue . '%')
+                        ->orWhere('contact_no', 'LIKE', $searchValue . '%');
+        }
+
         return $users;
     }
 
     public function generateUsersDataTable($data)
-    {
+    {   
+
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn("contact_no", function ($row) {
-                return "+$row->countryCode$row->contact_no ($row->isoCode)";
+            ->editColumn("contact_no", function ($row) {
+                if($row->contact_no) {
+                    return "+$row->countryCode-$row->contact_no ($row->isoCode)";
+                }
+                return null;
             })
             ->addColumn('status', function ($row) {
                 if ($row->status == 'active') {
@@ -40,7 +52,7 @@ class UserService
                 }
             })
             ->addColumn('registered_date', function ($row) {
-               return date_format($row->created_at,'F d, Y h:i A');
+               return date_format($row->created_at,'M d, Y h:i A');
             })
             ->addColumn('actions', function ($row) {
                 return '<div class="dropdown">

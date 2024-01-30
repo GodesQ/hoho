@@ -12,7 +12,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive text-nowrap">
-                    <table class="table data-table">
+                    <table class="table table-striped data-table">
                         <thead>
                             <tr>
                                 <th>Id</th>
@@ -20,7 +20,7 @@
                                 <th>Email</th>
                                 <th>Contact No</th>
                                 <th>Status</th>
-                                <th>Email Verified?</th>
+                                <th>Email Verified</th>
                                 <th>Registered Date</th>
                                 <th class="">Actions</th>
                             </tr>
@@ -45,7 +45,7 @@
                 },
                 columns: [{
                         data: 'id',
-                        name: 'id'
+                        name: 'id',
                     },
                     {
                         data: 'username',
@@ -58,15 +58,17 @@
                     },
                     {
                         data: 'contact_no',
-                        name: 'contact_no'
+                        name: 'contact_no',
                     },
                     {
                         data: 'status',
-                        name: 'status'
+                        name: 'status',
+                        orderable: false
                     },
                     {
                         data: 'email_verify',
-                        name: 'email_verify'
+                        name: 'email_verify',
+                        orderable: false,
                     },
                     {
                         data: 'registered_date',
@@ -74,16 +76,10 @@
                     },
                     {
                         data: 'actions',
-                        name: 'actions'
+                        name: 'actions',
+                        orderable: false
                     }
                 ],
-                columnDefs: [
-                    {
-                    targets: 7, // Index of the column you want to disable sorting for
-                    orderable: false
-                    }
-                ],
-
                 order: [[0, 'desc']] // Sort by the first column (index 0) in descending order
             });
         }
@@ -91,12 +87,12 @@
         $(document).on("click", ".remove-btn", function(e) {
             let id = $(this).attr("id");
             Swal.fire({
-                title: 'Are you sure?',
-                text: "Remove user from list",
-                icon: 'warning',
+                title: 'Remove User',
+                text: "Do you really want to delete this user?",
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: '#6f0d00',
+                cancelButtonColor: '#ff3e1d',
                 confirmButtonText: 'Yes, remove it!'
             }).then((result) => {
                 if (result.isConfirmed) {

@@ -49,7 +49,9 @@
                     },
                     {
                         data: 'logo',
-                        name: 'logo'
+                        name: 'logo',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'name',
@@ -61,21 +63,17 @@
                     },
                     {
                         data: 'status',
-                        name: 'status'
+                        name: 'status',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'actions',
                         name: 'actions'
                     }
                 ],
-                columnDefs: [
-                    {
-                    targets: 3, // Index of the column you want to disable sorting for
-                    orderable: false
-                    }
-                ],
                 order: [
-                    [0, 'desc'] // Sort by the first column (index 0) in descending order
+                    [0, 'desc']
                 ]
             });
         }
