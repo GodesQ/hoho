@@ -11,7 +11,7 @@
 
     <div class="card">
         <div class="card-body">
-            <table class="table data-table">
+            <table class="table table-striped data-table">
                 <thead>
                     <tr>
                         <th>Id</th>
@@ -31,41 +31,48 @@
     <script>
         function loadTable() {
             let table = $('.data-table').DataTable({
+                lengthChange: false,
                 processing: true,
-                    pageLength: 10,
-                    responsive: true,
-                    serverSide: false,
-                    ajax: {
-                        url: "{{ route('admin.rooms.index') }}"
+                pageLength: 25,
+                responsive: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('admin.rooms.index') }}"
+                },
+                columns: [{
+                        data: 'id',
+                        name: 'id'
                     },
-                    columns: [{
-                            data: 'id',
-                            name: 'id'
-                        },
-                        {
-                            data: 'merchant',
-                            name: 'merchant'
-                        },
-                        {
-                            data: 'room_name',
-                            name: 'room_name'
-                        },
-                        {
-                            data: 'price',
-                            name: 'price'
-                        },
-                        {
-                            data: 'status',
-                            name: 'status'
-                        },
-                        {
-                            data: 'actions',
-                            name: 'actions'
-                        }
-                    ],
-                    order: [
-                        [0, 'asc'] 
-                    ]
+                    {
+                        data: 'merchant',
+                        name: 'merchant',
+                        orderable: false,
+                        searchable: false,
+                    },
+                    {
+                        data: 'room_name',
+                        name: 'room_name'
+                    },
+                    {
+                        data: 'price',
+                        name: 'price'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status',
+                        orderable: false,
+                        searchable: false,
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false,
+                    }
+                ],
+                order: [
+                    [0, 'asc'] 
+                ]
             });
         }
 
@@ -73,12 +80,12 @@
                 $(document).on("click", ".remove-btn", function(e) {
                     let id = $(this).attr("id");
                     Swal.fire({
-                        title: 'Are you sure?',
-                        text: "Remove room from list",
-                        icon: 'warning',
+                        title: 'Remove Room',
+                        text: "Do you really want to delete this room?",
+                        icon: 'question',
                         showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
+                        confirmButtonColor: '#6f0d00',
+                        cancelButtonColor: '#ff3e1d',
                         confirmButtonText: 'Yes, remove it!'
                     }).then((result) => {
                         if (result.isConfirmed) {

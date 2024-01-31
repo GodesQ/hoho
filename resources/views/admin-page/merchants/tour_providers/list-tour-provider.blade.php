@@ -12,9 +12,10 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive text-nowrap">
-                <table class="table   data-table">
+                <table class="table table-striped data-table">
                     <thead>
                         <tr>
+                            <th>Id</th>
                             <th></th>
                             <th>Name</th>
                             <th>Nature Of Business</th>
@@ -33,14 +34,19 @@
     <script>
         function loadTable() {
             let table = $('.data-table').DataTable({
+                lengthChange: false,
                 processing: true,
-                pageLength: 10,
+                pageLength: 25,
                 responsive: true,
                 serverSide: false,
                 ajax: {
                     url: "{{ route('admin.merchants.tour_providers.list') }}"
                 },
                 columns: [
+                    {
+                        data: 'id',
+                        name: 'id'
+                    },
                     {
                         data: 'featured_image',
                         name: 'featured_image',
@@ -70,7 +76,7 @@
                     }
                 ],
                 order: [
-                    [0, 'asc'] // Sort by the first column (index 0) in descending order
+                    [0, 'desc'] // Sort by the first column (index 0) in descending order
                 ]
             })
         }
@@ -78,12 +84,12 @@
         $(document).on("click", ".remove-btn", function(e) {
             let id = $(this).attr("id");
             Swal.fire({
-                title: 'Are you sure?',
-                text: "Remove restaurant from list",
-                icon: 'warning',
+                title: 'Remove Tour Provider',
+                text: "Do you really want to delete this tour provider?",
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: '#6f0d00',
+                cancelButtonColor: '#ff3e1d',
                 confirmButtonText: 'Yes, remove it!'
             }).then((result) => {
                 if (result.isConfirmed) {

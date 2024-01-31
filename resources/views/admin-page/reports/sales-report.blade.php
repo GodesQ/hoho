@@ -246,7 +246,7 @@
                                     show: true,
                                     value: {
                                         fontSize: '1.5rem',
-                                        fontFamily: 'Poppins',
+                                        fontFamily: 'Inter',
                                         offsetY: -15,
                                         formatter: function(val) {
                                             return parseInt(val)
@@ -254,7 +254,7 @@
                                     },
                                     name: {
                                         offsetY: 20,
-                                        fontFamily: 'Poppins'
+                                        fontFamily: 'Inter'
                                     },
                                     total: {
                                         show: true,

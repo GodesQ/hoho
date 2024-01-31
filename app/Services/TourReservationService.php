@@ -10,11 +10,12 @@ use Yajra\DataTables\DataTables;
 
 class TourReservationService
 {
-    public function RetrieveAllTourReservationsList(Request $request)
+    public function RetrieveAllTourReservationsList($request)
     {   
         $current_user = Auth::guard('admin')->user();
 
         $data = TourReservation::with('user', 'tour')
+            ->whereHas('user')
             ->when(!in_array($current_user->role, ['super_admin', 'admin']), function($query) use ($current_user) {
                 $query->where('created_by', $current_user->id);
             })
@@ -25,6 +26,8 @@ class TourReservationService
                         ->orWhere('firstname', 'LIKE', '%' . $searchQuery . '%')
                         ->orWhere('lastname', 'LIKE', '%' . $searchQuery . '%')
                         ->orWhere(DB::raw("concat(firstname, ' ', lastname)"), 'LIKE', '%' . $searchQuery . '%');
+                })->orWhereHas('tour', function ($tourQuery) use ($searchQuery) {
+                    $tourQuery->where('name', 'LIKE', $searchQuery . '%');
                 });
             })
             ->when(!empty($request->get('status')), function ($query) use ($request) {
@@ -87,21 +90,24 @@ class TourReservationService
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('reserved_user', function ($row) {
-                return optional($row->user)->email ? optional($row->user)->email : 'Deleted User';
+                if($row->user) {
+                    return view('components.user-contact', ['user' => $row->user]);
+                }
+
+                return '-';
             })
-            ->addColumn('type', function ($row) {
-                return optional($row->tour)->type ?? 'Deleted Tour';
-            })
-            ->addColumn('tour', function ($row) {
-                return optional($row->tour)->name ?? "Deleted Tour";
+            ->editColumn('tour', function ($row) {
+                if($row->tour) {
+                    return view('components.tour', ['tour' => $row->tour]);
+                }
             })
             ->addColumn('status', function ($row) {
                 if($row->status == 'approved') {
-                    return '<div class="badge bg-success">Approved</div>';
+                    return '<div class="badge bg-label-success">Approved</div>';
                 } else if($row->status == 'pending') {
-                    return '<div class="badge bg-warning">Pending</div>';
+                    return '<div class="badge bg-label-warning">Pending</div>';
                 } else if($row->status == 'cancelled') {
-                    return '<div class="badge bg-warning">Cancelled</div>';
+                    return '<div class="badge bg-label-warning">Cancelled</div>';
                 }
             })
             ->addColumn('actions', function ($row) {

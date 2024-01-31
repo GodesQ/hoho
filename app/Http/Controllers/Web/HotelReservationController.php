@@ -21,25 +21,31 @@ class HotelReservationController extends Controller
             return DataTables::of($hotel_reservations)
                 ->addIndexColumn()
                 ->addColumn('reserved_user_id', function ($row) {
-                    return $row->reserved_user->email ?? null;
+                    if($row->reserved_user) {
+                        return view('components.user-contact', ['user' => $row->reserved_user]);
+                    }
+    
+                    return 'Deleted User';
                 })
                 ->editColumn('room_id', function ($row) {
-                    return ( $row->room->room_name ?? null )  . ' ( ' . ($row->room->merchant->name ?? null) . ' ) ';
+                    if($row->room) {
+                        return view('components.hotel-room', ['reservation' => $row]);
+                    }
                 })
                 ->editColumn('number_of_pax', function ($row) {
                     return $row->number_of_pax . ' Pax';
                 })
                 ->addColumn('status', function ($row) {
                     if ($row->status == 'pending') {
-                        return '<div class="badge bg-warning">Pending</div>';
+                        return '<div class="badge bg-label-warning">Pending</div>';
                     }
 
                     if ($row->status == 'approved') {
-                        return '<div class="badge bg-success">Approved</div>';
+                        return '<div class="badge bg-label-success">Approved</div>';
                     }
 
                     if ($row->status == 'declined') {
-                        return '<div class="badge bg-success">Declined</div>';
+                        return '<div class="badge bg-label-success">Declined</div>';
                     }
                 })
                 ->addColumn('actions', function ($row) {
@@ -55,7 +61,7 @@ class HotelReservationController extends Controller
 
                     return $output;
                 })
-                ->rawColumns(['actions', 'status'])
+                ->rawColumns(['actions', 'status', 'room_id'])
                 ->make(true);
         }
 

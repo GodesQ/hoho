@@ -1,6 +1,6 @@
 @extends('layouts.admin.layout')
 
-@section('title', 'Hop On Hop Off - Add User')
+@section('title', 'Add Guest - Philippine Hop On Hop Off')
 
 @section('content')
     <style>
@@ -22,7 +22,7 @@
     </style>
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center">
-            <h4 class="fw-bold py-3 mb-4">Create User</h4>
+            <h4 class="fw-bold py-3 mb-4">Add Guest</h4>
             <a href="{{ route('admin.users.list') }}" class="btn btn-dark"><i class="bx bx-undo"></i> Back to List</a>
         </div>
 

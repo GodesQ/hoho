@@ -37,7 +37,7 @@
     --bs-black-rgb: 67, 89, 113;
     --bs-body-color-rgb: 105, 122, 141;
     --bs-body-bg-rgb: 245, 245, 249;
-    --bs-font-sans-serif: "Poppins", sans-serif;
+    --bs-font-sans-serif: "Inter", sans-serif;
     --bs-font-monospace: "SFMono-Regular", Menlo, Monaco, Consolas,
         "Liberation Mono", "Courier New", monospace;
     --bs-gradient: linear-gradient(
@@ -71,7 +71,7 @@
 
 body {
     margin: 0;
-    font-family: "Poppins", sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: var(--bs-body-font-size);
     font-weight: var(--bs-body-font-weight);
     line-height: var(--bs-body-line-height);

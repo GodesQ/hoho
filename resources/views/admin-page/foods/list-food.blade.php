@@ -10,8 +10,8 @@
         </div>
 
         <div class="card">
-            <div class="card-body">
-                <table class="table data-table">
+            <div class="table-responsive card-body">
+                <table class="table table-striped data-table">
                     <thead>
                         <tr>
                             <th>Id</th>
@@ -32,8 +32,9 @@
         <script>
             function loadTable() {
                 let table = $('.data-table').DataTable({
+                    lengthChange: false,
                     processing: true,
-                    pageLength: 10,
+                    pageLength: 25,
                     responsive: true,
                     serverSide: false,
                     ajax: {
@@ -45,7 +46,9 @@
                         },
                         {
                             data: 'merchant',
-                            name: 'merchant'
+                            name: 'merchant',
+                            orderable: false,
+                            searchable: false,
                         },
                         {
                             data: 'title',
@@ -57,15 +60,21 @@
                         },
                         {
                             data: 'food_category',
-                            name: 'food_category'
+                            name: 'food_category',
+                            orderable: false,
+                            searchable: false,
                         },
                         {
                             data: 'status',
-                            name: 'status'
+                            name: 'status',
+                            orderable: false,
+                            searchable: false,
                         },
                         {
                             data: 'actions',
-                            name: 'actions'
+                            name: 'actions',
+                            orderable: false,
+                            searchable: false,
                         }
                     ],
                     order: [
@@ -78,12 +87,12 @@
                 $(document).on("click", ".remove-btn", function(e) {
                     let id = $(this).attr("id");
                     Swal.fire({
-                        title: 'Are you sure?',
-                        text: "Remove food from list",
-                        icon: 'warning',
+                        title: 'Remove Food',
+                        text: "Do you really want to delete this food?",
+                        icon: 'question',
                         showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
+                        confirmButtonColor: '#6f0d00',
+                        cancelButtonColor: '#ff3e1d',
                         confirmButtonText: 'Yes, remove it!'
                     }).then((result) => {
                         if (result.isConfirmed) {

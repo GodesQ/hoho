@@ -56,13 +56,12 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive text-nowrap">
-                    <table class="table data-table">
+                    <table class="table table-striped data-table">
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Trip Date</th>
                                 <th>Reserved User</th>
-                                <th>Type</th>
                                 <th>Tour</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -81,8 +80,9 @@
 
         function loadTable() {
             table = $('.data-table').DataTable({
+                lengthChange: false,
                 processing: true,
-                pageLength: 10,
+                pageLength: 25,
                 responsive: true,
                 serverSide: true,
                 ajax: {
@@ -105,30 +105,26 @@
                     },
                     {
                         data: 'reserved_user',
-                        name: 'reserved_user'
-                    },
-                    {
-                        data: 'type',
-                        name: 'type'
+                        name: 'reserved_user',
+                        orderable: false,
                     },
                     {
                         data: 'tour',
-                        name: 'tour'
+                        name: 'tour',
+                        orderable: false,
+                        searchable: false,
                     },
                     {
                         data: 'status',
-                        name: 'status'
+                        name: 'status',
+                        orderable: false,
+                        searchable: false,
                     },
                     {
                         data: 'actions',
-                        name: 'actions'
-                    }
-                ],
-                
-                columnDefs: [
-                    {
-                    targets: [4, 5, 6], // Index of the column you want to disable sorting for
-                    orderable: false
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false
                     }
                 ],
                 order: [
@@ -167,12 +163,12 @@
         $(document).on("click", ".remove-btn", function(e) {
             let id = $(this).attr("id");
             Swal.fire({
-                title: 'Are you sure?',
-                text: "Remove tour reservation from list",
-                icon: 'warning',
+                title: 'Remove Tour Reservation',
+                text: "Do you really want to delete this remove tour reservation?",
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: '#6f0d00',
+                cancelButtonColor: '#ff3e1d',
                 confirmButtonText: 'Yes, remove it!'
             }).then((result) => {
                 if (result.isConfirmed) {

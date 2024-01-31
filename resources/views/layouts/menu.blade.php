@@ -39,7 +39,7 @@
         @can('view_admins_list')
             <li class="menu-item {{ preg_match('/admin\/admins/', Request::path()) ? 'active' : null }}">
                 <a href="{{ route('admin.admins.list') }}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-user-circle"></i>
+                    <i class="menu-icon tf-icons bx bxs-user"></i>
                     <div data-i18n="Admins">Admins</div>
                 </a>
             </li>
@@ -51,7 +51,7 @@
             @canany(['view_merchant_stores_list', 'view_merchant_restaurants_list', 'view_merchant_hotels_list',
                 'view_merchant_tour_providers_list'])
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
-                    <i class="menu-icon tf-icons bx bx-cube-alt"></i>
+                    <i class="menu-icon tf-icons bx bx-store"></i>
                     <div data-i18n="Merchants">Merchants</div>
                 </a>
             @endcanany
@@ -161,21 +161,21 @@
 
     <li class="menu-item {{ preg_match('/admin\/tour_reservations/', Request::path()) ? 'active' : null }}">
         <a href="{{ route('admin.tour_reservations.list') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-file"></i>
+            <i class='menu-icon tf-icons bx bx-book-content'></i>
             <div data-i18n="Tour Reservations">Tour Reservations</div>
         </a>
     </li>
 
     <li class="menu-item {{ preg_match('/admin\/hotel-reservations/', Request::path()) ? 'active' : null }}">
         <a href="{{ route('admin.hotel_reservations.index') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-file"></i>
+            <i class='menu-icon tf-icons bx bx-book-content'></i>
             <div data-i18n="Hotel Reservations">Hotel Reservations</div>
         </a>
     </li>
 
     <li class="menu-item {{ preg_match('/admin\/restaurant-reservations/', Request::path()) ? 'active' : null }}">
         <a href="{{ route('admin.restaurant_reservations.index') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-file"></i>
+            <i class='menu-icon tf-icons bx bx-book-content'></i>
             <div data-i18n="Restaurant Reservations">Restaurant Reservations</div>
         </a>
     </li>

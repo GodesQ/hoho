@@ -49,7 +49,7 @@
                                     <div class="mb-3">
                                         <label for="price" class="form-label">Price <span
                                                 class="text-danger">*</span></label>
-                                        <input type="number" class="form-control" name="price" id="price"
+                                        <input type="text" class="form-control" name="price" id="price"
                                             value="{{ old('price') }}">
                                         <span class="text-danger danger">
                                             @error('price')

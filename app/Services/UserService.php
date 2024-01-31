@@ -32,10 +32,7 @@ class UserService
         return DataTables::of($data)
             ->addIndexColumn()
             ->editColumn("contact_no", function ($row) {
-                if($row->contact_no) {
-                    return "+$row->countryCode-$row->contact_no ($row->isoCode)";
-                }
-                return null;
+                return view('components.user-contact', ['user' => $row]);
             })
             ->addColumn('status', function ($row) {
                 if ($row->status == 'active') {
@@ -165,7 +162,7 @@ class UserService
             $user = Auth::user();
 
             $update_interests = $user->update([
-                'interest_ids' => $request->has('interest_ids') ? json_encode($request->interest_ids) : null,
+                'interest_ids' => $request->has('interest_ids') && $request->interest_ids != 'null' ? json_encode($request->interest_ids) : null,
             ]);
 
             return $update_interests;

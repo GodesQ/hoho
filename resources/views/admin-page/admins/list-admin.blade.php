@@ -12,7 +12,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive-lg text-nowrap">
-                    <table class="table   data-table">
+                    <table class="table table-striped data-table">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -34,11 +34,11 @@
     <script>
         function loadTable() {
             let table = $('.data-table').DataTable({
+                lengthChange: false,
                 processing: true,
-                pageLength: 10,
+                pageLength: 25,
                 responsive: true,
                 serverSide: true,
-                
                 ajax: {
                     url: "{{ route('admin.admins.list') }}"
                 },

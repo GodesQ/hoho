@@ -10,7 +10,7 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-7 order-md-2">
+        <div class="col-lg-7">
             <div class="card">
                 <div class="card-body">
                     @if ($errors->any())
@@ -87,7 +87,7 @@
                                     <div class="col-lg-4">
                                         <div class="mb-3">
                                             @if(count($organization_images) > 0 && isset($organization_images[0]))
-                                                <img src="{{ URL::asset('assets/img/organizations/' . $organization->id . '/' . $organization_images[0]) }}" id="previewImage1" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                <img src="{{ URL::asset('assets/img/organizations/' . $organization->id . '/' . $organization_images[0]) }}" id="previewImage1" alt="{{ $organization[0] }}" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                 <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $organization->id}}, '{{ $organization_images[0] }}')">Remove <i class="bx bx-trash"></i></button>
                                             @else
                                                 <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_1" onchange="handlePreviewImage(this, 'previewImage1')">
@@ -98,7 +98,7 @@
                                     <div class="col-lg-4">
                                         <div class="mb-3">
                                             @if(count($organization_images) > 0 && isset($organization_images[1]))
-                                                <img src="{{ URL::asset('assets/img/organizations/' . $organization->id . '/' . $organization_images[1]) }}" id="previewImage2" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                <img src="{{ URL::asset('assets/img/organizations/' . $organization->id . '/' . $organization_images[1]) }}" id="previewImage2" alt="{{ $organization[1] }}" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                 <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $organization->id}}, '{{ $organization_images[1] }}')">Remove <i class="bx bx-trash"></i></button>
                                             @else
                                                 <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_2" onchange="handlePreviewImage(this, 'previewImage2')">
@@ -109,7 +109,7 @@
                                     <div class="col-lg-4">
                                         <div class="mb-3">
                                             @if(count($organization_images) > 0 && isset($organization_images[2]))
-                                                <img src="{{ URL::asset('assets/img/organizations/' . $organization->id . '/' . $organization_images[2]) }}" id="previewImage3" alt="Default Image" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                <img src="{{ URL::asset('assets/img/organizations/' . $organization->id . '/' . $organization_images[2]) }}" id="previewImage3" alt="{{ $organization[2] }}" width="100%" height="200px" style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
                                                 <button type="button" style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;" class="btn btn-primary" onclick="removeImageBtn({{ $organization->id}}, '{{ $organization_images[2] }}')">Remove <i class="bx bx-trash"></i></button>
                                             @else
                                                 <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_3" onchange="handlePreviewImage(this, 'previewImage3')">
@@ -127,7 +127,7 @@
             </div>
         </div>
 
-        <div class="col-lg-5 order-md-1">
+        <div class="col-lg-5">
             <div class="card">
                 <div class="card-body">
                     <div class="row">

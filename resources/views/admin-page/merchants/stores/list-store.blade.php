@@ -29,9 +29,10 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive text-nowrap">
-                <table class="table data-table">
+                <table class="table table-striped data-table">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th></th>
                             <th>Name</th>
                             <th>Nature Of Business</th>
@@ -51,8 +52,9 @@
         let table;
         function loadTable() {
             table = $('.data-table').DataTable({
+                lengthChange: false,
                 processing: true,
-                pageLength: 10,
+                pageLength: 25,
                 responsive: true,
                 serverSide: true,
                 ajax: {
@@ -64,12 +66,19 @@
                 },
                 columns: [
                     {
+                        data: 'id',
+                        name: 'id'
+                    },
+                    {
                         data: 'featured_image',
                         name: 'featured_image',
+                        orderable: false,
+                        searchable: false,
                     },
                     {
                         data: 'name',
                         name: 'name',
+                        orderable: false,
                     },
                     {
                         data: 'nature_of_business',
@@ -77,18 +86,16 @@
                     },
                     {
                         data: 'is_featured',
-                        name: 'is_featured'
+                        name: 'is_featured',
+                        orderable: false,
+                        searchable: false,
                     },
                     {
                         data: 'actions',
-                        name: 'actions'
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false,
                     },
-                ],
-                columnDefs: [
-                    {
-                    targets: [0,3], // Index of the column you want to disable sorting for
-                    orderable: false
-                    }
                 ],
                 order: [
                     [1, 'desc'] // Sort by the first column (index 0) in descending order
@@ -99,12 +106,12 @@
         $(document).on("click", ".remove-btn", function(e) {
             let id = $(this).attr("id");
             Swal.fire({
-                title: 'Are you sure?',
-                text: "Remove store from list",
-                icon: 'warning',
+                title: 'Remove Store',
+                text: "Do you really want to delete this store?",
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: '#6f0d00',
+                cancelButtonColor: '#ff3e1d',
                 confirmButtonText: 'Yes, remove it!'
             }).then((result) => {
                 if (result.isConfirmed) {

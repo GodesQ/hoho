@@ -1,6 +1,6 @@
 @extends('layouts.admin.layout')
 
-@section('title', 'Hop On Hop Off - Create Restaurant')
+@section('title', 'Hop On Hop Off - Add Merchants Restaurant')
 
 @section('content')
 
@@ -16,7 +16,7 @@
 
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center">
-            <h4 class="fw-bold py-3 mb-4">Create Restaurant</h4>
+            <h4 class="fw-bold py-3 mb-4">Add Merchant Restaurant</h4>
             <a href="{{ route('admin.merchants.restaurants.list') }}" class="btn btn-dark"><i class="bx bx-undo"></i> Back to List</a>
         </div>
 

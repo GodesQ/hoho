@@ -11,8 +11,8 @@
         </div>
 
         <div class="card">
-            <div class="card-body">
-                <table class="table data-table">
+            <div class="table-responsive card-body">
+                <table class="table table-striped data-table">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -30,6 +30,7 @@
         <script>
             function loadTable() {
                 let table = $('.data-table').DataTable({
+                    lengthChange: false,
                     processing: true,
                     pageLength: 10,
                     responsive: true,
@@ -37,13 +38,15 @@
                     ajax: {
                         url: "{{ route('admin.food_categories.index') }}"
                     },
-                    columns: [{
+                    columns: [
+                        {
                             data: 'id',
                             name: 'id'
                         },
                         {
                             data: 'merchant',
-                            name: 'merchant'
+                            name: 'merchant',
+                            orderable: false,
                         },
                         {
                             data: 'title',
@@ -51,7 +54,8 @@
                         },
                         {
                             data: 'actions',
-                            name: 'actions'
+                            name: 'actions',
+                            orderable: false,
                         }
                     ],
                     order: [

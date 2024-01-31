@@ -26,6 +26,9 @@ class RoomController extends Controller
                 ->addColumn('merchant', function ($row) {
                     return optional($row->merchant)->name;
                 })
+                ->editColumn('price', function ($row) {
+                    return '₱ ' . number_format($row->price, 2);
+                })
                 ->addColumn('status', function ($row) {
                     if($row->is_active) {
                         return '<span class="badge bg-success">Active</span>';

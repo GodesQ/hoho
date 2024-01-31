@@ -11,8 +11,8 @@
     </div>
 
     <div class="card">
-        <div class="card-body">
-            <table class="table table-responsive data-table">
+        <div class="table-responsive card-body">
+            <table class="table table-striped table-responsive data-table">
                 <thead>
                     <tr>
                         <th>Id</th>
@@ -73,12 +73,12 @@
         $(document).on("click", ".remove-btn", function(e) {
             let id = $(this).attr("id");
             Swal.fire({
-                title: 'Are you sure?',
-                text: "Remove restaurant reservation from list",
-                icon: 'warning',
+                title: 'Remove Restaurant Reservation',
+                text: "Do you really want to delete this restaurant reservation?",
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: '#6f0d00',
+                cancelButtonColor: '#ff3e1d',
                 confirmButtonText: 'Yes, remove it!'
             }).then((result) => {
                 if (result.isConfirmed) {

@@ -13,7 +13,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive-lg text-nowrap">
-                    <table class="table data-table">
+                    <table class="table table-striped data-table">
                         <thead>
                             <tr>
                                 <th>Id</th>
@@ -35,6 +35,7 @@
     <script>
         function loadTable() {
             let table = $('.data-table').DataTable({
+                lengthChange: false,
                 processing: true,
                 pageLength: 10,
                 responsive: true,
@@ -81,12 +82,12 @@
         $(document).on("click", ".remove-btn", function(e) {
             let id = $(this).attr("id");
             Swal.fire({
-                title: 'Are you sure?',
-                text: "Remove organization from list",
-                icon: 'warning',
+                title: 'Remove Organization',
+                text: "Do you really want to delete this organization?",
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: '#6f0d00',
+                cancelButtonColor: '#ff3e1d',
                 confirmButtonText: 'Yes, remove it!'
             }).then((result) => {
                 if (result.isConfirmed) {

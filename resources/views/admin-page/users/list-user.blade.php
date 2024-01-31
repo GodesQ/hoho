@@ -17,12 +17,11 @@
                             <tr>
                                 <th>Id</th>
                                 <th>Username</th>
-                                <th>Email</th>
-                                <th>Contact No</th>
+                                <th>Contact</th>
                                 <th>Status</th>
                                 <th>Email Verified</th>
                                 <th>Registered Date</th>
-                                <th class="">Actions</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                     </table>
@@ -36,6 +35,7 @@
     <script>
         function loadTable() {
             let table = $('.data-table').DataTable({
+                lengthChange: false,
                 processing: true,
                 pageLength: 25,
                 responsive: true,
@@ -51,10 +51,6 @@
                         data: 'username',
                         name: 'username',
                         orderable: true,
-                    },
-                    {
-                        data: 'email',
-                        name: 'email'
                     },
                     {
                         data: 'contact_no',
