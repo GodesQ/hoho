@@ -12,13 +12,13 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive-lg text-nowrap">
-                <table class="table   data-table">
+                <table class="table table-striped table-borderless data-table">
                     <thead>
                         <tr>
                             <th>Id</th>
                             <th></th>
                             <th>Tour</th>
-                            <th>Type</th>
+                            <th>Default Price</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -54,8 +54,8 @@
                         name: 'name'
                     },
                     {
-                        data: 'type',
-                        name: 'type'
+                        data: 'price',
+                        name: 'price'
                     },
                     {
                         data: 'status',

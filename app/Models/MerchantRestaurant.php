@@ -11,6 +11,7 @@ class MerchantRestaurant extends Model
     protected $table = 'merchants_restaurant';
     protected $fillable = [
         'merchant_id',
+        'brochure',
         'images',
         'payment_options',
         'tags',

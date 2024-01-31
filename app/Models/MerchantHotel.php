@@ -11,6 +11,7 @@ class MerchantHotel extends Model
     protected $table = 'merchants_hotel';
     protected $fillable = [
         'merchant_id',
+        'brochure',
         'images',
         'payment_options',
         'tags',

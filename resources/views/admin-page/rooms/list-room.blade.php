@@ -11,7 +11,7 @@
 
     <div class="card">
         <div class="card-body">
-            <table class="table table-striped data-table">
+            <table class="table table-striped table-borderless data-table">
                 <thead>
                     <tr>
                         <th>Id</th>

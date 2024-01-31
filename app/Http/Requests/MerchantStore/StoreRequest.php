@@ -40,6 +40,7 @@ class StoreRequest extends FormRequest
             "contact_email" => "nullable|email",
             "business_hours" => "nullable",
             "tags" => "nullable",
+            "brochure" => "nullable|mimes:pdf"
         ];
     }
 }

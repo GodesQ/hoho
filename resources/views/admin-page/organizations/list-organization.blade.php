@@ -13,7 +13,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive-lg text-nowrap">
-                    <table class="table table-striped data-table">
+                    <table class="table table-striped table-borderless data-table">
                         <thead>
                             <tr>
                                 <th>Id</th>
@@ -37,7 +37,7 @@
             let table = $('.data-table').DataTable({
                 lengthChange: false,
                 processing: true,
-                pageLength: 10,
+                pageLength: 25,
                 responsive: true,
                 serverSide: true,
                 ajax: {

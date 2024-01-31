@@ -23,7 +23,7 @@ class MerchantStoreService {
      */
     public function CreateMerchantStore($request) {
         return DB::transaction(function () use ($request) {
-            $data = $request->except('_token', 'featured_image', 'main_featured_image', 'images');
+            $data = $request->except('_token', 'featured_image', 'main_featured_image', 'images', 'brochure');
 
             $merchant = Merchant::create(array_merge($data, [
                 'is_active' => $request->has('is_active'),
@@ -54,6 +54,13 @@ class MerchantStoreService {
                 ]);
             }
 
+            if ($request->hasFile('brochure')) {
+                $brochure_file = $request->file('brochure');
+                $name = Str::snake(Str::lower($request->name)) . '_brochure';
+                $brochure_file_name = $name . '.'. $brochure_file->getClientOriginalExtension();
+                $brochure_file->move(public_path() . '/assets/img/stores/' . $merchant->id, $brochure_file_name);
+            }
+
             $images = array();
 
             if ($request->has('images')) {
@@ -68,6 +75,7 @@ class MerchantStoreService {
 
             $merchant_store_data = array_merge($data, [
                 'merchant_id' => $merchant->id,
+                'brochure' => $brochure_file_name,
                 'images' => count($images) > 0 ? json_encode($images) : null,
                 'interests' => $request->has('interests') ? json_encode($request->interests) : null
             ]);

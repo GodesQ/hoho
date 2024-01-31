@@ -22,11 +22,17 @@ class TourService
                 ->addColumn('tour_image', function ($row) {
                     if($row->featured_image) {
                             $path = '../../../assets/img/tours/' . $row->id . '/' . $row->featured_image;
-                            return '<img src="' .$path. '" width="50" height="50" style="object-fit: cover;" />';
+                            return '<img src="' .$path. '" width="50" height="50" style="object-fit: cover; border-radius: 50px;" />';
                     } else {
                         $path = '../../../assets/img/' . 'default-image.jpg';
                         return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
                     }
+                })
+                ->editColumn('name', function ($row) {
+                    return view('components.tour', ['tour' => $row]);
+                })
+                ->editColumn('price', function ($row) {
+                    return '₱ ' . number_format($row->price, 2);
                 })
                 ->addColumn('actions', function ($row) {
                     return '<div class="dropdown">
@@ -52,6 +58,12 @@ class TourService
         $data = Tour::where('tour_provider_id', $admin->merchant->tour_provider_info->id)->latest('id')->get();
         return DataTables::of($data)
         ->addIndexColumn()
+        ->editColumn('name', function ($row) {
+            return view('components.tour', ['tour' => $row]);
+        })
+        ->editColumn('price', function ($row) {
+            return '₱ ' . number_format($row->price, 2);
+        })
         ->addColumn('actions', function ($row) {
             return '<div class="dropdown">
                         <a href="/admin/tours/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>

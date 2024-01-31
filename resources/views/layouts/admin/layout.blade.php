@@ -69,7 +69,7 @@
 
     <style>
         .table-striped > tbody > tr:nth-of-type(odd) > * {
-            /* --bs-table-accent-bg: rgb(255, 248, 248) !important; */
+            --bs-table-accent-bg: #fffafa !important;
         }
     </style>
 </head>
