@@ -66,7 +66,6 @@ class AdminAuthController extends Controller
         $data = $request->validated();
 
         $admin_user = Admin::create(array_merge($data, [
-            'password' => Hash::make($request->password),
             'is_merchant' => TRUE
         ]));
 

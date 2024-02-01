@@ -75,7 +75,7 @@ class MerchantStoreService {
 
             $merchant_store_data = array_merge($data, [
                 'merchant_id' => $merchant->id,
-                'brochure' => $brochure_file_name,
+                'brochure' => $brochure_file_name ?? null,
                 'images' => count($images) > 0 ? json_encode($images) : null,
                 'interests' => $request->has('interests') ? json_encode($request->interests) : null
             ]);
@@ -88,7 +88,6 @@ class MerchantStoreService {
                     'merchant' => $merchant,
                     'merchant_store' => $merchant_store
                 ];
-                // return redirect()->route('admin.merchants.stores.edit', $merchant_store->id)->withSuccess('Store created successfully');
             }
 
             return [
@@ -101,7 +100,7 @@ class MerchantStoreService {
 
     public function UpdateMerchantStore(Request $request) {
         return DB::transaction(function () use ($request) {
-            $data = $request->except('_token', 'images', 'featured_image');
+            $data = $request->except('_token', 'images', 'featured_image', 'brochure');
             $store = MerchantStore::where('id', $request->id)->with('merchant')->firstOrFail();
 
             $update_store = $store->update(array_merge($data, [
@@ -122,6 +121,23 @@ class MerchantStoreService {
 
                 $update_store = $store->update([
                     'images' => count($images) > 0 ? json_encode($images) : $store->images,
+                ]);
+            }
+
+            if ($request->hasFile('brochure')) {
+                $brochure_file = $request->file('brochure');
+                $name = Str::snake(Str::lower($request->name)) . '_brochure';
+                $brochure_file_name = $name . '.'. $brochure_file->getClientOriginalExtension();
+                $old_upload_brochure = public_path('assets/img/stores/') . $store->merchant->id . '/' . $store->brochure;
+
+                if($old_upload_brochure) {
+                    $remove_image = @unlink($old_upload_brochure);
+                }
+
+                $brochure_file->move(public_path() . '/assets/img/stores/' . $store->merchant->id, $brochure_file_name);
+
+                $update_store = $store->update([
+                    'brochure' => $brochure_file_name,
                 ]);
             }
 

@@ -98,42 +98,24 @@ class AuthController extends Controller
 
 
     public function register(RegisterRequest $request) {
-        
+        $data = $request->validated();
         $account_uid = $this->generateRandomUuid();
 
-        $contactNo = $request->contact_no;
+        $contact_no_format = $this->checkContactNumberJSON($request->contact_no);
 
-        if (is_string($contactNo) && is_array(json_decode($contactNo, true)) && (json_last_error() == JSON_ERROR_NONE)) {
-            $data = json_decode($contactNo, true);
-            $countryCode = $data['countryCode'];
-            $isoCode = $data['isoCode'] ?? null;
-            $number = $data['number'];
-            $contactNo = $number;
-        } else {
-            $countryCode = null;
-            $isoCode = null;
-            $contactNo = trim($request->input('contact_no'));
-        }
-
-        $register = User::create([
+        $register = User::create(array_merge($data, [
             'account_uid' => $account_uid,
-            'email' => $request->email,
-            'username' => $request->username,
-            'password' => Hash::make($request->password),
-            'birthdate' => $request->birthdate != null || $request->birthdate != '' ? Carbon::createFromFormat('Y-m-d', $request->birthdate) : null,
             'country_of_residence' => $request->country_of_residence,
-            'contact_no' =>  preg_replace('/\s+/', '', $contactNo),
-            'countryCode' => preg_replace("/[^0-9]/", "", $countryCode),
-            'isoCode' => $isoCode,
-            'is_old_user' => false,
+            'contact_no' =>  preg_replace('/[^0-9]/', '', $contact_no_format['contactNumber']),
+            'countryCode' => preg_replace("/[^0-9]/", "", $contact_no_format['countryCode']),
+            'isoCode' => $contact_no_format['isoCode'],
             'is_first_time_philippines' => $request->has('is_first_time_philippines'),
             'is_international_tourist' => $request->has('is_international_tourist'),
             'role' => 'guest'
-        ]);
+        ]));
 
         # details for sending email to worker
         $details = [
-            'title' => 'Verification email from HOHO',
             'email' => $request->email,
             'username' => $request->username,
         ];
@@ -151,9 +133,7 @@ class AuthController extends Controller
 
     public function logout(Request $request) {
         $user = Auth::user();
-
-        # delete token
-        $user->currentAccessToken()->delete();
+        $user->tokens()->delete();
 
         return response()->json([
             'status' => true,
@@ -168,5 +148,24 @@ class AuthController extends Controller
 
         $uuid = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
         return $uuid;
+    }
+
+    private function checkContactNumberJSON($requestContactNo) {
+        if (is_string($requestContactNo) && is_array(json_decode($requestContactNo, true)) && (json_last_error() == JSON_ERROR_NONE)) {
+            $data = json_decode($requestContactNo, true);
+            $countryCode = $data['countryCode'];
+            $isoCode = $data['isoCode'] ?? null;
+            $contactNumber = $data['number'];
+        } else {
+            $countryCode = null;
+            $isoCode = null;
+            $contactNumber = trim($requestContactNo);
+        }
+
+        return [
+            'countryCode' => $countryCode,
+            'isoCode' => $isoCode,
+            'contactNumber' => $contactNumber
+        ];
     }
 }

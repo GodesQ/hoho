@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -68,6 +71,20 @@ class User extends Authenticatable
         'is_first_time_philippines' => 'integer',
         'is_international_tourist' => 'integer'
     ];
+
+    protected function birthdate(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => Carbon::createFromFormat('Y-m-d', $value)->format('Y-m-d')
+        );
+    }
+
+    protected function password(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => Hash::make($value)
+        );
+    }
 
     protected $appends = ['interests'];
 

@@ -98,7 +98,7 @@
                     },
                 ],
                 order: [
-                    [1, 'desc'] // Sort by the first column (index 0) in descending order
+                    [0, 'desc'] // Sort by the first column (index 0) in descending order
                 ]
             })
         }

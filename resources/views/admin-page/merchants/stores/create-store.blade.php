@@ -162,6 +162,7 @@
                                     <div class="mb-3">
                                         <label for="tags" class="form-label">Tags</label>
                                         <textarea name="tags" id="tags" cols="30" rows="5" class="form-control"></textarea>
+                                        <span class="text-danger">@error('tags'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -185,8 +186,9 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="brochure-field" class="form-label">Brochure</label>
+                                        <label for="brochure-field" class="form-label">Brochure <span class="text-warning">(Maximum of 2MB)</span></label>
                                         <input type="file" name="brochure" id="brochure-field" class="form-control" accept="application/pdf" onchange="previewPDF()">
+                                        <span class="text-danger">@error('brochure'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                             </div>

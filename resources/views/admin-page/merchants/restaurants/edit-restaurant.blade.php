@@ -200,14 +200,13 @@
                                         @endif
                                     </div>
                                 </div>
-                                {{-- <div class="col-lg-6">
+                                <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="images" class="form-label">Images</label>
-                                        <input type="file" name="images[]" id="images_1" class="form-control">
-                                        <input type="file" name="images[]" id="images_2" class="form-control">
-                                        <input type="file" name="images[]" id="images_3" class="form-control">
+                                        <label for="brochure-field" class="form-label">Brochure <span class="text-warning">(Maximum of 2MB)</span></label>
+                                        <input type="file" name="brochure" id="brochure-field" class="form-control" accept="application/pdf" onchange="previewPDF()">
+                                        <span class="text-danger">@error('brochure'){{ $message }}@enderror</span>
                                     </div>
-                                </div> --}}
+                                </div>
                             </div>
                             <hr>
                             <h4>Images</h4>
@@ -303,6 +302,13 @@
                         @endif
                     </div>
                 </div>
+                <div class="card mt-2">
+                    <div class="card-body">
+                        <h6>Preview of Brochure</h6>
+                        <iframe id="pdfPreview" width="100%" height="500px" src="{{ URL::asset('/assets/img/restaurants/' . $restaurant->merchant->id . '/' . $restaurant->brochure) }}" frameborder="0"></iframe>
+                        <a target="_blank" href="{{ URL::asset('/assets/img/restaurants/' . $restaurant->merchant->id . '/' . $restaurant->brochure) }}">{{ URL::asset('/assets/img/restaurants/' . $restaurant->merchant->id . '/' . $restaurant->brochure) }}</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -356,6 +362,37 @@
             }
         }
 
+        function previewPDF() {
+            var input = document.getElementById('brochure-field');
+            var iframe = document.getElementById('pdfPreview');
+
+            // Check if a file is selected
+            if (input.files.length > 0) {
+                var file = input.files[0];
+                console.log(file.type);
+
+                // Check if the selected file is a PDF
+                if (file.type === 'application/pdf') {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        // Set the source of the iframe to the PDF data
+                        iframe.src = e.target.result;
+                    };
+
+                    // Read the file as data URL
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Please select a valid PDF file.');
+                    // Clear the input field to allow selecting another file
+                    input.value = '';
+                }
+            } else {
+                // Clear the iframe source if no file is selected
+                iframe.src = '';
+            }
+        }
+
         function handleIsFeaturedChange(e) {
             let main_featured_image_con = document.querySelector('.main-featured-image-container');
             if(e.target.checked) {
@@ -368,7 +405,7 @@
         function removeImageBtn(id, image_path) {
             Swal.fire({
                 title: 'Are you sure?',
-                text: "Remove store image",
+                text: "Remove restaurant image",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',

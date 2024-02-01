@@ -43,7 +43,14 @@ class MerchantRestaurantService
                 ]);
             }
 
-            $images = [];
+            if ($request->hasFile('brochure')) {
+                $brochure_file = $request->file('brochure');
+                $name = Str::snake(Str::lower($request->name)) . '_brochure';
+                $brochure_file_name = $name . '.'. $brochure_file->getClientOriginalExtension();
+                $brochure_file->move(public_path() . '/assets/img/restaurants/' . $merchant->id, $brochure_file_name);
+            }
+
+            $images = array();
 
             if ($request->has('images')) {
                 foreach ($request->file('images') as $count => $image) {
@@ -57,6 +64,7 @@ class MerchantRestaurantService
 
             $merchant_restaurant_data = array_merge($data, [
                 'merchant_id' => $merchant->id,
+                'brochure' => $brochure_file_name ?? null,
                 'images' => count($images) > 0 ? json_encode($images) : null,
                 'interests' => $request->has('interests') ? json_encode($request->interests) : null
             ]);
@@ -104,6 +112,23 @@ class MerchantRestaurantService
 
                 $update_restaurant = $restaurant->update([
                     'images' => count($images) > 0 ? json_encode($images) : $restaurant->images,
+                ]);
+            }
+
+            if ($request->hasFile('brochure')) {
+                $brochure_file = $request->file('brochure');
+                $name = Str::snake(Str::lower($request->name)) . '_brochure';
+                $brochure_file_name = $name . '.'. $brochure_file->getClientOriginalExtension();
+                $old_upload_brochure = public_path('assets/img/restaurants/') . $restaurant->merchant->id . '/' . $restaurant->brochure;
+
+                if($old_upload_brochure) {
+                    $remove_image = @unlink($old_upload_brochure);
+                }
+
+                $brochure_file->move(public_path() . '/assets/img/restaurants/' . $restaurant->merchant->id, $brochure_file_name);
+
+                $update_restaurant = $restaurant->update([
+                    'brochure' => $brochure_file_name,
                 ]);
             }
 
