@@ -35,7 +35,7 @@
                             <th>ID</th>
                             <th></th>
                             <th>Name</th>
-                            <th>Nature Of Business</th>
+                            <th>Location</th>
                             <th>Is Featured</th>
                             <th>Actions</th>
                         </tr>
@@ -81,8 +81,10 @@
                         orderable: false,
                     },
                     {
-                        data: 'nature_of_business',
-                        name: 'nature_of_business'
+                        data: 'location',
+                        name: 'location',
+                        orderable: false,
+                        searchable: false,
                     },
                     {
                         data: 'is_featured',

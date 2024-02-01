@@ -9,6 +9,19 @@
             <a href="{{ route('admin.users.create') }}" class="btn btn-primary">Add User <i class="bx bx-plus"></i></a>
         </div>
 
+        {{-- <div class="card mb-3">
+            <div class="card-body p-2">
+                <div class="row">
+                    <div class="col-lg-1">
+                        <button class="btn btn-primary w-100">Test</button>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div> --}}
+
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive text-nowrap">

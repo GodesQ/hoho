@@ -71,8 +71,11 @@ class MerchantStoreController extends Controller
                 ->addColumn('name', function ($row) {
                     return ($row->merchant)->name;
                 })
-                ->addColumn('nature_of_business', function($row) {
-                    return optional($row->merchant)->nature_of_business;
+                ->editColumn('location', function ($row) {
+                    if($row->merchant->address) {
+                        return view('components.merchant-location', ['data' => $row]);
+                    }
+                    return "-";
                 })
                 ->addColumn('is_featured', function($row) {
                     if ($row->merchant->is_featured) {
@@ -87,7 +90,7 @@ class MerchantStoreController extends Controller
                                 <a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                             </div>';
                 })
-                ->rawColumns(['actions', 'featured_image', 'is_featured'])
+                ->rawColumns(['actions', 'featured_image', 'is_featured', 'location'])
                 ->make(true);
         }
 
