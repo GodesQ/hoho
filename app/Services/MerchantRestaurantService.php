@@ -45,7 +45,7 @@ class MerchantRestaurantService
 
             if ($request->hasFile('brochure')) {
                 $brochure_file = $request->file('brochure');
-                $name = Str::snake(Str::lower($request->name)) . '_brochure';
+                $name = Str::snake(Str::lower($request->name)) . '_brochure_' . time();
                 $brochure_file_name = $name . '.'. $brochure_file->getClientOriginalExtension();
                 $brochure_file->move(public_path() . '/assets/img/restaurants/' . $merchant->id, $brochure_file_name);
             }
@@ -117,7 +117,7 @@ class MerchantRestaurantService
 
             if ($request->hasFile('brochure')) {
                 $brochure_file = $request->file('brochure');
-                $name = Str::snake(Str::lower($request->name)) . '_brochure';
+                $name = Str::snake(Str::lower($request->name)) . '_brochure_' . time();
                 $brochure_file_name = $name . '.'. $brochure_file->getClientOriginalExtension();
                 $old_upload_brochure = public_path('assets/img/restaurants/') . $restaurant->merchant->id . '/' . $restaurant->brochure;
 
