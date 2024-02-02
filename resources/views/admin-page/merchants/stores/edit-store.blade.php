@@ -221,10 +221,15 @@
                                         <div class="col-lg-4">
                                             <div class="mb-3">
                                                 @if (count($store_images) > 0 && isset($store_images[0]))
-                                                    <img src="{{ URL::asset('assets/img/stores/' . $store->merchant->id . '/' . $store_images[0]) }}"
-                                                        id="previewImage1" alt="Default Image" width="100%"
-                                                        height="200px"
-                                                        style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @fileExists('assets/img/stores/' . $store->merchant->id . '/' . $store_images[0])
+                                                        <img src="{{ URL::asset('assets/img/stores/' . $store->merchant->id . '/' . $store_images[0]) }}"
+                                                            id="previewImage2" alt="Default Image" width="100%" height="200px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @elsefileExists
+                                                        <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                            id="previewImage2" alt="Default Image" width="100%" height="210px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @endfileExists
                                                     <button type="button"
                                                         style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                         class="btn btn-primary"
@@ -243,10 +248,15 @@
                                         <div class="col-lg-4">
                                             <div class="mb-3">
                                                 @if (count($store_images) > 0 && isset($store_images[1]))
-                                                    <img src="{{ URL::asset('assets/img/stores/' . $store->merchant->id . '/' . $store_images[1]) }}"
-                                                        id="previewImage2" alt="Default Image" width="100%"
-                                                        height="200px"
-                                                        style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @fileExists('assets/img/stores/' . $store->merchant->id . '/' . $store_images[1])
+                                                        <img src="{{ URL::asset('assets/img/stores/' . $store->merchant->id . '/' . $store_images[1]) }}"
+                                                            id="previewImage2" alt="Default Image" width="100%" height="200px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @elsefileExists
+                                                        <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                            id="previewImage2" alt="Default Image" width="100%" height="210px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @endfileExists
                                                     <button type="button"
                                                         style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                         class="btn btn-primary"
@@ -265,10 +275,15 @@
                                         <div class="col-lg-4">
                                             <div class="mb-3">
                                                 @if (count($store_images) > 0 && isset($store_images[2]))
-                                                    <img src="{{ URL::asset('assets/img/stores/' . $store->merchant->id . '/' . $store_images[2]) }}"
-                                                        id="previewImage3" alt="Default Image" width="100%"
-                                                        height="200px"
-                                                        style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @fileExists('assets/img/stores/' . $store->merchant->id . '/' . $store_images[2])
+                                                        <img src="{{ URL::asset('assets/img/stores/' . $store->merchant->id . '/' . $store_images[2]) }}"
+                                                            id="previewImage2" alt="Default Image" width="100%" height="200px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @elsefileExists
+                                                        <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                            id="previewImage2" alt="Default Image" width="100%" height="210px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @endfileExists
                                                     <button type="button"
                                                         style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                         class="btn btn-primary"
@@ -298,8 +313,15 @@
                     <div class="card-body">
                         <h6>Preview of Featured Image</h6>
                         @if ($store->merchant->featured_image)
-                            <img src="{{ URL::asset('/assets/img/stores/' . $store->merchant->id . '/' . $store->merchant->featured_image) }}"
-                                alt="" style="border-radius: 10px;" width="100%" id="previewImage">
+                            @fileExists('assets/img/stores/' . $store->merchant->id . '/' . $store->merchant->featured_image)
+                                <img src="{{ URL::asset('assets/img/stores/' . $store->merchant->id . '/' . $store->merchant->featured_image) }}"
+                                    id="previewImage2" alt="Default Image" width="100%" height="200px"
+                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                            @elsefileExists
+                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                    id="previewImage2" alt="Default Image" width="100%" height="210px"
+                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                            @endfileExists
                         @else
                             <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt=""
                                 style="border-radius: 10px;" width="100%" id="previewImage">
@@ -309,8 +331,12 @@
                 <div class="card mt-2">
                     <div class="card-body">
                         <h6>Preview of Brochure</h6>
-                        <iframe id="pdfPreview" width="100%" height="500px" src="{{ URL::asset('/assets/img/stores/' . $store->merchant->id . '/' . $store->brochure) }}" frameborder="0"></iframe>
-                        <a target="_blank" href="{{ URL::asset('/assets/img/stores/' . $store->merchant->id . '/' . $store->brochure) }}">{{ URL::asset('/assets/img/stores/' . $store->merchant->id . '/' . $store->brochure) }}</a>
+                        @if($store->brochure) 
+                            <iframe id="pdfPreview" width="100%" height="500px" src="{{ URL::asset('/assets/img/stores/' . $store->merchant->id . '/' . $store->brochure) }}" frameborder="0"></iframe>
+                            <a target="_blank" href="{{ URL::asset('/assets/img/stores/' . $store->merchant->id . '/' . $store->brochure) }}">{{ URL::asset('/assets/img/stores/' . $store->merchant->id . '/' . $store->brochure) }}</a>
+                        @else
+                            <iframe id="pdfPreview" width="100%" height="500px" frameborder="0"></iframe>
+                        @endif
                     </div>
                 </div>
             </div>

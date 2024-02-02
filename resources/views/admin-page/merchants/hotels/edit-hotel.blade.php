@@ -216,20 +216,26 @@
                                     <div class="row">
                                         <div class="col-lg-4">
                                             <div class="mb-3">
-                                                <input type="file" class="form-control mb-2 image-input"
-                                                    accept="image/*" name="images[]" id="image_1"
-                                                    onchange="handlePreviewImage(this, 'previewImage1')">
+
                                                 @if (count($hotel_images) > 0 && isset($hotel_images[0]))
-                                                    <img src="{{ URL::asset('assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel_images[0]) }}"
-                                                        id="previewImage1" alt="Default Image" width="100%"
-                                                        height="200px"
-                                                        style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @fileExists('assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel_images[0])
+                                                        <img src="{{ URL::asset('assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel_images[0]) }}"
+                                                            id="previewImage2" alt="Default Image" width="100%" height="200px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @elsefileExists
+                                                        <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                            id="previewImage2" alt="Default Image" width="100%" height="210px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @endfileExists
                                                     <button type="button"
                                                         style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                         class="btn btn-primary"
                                                         onclick="removeImageBtn({{ $hotel->id }}, '{{ $hotel_images[0] }}')">Remove
                                                         <i class="bx bx-trash"></i></button>
                                                 @else
+                                                    <input type="file" class="form-control mb-2 image-input"
+                                                    accept="image/*" name="images[]" id="image_1"
+                                                    onchange="handlePreviewImage(this, 'previewImage1')">
                                                     <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
                                                         id="previewImage1" alt="Default Image" width="100%"
                                                         height="200px" style="border-radius: 10px; object-fit: cover;">
@@ -238,20 +244,25 @@
                                         </div>
                                         <div class="col-lg-4">
                                             <div class="mb-3">
-                                                <input type="file" class="form-control mb-2 image-input"
-                                                    accept="image/*" name="images[]" id="image_2"
-                                                    onchange="handlePreviewImage(this, 'previewImage2')">
                                                 @if (count($hotel_images) > 0 && isset($hotel_images[1]))
-                                                    <img src="{{ URL::asset('assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel_images[1]) }}"
-                                                        id="previewImage2" alt="Default Image" width="100%"
-                                                        height="200px"
-                                                        style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @fileExists('assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel_images[1])
+                                                        <img src="{{ URL::asset('assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel_images[1]) }}"
+                                                            id="previewImage2" alt="Default Image" width="100%" height="200px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @elsefileExists
+                                                        <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                            id="previewImage2" alt="Default Image" width="100%" height="210px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @endfileExists
                                                     <button type="button"
                                                         style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                         class="btn btn-primary"
                                                         onclick="removeImageBtn({{ $hotel->id }}, '{{ $hotel_images[1] }}')">Remove
                                                         <i class="bx bx-trash"></i></button>
                                                 @else
+                                                    <input type="file" class="form-control mb-2 image-input"
+                                                        accept="image/*" name="images[]" id="image_2"
+                                                        onchange="handlePreviewImage(this, 'previewImage2')">   
                                                     <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
                                                         id="previewImage2" alt="Default Image" width="100%"
                                                         height="200px" style="border-radius: 10px; object-fit: cover;">
@@ -260,20 +271,25 @@
                                         </div>
                                         <div class="col-lg-4">
                                             <div class="mb-3">
-                                                <input type="file" class="form-control mb-2 image-input"
-                                                    accept="image/*" name="images[]" id="image_3"
-                                                    onchange="handlePreviewImage(this, 'previewImage3')">
                                                 @if (count($hotel_images) > 0 && isset($hotel_images[2]))
-                                                    <img src="{{ URL::asset('assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel_images[2]) }}"
-                                                        id="previewImage3" alt="Default Image" width="100%"
-                                                        height="200px"
-                                                        style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @fileExists('assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel_images[2])
+                                                        <img src="{{ URL::asset('assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel_images[2]) }}"
+                                                            id="previewImage2" alt="Default Image" width="100%" height="200px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @elsefileExists
+                                                        <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                            id="previewImage2" alt="Default Image" width="100%" height="210px"
+                                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                    @endfileExists
                                                     <button type="button"
                                                         style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                         class="btn btn-primary"
                                                         onclick="removeImageBtn({{ $hotel->id }}, '{{ $hotel_images[2] }}')">Remove
                                                         <i class="bx bx-trash"></i></button>
                                                 @else
+                                                    <input type="file" class="form-control mb-2 image-input"
+                                                    accept="image/*" name="images[]" id="image_3"
+                                                    onchange="handlePreviewImage(this, 'previewImage3')">
                                                     <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
                                                         id="previewImage3" alt="Default Image" width="100%"
                                                         height="200px" style="border-radius: 10px; object-fit: cover;">
@@ -294,8 +310,15 @@
                     <div class="card-body">
                         <h6>Preview of Featured Image</h6>
                         @if ($hotel->merchant->featured_image)
-                            <img src="{{ URL::asset('/assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel->merchant->featured_image) }}"
-                                alt="" style="border-radius: 10px;" width="100%">
+                            @fileExists('assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel->merchant->featured_image)
+                                <img src="{{ URL::asset('assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel->merchant->featured_image) }}"
+                                    id="previewImage2" alt="Default Image" width="100%" height="200px"
+                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                            @elsefileExists
+                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                    id="previewImage2" alt="Default Image" width="100%" height="210px"
+                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                            @endfileExists
                         @else
                             <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt=""
                                 style="border-radius: 10px;" width="100%">
@@ -305,8 +328,12 @@
                 <div class="card mt-2">
                     <div class="card-body">
                         <h6>Preview of Brochure</h6>
-                        <iframe id="pdfPreview" width="100%" height="500px" src="{{ URL::asset('/assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel->brochure) }}" frameborder="0"></iframe>
-                        <a target="_blank" href="{{ URL::asset('/assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel->brochure) }}">{{ URL::asset('/assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel->brochure) }}</a>
+                        @if($hotel->brochure)
+                            <iframe id="pdfPreview" width="100%" height="500px" src="{{ URL::asset('/assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel->brochure) }}" frameborder="0"></iframe>
+                            <a target="_blank" href="{{ URL::asset('/assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel->brochure) }}">{{ URL::asset('/assets/img/hotels/' . $hotel->merchant->id . '/' . $hotel->brochure) }}</a>
+                        @else
+                            <iframe id="pdfPreview" width="100%" height="500px" frameborder="0"></iframe>
+                        @endif
                     </div>
                 </div>
             </div>

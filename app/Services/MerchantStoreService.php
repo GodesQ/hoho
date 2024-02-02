@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,7 +27,11 @@ class MerchantStoreService {
                         $path = asset('assets/img/stores/' . $row->merchant->id . '/' . $row->merchant->featured_image);
                     } else {
                         $path = $defaultImagePath;
-                    }            
+                    }
+                    
+                    if(!File::exists(public_path('assets/img/stores/' . $row->merchant->id . '/' . $row->merchant->featured_image))) {
+                        $path = $defaultImagePath;
+                    }
                 
                     return '<img src="' . $path . '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
                 })                

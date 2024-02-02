@@ -72,7 +72,7 @@
                     {
                         data: 'featured_image',
                         name: 'featured_image',
-                        orderable: false, 
+                        orderable: false,
                         searchable: false,
                     },
                     {
