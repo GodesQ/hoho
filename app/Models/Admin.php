@@ -34,6 +34,15 @@ class Admin extends Authenticatable
         'transport_id',
         'merchant_email_approved_at'
     ];
+
+    protected $casts = [
+        'is_active' => 'integer',
+        'is_merchant' => 'integer',
+        'is_approved' => 'integer',
+        'merchant_id' => 'integer',
+        'transport_id' => 'integer',
+    ];
+
     protected $hidden = ['password'];
 
     protected function password(): Attribute
