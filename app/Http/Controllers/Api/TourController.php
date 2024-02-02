@@ -13,7 +13,8 @@ class TourController extends Controller
 {
     public function getGuidedTours(Request $request)
     {
-        $userInterests = Auth::user()->interest_ids ? json_decode(Auth::user()->interest_ids) : [];
+        $userInterests = Auth::user()->interest_ids && Auth::user()->interest_ids != 'null' ? json_decode(Auth::user()->interest_ids) : [];
+        
         // return $userInterests;
         $tours = Tour::where('type', 'Guided Tour')
             ->where('status', 1)
