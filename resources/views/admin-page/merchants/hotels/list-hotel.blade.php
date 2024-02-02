@@ -35,7 +35,7 @@
                             <th>Id</th>
                             <th></th>
                             <th>Name</th>
-                            <th>Nature Of Business</th>
+                            <th>Location</th>
                             <th>Is Featured</th>
                             <th>Actions</th>
                         </tr>
@@ -80,8 +80,8 @@
                         name: 'name',
                     },
                     {
-                        data: 'nature_of_business',
-                        name: 'nature_of_business'
+                        data: 'location',
+                        name: 'location'
                     },
                     {
                         data: 'is_featured',

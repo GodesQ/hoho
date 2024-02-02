@@ -12,8 +12,49 @@ use App\Models\Organization;
 use App\Models\Interest;
 
 use DB;
+use Yajra\DataTables\DataTables;
 
 class MerchantStoreService {
+
+    public function generateDataTable(Request $request, $data) {
+        return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('featured_image', function ($row) {
+                    $defaultImagePath = asset('assets/img/default-image.jpg');
+                
+                    if ($row->merchant && $row->merchant->featured_image) {
+                        $path = asset('assets/img/stores/' . $row->merchant->id . '/' . $row->merchant->featured_image);
+                    } else {
+                        $path = $defaultImagePath;
+                    }            
+                
+                    return '<img src="' . $path . '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
+                })                
+                ->editColumn('name', function ($row) {
+                    return ($row->merchant)->name;
+                })
+                ->editColumn('location', function ($row) {
+                    if($row->merchant->address) {
+                        return view('components.merchant-location', ['data' => $row]);
+                    }
+                    return "-";
+                })
+                ->editColumn('is_featured', function($row) {
+                    if ($row->merchant->is_featured) {
+                        return '<span class="badge bg-label-success me-1">Yes</span>';
+                    } else {
+                        return '<span class="badge bg-label-secondary me-1">No</span>';
+                    }
+                })
+                ->editColumn('actions', function ($row) {
+                    return '<div class="dropdown">
+                                <a href="/admin/merchants/stores/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
+                                <a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
+                            </div>';
+                })
+                ->rawColumns(['actions', 'featured_image', 'is_featured', 'location'])
+                ->make(true);
+    }
 
     /**
      * Create a new merchant store using the provided request data.

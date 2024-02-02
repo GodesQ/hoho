@@ -190,24 +190,25 @@ class MerchantRestaurantService
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('featured_image', function ($row) {
-                if ($row->merchant) {
-                    if ($row->merchant->featured_image) {
-                        $path = '../../../assets/img/restaurants/' . $row->merchant->id . '/' . $row->merchant->featured_image;
-                        return '<img src="' . $path . '" width="50" height="50" style="object-fit: cover;" />';
-                    } else {
-                        $path = '../../../assets/img/' . 'default-image.jpg';
-                        return '<img src="' . $path . '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
-                    }
+                $defaultImagePath = asset('assets/img/default-image.jpg');
+            
+                if ($row->merchant && $row->merchant->featured_image) {
+                    $path = asset('assets/img/restaurants/' . $row->merchant->id . '/' . $row->merchant->featured_image);
                 } else {
-                    $path = '../../../assets/img/' . 'default-image.jpg';
-                    return '<img src="' . $path . '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
-                }
-            })
+                    $path = $defaultImagePath;
+                }            
+            
+                return '<img src="' . $path . '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
+            })            
             ->addColumn('name', function ($row) {
                 return optional($row->merchant)->name;
             })
-            ->addColumn('nature_of_business', function ($row) {
-                return optional($row->merchant)->nature_of_business;
+            ->addColumn('location', function ($row) {
+                if($row->merchant->address) {
+                    return view('components.merchant-location', ['data' => $row]);
+                }
+
+                return '-';
             })
             ->addColumn('is_featured', function ($row) {
                 if ($row->merchant->is_featured) {

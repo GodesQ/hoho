@@ -44,43 +44,7 @@ class MerchantHotelController extends Controller
             })
             ->with('merchant');
 
-            return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('featured_image', function($row) {
-                        if($row->merchant) {
-                            if($row->merchant->featured_image) {
-                                $path = '../../../assets/img/hotels/' . $row->merchant->id . '/' . $row->merchant->featured_image;
-                                return '<img src="' .$path. '" width="50" height="50" style="object-fit: cover;" />';
-                            } else {
-                                $path = '../../../assets/img/' . 'default-image.jpg';
-                                return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
-                            }
-                        } else {
-                            $path = '../../../assets/img/' . 'default-image.jpg';
-                            return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
-                        }
-                    })
-                    ->addColumn('name', function ($row) {
-                        return ($row->merchant)->name;
-                    })
-                    ->addColumn('nature_of_business', function($row) {
-                        return optional($row->merchant)->nature_of_business;
-                    })
-                    ->addColumn('is_featured', function($row) {
-                        if ($row->merchant->is_featured) {
-                            return '<span class="badge bg-label-success me-1">Yes</span>';
-                        } else {
-                            return '<span class="badge bg-label-secondary me-1">No</span>';
-                        }
-                    })
-                    ->addColumn('actions', function ($row) {
-                        return '<div class="dropdown">
-                                    <a href="/admin/merchants/hotels/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
-                                </div>';
-                    })
-                    ->rawColumns(['actions', 'featured_image', 'is_featured'])
-                    ->make(true);
+            return $this->merchantHotelService->generateDataTable($request, $data);
         }
 
         $organizations = Organization::get();
