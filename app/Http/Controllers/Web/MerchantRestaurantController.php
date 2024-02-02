@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MerchantRestaurant\StoreRequest;
+use App\Http\Requests\MerchantRestaurant\UpdateRequest;
 use App\Services\MerchantRestaurantService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -88,7 +89,7 @@ class MerchantRestaurantController extends Controller
         return view('admin-page.merchants.restaurants.edit-restaurant', compact('restaurant', 'organizations', 'interests'));
     }
 
-    public function update(Request $request)
+    public function update(UpdateRequest $request)
     {
         $result = $this->merchantRestaurantService->UpdateMerchantRestaurant($request);
 
@@ -118,7 +119,6 @@ class MerchantRestaurantController extends Controller
             }
         }
 
-        // Now try to remove the directory
         if (is_dir($directory)) {
             @rmdir($directory);
         }

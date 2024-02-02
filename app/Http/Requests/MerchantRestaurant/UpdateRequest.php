@@ -13,7 +13,7 @@ class UpdateRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,23 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            "name" => "required",
+            "code" => "nullable",
+            "type" => "required|in:Hotel,Restaurant,Tour Provider,Store",
+            "featured_image" => "nullable|image",
+            "nature_of_business" => "nullable",
+            "organization_id" => "required",
+            "address" => "nullable",
+            "latitude" => "nullable",
+            "longitude" => "nullable",
+            "description" => "nullable",
+            "interests" => "nullable|array",
+            "payment_options" => "nullable",
+            "contact_number" => "nullable|numeric|max:12",
+            "contact_email" => "nullable|email",
+            "business_hours" => "nullable",
+            "tags" => "nullable",
+            "brochure" => "nullable|mimes:pdf,ppt,pptx|max:2048"
         ];
     }
 }

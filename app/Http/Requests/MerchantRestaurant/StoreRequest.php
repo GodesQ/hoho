@@ -29,6 +29,18 @@ class StoreRequest extends FormRequest
             "type" => "required|in:Store,Hotel,Restaurant,Tour Provider",
             "featured_image" => "required|image",
             "nature_of_business" => "nullable",
+            "organization_id" => "required",
+            "address" => "nullable",
+            "latitude" => "nullable",
+            "longitude" => "nullable",
+            "description" => "nullable",
+            "interests" => "nullable|array",
+            "payment_options" => "nullable",
+            "contact_number" => "nullable|max:12",
+            "contact_email" => "nullable|email",
+            "business_hours" => "nullable",
+            "tags" => "nullable",
+            "brochure" => "nullable|mimes:pdf|max:2048",
         ];
     }
 }

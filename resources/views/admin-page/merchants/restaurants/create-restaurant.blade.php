@@ -24,6 +24,11 @@
             <div class="col-xl-8">
                 <div class="card">
                     <div class="card-body">
+                        @if ($errors->any())
+                            <div class="alert alert-danger my-2" style="border-left: 5px solid red;">
+                                Invalid Fields. Please check all fields before submitting the form.
+                            </div>
+                        @endif
                         <form action="{{ route('admin.merchants.restaurants.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
@@ -56,7 +61,11 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="featured_image" class="form-label">Featured Image</label>
+                                        <label for="featured_image" class="form-label">
+                                            Featured Image 
+                                            <span class="text-danger">*</span> 
+                                            <span class="text-warning">(Maximum of 2MB)</span>
+                                        </label>
                                         <input type="file" class="form-control" name="featured_image" id="featured_image" value="" accept="image/*">
                                         <span class="text-danger">@error('featured_image'){{ $message }}@enderror</span>
                                     </div>
@@ -188,7 +197,7 @@
                                 </div>
                             </div>
                             <hr>
-                            <h4>Images</h4>
+                            <h4>Images <span class="text-warning h6">(Maximum of 2MB)</span></h4>
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="row">

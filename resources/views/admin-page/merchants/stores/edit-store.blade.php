@@ -44,6 +44,7 @@
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="name" id="name"
                                             value="{{ $store->merchant->name }}" required>
+                                        <div class="text-danger">@error('name'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -51,6 +52,7 @@
                                         <label for="code" class="form-label">Merchant Code</label>
                                         <input type="text" class="form-control" name="code" id="code"
                                             value="{{ $store->merchant->code }}">
+                                        <div class="text-danger">@error('code'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -67,13 +69,18 @@
                                             <option {{ $store->merchant->type == 'Restaurant' ? 'selected' : null }}
                                                 value="Restaurant">Restaurant</option>
                                         </select>
+                                        <div class="text-danger">@error('type'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="featured_image" class="form-label">Featured Image</label>
+                                        <label for="featured_image" class="form-label">
+                                            Featured Image <span class="text-danger">*</span>
+                                            <span class="text-warning">(Maximum of 2MB)</span>
+                                        </label>
                                         <input type="file" class="form-control" name="featured_image" id="featured_image"
                                             value="">
+                                        <div class="text-danger">@error('featured_image'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -81,6 +88,7 @@
                                         <label for="nature_of_business" class="form-label">Nature of Business</label>
                                         <input type="text" class="form-control" name="nature_of_business"
                                             id="nature_of_business" value="{{ $store->merchant->nature_of_business }}">
+                                        <div class="text-danger">@error('nature_of_business'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -94,6 +102,7 @@
                                                     value="{{ $organization->id }}">{{ $organization->name }}</option>
                                             @endforeach
                                         </select>
+                                        <div class="text-danger">@error('organization_id'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -101,6 +110,7 @@
                                         <label for="address" class="form-label">Address</label>
                                         <input type="text" class="form-control" name="address" id="address"
                                             value="{{ $store->merchant->address }}">
+                                        <div class="text-danger">@error('address'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -110,6 +120,7 @@
                                                 <label action="latitude" class="form-label">Latitude</label>
                                                 <input type="text" class="form-control" name="latitude" id="latitude"
                                                     value="{{ $store->merchant->latitude }}">
+                                                <div class="text-danger">@error('latitude'){{ $message }}@enderror</div>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -117,6 +128,7 @@
                                                 <label action="longitude" class="form-label">longitude</label>
                                                 <input type="text" class="form-control" name="longitude" id="longitude"
                                                     value="{{ $store->merchant->longitude }}">
+                                                <div class="text-danger">@error('longitude'){{ $message }}@enderror</div>
                                             </div>
                                         </div>
                                     </div>
@@ -125,6 +137,7 @@
                                     <div class="mb-3">
                                         <label for="description" class="form-label">Description</label>
                                         <textarea name="description" id="description" cols="30" rows="5" class="form-control">{{ $store->merchant->description }}</textarea>
+                                        <div class="text-danger">@error('description'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                             </div>
@@ -144,6 +157,7 @@
                                                 <option {{ in_array($interest->id, $selected_interests) ? 'selected' : null }} value="{{ $interest->id }}">{{ $interest->name }}</option>
                                             @endforeach
                                         </select>
+                                        <div class="text-danger">@error('interests'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -151,6 +165,7 @@
                                         <label for="payment_options" class="form-label">Payment Options</label>
                                         <input type="text" class="form-control" name="payment_options"
                                             id="payment_options" value="{{ $store->payment_options }}">
+                                        <div class="text-danger">@error('payment_options'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -158,6 +173,7 @@
                                         <label for="contact_number" class="form-label">Contact Number</label>
                                         <input type="text" name="contact_number" id="contact_number"
                                             class="form-control" value="{{ $store->contact_number }}">
+                                        <div class="text-danger">@error('contact_number'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -165,18 +181,21 @@
                                         <label for="contact_email" class="form-label">Contact Email</label>
                                         <input type="text" name="contact_email" id="contact_email"
                                             class="form-control" value="{{ $store->contact_email }}">
+                                        <div class="text-danger">@error('contact_email'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="business_hours" class="form-label">Business Hours</label>
                                         <textarea name="business_hours" id="business_hours" cols="30" rows="5" class="form-control">{{ $store->business_hours }}</textarea>
+                                        <div class="text-danger">@error('business_hours'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="tags" class="form-label">Tags</label>
                                         <textarea name="tags" id="tags" cols="30" rows="5" class="form-control">{{ $store->tags }}</textarea>
+                                        <div class="text-danger">@error('tags'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -208,12 +227,12 @@
                                     <div class="mb-3">
                                         <label for="brochure-field" class="form-label">Brochure <span class="text-warning">(Maximum of 2MB)</span></label>
                                         <input type="file" name="brochure" id="brochure-field" class="form-control" accept="application/pdf" onchange="previewPDF()">
-                                        <span class="text-danger">@error('brochure'){{ $message }}@enderror</span>
+                                        <div class="text-danger">@error('brochure'){{ $message }}@enderror</div>
                                     </div>
                                 </div>
                             </div>
                             <hr>
-                            <h4>Images</h4>
+                            <h4>Images <span class="text-warning h6">(MAXIMUM OF 2MB)</span></h4>
                             <div class="row">
                                 <div class="col-lg-12">
                                     <?php $store_images = $store->images ? json_decode($store->images) : []; ?>

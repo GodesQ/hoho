@@ -15,10 +15,10 @@ use DB;
 
 class MerchantRestaurantService
 {
-    public function CreateMerchantRestaurant(Request $request)
+    public function CreateMerchantRestaurant($request)
     {
         return DB::transaction(function () use ($request) {
-            $data = $request->except('_token', 'featured_image', 'main_featured_image', 'images');
+            $data = $request->except('_token', 'featured_image', 'main_featured_image', 'images', 'brochure');
             $merchant = Merchant::create(array_merge($data, ['is_active' => $request->has('is_active'), 'is_featured' => $request->has('is_featured')]));
             $file_name = null;
 
@@ -73,7 +73,6 @@ class MerchantRestaurantService
             $merchant_restaurant = MerchantRestaurant::create($merchant_restaurant_data);
 
             if ($merchant_restaurant) {
-                // return redirect()->route('admin.merchants.restaurants.edit', $merchant_restaurant->id)->withSuccess('Restaurant created successfully');
                 return [
                     'status' => TRUE,
                     'merchant' => $merchant,
