@@ -75,20 +75,22 @@ class User extends Authenticatable
     protected function birthdate(): Attribute
     {
         return Attribute::make(
-            set: fn ($value) => Carbon::createFromFormat('Y-m-d', $value)->format('Y-m-d')
+            set: fn($value) => $value !== null ? Carbon::createFromFormat('Y-m-d', $value)->format('Y-m-d') : null
         );
     }
+
 
     protected function password(): Attribute
     {
         return Attribute::make(
-            set: fn ($value) => Hash::make($value)
+            set: fn($value) => Hash::make($value)
         );
     }
 
     protected $appends = ['interests'];
 
-    public function getInterestsAttribute() {
+    public function getInterestsAttribute()
+    {
         $interest_ids = json_decode($this->interest_ids, true);
 
         if (is_array($interest_ids) && !empty($interest_ids)) {
@@ -102,7 +104,8 @@ class User extends Authenticatable
         }
     }
 
-    public function user_badges() {
+    public function user_badges()
+    {
         return $this->hasMany(UserTourBadge::class, 'user_id');
     }
 }
