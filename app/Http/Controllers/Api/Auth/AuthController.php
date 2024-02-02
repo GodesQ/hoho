@@ -13,7 +13,6 @@ use App\Models\Admin;
 use App\Models\User;
 
 use App\Http\Requests\Auth\RegisterRequest;
-use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -30,65 +29,9 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $user = null;
-        $token = '';
-
         # Find the user based on email or username
         $fieldType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-
-        $user = User::where($fieldType, $request->username)->first();
-
-        # if it is not user then try to search in admin table
-        if(!$user) {
-            $user = Admin::where($fieldType, $request->username)->first();
-            if($user) {
-                # Load the 'transport' relationship if the role is 'bus_operator'
-                if ($user->role === 'bus_operator') {
-                    $user->load('transport');
-                }
-            } else {
-                return response([
-                    'status' => false,
-                    'user' => (
-                        [
-                            'is_old_user' => 0
-                        ]
-                    ),
-                    'message' => "Invalid credentials."
-                ], 400);
-            }
-        }
-
-        # Check if the password is correct and determined if the user is old user
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response([
-                'status' => false,
-                'user' => $user && $user->is_old_user ? (
-                    [
-                        'is_old_user' => 1
-                    ]
-                ) : (
-                    [
-                        'is_old_user' => 0
-                    ]
-                ),
-                'message' => $user && $user->is_old_user ? 'This is an old user. Please change password' : 'Invalid credentials.'
-            ], 400);
-        }
-
-        if($user->role == 'guest' && !$user->is_verify) {
-            return response([
-                'status' => false,
-                'message' => "Please verify your email first before signing-in."
-            ], 400);
-        }
-
-        $token = $user->createToken("API TOKEN")->plainTextToken;
-
-        return response([
-            'user' => $user,
-            'token' => $token
-        ], 200);
+        return $this->authenticate($request, $fieldType);
     }
 
     public function dash(Request $request) {
@@ -114,13 +57,8 @@ class AuthController extends Controller
             'role' => 'guest'
         ]));
 
-        # details for sending email to worker
-        $details = [
-            'email' => $request->email,
-            'username' => $request->username,
-        ];
-
         // SEND EMAIL FOR VERIFICATION
+        $details = ['email' => $request->email, 'username' => $request->username];
         Mail::to($request->email)->send(new EmailVerification($details));
 
         if($register) {
@@ -140,6 +78,8 @@ class AuthController extends Controller
             'message' => 'Logout Successfully',
         ], 200);
     }
+
+    # HELPERS    
 
     private function generateRandomUuid() {
         $data = random_bytes(16);
@@ -168,4 +108,65 @@ class AuthController extends Controller
             'contactNumber' => $contactNumber
         ];
     }
+
+    private function authenticateUser($request, $fieldType) {
+        $user = User::where($fieldType, $request->username)->first();
+    
+        if (!$user) {
+            $user = Admin::where($fieldType, $request->username)->first();
+            if ($user && $user->role === 'bus_operator') {
+                $user->load('transport');
+            } elseif (!$user) {
+                return $this->handleInvalidCredentials();
+            }
+        }
+    
+        return $user;
+    }
+
+    private function handleInvalidCredentials() {
+        $response = [
+            'status' => false,
+            'message' => 'Invalid credentials.',
+            'user' => ['is_old_user' => 0],
+        ];
+    
+        return response($response, 400);
+    }
+
+    private function authenticate(Request $request, $fieldType) {        
+        $user = $this->authenticateUser($request, $fieldType);
+    
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            $isOldUser = $user && $user->is_old_user;
+            $response = [
+                'status' => FALSE,
+                'user' => ['is_old_user' => $isOldUser ? 1 : 0],
+                'message' => $isOldUser ? 'This is an old user. Please change password' : 'Invalid credentials.',
+            ];
+    
+            return response($response, 400);
+        }
+        
+        // Check if the user is a guest and already verify the email address
+        if ($user->role == 'guest' && !$user->is_verify) {
+            $response = [
+                'status' => FALSE,
+                'message' => 'Please verify your email first before signing in.',
+            ];
+
+            return response($response, 400);
+        }
+    
+        $token = $user->createToken("API TOKEN")->plainTextToken;
+    
+        return response([
+            'status' => TRUE,
+            'user' => $user,
+            'token' => $token,
+            'message' => 'User Found'
+        ], 200);
+    }
+
+    # END OF HELPERS
 }
