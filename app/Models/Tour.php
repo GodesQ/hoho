@@ -42,7 +42,8 @@ class Tour extends Model
         'start_date_duration',
         'end_date_duration',
         'tour_duration',
-        'transport_id'
+        'transport_id',
+        'organization_id',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -51,6 +52,7 @@ class Tour extends Model
         'merchant_id' => 'integer',
         'tour_duration' => 'integer',
         'transport_id' => 'integer',
+        'organization_id' => 'integer',
         'price' => 'double',
         'bypass_days' => 'integer',
         'minimum_pax' => 'integer',

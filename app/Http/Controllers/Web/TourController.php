@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Interest;
+use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -54,6 +55,7 @@ class TourController extends Controller
     public function create(Request $request) {
         $attractions = Attraction::get();
         $interests = Interest::get();
+        $organizations = Organization::get();
         $admin =  Auth::guard('admin')->user();
 
         if(in_array($admin->role, ['tour_operator_admin', 'tour_operator_employee'])) {
@@ -62,7 +64,7 @@ class TourController extends Controller
             $tour_providers = MerchantTourProvider::get();
         }
 
-        return view('admin-page.tours.create-tour', compact('attractions', 'tour_providers', 'interests'));
+        return view('admin-page.tours.create-tour', compact('attractions', 'tour_providers', 'interests', 'organizations'));
     }
 
     public function store(Request $request) {
@@ -97,10 +99,11 @@ class TourController extends Controller
         $attractions = Attraction::get();
         $tour = Tour::where('id', $request->id)->firstOrFail();
         $tour_providers = MerchantTourProvider::get();
+        $organizations = Organization::get();
         $tour_badges = TourBadge::where('tour_id', $tour->id)->get();
         $interests = Interest::get();
 
-        return view('admin-page.tours.edit-tour', compact('tour', 'attractions', 'tour_providers', 'tour_badges', 'interests'));
+        return view('admin-page.tours.edit-tour', compact('tour', 'attractions', 'tour_providers', 'tour_badges', 'interests', 'organizations'));
     }
 
     public function update(Request $request) {

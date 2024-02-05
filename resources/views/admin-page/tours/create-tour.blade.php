@@ -79,21 +79,17 @@
                                                     <label for="interests" class="form-label">Interests</label>
                                                     <select name="interests[]" id="interests" class="select2" multiple>
                                                         @foreach ($interests as $interest)
-                                                            <option value="{{ $interest->id }}">{{ $interest->name }}</option>
+                                                            <option value="{{ $interest->id }}">{{ $interest->name }}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-lg-4">
                                                 <div class="mb-3">
-                                                    <label for="bypass_days" class="form-label">Number of ByPass Days</label>
-                                                    <input type="number" name="bypass_days" id="bypass_days" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="mb-3">
                                                     <label for="bypass_days" class="form-label">Disabled Days</label>
-                                                    <select name="disabled_days[]" id="disabled_days" class="select2" multiple>
+                                                    <select name="disabled_days[]" id="disabled_days" class="select2"
+                                                        multiple>
                                                         <option value="1">Monday</option>
                                                         <option value="2">Tuesday</option>
                                                         <option value="3">Wednesday</option>
@@ -105,10 +101,30 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-4">
+                                            <div class="col-lg-3">
+                                                <div class="mb-3">
+                                                    <label for="bypass_days" class="form-label">Number of ByPass
+                                                        Days</label>
+                                                    <input type="number" name="bypass_days" id="bypass_days"
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-2">
                                                 <div class="mb-3">
                                                     <label for="minimum_pax" class="form-label">Minimum Pax</label>
-                                                    <input type="number" name="minimum_pax" id="minimum_pax" class="form-control">
+                                                    <input type="number" name="minimum_pax" id="minimum_pax"
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="mb-3">
+                                                    <label for="organization-field" class="form-label">Organization</label>
+                                                    <select name="organization_id" id="organization-field" class="form-select">
+                                                            <option value="">--- SELECT ORGANIZATION ---</option>
+                                                        @foreach ($organizations as $organization)
+                                                            <option value="{{ $organization->id }}">{{ $organization->name }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6">
@@ -125,8 +141,8 @@
                                                         <div class="mb-3">
                                                             <label for="over_age_limit" class="form-label">Over Age
                                                                 Limit</label>
-                                                            <input type="number" class="form-control" name="over_age_limit"
-                                                                id="over_age_limit">
+                                                            <input type="number" class="form-control"
+                                                                name="over_age_limit" id="over_age_limit">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -136,8 +152,8 @@
                                                     <div class="col-lg-6">
                                                         <label for="minimum_capacity" class="form-label">Minimum
                                                             Capacity</label>
-                                                        <input type="number" class="form-control" name="minimum_capacity"
-                                                            id="minimum_capacity">
+                                                        <input type="number" class="form-control"
+                                                            name="minimum_capacity" id="minimum_capacity">
                                                     </div>
                                                     <div class="col-lg-6">
                                                         <label for="capacity" class="form-label">Maximum Capacity</label>
@@ -281,7 +297,7 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="navs-pills-top-profile" role="tabpanel">
-                    
+
                 </div>
             </div>
         </div>

@@ -96,12 +96,6 @@
                                         </div>
                                         <div class="col-lg-4">
                                             <div class="mb-3">
-                                                <label for="bypass_days" class="form-label">Number of ByPass Days</label>
-                                                <input type="number" name="bypass_days" id="bypass_days" class="form-control" value="{{ $tour->bypass_days }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="mb-3">
                                                 <?php $disabled_days = $tour->disabled_days ? json_decode($tour->disabled_days) : [] ?>
                                                 <label for="bypass_days" class="form-label">Disabled Days</label>
                                                 <select name="disabled_days[]" id="disabled_days" class="select2" multiple>
@@ -116,10 +110,30 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-3">
+                                            <div class="mb-3">
+                                                <label for="bypass_days" class="form-label">Number of ByPass Days</label>
+                                                <input type="number" name="bypass_days" id="bypass_days" class="form-control" value="{{ $tour->bypass_days }}">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-2">
                                             <div class="mb-3">
                                                 <label for="minimum_pax" class="form-label">Minimum Pax</label>
                                                 <input type="number" name="minimum_pax" id="minimum_pax" class="form-control" value="{{ $tour->minimum_pax }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="mb-3">
+                                                <label for="organization-field" class="form-label">Organization</label>
+                                                <select name="organization_id" id="organization-field" class="form-select">
+                                                        <option value="">--- SELECT ORGANIZATION ---</option>
+                                                    @foreach ($organizations as $organization)
+                                                        <option value="{{ $organization->id }}" {{ $tour->organization_id == $organization->id ? 'selected' : null }}>
+                                                            {{ $organization->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
