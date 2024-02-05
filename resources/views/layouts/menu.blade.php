@@ -159,26 +159,49 @@
         <span class="menu-header-text">Reservations</span>
     </li>
 
-    <li class="menu-item {{ preg_match('/admin\/tour_reservations/', Request::path()) ? 'active' : null }}">
-        <a href="{{ route('admin.tour_reservations.list') }}" class="menu-link">
-            <i class='menu-icon tf-icons bx bx-book-content'></i>
-            <div data-i18n="Tour Reservations">Tour Reservations</div>
-        </a>
-    </li>
+    @auth('admin')
+        @can('view_tour_reservations_list')
+            <li class="menu-item {{ preg_match('/admin\/tour_reservations/', Request::path()) ? 'active' : null }}">
+                <a href="{{ route('admin.tour_reservations.list') }}" class="menu-link">
+                    <i class='menu-icon tf-icons bx bx-book-content'></i>
+                    <div data-i18n="Tour Reservations">Tour Reservations</div>
+                </a>
+            </li>
+        @endcan
+    @endauth
 
-    <li class="menu-item {{ preg_match('/admin\/hotel-reservations/', Request::path()) ? 'active' : null }}">
-        <a href="{{ route('admin.hotel_reservations.index') }}" class="menu-link">
-            <i class='menu-icon tf-icons bx bx-book-content'></i>
-            <div data-i18n="Hotel Reservations">Hotel Reservations</div>
-        </a>
-    </li>
+    @auth('admin')
+        @can('view_hotel_reservations_list')
+            <li class="menu-item {{ preg_match('/admin\/hotel-reservations/', Request::path()) ? 'active' : null }}">
+                <a href="{{ route('admin.hotel_reservations.index') }}" class="menu-link">
+                    <i class='menu-icon tf-icons bx bx-book-content'></i>
+                    <div data-i18n="Hotel Reservations">Hotel Reservations</div>
+                </a>
+            </li>   
+        @endcan
+    @endauth
 
-    <li class="menu-item {{ preg_match('/admin\/restaurant-reservations/', Request::path()) ? 'active' : null }}">
-        <a href="{{ route('admin.restaurant_reservations.index') }}" class="menu-link">
-            <i class='menu-icon tf-icons bx bx-book-content'></i>
-            <div data-i18n="Restaurant Reservations">Restaurant Reservations</div>
-        </a>
-    </li>
+    @auth('admin')
+        @can('view_restaurant_reservations_list')
+            <li class="menu-item {{ preg_match('/admin\/restaurant-reservations/', Request::path()) ? 'active' : null }}">
+                <a href="{{ route('admin.restaurant_reservations.index') }}" class="menu-link">
+                    <i class='menu-icon tf-icons bx bx-book-content'></i>
+                    <div data-i18n="Restaurant Reservations">Restaurant Reservations</div>
+                </a>
+            </li>
+        @endcan
+    @endauth
+
+    @auth('admin')
+        @can('view_food_categories_list')
+            <li class="menu-item {{ preg_match('/admin\/orders/', Request::path()) ? 'active' : null }}">
+                <a href="{{ route('admin.orders.index') }}" class="menu-link">
+                    <i class='menu-icon tf-icons bx bx-book-content'></i>
+                    <div data-i18n="Orders">Orders</div>
+                </a>
+            </li>
+        @endcan
+    @endauth
 
 
     @auth('admin')

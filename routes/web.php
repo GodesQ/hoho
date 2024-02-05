@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\DeleteAccountController;
 use App\Http\Controllers\Web\FoodCategoryController;
 use App\Http\Controllers\Web\FoodController;
 use App\Http\Controllers\Web\HotelReservationController;
+use App\Http\Controllers\Web\OrderController;
 use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\RestaurantReservationController;
 use App\Http\Controllers\Web\RoomController;
@@ -268,6 +269,13 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('restaurant-reservations/edit/{id}', [RestaurantReservationController::class,'edit'])->name('restaurant_reservations.edit');
     Route::put('restaurant-reservations/update/{id}', [RestaurantReservationController::class,'update'])->name('restaurant_reservations.update');
     Route::delete('restaurant-reservations/destroy/{id}', [RestaurantReservationController::class,'destroy'])->name('restaurant_reservations.destroy');
+
+    Route::get('orders', [OrderController::class,'index'])->name('orders.index');
+    Route::get('orders/create', [OrderController::class,'create'])->name('orders.create');
+    Route::post('orders/store', [OrderController::class,'store'])->name('orders.store');
+    Route::get('orders/edit/{id}', [OrderController::class,'edit'])->name('orders.edit');
+    Route::put('orders/update/{id}', [OrderController::class,'update'])->name('orders.update');
+    Route::delete('orders/destroy/{id}', [OrderController::class,'destroy'])->name('orders.destroy');
 
     Route::get('interests', [InterestController::class, 'list'])->name('interests.list')->can('view_interests_list');
     Route::get('interests/create', [InterestController::class, 'create'])->name('interests.create');

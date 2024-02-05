@@ -29,7 +29,7 @@ class StoreRequest extends FormRequest
             'number_of_pax' => 'required|numeric',
             'reservation_date' => 'required|date',
             'reservation_time' => 'required',
-            'status' => 'required|in:pending,declined,approved'
+            'status' => 'nullable|in:pending,declined,approved'
         ];
     }
 }

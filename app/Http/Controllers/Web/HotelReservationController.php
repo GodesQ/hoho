@@ -9,15 +9,23 @@ use App\Models\HotelReservation;
 use App\Models\Merchant;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class HotelReservationController extends Controller
 {
     public function index(Request $request)
     {
-
         if ($request->ajax()) {
-            $hotel_reservations = HotelReservation::with('reserved_user', 'room')->get();
+            $user = Auth::guard('admin')->user();
+            $hotel_reservations = HotelReservation::when(in_array($user->role, ['merchant_hotel_admin', 'merchant_hotel_employee']), function ($query) use($user) {
+                $query->whereHas('room', function ($q) use ($user) {
+                    $q->where('merchant_id', $user->merchant_id);
+                });
+            })
+            ->with('reserved_user', 'room');
+
+
             return DataTables::of($hotel_reservations)
                 ->addIndexColumn()
                 ->addColumn('reserved_user_id', function ($row) {
@@ -69,8 +77,13 @@ class HotelReservationController extends Controller
     }
 
     public function create(Request $request)
-    {
-        $merchant_hotels = Merchant::where('type', 'Hotel')->get();
+    {   
+        $user = Auth::guard('admin')->user();   
+        $merchant_hotels = Merchant::where('type', 'Hotel')
+                            ->when(in_array($user->role, ['merchant_hotel_admin', 'merchant_hotel_employee']), function ($query) use($user) {
+                                return $query->where('id', $user->merchant_id);
+                            })
+                            ->get();
         return view('admin-page.hotel_reservations.create-hotel-reservation', compact('merchant_hotels'));
     }
 
@@ -86,7 +99,13 @@ class HotelReservationController extends Controller
 
     public function edit(Request $request, $id)
     {   
-        $merchant_hotels = Merchant::where('type', 'Hotel')->get();
+        $user = Auth::guard('admin')->user();   
+        $merchant_hotels = Merchant::where('type', 'Hotel')
+                            ->when(in_array($user->role, ['merchant_hotel_admin', 'merchant_hotel_employee']), function ($query) use($user) {
+                                return $query->where('id', $user->merchant_id);
+                            })
+                            ->get();
+                            
         $reservation = HotelReservation::where('id', $id)->with('reserved_user', 'room')->firstOrFail();
 
         return view('admin-page.hotel_reservations.edit-hotel-reservation', compact('reservation', 'merchant_hotels'));
