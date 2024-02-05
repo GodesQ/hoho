@@ -91,8 +91,7 @@
 
             @auth('admin')
                 @can('view_merchant_tour_providers_list')
-                    <li
-                        class="menu-item {{ preg_match('/admin\/merchants\/tour_providers/', Request::path()) ? 'active' : null }}">
+                    <li class="menu-item {{ preg_match('/admin\/merchants\/tour_providers/', Request::path()) ? 'active' : null }}">
                         <a href="{{ route('admin.merchants.tour_providers.list') }}" class="menu-link">
                             <div data-i18n="Tour Providers">Tour Providers</div>
                         </a>
@@ -193,7 +192,7 @@
     @endauth
 
     @auth('admin')
-        @can('view_food_categories_list')
+        @can('view_orders_list')
             <li class="menu-item {{ preg_match('/admin\/orders/', Request::path()) ? 'active' : null }}">
                 <a href="{{ route('admin.orders.index') }}" class="menu-link">
                     <i class='menu-icon tf-icons bx bx-book-content'></i>
