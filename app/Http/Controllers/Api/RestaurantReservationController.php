@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\HotelReservation\StoreRequest;
-use App\Models\HotelReservation;
+use App\Http\Requests\RestaurantReservation\StoreRequest;
+use App\Models\RestaurantReservation;
 use Illuminate\Http\Request;
 
-class HotelReservationController extends Controller
+class RestaurantReservationController extends Controller
 {
     public function store(StoreRequest $request) {
         $data = $request->validated();
-        $hotelReservation = HotelReservation::create(array_merge($data, ['status' => 'pending']));
+        RestaurantReservation::create(array_merge($data, ['status' => 'pending']));
 
         return response([
             'status' => TRUE,
@@ -20,9 +20,9 @@ class HotelReservationController extends Controller
     }
 
     public function show(Request $request, $id) {
-        $hotelReservation = HotelReservation::where('id', $id)->with('merchant')->first();
+        $restaurantReservation = RestaurantReservation::where('id', $id)->with('merchant')->first();
         
-        if(!$hotelReservation) {
+        if(!$restaurantReservation) {
             return response([
                 'status' => FALSE,
                 'message' => 'No Reservation Found.',
@@ -32,7 +32,7 @@ class HotelReservationController extends Controller
         return response([
             'status' => TRUE,
             'mesage' => 'Reservation Found.',
-            'hotel_reservation' => $hotelReservation
+            'restaurant_reservation' => $restaurantReservation
         ]);
     }
 }

@@ -21,6 +21,8 @@ class RestaurantReservation extends Model
         'approved_date',
     ];
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     public function merchant() : BelongsTo {
         return $this->belongsTo(Merchant::class, 'merchant_id');
     }

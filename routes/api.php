@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\HotelReservationController;
+use App\Http\Controllers\Api\RestaurantReservationController;
 use App\Http\Controllers\Api\RoomController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -102,4 +104,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('tour_badge/check', [TourBadgeController::class, 'checkBadge']);
 
     Route::get('rooms/{merchant_id}', [RoomController::class, 'getRooms']);
+
+    Route::post('restaurant-reservations', [RestaurantReservationController::class, 'store']);
+    Route::get('restaurant-reservations/{id}', [RestaurantReservationController::class, 'show']);
+
+    Route::post('hotel-reservations', [HotelReservationController::class, 'store']);
+    Route::get('hotel-reservations/{id}', [HotelReservationController::class, 'show']);
 });
