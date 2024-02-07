@@ -102,7 +102,7 @@
                     'X-CSRF-TOKEN': "{{ csrf_token() }}"
                 },
                 body: JSON.stringify({
-                    id: 3,
+                    id: 4,
                     latitude: INITIAL_LATITUDE,
                     longitude: INITIAL_LONGITUDE
                 })
