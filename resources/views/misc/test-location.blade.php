@@ -149,7 +149,6 @@
 <html>
 <head>
     <title>Bus Tracker</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         #map {
@@ -171,7 +170,7 @@
         ];
         var routeIndex = 0; // Index to track the current waypoint
 
-        function initMap() {
+        async function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
                 center: routeCoordinates[0], // Start at Okada Manila
                 zoom: 12
@@ -211,9 +210,9 @@
                 url: '{{ route('admin.transports.updateLocation') }}', // Update with your backend endpoint
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': "{{ csrf_token() }}"
                 }
-                contentType: 'application/json',
                 data: JSON.stringify(coordinates),
                 success: function(response) {
                     console.log('Bus location sent to server:', coordinates);
@@ -224,7 +223,7 @@
             });
         }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1UJdBuEc_a3P3i-efUeZIJmMQ5VXZGgU&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1UJdBuEc_a3P3i-efUeZIJmMQ5VXZGgU&libraries=places&callback=initMap"></script>
 </body>
 </html>
 
