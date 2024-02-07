@@ -170,7 +170,7 @@
         ];
         var routeIndex = 0; // Index to track the current waypoint
 
-        async function initMap() {
+        function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
                 center: routeCoordinates[0], // Start at Okada Manila
                 zoom: 12
@@ -212,7 +212,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                }
+                },
                 data: JSON.stringify(coordinates),
                 success: function(response) {
                     console.log('Bus location sent to server:', coordinates);
