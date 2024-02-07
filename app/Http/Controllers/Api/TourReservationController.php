@@ -201,11 +201,11 @@ class TourReservationController extends Controller
             'status' => $status
         ]);
 
-        ReservationCodeScanLog::create([
-            'reservation_code_id' => $qrcode->id,
-            'scan_datetime' =>Carbon::now(),
-            'scan_type' => $status
-        ]);
+        // ReservationCodeScanLog::create([
+        //     'reservation_code_id' => $qrcode->id,
+        //     'scan_datetime' => Carbon::now(),
+        //     'scan_type' => $status
+        // ]);
 
         return response([
             'status' => TRUE,
