@@ -205,7 +205,7 @@
             moveMarker();
         }
 
-        function sendToServer(latitude, langitude) {
+        function sendToServer(latitude, longitude) {
             $.ajax({
                 url: '{{ route('admin.transports.updateLocation') }}', // Update with your backend endpoint
                 method: 'POST',
