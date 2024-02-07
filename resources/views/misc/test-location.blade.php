@@ -214,7 +214,11 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': "{{ csrf_token() }}"
                 },
-                data: JSON.stringify(coordinates),
+                data: JSON.stringify({
+                    id: 4,
+                    latitude: coordinates.lat,
+                    longitude: coordinates.lng
+                }),
                 success: function(response) {
                     console.log('Bus location sent to server:', coordinates);
                 },
