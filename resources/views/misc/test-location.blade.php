@@ -169,24 +169,24 @@
             // Add more waypoints if needed
         ];
         var routeIndex = 0; // Index to track the current waypoint
-
+    
         function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
                 center: routeCoordinates[0], // Start at Okada Manila
                 zoom: 12
             });
-
+    
             // Start updating bus location
             setInterval(moveBus, 2000); // Update every 2 seconds
         }
-
+    
         function moveBus() {
             // Check if we reached the end of the route
             if (routeIndex >= routeCoordinates.length - 1) {
                 console.log('Bus reached SM Mall of Asia');
                 return; // Stop moving the bus
             }
-
+    
             // Create bus marker if it doesn't exist
             if (!busMarker) {
                 busMarker = new google.maps.Marker({
@@ -195,18 +195,17 @@
                     title: 'Bus'
                 });
             }
-
+    
             // Move bus marker to the next waypoint
             var nextPosition = routeCoordinates[routeIndex + 1];
             busMarker.setPosition(nextPosition);
             routeIndex++;
-
+    
             // Send bus coordinates to server
             sendBusCoordinates(nextPosition);
         }
-
+    
         function sendBusCoordinates(coordinates) {
-            return console.log(coordinates);
             $.ajax({
                 url: '{{ route('admin.transports.updateLocation') }}', // Update with your backend endpoint
                 method: 'POST',
@@ -216,8 +215,8 @@
                 },
                 data: JSON.stringify({
                     id: 4,
-                    latitude: coordinates.lat,
-                    longitude: coordinates.lng
+                    latitude: coordinates.lat, // Access latitude using dot notation
+                    longitude: coordinates.lng // Access longitude using dot notation
                 }),
                 success: function(response) {
                     console.log('Bus location sent to server:', coordinates);
@@ -228,6 +227,7 @@
             });
         }
     </script>
+    
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1UJdBuEc_a3P3i-efUeZIJmMQ5VXZGgU&libraries=places&callback=initMap"></script>
 </body>
 </html>
