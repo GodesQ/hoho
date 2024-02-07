@@ -284,14 +284,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
-                                            <div class="mb-3">
-
-                                            </div>
-                                        </div>
                                     </div>
-                                    <hr>
-                                    <button type="submit" class="btn btn-primary">Save Tour</button>
                                 </div>
                                 <div class="tab-pane fade" id="navs-tour-timeslot" role="tabpanel">
                                     <div class="w-100 mb-3 d-flex justify-content-end">
@@ -312,6 +305,8 @@
                                     </div>
                                 </div>
                             </div>
+                            <hr>
+                            <button type="submit" class="btn btn-primary">Save Tour</button>
                         </form>
 
                     </div>
@@ -346,8 +341,14 @@
 
         function removeTimeSlot(button) {
             const timeslotContainer = document.querySelector('.timeslot-container');
-            const timeslot = button.closest('.timeslot');
-            timeslotContainer.removeChild(timeslot);
+            const timeslots = document.querySelectorAll('.timeslot');
+
+            if(timeslots.length > 1) {
+                const timeslot = button.closest('.timeslot');
+                timeslotContainer.removeChild(timeslot);
+            }
+
+            return;
         }
     </script>
     <script>
