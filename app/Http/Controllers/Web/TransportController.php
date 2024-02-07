@@ -136,4 +136,9 @@ class TransportController extends Controller
             ]);
         }
     }
+
+    public function getTransportAttractions(Request $request, $id) {
+        $transport = Transport::where('id', $id)->with('assigned_tour')->first();
+        return $transport;
+    }
 }

@@ -162,6 +162,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('transports/edit/{id}', [TransportController::class, 'edit'])->name('transports.edit');
     Route::post('transports/update/{id}', [TransportController::class, 'update'])->name('transports.update');
     Route::delete('transports/destroy', [TransportController::class, 'destroy'])->name('transports.destroy');
+    Route::get('transports/tour/attractions/{id}', [TransportController::class, 'getTransportAttractions'])->name('transports.get_transport_attractions');
 
     Route::get('attractions', [AttractionController::class, 'list'])->name('attractions.list')->can('view_attractions_list');
     Route::get('attractions/create', [AttractionController::class, 'create'])->name('attractions.create');

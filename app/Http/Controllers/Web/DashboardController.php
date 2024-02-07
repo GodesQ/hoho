@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Merchant;
+use App\Models\Transport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -66,7 +67,8 @@ class DashboardController extends Controller
     }    
 
     public function testLocation() {
-        return view('misc.test-location');
+        $transports = Transport::get();
+        return view('admin-page.test_locations.index', compact('transports'));
     }
 
     public function testLocation2() {
