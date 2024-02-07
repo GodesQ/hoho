@@ -206,6 +206,7 @@
         }
 
         function sendBusCoordinates(coordinates) {
+            return console.log(coordinates);
             $.ajax({
                 url: '{{ route('admin.transports.updateLocation') }}', // Update with your backend endpoint
                 method: 'POST',
