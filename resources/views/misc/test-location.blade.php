@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{{-- <!DOCTYPE html>
 <html lang="en" class="light-style customizer-hide" dir="ltr" data-theme="theme-default"
     data-assets-path="../assets/" data-template="vertical-menu-template-free">
 
@@ -130,7 +130,7 @@
                         'X-CSRF-TOKEN': "{{ csrf_token() }}"
                     },
                     body: JSON.stringify({
-                        id: 2,
+ 
                         latitude: CURRENT_LATITUDE,
                         longitude: CURRENT_LONGITUDE
                     })
@@ -143,4 +143,88 @@
     </script>
 </body>
 
+</html> --}}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bus Tracker</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        var map;
+        var busMarker;
+        var routeCoordinates = [
+            { lat: 14.5374, lng: 120.9991 }, // Okada Manila
+            { lat: 14.5320, lng: 120.9817 }  // SM Mall of Asia
+            // Add more waypoints if needed
+        ];
+        var routeIndex = 0; // Index to track the current waypoint
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: routeCoordinates[0], // Start at Okada Manila
+                zoom: 12
+            });
+
+            // Start updating bus location
+            setInterval(moveBus, 2000); // Update every 2 seconds
+        }
+
+        function moveBus() {
+            // Check if we reached the end of the route
+            if (routeIndex >= routeCoordinates.length - 1) {
+                console.log('Bus reached SM Mall of Asia');
+                return; // Stop moving the bus
+            }
+
+            // Create bus marker if it doesn't exist
+            if (!busMarker) {
+                busMarker = new google.maps.Marker({
+                    position: routeCoordinates[0], // Start at Okada Manila
+                    map: map,
+                    title: 'Bus'
+                });
+            }
+
+            // Move bus marker to the next waypoint
+            var nextPosition = routeCoordinates[routeIndex + 1];
+            busMarker.setPosition(nextPosition);
+            routeIndex++;
+
+            // Send bus coordinates to server
+            sendBusCoordinates(nextPosition);
+        }
+
+        function sendBusCoordinates(coordinates) {
+            $.ajax({
+                url: '{{ route('admin.transports.updateLocation') }}', // Update with your backend endpoint
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                }
+                contentType: 'application/json',
+                data: JSON.stringify(coordinates),
+                success: function(response) {
+                    console.log('Bus location sent to server:', coordinates);
+                },
+                error: function(error) {
+                    console.error('Error sending bus location:', error);
+                }
+            });
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1UJdBuEc_a3P3i-efUeZIJmMQ5VXZGgU&callback=initMap"></script>
+</body>
 </html>
+
