@@ -65,6 +65,9 @@
                     let attractions = data.assigned_tour.attractions;
                     let originSelect = $('#origin');
                     let destinationSelect = $('#destination');
+                    
+                    originSelect.children('option').remove()
+                    destinationSelect.children('option').remove();
 
                     attractions.forEach((attraction, index) => {
                         let address = attraction.address;
@@ -199,7 +202,7 @@
                     sendToServer(currentLocation.lat(), currentLocation.lng());
 
                     currentIndex++;
-                    setTimeout(moveMarker, 3000); // Move to the next location every 2 seconds
+                    setTimeout(moveMarker, 4000); // Move to the next location every 2 seconds
                 }
             }
             moveMarker();
