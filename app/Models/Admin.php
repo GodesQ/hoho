@@ -38,7 +38,9 @@ class Admin extends Authenticatable
     protected $casts = [
         'is_active' => 'integer',
         'is_merchant' => 'integer',
+        'age' => 'integer',
         'is_approved' => 'integer',
+        'merchant_data_id' => 'integer',
         'merchant_id' => 'integer',
         'transport_id' => 'integer',
     ];
