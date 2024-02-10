@@ -22,7 +22,7 @@ class MerchantHotelService
                         $defaultImagePath = asset('assets/img/default-image.jpg');
                     
                         if ($row->merchant && $row->merchant->featured_image) {
-                            $path = asset('assets/img/stores/' . $row->merchant->id . '/' . $row->merchant->featured_image);
+                            $path = asset('assets/img/hotels/' . $row->merchant->id . '/' . $row->merchant->featured_image);
                         } else {
                             $path = $defaultImagePath;
                         }
