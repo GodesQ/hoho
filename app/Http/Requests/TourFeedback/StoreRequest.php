@@ -32,4 +32,13 @@ class StoreRequest extends FormRequest
             'category_three_rate' => 'required',
         ];
     }
+
+    public function messages() {
+        return [
+            'customer_id.required' => 'The customer field is required.',
+            'customer_id.exists' => 'The customer should be exists on our records.',
+            'tour_id.required' => 'The tour field is required.',
+            'tour_id.exists' => 'The tour should be exists on our records.'
+        ];
+    }
 }

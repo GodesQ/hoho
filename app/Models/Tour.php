@@ -92,4 +92,8 @@ class Tour extends Model
     public function tour_provider() {
         return $this->hasOne(MerchantTourProvider::class, 'id', 'tour_provider_id');
     }
+
+    public function timeslots() {
+        return $this->hasMany(TourTimeslot::class, 'tour_id');
+    } 
 }

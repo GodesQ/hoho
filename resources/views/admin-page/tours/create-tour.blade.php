@@ -45,6 +45,13 @@
                         </ul>
                         <hr>
                         <form action="{{ route('admin.tours.store') }}" method="POST" enctype="multipart/form-data">
+                            @if ($errors->any())
+                                @foreach ($errors->all() as $error)
+                                    <div class="alert alert-danger">
+                                        {{ $error }}
+                                    </div>
+                                @endforeach
+                            @endif
                             <div class="tab-content">
                                 <div class="tab-pane fade show active" id="navs-tour" role="tabpanel">
                                     @csrf
@@ -53,7 +60,7 @@
                                             <div class="mb-3">
                                                 <label for="name" class="form-label">Tour Name <span
                                                         class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" name="name" required>
+                                                <input type="text" class="form-control" name="name" required value="{{ old('name') }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -61,11 +68,11 @@
                                                 <label for="name" class="form-label">Tour Type</label>
                                                 <select name="type" id="type" class="form-select">
                                                     <option value="">---- SELECT TOUR TYPE ----</option>
-                                                    <option value="Luxury Tour">Luxury Tour</option>
-                                                    <option value="City Tour">City Tour</option>
-                                                    <option value="Guided Tour">Guided Tour</option>
-                                                    <option value="DIY Tour">DIY Tour</option>
-                                                    <option value="Others">Others</option>
+                                                    <option {{ old('type') == 'Luxury Tour' ? 'selected' : null }} value="Luxury Tour">Luxury Tour</option>
+                                                    <option {{ old('type') == 'City Tour' ? 'selected' : null }} value="City Tour">City Tour</option>
+                                                    <option {{ old('type') == 'Guided Tour' ? 'selected' : null }} value="Guided Tour">Guided Tour</option>
+                                                    <option {{ old('type') == 'DIY Tour' ? 'selected' : null }} value="DIY Tour">DIY Tour</option>
+                                                    <option {{ old('type') == 'Others' ? 'selected' : null }} value="Others">Others</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -103,14 +110,13 @@
                                             <div class="mb-3">
                                                 <label for="bypass_days" class="form-label">Disabled Days</label>
                                                 <select name="disabled_days[]" id="disabled_days" class="select2" multiple>
-                                                    <option value="1">Monday</option>
-                                                    <option value="2">Tuesday</option>
-                                                    <option value="3">Wednesday</option>
-                                                    <option value="4">Thursday</option>
-                                                    <option value="5">Friday</option>
-                                                    <option value="6">Saturday</option>
-                                                    <option value="7">Sunday</option>
-
+                                                    <option {{ in_array(1, (old('disabled_days') ?? [])) ? 'selected' : null }} value="1">Monday</option>
+                                                    <option {{ in_array(2, (old('disabled_days') ?? [])) ? 'selected' : null }} value="2">Tuesday</option>
+                                                    <option {{ in_array(3, (old('disabled_days') ?? [])) ? 'selected' : null }} value="3">Wednesday</option>
+                                                    <option {{ in_array(4, (old('disabled_days') ?? [])) ? 'selected' : null }} value="4">Thursday</option>
+                                                    <option {{ in_array(5, (old('disabled_days') ?? [])) ? 'selected' : null }} value="5">Friday</option>
+                                                    <option {{ in_array(6, (old('disabled_days') ?? [])) ? 'selected' : null }} value="6">Saturday</option>
+                                                    <option {{ in_array(7, (old('disabled_days') ?? [])) ? 'selected' : null }} value="7">Sunday</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -184,7 +190,8 @@
                                                         <label for="price" class="form-label">Default Price <span
                                                                 class="text-danger">*</span></label>
                                                         <input type="text" class="form-control" name="price"
-                                                            id="price" required>
+                                                            id="price" required value="0">
+                                                        <div class="text-danger">@error('name'){{ $message }}@enderror</div>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-3">
@@ -192,7 +199,8 @@
                                                         <label for="bracket_price_one" class="form-label">Bracket
                                                             Price (Min of 4) <span class="text-danger">*</span></label>
                                                         <input type="text" class="form-control"
-                                                            name="bracket_price_one" id="bracket_price_one" required>
+                                                            name="bracket_price_one" id="bracket_price_one" value="0">
+                                                        <div class="text-danger">@error('bracket_price_one'){{ $message }}@enderror</div>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-3">
@@ -200,7 +208,8 @@
                                                         <label for="bracket_price_two" class="form-label">Bracket
                                                             Price (Min of 10) <span class="text-danger">*</span></label>
                                                         <input type="text" class="form-control"
-                                                            name="bracket_price_two" id="bracket_price_two" required>
+                                                            name="bracket_price_two" id="bracket_price_two" value="0">
+                                                        <div class="text-danger">@error('bracket_price_two'){{ $message }}@enderror</div>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-3">
@@ -208,7 +217,8 @@
                                                         <label for="bracket_price_three" class="form-label">Bracket
                                                             Price (Min of 25) <span class="text-danger">*</span></label>
                                                         <input type="text" class="form-control"
-                                                            name="bracket_price_three" id="bracket_price_three" required>
+                                                            name="bracket_price_three" id="bracket_price_three" value="0">
+                                                        <div class="text-danger">@error('bracket_price_three'){{ $message }}@enderror</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -288,20 +298,11 @@
                                 </div>
                                 <div class="tab-pane fade" id="navs-tour-timeslot" role="tabpanel">
                                     <div class="w-100 mb-3 d-flex justify-content-end">
-                                        <button class="btn btn-primary" type="button" onclick="addTimeSlot()">Add Time Slot</button>
+                                        <button class="btn btn-primary" type="button" onclick="addTimeSlot()">Add Time
+                                            Slot</button>
                                     </div>
                                     <div class="timeslot-container">
-                                        <div class="row timeslot my-3">
-                                            <div class="col-lg-5">
-                                                <input type="time" name="start_time[]" class="form-control start-time-field">
-                                            </div>
-                                            <div class="col-lg-5">
-                                                <input type="time" name="end_time[]" class="form-control end-time-field">
-                                            </div>
-                                            <div class="col-lg-2 d-flex justify-content-center align-items-center">
-                                                <button type="button" class="btn btn-danger" onclick="removeTimeSlot(this)"><i class="bx bx-trash"></i></button>
-                                            </div>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -330,27 +331,43 @@
     <script>
         function addTimeSlot() {
             const timeslotContainer = document.querySelector('.timeslot-container');
-            const timeslot = document.querySelector('.timeslot');
-            const newTimeSlot = timeslot.cloneNode(true);
-            const startTimeInput = newTimeSlot.querySelector('.start-time-field');
-            const endTimeInput = newTimeSlot.querySelector('.end-time-field');
-            startTimeInput.value = '';
-            endTimeInput.value = '';
-            timeslotContainer.appendChild(newTimeSlot);
+            const timeslots = document.querySelectorAll('.timeslot');
+
+            if(timeslots && timeslots.length > 0) {
+                const newTimeSlot = timeslots[0].cloneNode(true);
+                const startTimeInput = newTimeSlot.querySelector('.start-time-field');
+                const endTimeInput = newTimeSlot.querySelector('.end-time-field');
+                startTimeInput.value = '';
+                endTimeInput.value = '';
+                timeslotContainer.appendChild(newTimeSlot);
+            } else {
+                const timeslot_section = `<div class="row timeslot my-3">
+                                            <div class="col-lg-5">
+                                                <input type="time" name="start_time[]"
+                                                    class="form-control start-time-field">
+                                            </div>
+                                            <div class="col-lg-5">
+                                                <input type="time" name="end_time[]"
+                                                    class="form-control end-time-field">
+                                            </div>
+                                            <div class="col-lg-2 d-flex justify-content-center align-items-center">
+                                                <button type="button" class="btn btn-danger"
+                                                    onclick="removeTimeSlot(this)"><i class="bx bx-trash"></i></button>
+                                            </div>
+                                        </div>`;
+                timeslotContainer.innerHTML = timeslot_section;
+            }
         }
 
         function removeTimeSlot(button) {
             const timeslotContainer = document.querySelector('.timeslot-container');
             const timeslots = document.querySelectorAll('.timeslot');
 
-            if(timeslots.length > 1) {
-                const timeslot = button.closest('.timeslot');
-                timeslotContainer.removeChild(timeslot);
-            }
-
-            return;
+            const timeslot = button.closest('.timeslot');
+            timeslotContainer.removeChild(timeslot);
         }
     </script>
+
     <script>
         $(document).ready(function() {
             // const dateInput = $('#date_duration');

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Tour\StoreRequest;
 use App\Models\Interest;
 use App\Models\Organization;
+use App\Models\TourTimeslot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -67,7 +69,8 @@ class TourController extends Controller
         return view('admin-page.tours.create-tour', compact('attractions', 'tour_providers', 'interests', 'organizations'));
     }
 
-    public function store(Request $request) {
+    public function store(StoreRequest $request) {
+        // dd($request->all());
         $data = $request->except('_token', 'featured_image');
 
         $tour = Tour::create(array_merge($data, [
@@ -90,6 +93,16 @@ class TourController extends Controller
             $tour->update([
                 'featured_image' => $featured_file_name
             ]);
+        }
+
+        if($request->has('start_time') && $request->has('end_time')) {
+            foreach ($request->start_time as $key => $start_time) {
+                TourTimeslot::create([
+                    'tour_id' => $tour->id,
+                    'start_time' => $start_time ?? date('H:i'),
+                    'end_time' => $request->end_time[$key] ?? date('H:i')
+                ]);
+            }
         }
 
         if($tour) return redirect()->route('admin.tours.edit', $tour->id)->with('success', 'Tour created successfully');

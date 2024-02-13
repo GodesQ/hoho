@@ -89,6 +89,8 @@ class Attraction extends Model
                 return $data;
             }
         }
+
+        return [];
     }
 
     public function getNearestRestaurantsAttribute() {
@@ -103,6 +105,8 @@ class Attraction extends Model
                 return $data;
             }
         }
+
+        return [];
     }
 
     public function getNearestHotelsAttribute() {
@@ -117,6 +121,8 @@ class Attraction extends Model
                 return $data;
             }
         }
+
+        return [];
     }
 
     public function organization()

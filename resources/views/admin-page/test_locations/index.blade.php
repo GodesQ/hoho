@@ -65,7 +65,7 @@
                     let attractions = data.assigned_tour.attractions;
                     let originSelect = $('#origin');
                     let destinationSelect = $('#destination');
-                    
+
                     originSelect.children('option').remove()
                     destinationSelect.children('option').remove();
 
@@ -172,7 +172,6 @@
                         // Get the route's overview path (waypoints)
                         directionsRenderer.setDirections(response); // Display the route on the map
                         const waypoints = response.routes[0].overview_path;
-                        console.log(waypoints);
                         // Animate marker movement along waypoints
                         animateMarkerMovement(waypoints);
                     } else {
