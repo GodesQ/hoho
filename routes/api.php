@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\HotelReservationController;
 use App\Http\Controllers\Api\RestaurantReservationController;
 use App\Http\Controllers\Api\RoomController;
+use App\Http\Controllers\Api\TourFeedBackController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -110,4 +111,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('hotel-reservations', [HotelReservationController::class, 'store']);
     Route::get('hotel-reservations/{id}', [HotelReservationController::class, 'show']);
+
+    Route::get('tour-feedbacks', [TourFeedBackController::class, 'index']);
+    Route::post('tour-feedbacks', [TourFeedBackController::class, 'store']);
+    Route::get('tour-feedbacks/{id}', [TourFeedBackController::class, 'show']);
+    Route::put('tour-feedbacks/{id}', [TourFeedBackController::class, 'update']);
 });
