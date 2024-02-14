@@ -119,7 +119,7 @@ class TourController extends Controller
         return view('admin-page.tours.edit-tour', compact('tour', 'attractions', 'tour_providers', 'tour_badges', 'interests', 'organizations'));
     }
 
-    public function update(Request $request) {
+    public function update(StoreRequest $request) {
         $data = $request->except('_token', 'featured_image', 'attractions_assignments_ids');
         $tour = Tour::where('id', $request->id)->firstOrFail();
 
@@ -152,6 +152,19 @@ class TourController extends Controller
         $update_tour = $tour->update([
             'featured_image' => $featured_file_name
         ]);
+
+        $tour->timeslots()->delete();
+
+        if($request->has('start_time') && $request->has('end_time')) {
+
+            foreach ($request->start_time as $key => $start_time) {
+                TourTimeslot::create([
+                    'tour_id' => $tour->id,
+                    'start_time' => $start_time ?? date('H:i'),
+                    'end_time' => $request->end_time[$key] ?? date('H:i')
+                ]);
+            }
+        }
 
         if($update_tour) return back()->with('success', 'Tour updated successfully');
     }

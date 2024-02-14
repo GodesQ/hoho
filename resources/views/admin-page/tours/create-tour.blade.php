@@ -301,9 +301,7 @@
                                         <button class="btn btn-primary" type="button" onclick="addTimeSlot()">Add Time
                                             Slot</button>
                                     </div>
-                                    <div class="timeslot-container">
-                                        
-                                    </div>
+                                    <div class="timeslot-container"></div>
                                 </div>
                             </div>
                             <hr>

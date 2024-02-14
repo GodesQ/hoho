@@ -15,8 +15,8 @@ class TourFeedBackController extends Controller
 
     public function store(StoreRequest $request) {
         $data = $request->validated();
-        $total_rate = $this->calculateTotalRate($request->category_one_rate, $request->category_two_rate, $request->category_three_rate);
-        
+        $sum_of_categories = $request->category_one_rate + $request->category_two_rate + $request->category_three_rate + $request->category_four_rate + $request->category_five_rate + $request->category_six_rate;
+        $total_rate = $this->calculateTotalRate($sum_of_categories);
         $data = array_merge($data, ['total_rate' => $total_rate]);
         $tour_feedback = TourFeedback::create($data);
 
@@ -43,7 +43,8 @@ class TourFeedBackController extends Controller
         $tour_feedback = TourFeedBack::where('id', $id)->first();
 
         $data = $request->validated();
-        $total_rate = $this->calculateTotalRate($request->category_one_rate, $request->category_two_rate, $request->category_three_rate);
+        $sum_of_categories = $request->category_one_rate + $request->category_two_rate + $request->category_three_rate + $request->category_four_rate + $request->category_five_rate + $request->category_six_rate;
+        $total_rate = $this->calculateTotalRate($sum_of_categories);
         
         $data = array_merge($data, ['total_rate' => $total_rate]);
         $tour_feedback->update($data);
@@ -55,9 +56,8 @@ class TourFeedBackController extends Controller
         ], 200);
     }
 
-    private function calculateTotalRate($category_one, $category_two, $category_three) {
-        $sum_of_categories = $category_one + $category_two + $category_three;
-        $percentage =  ($sum_of_categories / 15) * 100; // 15 is the total for every maximum 5 rate of each category
+    private function calculateTotalRate($sum_of_categories) {
+        $percentage =  ($sum_of_categories / 30) * 100; // 30 is the total for every maximum 5 rate of each category
         
         $total_range  = $percentage / 20;
 

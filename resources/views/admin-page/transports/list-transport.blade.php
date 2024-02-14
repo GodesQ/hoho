@@ -17,7 +17,7 @@
                     class="bx bx-plus"></i></a>
         </div>
 
-        <div class="card my-3">
+        {{-- <div class="card my-3">
             <div class="card-body">
                 <div class="mb-3 w-20">
                     <label for="" class="form-label font-weight-bold">Select Transport</label>
@@ -32,7 +32,7 @@
                 </div>
                 <div id="map"></div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="card">
             <div class="card-body">
@@ -132,7 +132,7 @@
         loadTable();
     </script>
 
-    <script>
+    {{-- <script>
         let map, operatorMarker;
         let isActive = true;
 
@@ -451,7 +451,7 @@
         }
 
         // setUpPusher();
-    </script>
+    </script> --}}
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcjk7zETwVNURwNgnIidjFDQzVcjGaqVU&libraries=places&callback=initMap">
     </script>

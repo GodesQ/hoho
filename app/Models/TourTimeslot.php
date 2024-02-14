@@ -11,6 +11,11 @@ class TourTimeslot extends Model
     protected $table = 'tour_timeslots';
     protected $fillable = ['tour_id', 'start_time', 'end_time'];
 
+    protected $casts = [
+        'start_time' => 'datetime:H:i',
+        'end_time' => 'datetime:H:i'
+    ];
+
     public function tour() {
         return $this->belongsTo(Tour::class, 'tour_id');
     }
