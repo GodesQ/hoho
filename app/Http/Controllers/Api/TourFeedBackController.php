@@ -28,7 +28,7 @@ class TourFeedBackController extends Controller
     }
 
     public function show(Request $request, $id) {
-        $tour_feedback = TourFeedBack::where('id', $id)->with('tour')->first();
+        $tour_feedback = TourFeedback::where('id', $id)->with('tour')->first();
 
         $tour_feedback->tour->setAppends([]);
         
@@ -40,7 +40,7 @@ class TourFeedBackController extends Controller
     }
 
     public function update(StoreRequest $request, $id) {
-        $tour_feedback = TourFeedBack::where('id', $id)->first();
+        $tour_feedback = TourFeedback::where('id', $id)->first();
 
         $data = $request->validated();
         $sum_of_categories = $request->category_one_rate + $request->category_two_rate + $request->category_three_rate + $request->category_four_rate + $request->category_five_rate + $request->category_six_rate;
