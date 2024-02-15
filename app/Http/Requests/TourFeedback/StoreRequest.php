@@ -30,6 +30,9 @@ class StoreRequest extends FormRequest
             'category_one_rate' => 'required',
             'category_two_rate' => 'required',
             'category_three_rate' => 'required',
+            'category_four_rate' => 'required',
+            'category_five_rate' => 'required',
+            'category_six_rate' => 'required',
         ];
     }
 
