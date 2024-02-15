@@ -96,4 +96,12 @@ class Tour extends Model
     public function timeslots() {
         return $this->hasMany(TourTimeslot::class, 'tour_id');
     } 
+
+    public function feedbacks() {
+        return $this->hasMany(TourFeedback::class, 'tour_id');
+    }
+
+    public function feedback() {
+        return $this->hasOne(TourFeedback::class, 'tour_id');
+    }
 }

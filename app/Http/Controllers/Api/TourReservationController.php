@@ -137,9 +137,16 @@ class TourReservationController extends Controller
     public function getUserReservations(Request $request)
     {
         $user = Auth::user();
-        $reservations = TourReservation::latest('created_at')->where('reserved_user_id', $user->id)->with('tour')->get();
+        $reservations = TourReservation::latest('created_at')
+        ->where('reserved_user_id', $user->id)
+        ->with(['tour.feedback' => function ($query) use ($user) {
+            $query->where('customer_id', $user->id); // Limit to retrieve only one feedback
+        }])
+        ->get();
+
         foreach ($reservations as $reservation) {
             $reservation->setAppends([]); // Exclude the "attractions" attribute for this instance
+            $reservation->tour->setAppends([]);
         }
 
         return response([
