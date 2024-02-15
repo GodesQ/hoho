@@ -61,7 +61,7 @@ class TourReservation extends Model
     }
 
     public function tour() {
-        return $this->hasOne(Tour::class, 'id', 'tour_id')->select('id', 'name', 'capacity', 'type', 'price', 'bracket_price_one', 'bracket_price_two', 'bracket_price_three');
+        return $this->hasOne(Tour::class, 'id', 'tour_id')->select('id', 'name', 'featured_image', 'capacity', 'type', 'price', 'bracket_price_one', 'bracket_price_two', 'bracket_price_three');
     }
 
     public function reservation_codes() {
