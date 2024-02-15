@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TourFeedback\StoreRequest;
-use App\Models\TourFeedBack;
+use App\Models\TourFeedback;
 use Illuminate\Http\Request;
 
 class TourFeedBackController extends Controller
