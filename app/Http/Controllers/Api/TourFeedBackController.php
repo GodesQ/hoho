@@ -56,6 +56,16 @@ class TourFeedBackController extends Controller
         ], 200);
     }
 
+    public function getFeedBacksByTour(Request $request, $tour_id) {
+        $tour_feedbacks = TourFeedback::where('tour_id', $tour_id)->orderBy('total_rate', 'desc')->get();
+        
+        return response([
+            'status' => TRUE,
+            'message' => 'Feedbacks Found.',
+            'feedbacks' => $tour_feedbacks,
+        ]);
+    }
+
     private function calculateTotalRate($sum_of_categories) {
         $percentage =  ($sum_of_categories / 30) * 100; // 30 is the total for every maximum 5 rate of each category
         

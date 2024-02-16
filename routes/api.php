@@ -116,4 +116,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('tour-feedbacks', [TourFeedBackController::class, 'store']);
     Route::get('tour-feedbacks/{id}', [TourFeedBackController::class, 'show']);
     Route::put('tour-feedbacks/{id}', [TourFeedBackController::class, 'update']);
+    Route::get('tour-feedbacks/tours/{tour_id}', [TourFeedBackController::class, 'getFeedBacksByTour']);
 });
