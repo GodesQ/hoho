@@ -88,6 +88,19 @@ class ProductController extends Controller
 
     }
 
+    public function show(Request $request, $id) {
+        $product = Product::findOrFail($id);
+        
+        if($request->ajax()) {
+            return response()->json([
+                'message' => 'Product Found',
+                'product' => $product,
+            ]);
+        }
+
+        return;
+    } 
+
     public function edit($id)
     {   
         $merchants = Merchant::where('type', 'Store')->get();
@@ -163,6 +176,25 @@ class ProductController extends Controller
             'status' => TRUE,
             'message' => 'Product Deleted Successfully'
         ];
+    }
+
+    public function lookup(Request $request) {
+        $searchQuery = $request->input('q');
+        $products = Product::orWhere('name', 'LIKE', "%$searchQuery%")
+            ->select('id', 'name', 'merchant_id')
+            ->with('merchant')
+            ->get();
+
+        $formattedProducts = [];
+
+        foreach ($products as $product) {
+            $formattedProducts[] = [
+                'id' => $product->id,
+                'text' => $product->name . ' - ' . '(' . $product->merchant->name . ')',
+            ];
+        }
+
+        return response()->json($formattedProducts);
     }
 
     public function removeImage(Request $request) {

@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Order\StoreRequest;
 use App\Models\Order;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -41,11 +44,17 @@ class OrderController extends Controller
     }
 
     public function create() {
-        return view('admin-page.orders.create-order');
+        $products = Product::get();
+        $customers = User::get();
+
+        return view('admin-page.orders.create-order', compact('products', 'customers'));
     }
 
-    public function store(Request $request) {
+    public function store(StoreRequest $request) {
+        $product = Product::where('id', $request->product_id)->first();
+        $totalAmount = $this->calculateTotalAmount($product->price, $request->quantity);
 
+        
     }
 
     public function show($id) { 
@@ -62,5 +71,9 @@ class OrderController extends Controller
     
     public function destroy($id) {
     
+    }
+
+    private function calculateTotalAmount($price, $quantity) {
+        return $price * $quantity;    
     }
 }
