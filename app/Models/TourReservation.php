@@ -72,6 +72,14 @@ class TourReservation extends Model
         return $this->hasOne(Referral::class, 'referral_code', 'referral_code');
     }
 
+    public function feedbacks() {
+        return $this->hasMany(TourFeedback::class, 'reservation_id');
+    }
+
+    public function feedback() {
+        return $this->hasOne(TourFeedback::class, 'reservation_id');
+    }
+
     public function getPassengersAttribute() {
         $passenger_ids = json_decode($this->passenger_ids, true); // Passing true as the second argument to get an associative array
 

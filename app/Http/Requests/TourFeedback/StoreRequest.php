@@ -26,6 +26,7 @@ class StoreRequest extends FormRequest
         return [
             'customer_id' => 'required|exists:users,id',
             'tour_id' => 'required|exists:tours,id',
+            'reservation_id' => 'required|exists:tour_reservations,id',
             'message' => 'nullable',
             'category_one_rate' => 'required',
             'category_two_rate' => 'required',
@@ -41,7 +42,9 @@ class StoreRequest extends FormRequest
             'customer_id.required' => 'The customer field is required.',
             'customer_id.exists' => 'The customer should be exists on our records.',
             'tour_id.required' => 'The tour field is required.',
-            'tour_id.exists' => 'The tour should be exists on our records.'
+            'tour_id.exists' => 'The tour should be exists on our records.',
+            'reservation_id.required' => 'The tour reservation field is required.',
+            'reservation_id.exists' => 'The tour reservation should be exists on our records.'
         ];
     }
 }

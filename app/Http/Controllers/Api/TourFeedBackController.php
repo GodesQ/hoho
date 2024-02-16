@@ -28,8 +28,9 @@ class TourFeedBackController extends Controller
     }
 
     public function show(Request $request, $id) {
-        $tour_feedback = TourFeedback::where('id', $id)->with('tour')->first();
+        $tour_feedback = TourFeedback::where('id', $id)->with('tour_reservation', 'tour')->first();
 
+        $tour_feedback->tour_reservation->setAppends([]);
         $tour_feedback->tour->setAppends([]);
         
         return response([
