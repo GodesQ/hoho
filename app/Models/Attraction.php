@@ -63,9 +63,11 @@ class Attraction extends Model
         $nearest_attractions = $this->nearest_attraction_ids ? json_decode($this->nearest_attraction_ids, true) : [];
     
         if (is_array($nearest_attractions) && !empty($nearest_attractions)) {
-            $data = Attraction::whereIn('id', $nearest_attractions)
-                ->get()
-                ->toArray();
+            $data = Attraction::select('id', 'name', 'featured_image', 'organization_id', 'latitude', 'longitude', 'address', 'status')
+                ->whereIn('id', $nearest_attractions)
+                ->get();
+
+            $data->each->setAppends([]);
     
             self::$loadingNearestAttractions = false; // Reset the flag after loading
     
@@ -79,17 +81,21 @@ class Attraction extends Model
 
     public function getNearestStoresAttribute() {
         $nearest_stores = $this->nearest_store_ids ? json_decode($this->nearest_store_ids, true) : [];
-
+    
         if (is_array($nearest_stores) && !empty($nearest_stores)) {
-            $data = Merchant::whereIn('id', $nearest_stores)
-                ->with('store_info')
+            $data = Merchant::select('id', 'name', 'featured_image', 'organization_id', 'address', 'latitude', 'longitude', 'is_active')
+                ->whereIn('id', $nearest_stores)
+                ->with(['store_info' => function ($query) {
+                    $query->select('id', 'merchant_id', 'images', 'brochure'); 
+                }])
                 ->get()
                 ->toArray();
+            
             if (!empty($data)) {
                 return $data;
             }
         }
-
+    
         return [];
     }
 
@@ -97,8 +103,11 @@ class Attraction extends Model
         $nearest_restaurants = $this->nearest_restaurant_ids ? json_decode($this->nearest_restaurant_ids, true) : [];
         
         if (is_array($nearest_restaurants) && !empty($nearest_restaurants)) {
-            $data = Merchant::whereIn('id', $nearest_restaurants)
-                ->with('restaurant_info')
+            $data = Merchant::select('id', 'name', 'featured_image', 'organization_id', 'address', 'latitude', 'longitude', 'is_active')
+                ->whereIn('id', $nearest_restaurants)
+                ->with(['restaurant_info' => function ($query) {
+                    $query->select('id', 'merchant_id', 'images', 'brochure'); 
+                }])
                 ->get()
                 ->toArray();
             if (!empty($data)) {
@@ -113,8 +122,11 @@ class Attraction extends Model
         $nearest_hotels = $this->nearest_hotel_ids ? json_decode($this->nearest_hotel_ids, true) : [];
         
         if (is_array($nearest_hotels) && !empty($nearest_hotels)) {
-            $data = Merchant::whereIn('id', $nearest_hotels)
-                ->with('hotel_info')
+            $data = Merchant::select('id', 'name', 'featured_image', 'organization_id', 'address', 'latitude', 'longitude', 'is_active')
+                ->whereIn('id', $nearest_hotels)
+                ->with(['hotel_info' => function ($query) {
+                    $query->select('id', 'merchant_id', 'images', 'brochure'); 
+                }])
                 ->get()
                 ->toArray();
             if (!empty($data)) {

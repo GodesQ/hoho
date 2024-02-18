@@ -5,15 +5,27 @@ namespace App\Http\Controllers\Api\v2;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AttractionResource;
 use App\Models\Attraction;
+use Exception;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class AttractionController extends Controller
 {
     public function index(Request $request) {
-        return AttractionResource::collection(Attraction::get());
+        $attractions = Cache::remember('attractions', 180, function() {
+            return Attraction::where('status', 1)->get();
+        });
+
+        return AttractionResource::collection($attractions);
     }
 
-    public function getByOrganization(Request $request, $organization_id) {
+    public function show(Request $request, $attraction_id) {
+        $attraction = Attraction::findOrFail($attraction_id);
+        return AttractionResource::make($attraction);
+    }
+
+    public function attractionsByOrganization(Request $request, $organization_id) {
         return AttractionResource::collection(Attraction::where('organization_id', $organization_id)->get());
     }
 }

@@ -21,7 +21,8 @@ class PromoCodeController extends Controller
     }
 
     public function checkValidPromoCode(Request $request) {
-        $promocode = PromoCode::select('id', 'name', 'code', 'description', 'is_need_requirement', 'type', 'is_need_approval', 'discount_type', 'discount_amount')->where('code', $request->code)->first();
+        $promocode = PromoCode::select('id', 'name', 'code', 'description', 'is_need_requirement', 'type', 'is_need_approval', 'discount_type', 'discount_amount')
+                    ->where('code', $request->code)->first();
 
         if($promocode) {
             return response([
