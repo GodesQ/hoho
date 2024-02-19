@@ -9,7 +9,7 @@
         <a href="{{ route('admin.orders.index') }}" class="btn btn-primary">Back to List <i class="bx bx-undo"></i></a>
     </div>
 
-    <form action="{{ route('admin.rooms.store') }}" method="post">
+    <form action="{{ route('admin.orders.store') }}" method="post">
         @csrf
         <input type="hidden" name="product_price" id="product-price-field" value="0">
         <div class="row">
@@ -20,29 +20,31 @@
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="product-field" class="form-label">Product</label>
-                                    <select name="product_id" id="product-field" class="products form-select">
-
-                                    </select>
+                                    <select name="product_id" id="product-field" class="products form-select"></select>
+                                    <div class="text-danger">@error('product_id'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="customer-field" class="form-label">Customer</label>
-                                    <select name="buyer_id" id="customer-field" class="customers form-select"
-                                        style="width: 100%;" required>
+                                    <select name="customer_id" id="customer-field" class="customers form-select"
+                                        style="width: 100%;">
                                     </select>
+                                    <div class="text-danger">@error('customer_id'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="quantity-field" class="form-label">Quantity</label>
                                     <input type="number" name="quantity" id="quantity-field" class="form-control" value="1">
+                                    <div class="text-danger">@error('quantity'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="order-date-field" class="form-label">Order Date</label>
                                     <input type="date" name="order_date" id="order-date-field" value="{{ date('Y-m-d') }}" class="form-control">
+                                    <div class="text-danger">@error('order_date'){{ $message }}@enderror</div>
                                 </div>
                             </div>
                         </div>
@@ -152,7 +154,7 @@
             let subAmountValue = $('#product-price-field').val() ;
             let quantity = $('#quantity-field').val();
 
-            const totalAmount = subAmountValue * quantity;
+            const totalAmount = (subAmountValue * quantity).toFixed(2);
             $('#total-amount-text').text('₱ ' + totalAmount);
         }
 

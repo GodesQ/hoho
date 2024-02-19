@@ -296,7 +296,7 @@
                                                 class="bx bx-save"></i></button>
                                         <div class="w-100">
                                             <a href="{{ route('admin.transactions.edit', $reservation->order_transaction_id) }}"
-                                                class="w-100 btn-outline-primary btn">See Transaction Details</a>
+                                                class="w-100 btn-outline-primary btn">View Transaction Details</a>
                                         </div>
                                     </div>
                                 </div>

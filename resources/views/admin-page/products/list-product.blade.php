@@ -15,8 +15,7 @@
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Merchant</th>
-                            <th>Name</th>
+                            <th>Product</th>
                             <th>Price</th>
                             <th>Status</th>
                             <th>Actions</th>
@@ -44,13 +43,10 @@
                         name: 'id'
                     },
                     {
-                        data: 'merchant',
-                        name: 'merchant',
+                        data: 'product',
+                        name: 'product',
                         orderable: false,
-                    },
-                    {
-                        data: 'name',
-                        name: 'name'
+                        searchable: false,
                     },
                     {
                         data: 'price',

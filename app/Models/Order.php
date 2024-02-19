@@ -10,14 +10,16 @@ class Order extends Model
 {
     use HasFactory;
     protected $table = "orders";
-    protected $fillable = ["product_id", "buyer_id", "transaction_id", "reference_code", "quantity", "sub_amount", "total_amount", "payment_method", "status", "order_date"];
+    protected $fillable = ["product_id", "customer_id", "transaction_id", "reference_code", "quantity", "sub_amount", "total_amount", "payment_method", "status", "order_date"];
     protected $hidden = ['created_at', 'updated_at'];
+
+    protected $dates = ['order_date'];
 
     public function product() : BelongsTo {
         return $this->belongsTo(Product::class, 'product_id');
     }
 
     public function customer() : BelongsTo {
-        return $this->belongsTo(User::class, 'buyer_id');
+        return $this->belongsTo(User::class, 'customer_id');
     }
 }

@@ -18,12 +18,17 @@ class ProductController extends Controller
     {
 
         if ($request->ajax()) {
-            $products = Product::with('merchant');
+            $products = Product::query();
+
+            if($request->search['value'] && $request->ajax()) {
+                $searchValue = $request->search['value'];
+                $products = $products->where('name', 'LIKE', $searchValue . '%');
+            }
             
             return DataTables::of($products)
                 ->addIndexColumn()
-                ->addColumn('merchant', function ($row) {
-                    return $row->merchant->name;
+                ->editColumn('product', function ($row) {
+                    return view('components.merchant-product', ['product' => $row ]);
                 })
                 ->addColumn('status', function ($row) {
                     if($row->is_active) {

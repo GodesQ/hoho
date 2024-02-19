@@ -276,6 +276,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::get('orders', [OrderController::class,'index'])->name('orders.index');
     Route::get('orders/create', [OrderController::class,'create'])->name('orders.create');
     Route::post('orders/store', [OrderController::class,'store'])->name('orders.store');
+    Route::get('orders/show/{id}', [OrderController::class,'show'])->name('orders.show');
     Route::get('orders/edit/{id}', [OrderController::class,'edit'])->name('orders.edit');
     Route::put('orders/update/{id}', [OrderController::class,'update'])->name('orders.update');
     Route::delete('orders/destroy/{id}', [OrderController::class,'destroy'])->name('orders.destroy');
