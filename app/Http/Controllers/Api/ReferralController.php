@@ -10,7 +10,9 @@ use App\Models\Referral;
 class ReferralController extends Controller
 {
     public function verifyReferralCode(Request $request) {
-        $referral = Referral::select('id', 'referral_code', 'referral_name')->where('referral_code', $request->referral_code)->first();
+        $referral = Referral::select('id', 'referral_code', 'referral_name')
+                    ->where('referral_code', $request->referral_code)
+                    ->first();
 
         if(!$referral) {
             return response([

@@ -17,7 +17,5 @@ class TicketPassController extends Controller
             'ticket_passes' => $ticket_passes
         ]);
 
-    }
-
-    
+    }   
 }

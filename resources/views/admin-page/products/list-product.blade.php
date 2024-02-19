@@ -44,9 +44,8 @@
                     },
                     {
                         data: 'product',
-                        name: 'product',
+                        name: 'name',
                         orderable: false,
-                        searchable: false,
                     },
                     {
                         data: 'price',

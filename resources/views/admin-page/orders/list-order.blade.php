@@ -47,8 +47,8 @@
                         name: 'id',
                     },
                     {
-                        data: 'buyer_id',
-                        name: 'buyer_id',
+                        data: 'customer_id',
+                        name: 'customer_id',
                     },
                     {
                         data: 'product_id',

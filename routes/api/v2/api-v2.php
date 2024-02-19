@@ -2,16 +2,19 @@
 
 use App\Http\Controllers\Api\v2\AnnouncementController;
 use App\Http\Controllers\Api\v2\AttractionController;
+use App\Http\Controllers\Api\v2\InterestController;
 use App\Http\Controllers\Api\v2\MerchantController;
 use App\Http\Controllers\Api\v2\OrganizationController;
 use App\Http\Controllers\Api\v2\PromocodeController;
+use App\Http\Controllers\Api\v2\ReferralController;
+use App\Http\Controllers\Api\v2\TicketPassController;
+use App\Http\Controllers\Api\v2\TourBadgeController;
 use App\Http\Controllers\Api\v2\TourController;
 use App\Http\Controllers\Api\v2\TourReservationController;
 use App\Http\Controllers\Api\v2\TransportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('announcements', [AnnouncementController::class, 'index']);
     Route::get('announcements/{id}', [AnnouncementController::class, 'show']);
 
@@ -38,4 +41,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('promocodes', [PromocodeController::class, 'index']);
     Route::post('promocodes/verify', [PromocodeController::class, 'verify']);
-});
+
+    Route::post('referrals/verify', [ReferralController::class, 'verify']);
+    
+    Route::get('interests', [InterestController::class, 'index']);
+    Route::get('interests/{interest_id}', [InterestController::class, 'show']);
+
+    Route::get('ticket-passes', [TicketPassController::class, 'index']);
+    Route::get('ticket-passes/{ticket_pass_id}', [TicketPassController::class, 'show']);
+
+    Route::get('tour-badges', [TourBadgeController::class, 'index']);
+    Route::get('tour-badges/{tour_badge_id}', [TourBadgeController::class, 'show']);

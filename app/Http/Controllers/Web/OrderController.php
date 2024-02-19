@@ -22,7 +22,7 @@ class OrderController extends Controller
             $orders = Order::with('product', 'customer');
 
             return DataTables::of($orders)
-            ->editColumn('buyer_id', function ($order) {
+            ->editColumn('customer_id', function ($order) {
                 return view('components.user-contact', ['user' => $order->customer]);
             })
             ->editColumn('product_id', function ($order) {
