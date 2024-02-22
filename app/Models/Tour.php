@@ -87,6 +87,10 @@ class Tour extends Model
         return [];
     }
 
+    public function organization() {
+        return $this->belongsTo(Organization::class, 'organization_id');
+    }
+
     public function transport() {
         return $this->hasOne(Transport::class, 'id', 'transport_id')->select('id', 'available_seats', 'route', 'capacity', 'tour_assigned_id', 'tour_assignment_ids', 'latitude', 'longitude', 'name', 'current_location', 'next_location', 'previous_location');
     }

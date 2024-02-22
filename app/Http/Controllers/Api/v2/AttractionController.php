@@ -13,8 +13,9 @@ use Illuminate\Support\Facades\Cache;
 class AttractionController extends Controller
 {
     public function index(Request $request) {
-        $attractions = Cache::remember('attractions', 180, function() {
-            return Attraction::where('status', 1)->get();
+        $attractions = Cache::remember('attractions', 60, function() use ($request) {
+            $length = $request->query('length') ?? '';
+            return Attraction::where('status', 1)->inRandomOrder()->limit($length)->get();
         });
 
         return AttractionResource::collection($attractions);

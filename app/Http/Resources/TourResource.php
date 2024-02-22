@@ -24,7 +24,6 @@ class TourResource extends JsonResource
             'featured_image' => $this->featured_image,
             'images' => $this->when($request->tour_id, $this->images),
             'interests' => $this->interests,
-            'operating_hours' => $this->operating_hours,
             'is_cancellable' => $this->when($request->tour_id, (boolean) $this->is_cancellable),
             'is_refundable' => $this->when($request->tour_id, (boolean) $this->is_refundable),
             'bypass_days' => (integer) $this->bypass_days,
@@ -32,12 +31,14 @@ class TourResource extends JsonResource
             'minimum_pax' => $this->minimum_pax,
             'tour_itinerary' => $this->tour_itinerary,
             'tour_inclusions' => $this->tour_inclusions,
+            'operating_hours' => $this->when($request->tour_id, $this->operating_hours),
             'price' => (double) $this->price,
             'bracket_price_one' => (double) $this->bracket_price_one,
             'bracket_price_two' => (double) $this->bracket_price_two,
             'bracket_price_three' => (double) $this->bracket_price_three,
             'transport_id' => (integer) $this->transport_id,
             'organization_id' => (integer) $this->organization_id,
+            'organization' => $this->when($request->tour_id, $this->organization),
             'attractions' => $this->when(is_array($this->attractions) || $this->attractions != null, AttractionResource::collection($this->attractions)),
         ];
     }

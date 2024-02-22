@@ -19,9 +19,11 @@ class TourController extends Controller
     }
 
     public function getGuidedTours(Request $request) {
+        $length = $request->query('length') ?? '';
         $tours = Tour::where('status', 1)
                 ->where('type', 'Guided Tour')
                 ->inRandomOrder()
+                ->limit($length)
                 ->get();
 
         return TourResource::collection($tours);
