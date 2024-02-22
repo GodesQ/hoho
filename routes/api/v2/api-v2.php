@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\Route;
 
     Route::get('tour-reservations/users/{user_id}/reservation-dates', [TourReservationController::class, 'userTourReservationDates']);
     Route::get('tour-reservations/users/{user_id}', [TourReservationController::class, 'userTourReservations']);
+    Route::get('tour-reservations/{tour_reservation_id}', [TourReservationController::class, 'show']);
 
     Route::get('promocodes', [PromocodeController::class, 'index']);
     Route::post('promocodes/verify', [PromocodeController::class, 'verify']);

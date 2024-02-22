@@ -8,7 +8,11 @@ use App\Models\HotelReservation;
 use Illuminate\Http\Request;
 
 class HotelReservationController extends Controller
-{
+{   
+    public function userHotelReservations(Request $request) {
+        
+    }
+
     public function store(StoreRequest $request) {
         $data = $request->validated();
         $hotelReservation = HotelReservation::create(array_merge($data, ['status' => 'pending']));
