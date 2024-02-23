@@ -9,7 +9,15 @@ use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class TourReservationService
-{
+{   
+    public function storeRegisteredUserReservation(Request $request) {
+        
+    }
+
+    public function storeAnonymousUserReservation(Request $request) {
+
+    }
+
     public function RetrieveAllTourReservationsList($request)
     {   
         $current_user = Auth::guard('admin')->user();
@@ -122,8 +130,6 @@ class TourReservationService
             ->rawColumns(['actions', 'status'])
             ->make(true);
     }
-
-
 
 
 }

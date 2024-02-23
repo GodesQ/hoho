@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\v2\MerchantController;
 use App\Http\Controllers\Api\v2\OrganizationController;
 use App\Http\Controllers\Api\v2\PromocodeController;
 use App\Http\Controllers\Api\v2\ReferralController;
+use App\Http\Controllers\Api\v2\ReservationCodeController;
 use App\Http\Controllers\Api\v2\TicketPassController;
 use App\Http\Controllers\Api\v2\TourBadgeController;
 use App\Http\Controllers\Api\v2\TourController;
@@ -36,6 +37,8 @@ use Illuminate\Support\Facades\Route;
     Route::get('transports', [TransportController::class, 'index']);
     Route::get('transports/{transport_id}', [TransportController::class, 'show']);
 
+    Route::post('tour-reservations', [TourReservationController::class, 'store']);
+    Route::post('tour-reservations/bulk', [TourReservationController::class, 'bulk']);
     Route::get('tour-reservations/users/{user_id}/reservation-dates', [TourReservationController::class, 'userTourReservationDates']);
     Route::get('tour-reservations/users/{user_id}', [TourReservationController::class, 'userTourReservations']);
     Route::get('tour-reservations/{tour_reservation_id}', [TourReservationController::class, 'show']);
@@ -53,3 +56,6 @@ use Illuminate\Support\Facades\Route;
 
     Route::get('tour-badges', [TourBadgeController::class, 'index']);
     Route::get('tour-badges/{tour_badge_id}', [TourBadgeController::class, 'show']);
+
+    Route::get('reservation-codes/tour-reservations/{reservation_id}', [ReservationCodeController::class, 'getTourReservationCodes']);
+    Route::get('reservation-codes/{reservation_code_id}', [ReservationCodeController::class, 'show']);

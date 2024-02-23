@@ -42,4 +42,12 @@ class TourReservationController extends Controller
             'data' => $disabledDates,
         ];
     }
+
+    public function store(Request $request) {
+
+    }
+
+    public function bulk(Request $request) {
+        
+    }
 }
