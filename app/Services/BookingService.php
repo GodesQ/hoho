@@ -126,6 +126,7 @@ class BookingService
     public function createMultipleBooking(Request $request)
     {
         return DB::transaction(function () use ($request) {
+            dd($request->all());
             // Remove the line below, as it's just for testing purposes
 
             $reference_no = $this->generateReferenceNo();
