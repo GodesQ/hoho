@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\TourReservationCustomerDetail;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -149,6 +150,20 @@ class TourReservationController extends Controller
             'status' => TRUE,
             'reservation_codes' => $tour_reservation_codes
         ]);
+    }
+
+    public function syncCustomerDetails() {
+        $tour_reservations = TourReservation::with('user')->whereHas('user')->get();
+
+        foreach ($tour_reservations as $key => $tour_reservation) {
+            TourReservationCustomerDetail::create([
+                'tour_reservation_id' => $tour_reservation->id,
+                'firstname' => $tour_reservation->user->lastname,
+                'lastname' => $tour_reservation->user->lastname,
+                'email' => $tour_reservation->user->email,
+                'contact_no' => optional($tour_reservation->user)->countryCode . optional($tour_reservation->user)->contact_no,
+            ]);
+        }
     }
 
     private function generateReservationCode($number_of_pass, $reservation) {

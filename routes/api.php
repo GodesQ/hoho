@@ -113,7 +113,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('hotel-reservations', [HotelReservationController::class, 'store']);
     Route::get('hotel-reservations/{id}', [HotelReservationController::class, 'show']);
 
-    Route::get('products/merchants/{id}', [ProductController::class, 'getMerchantProducts']);
+    Route::get('products/merchants/{merchant_id}', [ProductController::class, 'getMerchantProducts']);
     Route::get('products/{id}', [ProductController::class, 'getProduct']);
 
     Route::get('tour-feedbacks', [TourFeedBackController::class, 'index']);
