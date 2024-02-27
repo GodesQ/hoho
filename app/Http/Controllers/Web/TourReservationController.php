@@ -164,6 +164,8 @@ class TourReservationController extends Controller
                 'contact_no' => optional($tour_reservation->user)->countryCode . optional($tour_reservation->user)->contact_no,
             ]);
         }
+
+        echo "Success";
     }
 
     private function generateReservationCode($number_of_pass, $reservation) {

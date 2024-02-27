@@ -39,6 +39,7 @@ use Illuminate\Support\Facades\Route;
 
     Route::post('tour-reservations', [TourReservationController::class, 'store']);
     Route::post('tour-reservations/bulk', [TourReservationController::class, 'bulk']);
+    Route::post('tour-reservations/guest', [TourReservationController::class, 'storeGuestReservation']);
     Route::get('tour-reservations/users/{user_id}/reservation-dates', [TourReservationController::class, 'userTourReservationDates']);
     Route::get('tour-reservations/users/{user_id}', [TourReservationController::class, 'userTourReservations']);
     Route::get('tour-reservations/{tour_reservation_id}', [TourReservationController::class, 'show']);

@@ -244,7 +244,6 @@ class BookingService
     {
         $charges = [
             'Convenience Fee' => 99,
-            // 'Travel Pass' => 50,
         ];
 
         return $charges;
@@ -454,7 +453,6 @@ class BookingService
             'currency' => 'PHP',
             'paymentType' => 'DTP',
             'amount' => $transaction->payment_amount,
-            'description' => 'Payment for Philippines Hop-On Hop-Off Reservation',
             'customer' => [
                 'name' => optional($transaction->user)->firstname . ' ' . optional($transaction->user)->lastname,
                 'email' => optional($transaction->user)->email,
@@ -462,7 +460,7 @@ class BookingService
             ],
             'project' => [
                 'name' => 'Philippines Hop-On Hop-Off Checkout Reservation',
-                'unitNumber' => '1-1234',
+                'unitNumber' => '00000',
                 'category' => 'Checkout'
             ],
             'redirectUrl' => [
@@ -473,8 +471,6 @@ class BookingService
             'note' => 'Checkout for Tour Reservation',
             'metadata' => [
                 'Convenience Fee' => '99.00' . ' ' . 'Per Pax',
-                'Amount' => number_format($transaction->payment_amount, 2),
-                'agentName' => $transaction->user->firstname . ' ' . $transaction->user->lastname
             ]
         ];
 
