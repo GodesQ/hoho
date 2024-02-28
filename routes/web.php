@@ -133,7 +133,7 @@ Route::post('aqwire/webhook', function () {
 
     return response()->json([
         $_REQUEST,
-        $_POST,
+        $_POST['transactionId'],
         $_GET
     ], 200);
 
