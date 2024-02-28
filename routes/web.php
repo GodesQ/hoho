@@ -101,7 +101,7 @@ Route::get('user/reset_password_form', [ForgotPasswordController::class, 'resetP
 Route::post('user/reset_password_form', [ForgotPasswordController::class, 'postResetPasswordForm'])->name('user.post_reset_password_form');
 Route::view('user/reset_password_success', 'misc.success-reset-password-message')->name('user.reset_password_success');
 
-Route::post('aqwire/webhook', function () {
+Route::post('aqwire/webhook', function (Request $request) {
     header('Content-Type: application/json');
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         echo (json_encode(
@@ -120,32 +120,34 @@ Route::post('aqwire/webhook', function () {
     $rawSignature = hash_hmac('sha256', $json, $merchantSecretKey, true);
     $computedSignature = strtr(base64_encode($rawSignature), '+/', '-_');
 
-    if ($signature !== $computedSignature) {
-        echo (json_encode(
-            array (
-                'message' => 'Unauthorized API call'
-            )
-        ));
-        http_response_code(401);
-        exit ();
-    }
+    // if ($signature !== $computedSignature) {
+    //     echo (json_encode(
+    //         array (
+    //             'message' => 'Unauthorized API call'
+    //         )
+    //     ));
+    //     http_response_code(401);
+    //     exit ();
+    // }
 
-    echo (json_encode(
-        array (
-            'sign' => $signature
-        )
-    ));
-    echo (json_encode(
-        array (
-            'verify' => $computedSignature
-        )
-    ));
-    echo (json_encode(
-        array (
-            'message' => 'Data posted'
-        )
-    ));
-    http_response_code(200);
+    return response()->json($request->all(), 200);
+
+    // echo (json_encode(
+    //     array (
+    //         'sign' => $signature
+    //     )
+    // ));
+    // echo (json_encode(
+    //     array (
+    //         'verify' => $computedSignature
+    //     )
+    // ));
+    // echo (json_encode(
+    //     array (
+    //         'message' => 'Data posted'
+    //     )
+    // ));
+    // http_response_code(200);
 });
 
 Route::get('merchant_form/{type}', [MerchantController::class, 'merchant_form'])->name('merchant_form')->middleware('auth:admin');
