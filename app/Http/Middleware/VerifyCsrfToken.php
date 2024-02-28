@@ -13,6 +13,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'http://192.168.100.71:8000/broadcasting/auth',
-        'api/*'
+        'api/*',
+        'aqwire/*'
     ];
 }
