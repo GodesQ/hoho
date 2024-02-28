@@ -102,7 +102,7 @@ Route::get('user/reset_password_form', [ForgotPasswordController::class, 'resetP
 Route::post('user/reset_password_form', [ForgotPasswordController::class, 'postResetPasswordForm'])->name('user.post_reset_password_form');
 Route::view('user/reset_password_success', 'misc.success-reset-password-message')->name('user.reset_password_success');
 
-Route::post('aqwire/webhook', function (Request $request) {
+Route::post('aqwire/webhook', function () {
     header('Content-Type: application/json');
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         echo (json_encode(
@@ -131,7 +131,7 @@ Route::post('aqwire/webhook', function (Request $request) {
     //     exit ();
     // }
 
-    return response()->json($request->all(), 200);
+    return response()->json($_POST, 200);
 
     // echo (json_encode(
     //     array (
