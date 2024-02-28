@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Room\StoreRequest;
 use App\Http\Requests\Room\UpdateRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -50,8 +51,14 @@ class RoomController extends Controller
     }
 
     public function create(Request $request)
-    {
-        $merchants = Merchant::where('type', 'Hotel')->get();
+    {   
+        $user = Auth::guard('admin')->user();
+        if($user->role == 'merchant_hotel_admin') {
+            $merchants = Merchant::where('type', 'Hotel')->get();
+        } else {
+            $merchants = Merchant::where('type','Hotel')->where('id', $user->merchant_id)->get();
+        }
+
         $product_categories = ProductCategory::get();
         return view('admin-page.rooms.create-room', compact('merchants', 'product_categories'));
     }
@@ -108,7 +115,13 @@ class RoomController extends Controller
 
     public function edit(Request $request)
     {
-        $merchants = Merchant::where('type', 'Hotel')->get();
+        $user = Auth::guard('admin')->user();
+        if($user->role == 'merchant_hotel_admin') {
+            $merchants = Merchant::where('type', 'Hotel')->get();
+        } else {
+            $merchants = Merchant::where('type','Hotel')->where('id', $user->merchant_id)->get();
+        }
+        
         $product_categories = ProductCategory::get();
 
         $room = Room::where('id', $request->id)->with('merchant')->firstOrFail();

@@ -92,7 +92,6 @@ class TourReservationService
                         'promo_code' => $request->promo_code,
                         'requirement_file_path' => null,
                         'discount_amount' => $subAmount - $totalOfDiscount,
-                        'created_by' => $request->reserved_user_id,
                         'created_user_type' => 'guest'
                     ]);
 
@@ -101,7 +100,7 @@ class TourReservationService
                         'firstname' => $request->firstname,
                         'lastname' => $request->lastname,
                         'email' => $request->email,
-                        'contact_no' => $request->contact_no,
+                        'contact_no' => preg_replace('/[^0-9]/', '', $request->contact_no),
                         'address' => $request->address,
                     ]);
                 }
@@ -134,7 +133,7 @@ class TourReservationService
                 ]
             ];
 
-            // Generate URL Endpoint and Auth Token for Payment Gateway
+            # Generate URL Endpoint and Auth Token for Payment Gateway
             if (env('APP_ENVIRONMENT') == 'LIVE') {
                 $url_create = 'https://payments.aqwire.io/api/v3/transactions/create';
                 $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
