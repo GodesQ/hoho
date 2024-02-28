@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class RoomController extends Controller
 {
-    public function getRooms(Request $request) {
+    public function getMerchantRooms(Request $request) {
         $merchant_id = $request->merchant_id;
         $rooms = Room::where("merchant_id", $merchant_id)->get();
 

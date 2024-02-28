@@ -105,7 +105,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('tour_badges/user_badges', [TourBadgeController::class,'getUserTourBadges']);
     Route::post('tour_badge/check', [TourBadgeController::class, 'checkBadge']);
 
-    Route::get('rooms/{merchant_id}', [RoomController::class, 'getRooms']);
+    Route::get('rooms/merchants/{merchant_id}', [RoomController::class, 'getMerchantRooms']);
 
     Route::post('restaurant-reservations', [RestaurantReservationController::class, 'store']);
     Route::get('restaurant-reservations/{id}', [RestaurantReservationController::class, 'show']);

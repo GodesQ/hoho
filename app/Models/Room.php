@@ -23,6 +23,15 @@ class Room extends Model
         "is_refundable",
         "is_active",
     ];
+
+    protected $casts = [
+        "merchant_id" => "integer",
+        "is_cancellable" => "integer",
+        "is_active" => "integer",
+        "price" => "double",
+        "available_pax" => "integer"
+    ];
+
     protected $hidden = ['created_at', 'updated_at'];
     public function merchant() {
         return $this->belongsTo(Merchant::class, "merchant_id");
