@@ -57,7 +57,7 @@ use App\Http\Controllers\Web\AqwireController;
 */
 
 Route::get('/', function () {
-    if(Auth::guard('admin')->check()) {
+    if (Auth::guard('admin')->check()) {
         return redirect()->route('admin.dashboard');
     } else {
         return redirect()->route('admin.login');
@@ -65,9 +65,9 @@ Route::get('/', function () {
 });
 
 Route::get('delete-account', [DeleteAccountController::class, 'index'])->name('delete-account.index');
-Route::post('delete-account', [DeleteAccountController::class,'confirmDeleteAccountEmail'])->name('delete-account.post');
-Route::get('delete-account/otp/{token}/{email}', [DeleteAccountController::class,'showOTPInputForm'])->name('delete-account.otp');
-Route::post('delete-account/otp/confirm', [DeleteAccountController::class,'confirmOTP'])->name('delete-account.otp.confirm');
+Route::post('delete-account', [DeleteAccountController::class, 'confirmDeleteAccountEmail'])->name('delete-account.post');
+Route::get('delete-account/otp/{token}/{email}', [DeleteAccountController::class, 'showOTPInputForm'])->name('delete-account.otp');
+Route::post('delete-account/otp/confirm', [DeleteAccountController::class, 'confirmOTP'])->name('delete-account.otp.confirm');
 
 Route::view('deleted-account/message', 'misc.deleted-account-message')->name('delete-account.message');
 
@@ -101,9 +101,56 @@ Route::get('user/reset_password_form', [ForgotPasswordController::class, 'resetP
 Route::post('user/reset_password_form', [ForgotPasswordController::class, 'postResetPasswordForm'])->name('user.post_reset_password_form');
 Route::view('user/reset_password_success', 'misc.success-reset-password-message')->name('user.reset_password_success');
 
+Route::post('aqwire/webhook', function () {
+    header('Content-Type: application/json');
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        echo (json_encode(
+            array (
+                'message' => 'Invalid request method'
+            )
+        ));
+        http_response_code(401);
+        exit ();
+    }
+
+    $signature = $_GET['sign'];
+    $json = file_get_contents('php://input');
+    $merchantSecretKey = 'sk_test_Rop0qkilkqmud8jq31T8SX094982SMB2';
+
+    $rawSignature = hash_hmac('sha256', $json, $merchantSecretKey, true);
+    $computedSignature = strtr(base64_encode($rawSignature), '+/', '-_');
+
+    if ($signature !== $computedSignature) {
+        echo (json_encode(
+            array (
+                'message' => 'Unauthorized API call'
+            )
+        ));
+        http_response_code(401);
+        exit ();
+    }
+
+    echo (json_encode(
+        array (
+            'sign' => $signature
+        )
+    ));
+    echo (json_encode(
+        array (
+            'verify' => $computedSignature
+        )
+    ));
+    echo (json_encode(
+        array (
+            'message' => 'Data posted'
+        )
+    ));
+    http_response_code(200);
+});
+
 Route::get('merchant_form/{type}', [MerchantController::class, 'merchant_form'])->name('merchant_form')->middleware('auth:admin');
 
-Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function(){
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function () {
     Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard')->middleware('merchant_created');
     Route::get('profile', [DashboardController::class, 'adminProfile'])->name('profile');
@@ -118,7 +165,7 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
     Route::delete('admins/destroy', [AdminController::class, 'destroy'])->name('admins.destroy')->can('delete_admin');
     Route::get('admins/merchantAdmins', [AdminController::class, 'merchantAdmins']);
     Route::get('admins/operatorAdmins', [AdminController::class, 'operatorAdmins']);
-    
+
     Route::get('users', [UserController::class, 'list'])->name('users.list')->can('view_users_list');
     Route::get('users/lookup', [UserController::class, 'lookup'])->name('users.lookup');
     Route::get('users/create', [UserController::class, 'create'])->name('users.create')->can('create_user');
@@ -227,61 +274,61 @@ Route::group(['prefix'=> 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin
         Route::get('stores/update_stores', [MerchantStoreController::class, 'update_stores'])->name('merchants.update_stores');
     });
 
-    Route::get('food-categories', [FoodCategoryController::class,'index'])->name('food_categories.index');
-    Route::get('food-categories/create', [FoodCategoryController::class,'create'])->name('food_categories.create');
-    Route::post('food-categories/store', [FoodCategoryController::class,'store'])->name('food_categories.store');
-    Route::get('food-categories/edit/{id}', [FoodCategoryController::class,'edit'])->name('food_categories.edit');
-    Route::post('food-categories/update/{id}', [FoodCategoryController::class,'update'])->name('food_categories.update');
-    Route::delete('food-categories/destroy/{id?}', [FoodCategoryController::class,'destroy'])->name('food_categories.destroy');
+    Route::get('food-categories', [FoodCategoryController::class, 'index'])->name('food_categories.index');
+    Route::get('food-categories/create', [FoodCategoryController::class, 'create'])->name('food_categories.create');
+    Route::post('food-categories/store', [FoodCategoryController::class, 'store'])->name('food_categories.store');
+    Route::get('food-categories/edit/{id}', [FoodCategoryController::class, 'edit'])->name('food_categories.edit');
+    Route::post('food-categories/update/{id}', [FoodCategoryController::class, 'update'])->name('food_categories.update');
+    Route::delete('food-categories/destroy/{id?}', [FoodCategoryController::class, 'destroy'])->name('food_categories.destroy');
     Route::get('food-categories/select/{merchant_id?}', [FoodCategoryController::class, 'getFoodCategorySelect'])->name('food_categories.select');
 
-    Route::get('foods', [FoodController::class,'index'])->name('foods.index');
-    Route::get('foods/create', [FoodController::class,'create'])->name('foods.create');
-    Route::post('foods/store', [FoodController::class,'store'])->name('foods.store');
-    Route::get('foods/edit/{id}', [FoodController::class,'edit'])->name('foods.edit');
-    Route::post('foods/update/{id}', [FoodController::class,'update'])->name('foods.update');
-    Route::delete('foods/destroy/{id?}', [FoodController::class,'destroy'])->name('foods.destroy');
+    Route::get('foods', [FoodController::class, 'index'])->name('foods.index');
+    Route::get('foods/create', [FoodController::class, 'create'])->name('foods.create');
+    Route::post('foods/store', [FoodController::class, 'store'])->name('foods.store');
+    Route::get('foods/edit/{id}', [FoodController::class, 'edit'])->name('foods.edit');
+    Route::post('foods/update/{id}', [FoodController::class, 'update'])->name('foods.update');
+    Route::delete('foods/destroy/{id?}', [FoodController::class, 'destroy'])->name('foods.destroy');
 
-    Route::get('rooms', [RoomController::class,'index'])->name('rooms.index');
-    Route::get('rooms/create', [RoomController::class,'create'])->name('rooms.create');
-    Route::post('rooms/store', [RoomController::class,'store'])->name('rooms.store');
-    Route::get('rooms/edit/{id}', [RoomController::class,'edit'])->name('rooms.edit');
-    Route::post('rooms/update/{id}', [RoomController::class,'update'])->name('rooms.update');
-    Route::delete('rooms/destroy/{id?}', [RoomController::class,'destroy'])->name('rooms.destroy');
+    Route::get('rooms', [RoomController::class, 'index'])->name('rooms.index');
+    Route::get('rooms/create', [RoomController::class, 'create'])->name('rooms.create');
+    Route::post('rooms/store', [RoomController::class, 'store'])->name('rooms.store');
+    Route::get('rooms/edit/{id}', [RoomController::class, 'edit'])->name('rooms.edit');
+    Route::post('rooms/update/{id}', [RoomController::class, 'update'])->name('rooms.update');
+    Route::delete('rooms/destroy/{id?}', [RoomController::class, 'destroy'])->name('rooms.destroy');
 
-    Route::get('rooms/lookup/{q?}', [RoomController::class,'lookup'])->name('rooms.lookup');
+    Route::get('rooms/lookup/{q?}', [RoomController::class, 'lookup'])->name('rooms.lookup');
 
-    Route::get('products', [ProductController::class,'index'])->name('products.index');
+    Route::get('products', [ProductController::class, 'index'])->name('products.index');
     Route::get('products/lookup', [ProductController::class, 'lookup'])->name('products.lookup');
-    Route::get('products/create', [ProductController::class,'create'])->name('products.create');
-    Route::post('products/store', [ProductController::class,'store'])->name('products.store');
+    Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::post('products/store', [ProductController::class, 'store'])->name('products.store');
     Route::get('products/show/{id}', [ProductController::class, 'show'])->name('products.show');
-    Route::get('products/edit/{id}', [ProductController::class,'edit'])->name('products.edit');
-    Route::post('products/update/{id}', [ProductController::class,'update'])->name('products.update');
-    Route::delete('products/destroy/{id?}', [ProductController::class,'destroy'])->name('products.destroy');
+    Route::get('products/edit/{id}', [ProductController::class, 'edit'])->name('products.edit');
+    Route::post('products/update/{id}', [ProductController::class, 'update'])->name('products.update');
+    Route::delete('products/destroy/{id?}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::delete('products/remove_image', [ProductController::class, 'removeImage'])->name('products.remove_image');
 
-    Route::get('hotel-reservations', [HotelReservationController::class,'index'])->name('hotel_reservations.index');
-    Route::get('hotel-reservations/create', [HotelReservationController::class,'create'])->name('hotel_reservations.create');
-    Route::post('hotel-reservations/store', [HotelReservationController::class,'store'])->name('hotel_reservations.store');
-    Route::get('hotel-reservations/edit/{id}', [HotelReservationController::class,'edit'])->name('hotel_reservations.edit');
-    Route::put('hotel-reservations/update/{id}', [HotelReservationController::class,'update'])->name('hotel_reservations.update');
-    Route::delete('hotel-reservations/destroy/{id}', [HotelReservationController::class,'destroy'])->name('hotel_reservations.destroy');
+    Route::get('hotel-reservations', [HotelReservationController::class, 'index'])->name('hotel_reservations.index');
+    Route::get('hotel-reservations/create', [HotelReservationController::class, 'create'])->name('hotel_reservations.create');
+    Route::post('hotel-reservations/store', [HotelReservationController::class, 'store'])->name('hotel_reservations.store');
+    Route::get('hotel-reservations/edit/{id}', [HotelReservationController::class, 'edit'])->name('hotel_reservations.edit');
+    Route::put('hotel-reservations/update/{id}', [HotelReservationController::class, 'update'])->name('hotel_reservations.update');
+    Route::delete('hotel-reservations/destroy/{id}', [HotelReservationController::class, 'destroy'])->name('hotel_reservations.destroy');
 
-    Route::get('restaurant-reservations', [RestaurantReservationController::class,'index'])->name('restaurant_reservations.index');
-    Route::get('restaurant-reservations/create', [RestaurantReservationController::class,'create'])->name('restaurant_reservations.create');
-    Route::post('restaurant-reservations/store', [RestaurantReservationController::class,'store'])->name('restaurant_reservations.store');
-    Route::get('restaurant-reservations/edit/{id}', [RestaurantReservationController::class,'edit'])->name('restaurant_reservations.edit');
-    Route::put('restaurant-reservations/update/{id}', [RestaurantReservationController::class,'update'])->name('restaurant_reservations.update');
-    Route::delete('restaurant-reservations/destroy/{id}', [RestaurantReservationController::class,'destroy'])->name('restaurant_reservations.destroy');
+    Route::get('restaurant-reservations', [RestaurantReservationController::class, 'index'])->name('restaurant_reservations.index');
+    Route::get('restaurant-reservations/create', [RestaurantReservationController::class, 'create'])->name('restaurant_reservations.create');
+    Route::post('restaurant-reservations/store', [RestaurantReservationController::class, 'store'])->name('restaurant_reservations.store');
+    Route::get('restaurant-reservations/edit/{id}', [RestaurantReservationController::class, 'edit'])->name('restaurant_reservations.edit');
+    Route::put('restaurant-reservations/update/{id}', [RestaurantReservationController::class, 'update'])->name('restaurant_reservations.update');
+    Route::delete('restaurant-reservations/destroy/{id}', [RestaurantReservationController::class, 'destroy'])->name('restaurant_reservations.destroy');
 
-    Route::get('orders', [OrderController::class,'index'])->name('orders.index');
-    Route::get('orders/create', [OrderController::class,'create'])->name('orders.create');
-    Route::post('orders/store', [OrderController::class,'store'])->name('orders.store');
-    Route::get('orders/show/{id}', [OrderController::class,'show'])->name('orders.show');
-    Route::get('orders/edit/{id}', [OrderController::class,'edit'])->name('orders.edit');
-    Route::put('orders/update/{id}', [OrderController::class,'update'])->name('orders.update');
-    Route::delete('orders/destroy/{id}', [OrderController::class,'destroy'])->name('orders.destroy');
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/create', [OrderController::class, 'create'])->name('orders.create');
+    Route::post('orders/store', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('orders/show/{id}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('orders/edit/{id}', [OrderController::class, 'edit'])->name('orders.edit');
+    Route::put('orders/update/{id}', [OrderController::class, 'update'])->name('orders.update');
+    Route::delete('orders/destroy/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
     Route::get('interests', [InterestController::class, 'list'])->name('interests.list')->can('view_interests_list');
     Route::get('interests/create', [InterestController::class, 'create'])->name('interests.create');
