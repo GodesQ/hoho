@@ -131,7 +131,7 @@ Route::post('aqwire/webhook', function () {
     //     exit ();
     // }
 
-    return response()->json($_POST, 200);
+    return response()->json($_GET, 200);
 
     // echo (json_encode(
     //     array (
