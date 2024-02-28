@@ -15,6 +15,15 @@ class Order extends Model
 
     protected $dates = ['order_date'];
 
+    protected $casts = [
+        'product_id' => 'integer', 
+        'customer_id' => 'integer', 
+        'quantity' => 'integer',
+        'transaction_id' => 'integer',
+        'sub_amount' => 'double',
+        'total_amount' => 'double',
+    ];
+
     public function product() : BelongsTo {
         return $this->belongsTo(Product::class, 'product_id');
     }

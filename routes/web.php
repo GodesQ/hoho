@@ -102,59 +102,6 @@ Route::get('user/reset_password_form', [ForgotPasswordController::class, 'resetP
 Route::post('user/reset_password_form', [ForgotPasswordController::class, 'postResetPasswordForm'])->name('user.post_reset_password_form');
 Route::view('user/reset_password_success', 'misc.success-reset-password-message')->name('user.reset_password_success');
 
-Route::post('aqwire/webhook', function () {
-    header('Content-Type: application/json');
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        echo (json_encode(
-            array (
-                'message' => 'Invalid request method'
-            )
-        ));
-        http_response_code(401);
-        exit ();
-    }
-
-    $signature = $_GET['sign'];
-    $json = file_get_contents('php://input');
-    $merchantSecretKey = 'sk_test_Rop0qkilkqmud8jq31T8SX094982SMB2';
-
-    $rawSignature = hash_hmac('sha256', $json, $merchantSecretKey, true);
-    $computedSignature = strtr(base64_encode($rawSignature), '+/', '-_');
-
-    // if ($signature !== $computedSignature) {
-    //     echo (json_encode(
-    //         array (
-    //             'message' => 'Unauthorized API call'
-    //         )
-    //     ));
-    //     http_response_code(401);
-    //     exit ();
-    // }
-
-    return response()->json([
-        $_REQUEST,
-        $_POST['transactionId'],
-        $_GET
-    ], 200);
-
-    // echo (json_encode(
-    //     array (
-    //         'sign' => $signature
-    //     )
-    // ));
-    // echo (json_encode(
-    //     array (
-    //         'verify' => $computedSignature
-    //     )
-    // ));
-    // echo (json_encode(
-    //     array (
-    //         'message' => 'Data posted'
-    //     )
-    // ));
-    // http_response_code(200);
-});
-
 Route::get('merchant_form/{type}', [MerchantController::class, 'merchant_form'])->name('merchant_form')->middleware('auth:admin');
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function () {

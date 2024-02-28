@@ -11,11 +11,12 @@ class RestaurantReservationController extends Controller
 {
     public function store(StoreRequest $request) {
         $data = $request->validated();
-        RestaurantReservation::create(array_merge($data, ['status' => 'pending']));
+        $restaurant_reservation = RestaurantReservation::create(array_merge($data, ['status' => 'pending']));
 
         return response([
             'status' => TRUE,
             'message'=> 'Submission successful! Your request for availability is now under review. Please await the next notification.',
+            'restaurant_reservation' => $restaurant_reservation,
         ], 201);
     }
 

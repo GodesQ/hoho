@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\HotelReservationController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RestaurantReservationController;
 use App\Http\Controllers\Api\RoomController;
@@ -115,6 +116,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('products/merchants/{merchant_id}', [ProductController::class, 'getMerchantProducts']);
     Route::get('products/{id}', [ProductController::class, 'getProduct']);
+
+    Route::post('orders', [OrderController::class, 'store']);
+    Route::get('orders/{order_id}', [OrderController::class, 'show']);
 
     Route::get('tour-feedbacks', [TourFeedBackController::class, 'index']);
     Route::post('tour-feedbacks', [TourFeedBackController::class, 'store']);
