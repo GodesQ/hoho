@@ -54,10 +54,11 @@ class RoomController extends Controller
     {   
         $user = Auth::guard('admin')->user();
         if($user->role == 'merchant_hotel_admin') {
-            $merchants = Merchant::where('type', 'Hotel')->get();
-        } else {
             $merchants = Merchant::where('type','Hotel')->where('id', $user->merchant_id)->get();
+        } else {
+            $merchants = Merchant::where('type', 'Hotel')->get();
         }
+        
 
         $product_categories = ProductCategory::get();
         return view('admin-page.rooms.create-room', compact('merchants', 'product_categories'));
@@ -117,11 +118,11 @@ class RoomController extends Controller
     {
         $user = Auth::guard('admin')->user();
         if($user->role == 'merchant_hotel_admin') {
-            $merchants = Merchant::where('type', 'Hotel')->get();
-        } else {
             $merchants = Merchant::where('type','Hotel')->where('id', $user->merchant_id)->get();
+        } else {
+            $merchants = Merchant::where('type', 'Hotel')->get();
         }
-        
+
         $product_categories = ProductCategory::get();
 
         $room = Room::where('id', $request->id)->with('merchant')->firstOrFail();
