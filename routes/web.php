@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\RestaurantReservationController;
 use App\Http\Controllers\Web\RoomController;
 use App\Http\Controllers\Web\TourBadgeController;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Web\Auth\AdminAuthController;
