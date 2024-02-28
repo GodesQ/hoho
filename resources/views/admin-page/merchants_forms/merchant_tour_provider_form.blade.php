@@ -7,7 +7,7 @@
         <div class="card">
             <div class="card-body">
                 <form enctype="multipart/form-data"
-                    action="{{ $admin->merchant->tour_provider_info ? route('admin.merchants.tour_providers.update', optional($admin->merchant->tour_provider_info)->id) : route('admin.merchants.tour_providers.store') }}"
+                    action="{{ optional($admin->merchant)->tour_provider_info ? route('admin.merchants.tour_providers.update', optional($admin->merchant->tour_provider_info)->id) : route('admin.merchants.tour_providers.store') }}"
                     method="post">
                     @csrf
                     <div class="row">
@@ -115,7 +115,7 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h6>Preview of Featured Image</h6>
-                                    @if ($admin->merchant->tour_provider_info && $admin->merchant->featured_image)
+                                    @if (optional($admin->merchant)->tour_provider_info && $admin->merchant->featured_image)
                                         <img src="{{ URL::asset('/assets/img/tour_providers/' . $admin->merchant->id . '/' . $admin->merchant->featured_image) }}"
                                             alt="" style="border-radius: 10px;" width="100%" id="previewImage">
                                     @else
