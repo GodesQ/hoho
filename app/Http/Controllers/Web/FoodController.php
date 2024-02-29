@@ -39,7 +39,7 @@ class FoodController extends Controller
                                     <button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
                                 </div>';
                 })
-                ->rawColumns(['actions'])
+                ->rawColumns(['actions', 'status'])
                 ->make(true);
         }
 
