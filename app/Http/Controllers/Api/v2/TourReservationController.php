@@ -47,7 +47,7 @@ class TourReservationController extends Controller
     }
 
     public function store(Request $request) {
-
+        
     }
 
     public function bulk(Request $request) {

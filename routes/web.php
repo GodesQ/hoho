@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\ApiConsumerController;
 use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\DeleteAccountController;
 use App\Http\Controllers\Web\FoodCategoryController;
@@ -371,6 +372,13 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('unavailable_dates/update/{id}', [TourUnavailableDateController::class, 'update'])->name('unavailable_dates.update');
     Route::delete('unavailable_dates/destroy', [TourUnavailableDateController::class, 'destroy'])->name('unavailable_dates.destroy');
 
+    Route::get('api-consumers', [ApiConsumerController::class, 'index'])->name('api_consumers.list');
+    Route::get('api-consumers/create', [ApiConsumerController::class, 'create'])->name('api_consumers.create');
+    Route::post('api-consumers/store', [ApiConsumerController::class, 'store'])->name('api_consumers.store');
+    Route::get('api-consumers/edit/{id}', [ApiConsumerController::class, 'edit'])->name('api_consumers.edit');
+    Route::put('api-consumers/update/{id}', [ApiConsumerController::class, 'update'])->name('api_consumers.update');
+    Route::delete('api-consumers/destroy/{id}', [ApiConsumerController::class, 'destroy'])->name('api_consumers.destroy');
+
     Route::prefix('reports')->as('reports.')->group(function () {
         Route::get('user_demographics', [DataReportController::class, 'user_demographics'])->name('user_demographics');
         Route::get('sales_report', [DataReportController::class, 'sales_report'])->name('sales_report')->can('view_sales_report');
@@ -382,6 +390,5 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
         Route::get('get_total_bookings_per_type', [DataReportController::class, 'getTotalBookingsPerType'])->name('get_total_bookings_per_type')->can('view_sales_report');
         Route::get('get_overall_sales', [DataReportController::class, 'getSalesData'])->name('get_overall_sales')->can('view_sales_report');
         Route::get('get_transaction_status_data', [DataReportController::class, 'getTransactionStatusData'])->name('get_transaction_status_data')->can('view_sales_report');
-
     });
 });

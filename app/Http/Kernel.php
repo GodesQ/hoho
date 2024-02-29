@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'permission_access' =>  \App\Http\Middleware\PermissionAccess::class,
         'merchant_created' => \App\Http\Middleware\IsMerchantCreated::class,
+        'api_base_authorization' => \App\Http\Middleware\BaseAuthorizationMiddleware::class,
     ];
 }

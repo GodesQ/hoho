@@ -380,7 +380,7 @@ class BookingService
 
             if ($tour?->tour_provider?->contact_email) {
                 $recipientEmail = env('APP_ENVIRONMENT') == 'LIVE' ? $tour->tour_provider->contact_email : 'james@godesq.com';
-                Mail::to($recipientEmail)->send(new TourProviderBookingNotification($details));
+                Mail::to($recipientEmail)->cc('philippinehoho@tourism.gov.ph')->send(new TourProviderBookingNotification($details));
             }
             
         }

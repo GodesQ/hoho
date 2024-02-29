@@ -418,6 +418,17 @@
         @endcan
     @endauth
 
+    @auth('admin')
+        @can('view_unavailable_dates_list')
+            <li class="menu-item {{ preg_match('/admin\/api-consuemrs/', Request::path()) ? 'active' : null }}">
+                <a href="{{ route('admin.api_consumers.list') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-user"></i>
+                    <div data-i18n="Api Consumers">Api Consumers</div>
+                </a>
+            </li>
+        @endcan
+    @endauth
+
     <!-- Roles & Permissions -->
     @auth('admin')
         @canany(['view_roles_list', 'view_permissions_list'])

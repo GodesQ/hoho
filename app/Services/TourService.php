@@ -61,6 +61,15 @@ class TourService
         ->editColumn('name', function ($row) {
             return view('components.tour', ['tour' => $row]);
         })
+        ->addColumn('tour_image', function ($row) {
+            if($row->featured_image) {
+                    $path = '../../../assets/img/tours/' . $row->id . '/' . $row->featured_image;
+                    return '<img src="' .$path. '" width="50" height="50" style="object-fit: cover; border-radius: 50px;" />';
+            } else {
+                $path = '../../../assets/img/' . 'default-image.jpg';
+                return '<img src="' .$path. '" width="50" height="50" style="border-radius: 50%; object-fit: cover;" />';
+            }
+        })
         ->editColumn('price', function ($row) {
             return '₱ ' . number_format($row->price, 2);
         })
@@ -77,7 +86,7 @@ class TourService
                 return '<div class="badge bg-label-warning">InActive</div>';
             }
         })
-        ->rawColumns(['actions', 'status'])
+        ->rawColumns(['actions', 'status', 'tour_image'])
         ->make(true);
     }
 }
