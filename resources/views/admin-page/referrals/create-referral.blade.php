@@ -49,8 +49,8 @@
                         <div class="mb-3">
                             <label for="merchant_id" class="form-label">Merchant</label>
                             @if(in_array(auth('admin')->user()->role, merchant_roles()))
-                                <input type="text" class="form-control" value="{{ auth('admin')->user()->merchant_hotel->merchant->name }}" readonly>
-                                <input type="hidden" name="merchant_id" value="{{ auth('admin')->user()->merchant_hotel->merchant->id }}">
+                                <input type="text" class="form-control" value="{{ auth('admin')->user()->merchant->name }}" readonly>
+                                <input type="hidden" name="merchant_id" value="{{ auth('admin')->user()->merchant->id }}">
                             @else
                                 <select name="merchant_id" id="merchant_id" class="select2">
                                     <option value="">--- SELECT MERCHANT ---</option>

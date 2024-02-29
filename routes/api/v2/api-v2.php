@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\v2\AttractionController;
 use App\Http\Controllers\Api\v2\InterestController;
 use App\Http\Controllers\Api\v2\MerchantController;
 use App\Http\Controllers\Api\v2\OrganizationController;
+use App\Http\Controllers\Api\v2\ProductController;
 use App\Http\Controllers\Api\v2\PromocodeController;
 use App\Http\Controllers\Api\v2\ReferralController;
 use App\Http\Controllers\Api\v2\ReservationCodeController;
@@ -60,3 +61,7 @@ use Illuminate\Support\Facades\Route;
 
     Route::get('reservation-codes/tour-reservations/{reservation_id}', [ReservationCodeController::class, 'getTourReservationCodes']);
     Route::get('reservation-codes/{reservation_code_id}', [ReservationCodeController::class, 'show']);
+
+    Route::get('products', [ProductController::class, 'index']);
+    Route::get('products/merchants/{merchant_id}', [ProductController::class, 'merchantProducts']);
+    Route::get('products{product_id}', [ProductController::class, 'show']);
