@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\ApiConsumerController;
 use App\Http\Controllers\Web\CartController;
+use App\Http\Controllers\Web\ConsumerApiLogController;
 use App\Http\Controllers\Web\DeleteAccountController;
 use App\Http\Controllers\Web\FoodCategoryController;
 use App\Http\Controllers\Web\FoodController;
@@ -379,6 +380,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::put('api-consumers/update/{id}', [ApiConsumerController::class, 'update'])->name('api_consumers.update');
     Route::delete('api-consumers/destroy/{id}', [ApiConsumerController::class, 'destroy'])->name('api_consumers.destroy');
 
+    Route::get('consumer-api-logs', [ConsumerApiLogController::class, 'index'])->name('consumer_api_logs.list');
+    Route::get('consumer-api-logs/show/{id}', [ConsumerApiLogController::class, 'show'])->name('consumer_api_logs.show');
+    
     Route::prefix('reports')->as('reports.')->group(function () {
         Route::get('user_demographics', [DataReportController::class, 'user_demographics'])->name('user_demographics');
         Route::get('sales_report', [DataReportController::class, 'sales_report'])->name('sales_report')->can('view_sales_report');

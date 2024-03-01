@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Models\ApiConsumer;
+use App\Models\ConsumerApiLog;
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,9 +37,20 @@ class BaseAuthorizationMiddleware
         } else {
             $apiKey = $request->header('X-API-Key');
             $apiCode = $request->header('x-api-code');
-            $consumer = ApiConsumer::where('api_code', $apiCode)->where('api_key', $apiKey)->exists();
+            $consumer = ApiConsumer::where('api_code', $apiCode)->where('api_key', $apiKey)->first();
 
             if ($consumer) {
+                // ConsumerApiLog::create([
+                //     'consumer_id' => $consumer->id,
+                //     'request_timestamp' => Carbon::now(),
+                //     'http_method' => $request->method(),
+                //     'request_path' => $request->path(),
+                //     'request_headers' => json_encode($request->header()),
+                //     'request_body' => json_encode($request->all()),
+                //     'ip_address' => $request->ip(),
+                //     'user_agent' => $request->header('User-Agent'),
+                // ]);
+
                 return $next($request);
             }
         }

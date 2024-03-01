@@ -420,7 +420,7 @@
 
     @auth('admin')
         @can('view_unavailable_dates_list')
-            <li class="menu-item {{ preg_match('/admin\/api-consuemrs/', Request::path()) ? 'active' : null }}">
+            <li class="menu-item {{ preg_match('/admin\/api-consumers/', Request::path()) ? 'active' : null }}">
                 <a href="{{ route('admin.api_consumers.list') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-user"></i>
                     <div data-i18n="Api Consumers">Api Consumers</div>
@@ -429,11 +429,19 @@
         @endcan
     @endauth
 
+    <li class="menu-item {{ preg_match('/admin\/consumer-api-logs/', Request::path()) ? 'active' : null }}">
+        <a href="{{ route('admin.consumer_api_logs.list') }}" class="menu-link">
+            <i class='menu-icon tf-icons bx bx-shape-triangle'></i>
+            <div data-i18n="Consumer API Logs">Consumer API Logs</div>
+        </a>
+    </li>
+
     <!-- Roles & Permissions -->
     @auth('admin')
         @canany(['view_roles_list', 'view_permissions_list'])
-            <li class="menu-header small text-uppercase"><span class="menu-header-text">Roles &
-                    Permissions</span></li>
+            <li class="menu-header small text-uppercase">
+                <span class="menu-header-text">Roles & Permissions</span>
+            </li>
         @endcanany
     @endauth
 
