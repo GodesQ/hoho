@@ -30,9 +30,12 @@ class TourController extends Controller
     }
 
     public function getDIYTours(Request $request) {
+        $length = $request->query('length') ?? '';
+
         $tours = Tour::where('status', 1)
                 ->where('type', 'DIY Tour')
                 ->inRandomOrder()
+                ->limit($length)
                 ->get();
 
         return TourResource::collection($tours);
