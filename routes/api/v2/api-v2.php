@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\v2\AnnouncementController;
 use App\Http\Controllers\Api\v2\AttractionController;
+use App\Http\Controllers\Api\v2\AuthController;
 use App\Http\Controllers\Api\v2\InterestController;
 use App\Http\Controllers\Api\v2\MerchantController;
 use App\Http\Controllers\Api\v2\OrganizationController;
@@ -16,6 +17,8 @@ use App\Http\Controllers\Api\v2\TourReservationController;
 use App\Http\Controllers\Api\v2\TransportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+    Route::post('login', [AuthController::class, 'login']);
 
     Route::group(['middleware' => ['api_base_authorization']], function () {
         Route::get('announcements', [AnnouncementController::class, 'index']);
