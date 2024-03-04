@@ -15,7 +15,7 @@ class Product extends Model
         'image', 
         'description',
         'price',
-        'quantity',
+        'stock',
         'other_images',
         'is_active'
     ];
@@ -24,7 +24,7 @@ class Product extends Model
     protected $casts = [
         'merchant_id' => 'integer',
         'price' => 'double',
-        'quantity' => 'integer'
+        'stock' => 'integer'
     ];
 
     public function merchant() {
