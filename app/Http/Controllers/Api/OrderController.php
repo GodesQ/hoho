@@ -65,10 +65,11 @@ class OrderController extends Controller
 
         if(is_array($items)) {
             foreach ($items as $key => $item) {
-                $product = Product::where('id', $item['product_id'])->first();
-                $totalAmount = $this->calculateTotalAmount($product->price, $item['quantity']);
+                $itemArray = (array) $item; // Convert stdClass object to array
+                $product = Product::where('id', $itemArray['product_id'])->first();
+                $totalAmount = $this->calculateTotalAmount($product->price, $itemArray['quantity']);
                 $reference_no = $this->generateReferenceNo();
-
+            
                 $transaction = Transaction::create([
                     'reference_no' => $reference_no,
                     'transaction_by_id' => $request->customer_id,
@@ -81,15 +82,15 @@ class OrderController extends Controller
                     'payment_status' => 'pending',
                     'resolution_status' => 'pending',
                     'aqwire_paymentMethodCode' => null,
-                    'order_date' => Carbon::parse($item['order_date'])->format('Y-m-d'),
+                    'order_date' => Carbon::parse($itemArray['order_date'])->format('Y-m-d'),
                     'transaction_date' => Carbon::now(),
                 ]);
-    
+            
                 $order = Order::create([
-                    'product_id' => $item['product_id'],
+                    'product_id' => $itemArray['product_id'],
                     'customer_id' => $request->customer_id,
-                    'quantity' => $item['quantity'],
-                    'order_date' => $item['order_date'],
+                    'quantity' => $itemArray['quantity'],
+                    'order_date' => $itemArray['order_date'],
                     'transaction_id' => $transaction->id, 
                     'reference_code' => $transaction->reference_no,
                     'sub_amount' => $product->price,
@@ -97,7 +98,7 @@ class OrderController extends Controller
                     'payment_method' => 'cash',
                     'status' => 'pending', 
                 ]);
-
+            
                 array_push($orders, $order);
             }
 
