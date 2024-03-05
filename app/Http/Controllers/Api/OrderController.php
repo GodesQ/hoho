@@ -59,6 +59,56 @@ class OrderController extends Controller
         ], 201);
     }
 
+    public function bulk_store(Request $request) {
+        $items = json_decode($request->items);
+        $orders = [];
+
+        if(is_array($items)) {
+            foreach ($items as $key => $item) {
+                $product = Product::where('id', $item['product_id'])->first();
+                $totalAmount = $this->calculateTotalAmount($product->price, $item['quantity']);
+                $reference_no = $this->generateReferenceNo();
+
+                $transaction = Transaction::create([
+                    'reference_no' => $reference_no,
+                    'transaction_by_id' => $request->customer_id,
+                    'sub_amount' => $product->price,
+                    'total_additional_charges' => 0,
+                    'total_discount' => 0,
+                    'transaction_type' => 'order',
+                    'payment_amount' => $totalAmount,
+                    'additional_charges' => null,
+                    'payment_status' => 'pending',
+                    'resolution_status' => 'pending',
+                    'aqwire_paymentMethodCode' => null,
+                    'order_date' => Carbon::parse($item['order_date'])->format('Y-m-d'),
+                    'transaction_date' => Carbon::now(),
+                ]);
+    
+                $order = Order::create([
+                    'product_id' => $item['product_id'],
+                    'customer_id' => $request->customer_id,
+                    'quantity' => $item['quantity'],
+                    'order_date' => $item['order_date'],
+                    'transaction_id' => $transaction->id, 
+                    'reference_code' => $transaction->reference_no,
+                    'sub_amount' => $product->price,
+                    'total_amount' => $totalAmount,
+                    'payment_method' => 'cash',
+                    'status' => 'pending', 
+                ]);
+
+                array_push($orders, $order);
+            }
+
+            return response([
+                'status' => TRUE,
+                'message' => 'Order successfully submitted. Please wait for approval of merchant.',
+                'orders' => $orders,
+            ]);
+        }
+    }
+
     public function show(Request $request, $order_id) {
         $order = Order::findOrFail($order_id);
 
