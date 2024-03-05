@@ -59,7 +59,7 @@ Route::get('featured_merchants', [MerchantController::class, 'getFeaturedMerchan
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
-    
+
     Route::get('user', [UserController::class, 'getUser']);
     Route::post('user/profile', [UserController::class, 'updateProfile']);
     Route::post('user/update_interest', [UserController::class, 'updateInterest']);
@@ -103,7 +103,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('verify_referral_code/{referral_code}', [ReferralController::class, 'verifyReferralCode']);
 
     Route::get('tour_badges', [TourBadgeController::class, 'getAllTourBadges']);
-    Route::get('tour_badges/user_badges', [TourBadgeController::class,'getUserTourBadges']);
+    Route::get('tour_badges/user_badges', [TourBadgeController::class, 'getUserTourBadges']);
     Route::post('tour_badge/check', [TourBadgeController::class, 'checkBadge']);
 
     Route::get('rooms/merchants/{merchant_id}', [RoomController::class, 'getMerchantRooms']);
@@ -118,7 +118,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('products/{id}', [ProductController::class, 'getProduct']);
 
     Route::post('orders', [OrderController::class, 'store']);
+    Route::post('orders/bulk', [OrderController::class, 'bulk_store']); // Change from post to get
     Route::get('orders/{order_id}', [OrderController::class, 'show']);
+
 
     Route::get('tour-feedbacks', [TourFeedBackController::class, 'index']);
     Route::post('tour-feedbacks', [TourFeedBackController::class, 'store']);
