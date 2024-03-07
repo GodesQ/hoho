@@ -46,12 +46,8 @@ class TourReservationController extends Controller
         ];
     }
 
-    public function store(Request $request) {
-        
-    }
-
-    public function bulk(Request $request) {
-        
+    public function store(Request $request, TourReservationService $tourReservationService) {
+        return $tourReservationService->storeRegisteredUserReservation($request);
     }
 
     public function storeGuestReservation(Request $request, TourReservationService $tourReservationService) {
