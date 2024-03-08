@@ -44,7 +44,7 @@ class TourController extends Controller
 
     public function getDIYTours(Request $request)
     {
-        $tours = Tour::where('type', 'DIY Tour')->get();
+        $tours = Tour::where('type', 'DIY Tour')->where('status', 1)->get();
 
         foreach ($tours as $tour) {
             $tour->setAppends([]); // Exclude the "attractions" attribute for this instance

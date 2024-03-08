@@ -35,17 +35,24 @@ class TourService
                     return '₱ ' . number_format($row->price, 2);
                 })
                 ->addColumn('actions', function ($row) {
-                    return '<div class="dropdown">
-                                <a href="/admin/tours/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                <a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
-                            </div>';
+                    $output = '<div class="dropdown">';
+
+                    $output .= '<a href="/admin/tours/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>';
+
+                    if($row->id != 63) {
+                        $output .= '<a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>';
+                    }
+
+                    $output .= '</div>';
+
+                    return $output;
                 })
                 ->addColumn('status', function($row) {
+                    
                     if($row->status) {
                         return '<div class="badge bg-label-success">Active</div>';
                     } else {
                         return '<div class="badge bg-label-warning">InActive</div>';
-
                     }
                 })
                 ->rawColumns(['actions', 'status', 'tour_image'])

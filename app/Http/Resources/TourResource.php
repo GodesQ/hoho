@@ -21,7 +21,7 @@ class TourResource extends JsonResource
             'type' => $this->type,
             'description' => $this->description,
             'contact_no' => $this->contact_no,
-            'featured_image' => $this->featured_image,
+            'featured_image' => asset('assets/img/tours/' . $this->id .'/'. $this->featured_image),
             'images' => $this->when($request->tour_id, $this->images),
             'interests' => $this->interests,
             'is_cancellable' => $this->when($request->tour_id, (boolean) $this->is_cancellable),
