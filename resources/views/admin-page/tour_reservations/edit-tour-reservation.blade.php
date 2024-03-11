@@ -121,7 +121,12 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
-                                            <div class="row">
+                                            <div class="mb-3">
+                                                <label for="" class="form-label">Trip Date</label>
+                                                <input type="text" placeholder="Select a Trip Date" class="form-control"
+                                                name="trip_date" id="trip_date" required value="{{ date_format(new \DateTime($reservation->start_date), 'Y-m-d') }}">
+                                            </div>
+                                            {{-- <div class="row d-none">
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="" class="form-label">Start Date</label>
@@ -136,7 +141,7 @@
                                                             value="{{ $reservation->end_date }}" disabled>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
@@ -324,6 +329,7 @@
 
 @push('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script>
 
         $(document).ready(function () {
@@ -339,6 +345,30 @@
                     }
                 }
             })
+
+            if (["super_admin", "admin"].includes("{{ auth('admin')->user()->role }}")) {
+                var dateToday = new Date();
+            } else {
+                var dateToday = new Date();
+                dateToday.setDate(dateToday.getDate() + 5); // Add 5 days
+            }
+
+            $("#trip_date").datepicker({
+                minDate: dateToday,
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'yy-mm-dd',
+                beforeShowDay: function(date) {
+                    // Check if the day of the week is Monday (0 for Sunday, 1 for Monday, etc.)
+                    if (date.getDay() === 1) {
+                    // Disable Monday dates
+                    return [false, "ui-state-disabled"];
+                    } else {
+                    // Enable other dates
+                    return [true, ""];
+                    }
+                }
+            });
         })
 
         // Function to generate QR code for each reservation code

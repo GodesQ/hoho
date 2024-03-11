@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\TourReservationCustomerDetail;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -82,7 +83,11 @@ class TourReservationController extends Controller
     public function update(Request $request) {
         $reservation = TourReservation::where('id', $request->id)->with('user')->first();
 
+        $trip_date = Carbon::parse($request->trip_date);
+
         $update_reservation = $reservation->update([
+            'start_date' => $trip_date->format('Y-m-d'),
+            'end_date' => $request->type == 'Guided' ? $trip_date->addDays(1) : $this->bookingService->getDateOfDIYPass($request->ticket_pass, $trip_date),
             'status' => $request->status
         ]);
 

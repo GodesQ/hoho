@@ -10,7 +10,12 @@ use Illuminate\Http\Request;
 class TourController extends Controller
 {
     public function index(Request $request) {
-        $tours = Tour::where('status', 1)->get();
+        $tours = Tour::where('status', 1)
+                ->when($request->query('type'), function ($query) use ($request) {
+                    $type = $request->query('type') == 'diy' ? 'DIY Tour' : 'Guided Tour';
+                    $query->where('type', $type);
+                })
+                ->get();
         return TourResource::collection($tours);
     }
 

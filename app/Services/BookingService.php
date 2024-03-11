@@ -490,7 +490,7 @@ class BookingService
         return $update_transaction;
     }
 
-    private function getDateOfDIYPass($ticket_pass, $trip_date)
+    public function getDateOfDIYPass($ticket_pass, $trip_date)
     {
         if ($ticket_pass == '1 Day Pass') {
             $date = $trip_date->addDays(1);

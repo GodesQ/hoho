@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 
     Route::post('login', [AuthController::class, 'login']);
 
-    // Route::group(['middleware' => ['api_base_authorization']], function () {
+    Route::group(['middleware' => ['api_base_authorization']], function () {
         Route::get('announcements', [AnnouncementController::class, 'index']);
         Route::get('announcements/{id}', [AnnouncementController::class, 'show']);
 
@@ -69,4 +69,4 @@ use Illuminate\Support\Facades\Route;
         Route::get('products', [ProductController::class, 'index']);
         Route::get('products/merchants/{merchant_id}', [ProductController::class, 'merchantProducts']);
         Route::get('products/{product_id}', [ProductController::class, 'show']);
-    // });
+    });
