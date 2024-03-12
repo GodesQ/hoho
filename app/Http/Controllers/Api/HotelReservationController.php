@@ -24,7 +24,7 @@ class HotelReservationController extends Controller
     }
 
     public function show(Request $request, $id) {
-        $hotelReservation = HotelReservation::where('id', $id)->with('merchant')->first();
+        $hotelReservation = HotelReservation::where('id', $id)->with('room')->first();
         
         if(!$hotelReservation) {
             return response([
