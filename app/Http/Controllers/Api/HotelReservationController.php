@@ -39,4 +39,19 @@ class HotelReservationController extends Controller
             'hotel_reservation' => $hotelReservation
         ]);
     }
+
+    public function getMerchantHotelReservations(Request $request, $merchant_id) {
+        $hotelReservations = HotelReservation::where('merchant_id', $merchant_id)
+                            ->whereHas('room', function ($q) use ($merchant_id) {
+                                $q->where('merchant_id', $merchant_id);
+                            })
+                            ->with('room')
+                            ->get();
+
+        return response([
+            'status' => TRUE,
+            'message' => 'Hotel Reservations Found',
+            'hotel_reservations' => $hotelReservations
+        ]);
+    }
 }
