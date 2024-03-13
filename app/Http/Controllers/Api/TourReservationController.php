@@ -220,6 +220,73 @@ class TourReservationController extends Controller
         ]);
     }
 
+    public function scanReservationCode(Request $request) {
+        $today = date('Y-m-d');
+
+        $tour_reservation = TourReservation::where('id', $request->reservation_id)->with('tour.transport')->first();
+        if (!$tour_reservation) {
+            return response([
+                'status' => FALSE,
+                'message' => 'Failed! No Tour Reservation Found',
+                'tour_reservation' => $tour_reservation
+            ]);
+        }
+
+        $qrcode = $tour_reservation->reservation_codes()->where('code', $request->code)->first();
+
+        if (!$qrcode) {
+            return response([
+                'status' => FALSE,
+                'message' => 'Failed! Invalid QR Code',
+            ]);
+        }
+
+        // return response($this->getDatesInRange($tour_reservation->start_date, $tour_reservation->end_date));
+
+        if ($qrcode->start_datetime) {
+            $startDatetime = \DateTime::createFromFormat('Y-m-d H:i:s', $qrcode->start_datetime);
+
+            if ($startDatetime && $startDatetime->format('Y-m-d') != $today) {
+                return response([
+                    'status' => FALSE,
+                    'message' => 'Failed! You already use this QR Code in other date.',
+                ]);
+            }
+        }
+
+        if($qrcode->status == 'hop_on') {
+            $status = 'hop_off';
+            $tour_reservation->tour->transport->update([
+                'available_seats' => $tour_reservation->tour->transport->available_seats + 1,
+            ]);
+        } else {
+            $status = 'hop_on';
+            $tour_reservation->tour->transport->update([
+                'available_seats' => $tour_reservation->tour->transport->available_seats - 1,
+            ]);
+        }
+
+        $qrcode->update([
+            'scan_count' => $qrcode->scan_count + 1,
+            'start_datetime' => $qrcode->start_datetime ? $qrcode->start_datetime : Carbon::now(),
+            'end_datetime' => $qrcode->end_datetime ? $qrcode->end_datetime : Carbon::now()->addDay(),
+            'status' => $status,
+            'current_hub' => $request->current_hub,
+            'current_attraction' => $request->current_attraction,
+        ]);
+
+        // ReservationCodeScanLog::create([
+        //     'reservation_code_id' => $qrcode->id,
+        //     'scan_datetime' => Carbon::now(),
+        //     'scan_type' => $status
+        // ]);
+
+        return response([
+            'status' => TRUE,
+            'message' => $status == 'hop_on' ? 'Success! You can now ride the HOHO bus.' : 'Thank you for riding with us! Have a great day!',
+        ]);
+    } 
+
     # HELPERS
     public function getDatesInRange($start_date, $end_date)
     {

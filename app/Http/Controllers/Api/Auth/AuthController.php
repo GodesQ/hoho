@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\SSORegisterRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -67,6 +68,28 @@ class AuthController extends Controller
                 'message' => 'User registered successfully'
             ]);
         }
+    }
+
+    public function ssoRegister(SSORegisterRequest $request) {
+        $data = $request->validated();
+        $account_id = $this->generateRandomUuid();
+
+        $fullContactNumber = $request->contact_number;
+        $countryCode = substr($fullContactNumber, 0, 3);
+        $contactNumber = substr($fullContactNumber, 3);
+
+        User::create(array_merge($data, [
+            'account_id' => $account_id,
+            'countryCode' => preg_replace('/[^0-9]/', '', $countryCode),
+            'contact_no' => preg_replace('/[^0-9]/', '', $contactNumber),
+            'login_with' => 'egov',
+            'role' => 'guest'
+        ]));
+
+        return response([
+            'status' => TRUE,
+            'message' => 'User registered successfully'
+        ]);
     }
 
     public function logout(Request $request) {

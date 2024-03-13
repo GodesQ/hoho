@@ -43,6 +43,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
+Route::post('register/sso', [AuthController::class, 'ssoRegister']);
 
 Route::get('promocodes', [PromoCodeController::class, 'getPromoCodes']);
 Route::get('promocodes/verify/{code}', [PromoCodeController::class, 'checkValidPromoCode']);
@@ -99,6 +100,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('interests', [InterestController::class, 'getInterests']);
 
     Route::get('reservation_codes/verify/{reservation_id}/{code}', [TourReservationController::class, 'verifyReservationCode']);
+    Route::post('reservation-codes/verify', [TourReservationController::class, 'scanReservationCode']);
 
     Route::get('verify_referral_code/{referral_code}', [ReferralController::class, 'verifyReferralCode']);
 
@@ -109,6 +111,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('rooms/merchants/{merchant_id}', [RoomController::class, 'getMerchantRooms']);
 
     Route::post('restaurant-reservations', [RestaurantReservationController::class, 'store']);
+    Route::get('restaurant-reservations/merchants/{merchant_id}', [RestaurantReservationController::class, 'getMerchantRestaurantReservations']);
     Route::get('restaurant-reservations/{id}', [RestaurantReservationController::class, 'show']);
 
     Route::post('hotel-reservations', [HotelReservationController::class, 'store']);
@@ -121,10 +124,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('orders/bulk', [OrderController::class, 'bulk_store']); // Change from post to get
     Route::get('orders/{order_id}', [OrderController::class, 'show']);
 
-
     Route::get('tour-feedbacks', [TourFeedBackController::class, 'index']);
     Route::post('tour-feedbacks', [TourFeedBackController::class, 'store']);
     Route::get('tour-feedbacks/{id}', [TourFeedBackController::class, 'show']);
     Route::put('tour-feedbacks/{id}', [TourFeedBackController::class, 'update']);
     Route::get('tour-feedbacks/tours/{tour_id}', [TourFeedBackController::class, 'getFeedBacksByTour']);
+
+    // Route::get()
 });

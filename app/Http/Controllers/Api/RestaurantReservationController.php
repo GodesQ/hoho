@@ -36,4 +36,14 @@ class RestaurantReservationController extends Controller
             'restaurant_reservation' => $restaurantReservation
         ]);
     }
+
+    public function getMerchantRestaurantReservations(Request $request, $merchant_id) {
+        $reservations = RestaurantReservation::where('merchant_id', $merchant_id)->get();
+
+        return response([
+            'status' => TRUE,
+            'message' => 'Reservations Found',
+            'restaurant_reservations' => $reservations,
+        ]);
+    }
 }

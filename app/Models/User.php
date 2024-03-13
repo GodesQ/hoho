@@ -42,7 +42,8 @@ class User extends Authenticatable
         'country_of_residence',
         'is_first_time_philippines',
         'is_international_tourist',
-        'role'
+        'role',
+        'login_with'
     ];
 
     /**
