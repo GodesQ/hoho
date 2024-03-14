@@ -20,20 +20,32 @@ use App\Models\MerchantRestaurant;
 use App\Models\MerchantTourProvider;
 use App\Models\TourReservation;
 
+use App\Traits\DashboardTrait;
+
 use DB;
 
 class DashboardController extends Controller
 {
+    use DashboardTrait;
     public function dashboard(Request $request) {
         $user = Auth::guard('admin')->user();
     
         if (in_array($user->role, merchant_roles())) {
-            $type = null;
-            
-            $recentTourReservations = TourReservation::with('user', 'tour')->where('created_by', $user->id)->with('tour', 'user')->latest()->limit(5)->get();
-
             $merchantInfo = Merchant::where('id', $user->merchant_id)->first();
 
+            if($user->role == 'merchant_hotel_admin') {
+                return $this->hotelDashboard($merchantInfo);
+            }
+
+            if($user->role == 'merchant_restaurant_admin') {
+                return $this->restaurantDashboard($merchantInfo);
+            }
+
+            if($user->role == 'merchant_store_admin') {
+                return $this->storeDashboard($merchantInfo);
+            }
+
+            $recentTourReservations = TourReservation::with('user', 'tour')->where('created_by', $user->id)->with('tour', 'user')->latest()->limit(5)->get();
             $type = config('roles.' . $user->role, null);
     
             return view('admin-page.dashboard.merchant-dashboard', compact('merchantInfo', 'type', 'recentTourReservations'));

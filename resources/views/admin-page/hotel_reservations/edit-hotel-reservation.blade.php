@@ -44,9 +44,9 @@
                             </div>
                         </div>
                         <div class="col-lg-6">
-                            <div class="mb-3">0
+                            <div class="mb-3">
                                 <label for="reservation-date-field" class="form-label">Reservation Date <span class="text-danger">*</span></label>
-                                <input type="date" name="reservation_date" id="reservation-date-field" class="form-control" value="{{ $reservation->reservation_date }}">
+                                <input type="date" name="reservation_date" id="reservation-date-field" class="form-control" value="{{ $reservation->reservation_date->format("Y-m-d") }}">
                                 <div class="text-danger">@error('reservation_date'){{ $message }}@enderror</div>
                             </div>
                         </div>

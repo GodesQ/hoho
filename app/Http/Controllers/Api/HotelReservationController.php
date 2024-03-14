@@ -54,4 +54,14 @@ class HotelReservationController extends Controller
             'hotel_reservations' => $hotelReservations
         ]);
     }
+
+    public function getUserHotelReservations(Request $request, $user_id) {
+        $hotelReservations = HotelReservation::where('reserved_user_id', $user_id)->with('room')->get();
+        
+        return response([
+            'status' => TRUE,
+            'message' => 'Hotel Reservations Found',
+            'hotel_reservations' => $hotelReservations
+        ]);
+    }
 }

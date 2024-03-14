@@ -46,7 +46,7 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="reservation-date-field" class="form-label">Reservation Date</label>
-                                        <input type="date" name="reservation_date" id="reservation-date-field" class="form-control" value="{{ $reservation->reservation_date }}">
+                                        <input type="date" name="reservation_date" id="reservation-date-field" class="form-control" value="{{ $reservation->reservation_date->format('Y-m-d') }}">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -70,7 +70,7 @@
                         <div class="col-lg-6">
                             <div class="mb-3">
                                 <label for="approved-date-field" class="form-label">Approved Date</label>
-                                <input type="date" class="form-control" name="approved_date" readonly value="{{ $reservation->approved_date }}" id="approved-date-field">
+                                <input type="text" class="form-control" name="approved_date" readonly value="{{ $reservation->approved_date }}" id="approved-date-field">
                             </div>
                         </div>
                     </div>

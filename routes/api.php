@@ -112,9 +112,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('restaurant-reservations', [RestaurantReservationController::class, 'store']);
     Route::get('restaurant-reservations/merchants/{merchant_id}', [RestaurantReservationController::class, 'getMerchantRestaurantReservations']);
+    Route::get('restaurant-reservations/users/{user_id}', [RestaurantReservationController::class, 'getUserRestaurantReservations']);
     Route::get('restaurant-reservations/{id}', [RestaurantReservationController::class, 'show']);
 
     Route::post('hotel-reservations', [HotelReservationController::class, 'store']);
+    Route::get('hotel-reservations/users/{user_id}', [HotelReservationController::class, 'getUserHotelReservations']);
     Route::get('hotel-reservations/{id}', [HotelReservationController::class, 'show']);
 
     Route::get('products/merchants/{merchant_id}', [ProductController::class, 'getMerchantProducts']);

@@ -46,4 +46,14 @@ class RestaurantReservationController extends Controller
             'restaurant_reservations' => $reservations,
         ]);
     }
+
+    public function getUserRestaurantReservations(Request $request, $user_id) {
+        $reservations = RestaurantReservation::where('reserved_user_id', $user_id)->get();
+        
+        return response([
+            'status' => TRUE,
+            'message' => 'Reservations Found',
+            'restaurant_reservations' => $reservations,
+        ]);
+    }
 }
