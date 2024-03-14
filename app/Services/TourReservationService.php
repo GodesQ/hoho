@@ -234,6 +234,11 @@ class TourReservationService
     public function storeAnonymousUserReservation(Request $request, MailService $mailService)
     {
         try {
+
+            if(!$request->firstname || !$request->lastname || !$request->contact_no) {
+                throw new Exception("The first name, last name and contact number must be filled in completely in your profile to continue.");
+            }
+
             $referenceNumber = $this->generateReferenceNo();
             $additionalCharges = $this->generateAdditionalCharges();
             $subAmount = 0;
@@ -357,7 +362,8 @@ class TourReservationService
             $statusCode = $response->getStatusCode();
 
             if ($statusCode == 400) {
-                throw new Exception(json_decode($response->getBody()->getContents()));
+                $content = json_decode($response->getBody()->getContents());
+                throw new Exception($content->message . ' in Aqwire Payment Gateway.');
             }
 
             $responseData = json_decode($response->getBody(), true);
@@ -390,7 +396,7 @@ class TourReservationService
             ], 201);
 
         } catch (HttpException $e) {
-            if (env('APP_ENVIRONMENT') != 'LIVE') dd($e);
+            // if (env('APP_ENVIRONMENT') != 'LIVE') dd($e);
 
             return response([
                 'status' => 'failed',
@@ -399,7 +405,7 @@ class TourReservationService
             ], 400);
 
         } catch (\ErrorException $e) {
-            if (env('APP_ENVIRONMENT') != 'LIVE') dd($e);
+            // if (env('APP_ENVIRONMENT') != 'LIVE') dd($e);
 
             return response([
                 'status' => 'failed',
@@ -417,7 +423,7 @@ class TourReservationService
             ], 400);
 
         } catch (\Error $e) {
-            if (env('APP_ENVIRONMENT') != 'LIVE') dd($e);
+            // if (env('APP_ENVIRONMENT') != 'LIVE') dd($e);
 
             return response([
                 'status' => 'failed',
