@@ -25,7 +25,7 @@ class AqwireController extends Controller
             'payment_date' => Carbon::now()
         ]);
 
-        $reservations = TourReservation::where('order_transaction_id', $transaction->id)->with('tour', 'user')->get();
+        $reservations = TourReservation::where('order_transaction_id', $transaction->id)->with('tour', 'user', 'customer_detail')->get();
 
         foreach ($reservations as $key => $reservation) {
             $reservation->update([
@@ -38,10 +38,8 @@ class AqwireController extends Controller
                 'transaction' => $transaction
             ];
 
-            Mail::to(optional($reservation->user)->email)->send(new InvoiceMail($details));
+            Mail::to(optional($reservation->customer_detail)->email)->send(new InvoiceMail($details));
         }
-
-
 
         if($update_transaction) {
             return redirect('aqwire/payment/view_success');
