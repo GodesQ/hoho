@@ -111,11 +111,20 @@ class OrderController extends Controller
     }
 
     public function show(Request $request, $order_id) {
-        $order = Order::findOrFail($order_id);
+        $order = Order::where('id', $order_id)->with('product')->first();
 
         return response([
             'status' => TRUE,
             'order' => $order
+        ]);
+    }
+
+    public function getUserOrders(Request $request, $user_id) {
+        $orders = Order::where('customer_id', $user_id)->with('product')->get();
+
+        return response([
+            'status' => TRUE,
+            'orders' => $orders
         ]);
     }
 

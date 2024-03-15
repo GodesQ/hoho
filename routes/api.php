@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\SSOController;
 use App\Http\Controllers\Api\HotelReservationController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
@@ -37,13 +38,15 @@ use App\Http\Controllers\Api\TourBadgeController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
-Route::post('register/sso', [AuthController::class, 'ssoRegister']);
+
+Route::post('sso/register', [SSOController::class, 'register']);
+Route::post('sso/login', [SSOController::class, 'login']);
 
 Route::get('promocodes', [PromoCodeController::class, 'getPromoCodes']);
 Route::get('promocodes/verify/{code}', [PromoCodeController::class, 'checkValidPromoCode']);
@@ -56,7 +59,6 @@ Route::get('announcements/important_announcements', [AnnouncementController::cla
 Route::get('announcements', [AnnouncementController::class, 'getAnnouncements']);
 
 Route::get('featured_merchants', [MerchantController::class, 'getFeaturedMerchants']);
-
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
@@ -99,8 +101,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('interests', [InterestController::class, 'getInterests']);
 
-    Route::get('reservation_codes/verify/{reservation_id}/{code}', [TourReservationController::class, 'verifyReservationCode']);
     Route::post('reservation-codes/verify', [TourReservationController::class, 'scanReservationCode']);
+    Route::get('reservation_codes/verify/{reservation_id}/{code}', [TourReservationController::class, 'verifyReservationCode']);
 
     Route::get('verify_referral_code/{referral_code}', [ReferralController::class, 'verifyReferralCode']);
 
@@ -124,6 +126,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('orders', [OrderController::class, 'store']);
     Route::post('orders/bulk', [OrderController::class, 'bulk_store']); // Change from post to get
+    Route::get('orders/users/{user_id}', [OrderController::class, 'getUserOrders']);
     Route::get('orders/{order_id}', [OrderController::class, 'show']);
 
     Route::get('tour-feedbacks', [TourFeedBackController::class, 'index']);
@@ -131,6 +134,4 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('tour-feedbacks/{id}', [TourFeedBackController::class, 'show']);
     Route::put('tour-feedbacks/{id}', [TourFeedBackController::class, 'update']);
     Route::get('tour-feedbacks/tours/{tour_id}', [TourFeedBackController::class, 'getFeedBacksByTour']);
-
-    // Route::get()
 });
