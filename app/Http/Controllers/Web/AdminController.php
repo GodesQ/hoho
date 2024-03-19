@@ -86,12 +86,14 @@ class AdminController extends Controller
             @unlink($old_upload_image);
             $file = $request->file('admin_profile');
             $file_name = Str::snake(Str::lower($image_name)) . '.' . $file->getClientOriginalExtension();
-            $save_file = $file->move(public_path() . '/assets/img/admin_profiles', $file_name);
+
+            // Save Admin Profile
+            $file->move(public_path() . '/assets/img/admin_profiles', $file_name);
         } else {
             $file_name = $admin->admin_profile;
         }
 
-        $update_admin = $admin->update(array_merge($data, [
+        $admin->update(array_merge($data, [
             'is_approved' => $request->has('is_approved') ? true : false,
             'admin_profile' => $file_name
         ]));
@@ -111,8 +113,20 @@ class AdminController extends Controller
         return back()->withSuccess('Admin updated successfully');
     }
 
-    public function destroy(Request $request) {
+    public function destroy(Request $request, $id) {
+        $admin = Admin::where('id', $id)->first();
+        
+        if($admin->admin_profile) {
+            $old_upload_image = public_path('/assets/img/admin_profiles') . $admin->admin_profile;
+            @unlink($old_upload_image);
+        }
 
+        $admin->delete();
+
+        return response([
+            'status' => TRUE,
+            'message' => 'Admin Deleted Successfully'
+        ]);
     }
 
     public function merchantAdmins() {

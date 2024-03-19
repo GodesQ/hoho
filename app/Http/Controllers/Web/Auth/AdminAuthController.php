@@ -50,7 +50,7 @@ class AdminAuthController extends Controller
             if (in_array($admin->role, merchant_roles())) $this->checkMerchantRole($admin);
 
             return redirect()->route('admin.dashboard')->withSuccess('Login Successfully');
-        } 
+        }
         
         // Return back to login if failed
         return back()->with('fail', 'Invalid Credentials');
@@ -70,6 +70,7 @@ class AdminAuthController extends Controller
         ]));
 
         if ($admin_user) {
+            
             $details = [
                 'email' => $admin_user->email,
                 'registered_date' => date('F d, Y')
