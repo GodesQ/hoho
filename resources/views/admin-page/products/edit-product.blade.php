@@ -61,9 +61,9 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="quantity" class="form-label">Quantity</label>
-                                        <input type="number" name="quantity" id="quantity" class="form-control"
-                                            value="{{ $product->quantity }}">
+                                        <label for="stock" class="form-label">Stocks</label>
+                                        <input type="number" name="stock" id="stock" class="form-control"
+                                            value="{{ $product->stock }}">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -77,6 +77,11 @@
                                         <input class="form-check-input" type="checkbox" id="isActive" name="is_active"
                                             {{ $product->is_active ? 'checked' : null }} />
                                         <label class="form-check-label" for="isActive">Is Active</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="isBestSeller" name="is_best_seller"
+                                            {{ $product->is_best_seller ? 'checked' : null }} />
+                                        <label class="form-check-label" for="isBestSeller">Is Best Seller</label>
                                     </div>
                                 </div>
                             </div>

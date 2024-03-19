@@ -82,6 +82,11 @@
                                             checked />
                                         <label class="form-check-label" for="isActive">Is Active</label>
                                     </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="isBestSeller" name="is_best_seller"
+                                            checked />
+                                        <label class="form-check-label" for="isBestSeller">Is Best Seller</label>
+                                    </div>
                                 </div>
                             </div>
                             <hr>

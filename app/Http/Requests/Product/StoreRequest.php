@@ -28,7 +28,7 @@ class StoreRequest extends FormRequest
             'merchant_id' => 'required',
             'price' => 'required|numeric',
             'image' => 'required|image|max:2000',
-            'quantity' => 'required|numeric',
+            'stock' => 'required|numeric',
             'description' => 'nullable|max:250',
             'other_images.*' => 'nullable|image|mimes:png,jpg,jpeg|max:2048'
         ];

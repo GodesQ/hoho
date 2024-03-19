@@ -17,6 +17,7 @@ class Product extends Model
         'price',
         'stock',
         'other_images',
+        'is_best_seller',
         'is_active'
     ];
     protected $hidden = ['created_at', 'updated_at'];
@@ -24,7 +25,9 @@ class Product extends Model
     protected $casts = [
         'merchant_id' => 'integer',
         'price' => 'double',
-        'stock' => 'integer'
+        'stock' => 'integer',
+        'is_best_seller' => 'integer',
+        'is_active' => 'integer',
     ];
 
     public function merchant() {

@@ -60,7 +60,12 @@ class ProductController extends Controller
     {
         $data = $request->except('image', 'other_images');
 
-        $product = Product::create(array_merge($data, ['is_active' => $request->has('is_active')]));
+        $product = Product::create(array_merge($data, 
+                    [
+                        'is_active' => $request->has('is_active'), 
+                        'is_best_seller' => $request->has('is_best_seller')
+                    ]
+                ));
 
         if ($request->has('image')) {
             $file = $request->file('image');
@@ -119,7 +124,8 @@ class ProductController extends Controller
         $product = Product::where('id', $id)->firstOrFail();
 
         $product->update(array_merge($data, [
-            'is_active' => $request->has('is_active')
+            'is_active' => $request->has('is_active'),
+            'is_best_seller' => $request->has('is_best_seller')
         ]));
 
         // Primary Image
