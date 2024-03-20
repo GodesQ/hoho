@@ -8,12 +8,13 @@ use Illuminate\Http\Request;
 use App\Models\Attraction;
 
 class AttractionController extends Controller
-{
+{   
+    public function getAllAttractions(Request $request) {
+        
+    }
+
     public function getAttraction(Request $request) {
-        $attraction = Attraction::where('id', $request->id)->with('organization')->first();
-
-        if(!$attraction) return response(['status' => FALSE, 'message' => 'Attraction not found.'], 404);
-
+        $attraction = Attraction::where('id', $request->id)->with('organization')->firstOrFail();
         return response($attraction);
 
         // return response([

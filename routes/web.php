@@ -118,7 +118,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('admins/store', [AdminController::class, 'store'])->name('admins.store')->can('create_admin');
     Route::get('admins/edit/{id}', [AdminController::class, 'edit'])->name('admins.edit')->can('edit_admin');
     Route::post('admins/update/{id}', [AdminController::class, 'update'])->name('admins.update')->can('update_admin');
-    Route::delete('admins/destroy', [AdminController::class, 'destroy'])->name('admins.destroy')->can('delete_admin');
+    Route::delete('admins/destroy/{id}', [AdminController::class, 'destroy'])->name('admins.destroy')->can('delete_admin');
     Route::get('admins/merchantAdmins', [AdminController::class, 'merchantAdmins']);
     Route::get('admins/operatorAdmins', [AdminController::class, 'operatorAdmins']);
 
