@@ -9,13 +9,25 @@
         <div class="row">
             <div class="col-lg-6">
                 <div class="card">
-                    <img class="card-img-top" style="max-height: 400px; object-fit: cover;" src="{{ URL::asset('assets/img/' . $type . 's/' . ($merchantInfo->id ?? null) . '/' . ($merchantInfo->featured_image ?? '')) }}">
+
+                    @fileExists(
+                        'assets/img/' . $type . 's/' . ($merchantInfo->id ?? null) . '/' . ($merchantInfo->featured_image ?? '')
+                    )
+                        <img class="card-img-top" style="max-height: 400px; object-fit: cover;"
+                            src="{{ URL::asset('assets/img/' . $type . 's/' . ($merchantInfo->id ?? null) . '/' . ($merchantInfo->featured_image ?? '')) }}">
+                    @elsefileExists
+                        <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                            id="previewImage1" alt="Default Image" width="100%" height="250px"
+                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                    @endfileExists
+
                     <div class="card-body">
-                        <h5 class="card-title">{{ ($merchantInfo->name ?? null) }}</h5>
+                        <h5 class="card-title">{{ $merchantInfo->name ?? null }}</h5>
                         <p class="card-text">
-                            {{ substr(($merchantInfo->description ?? ''), 0, 250) }}...
+                            {{ substr($merchantInfo->description ?? '', 0, 250) }}...
                         </p>
-                        <a href="{{ route('merchant_form', $type) }}" class="btn btn-outline-primary">Go to Merchant Profile</a>
+                        <a href="{{ route('merchant_form', $type) }}" class="btn btn-outline-primary">Go to Merchant
+                            Profile</a>
                     </div>
                 </div>
             </div>
@@ -42,18 +54,20 @@
                                             <small
                                                 class="text-muted d-block mb-1">{{ $recent_store_order->customer ? $recent_store_order->customer->email : 'Deleted User' }}</small>
                                             <h6 class="mb-0">
-                                                <a href="{{ route('admin.orders.edit', $recent_store_order->id) }}">{{ $recent_store_order->product->name ?? null }}</a>
+                                                <a
+                                                    href="{{ route('admin.orders.edit', $recent_store_order->id) }}">{{ $recent_store_order->product->name ?? null }}</a>
                                             </h6>
                                         </div>
                                         <div class="user-progress text-end">
                                             <small class="text-mute d-block mb-1">
-                                               {{ $recent_store_order->payment_method }}
-                                            </small> 
-                                            <h6 class="mb-0 text-end">{{ number_format($recent_store_order->total_amount, 2) }}</h6>
+                                                {{ $recent_store_order->payment_method }}
+                                            </small>
+                                            <h6 class="mb-0 text-end">
+                                                {{ number_format($recent_store_order->total_amount, 2) }}</h6>
                                         </div>
                                     </div>
                                 </li>
-                                @empty
+                            @empty
                                 <li class="d-flex mb-4 pb-1">No Hotel Reservations Found</li>
                             @endforelse
                         </ul>

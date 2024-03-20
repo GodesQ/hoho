@@ -11,6 +11,8 @@ class TourTimeslot extends Model
     protected $table = 'tour_timeslots';
     protected $fillable = ['tour_id', 'start_time', 'end_time'];
 
+    protected $hidden = ['created_at','updated_at'];
+
     protected $casts = [
         'start_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i'

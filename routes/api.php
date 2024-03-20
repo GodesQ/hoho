@@ -70,6 +70,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('user/reservations', [TourReservationController::class, 'getUserReservations']);
     Route::get('user/future_reservations_dates', [TourReservationController::class, 'getAllUserFutureDateReservations']);
+    
     Route::get('ticket_pass', [TourReservationController::class, 'getDIYTicketPassReservations']);
     Route::get('ticket_pass_reservation/{id}', [TourReservationController::class, 'getDIYTicketPassReservation']);
     Route::get('today_reservation', [TourReservationController::class, 'getUserTodayReservation']);

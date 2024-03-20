@@ -257,6 +257,56 @@
             }
         }
 
+        function handlePreviewImage(event, previewImageId) {
+            const file = event.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const previewImage = document.getElementById(previewImageId);
+                    console.log(previewImage);
+                    previewImage.src = event.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImageBtn(id, image_path) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Remove room image",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, remove it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `{{ route('admin.rooms.remove_image') }}`,
+                        method: "DELETE",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            id: id,
+                            image_path: image_path
+                        },
+                        success: function(response) {
+                            if (response.status) {
+                                Swal.fire('Removed!', response.message, 'success').then(
+                                    result => {
+                                        if (result.isConfirmed) {
+                                            toastr.success(response.message, 'Success');
+                                            location.reload();
+                                        }
+                                    })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+
         let mainImageInput = document.querySelector('#image');
         mainImageInput.addEventListener('change', handleFileSelect);
     </script>

@@ -129,18 +129,25 @@
                                                 <div class="col-lg-4">
                                                     <div class="mb-3">
                                                         @if (($admin->merchant->hotel_info ?? false) && count($hotel_images) > 0 && isset($hotel_images[0]))
-                                                            <img src="{{ URL::asset('assets/img/hotels/' . $admin->merchant->id . '/' . $hotel_images[0]) }}"
-                                                                id="previewImage1" alt="Default Image" width="100%"
-                                                                height="200px"
+
+                                                            @fileExists('assets/img/hotels/' . $admin->merchant->id . '/' . $hotel_images[0])
+                                                                <img src="{{ URL::asset('assets/img/hotels/' . $admin->merchant->id . '/' . $hotel_images[0]) }}"
+                                                                    id="previewImage1" alt="Default Image" width="100%"
+                                                                    height="200px"
+                                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                            @elsefileExists
+                                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                                id="previewImage1" alt="Default Image" width="100%" height="210px"
                                                                 style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                            @endfileExists
+
                                                             <button type="button"
                                                                 style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                                 class="btn btn-primary"
                                                                 onclick="removeImageBtn({{ $admin->merchant->hotel_info->id }}, '{{ $hotel_images[0] }}')">Remove
                                                                 <i class="bx bx-trash"></i></button>
                                                         @else
-                                                            <input type="file" class="form-control mb-2 image-input"
-                                                                accept="image/*" name="images[]" id="image_1"
+                                                            <input type="file" class="form-control mb-2 image-input" accept="image/*" name="images[]" id="image_1"
                                                                 onchange="handlePreviewImage(this, 'previewImage1')">
                                                             <img src="{{ URL::asset('assets/img/default-image.jpg') }}"
                                                                 id="previewImage1" alt="Default Image" width="100%"
@@ -152,10 +159,18 @@
                                                 <div class="col-lg-4">
                                                     <div class="mb-3">
                                                         @if (($admin->merchant->hotel_info ?? false) && count($hotel_images) > 0 && isset($hotel_images[1]))
-                                                            <img src="{{ URL::asset('assets/img/hotels/' . $admin->merchant->id . '/' . $hotel_images[1]) }}"
-                                                                id="previewImage2" alt="Default Image" width="100%"
-                                                                height="200px"
+
+                                                            @fileExists('assets/img/hotels/' . $admin->merchant->id . '/' . $hotel_images[1])
+                                                                <img src="{{ URL::asset('assets/img/hotels/' . $admin->merchant->id . '/' . $hotel_images[1]) }}"
+                                                                    id="previewImage2" alt="Default Image" width="100%"
+                                                                    height="200px"
+                                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                            @elsefileExists
+                                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                                id="previewImage1" alt="Default Image" width="100%" height="210px"
                                                                 style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                            @endfileExists
+
                                                             <button type="button"
                                                                 style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                                 class="btn btn-primary"
@@ -175,10 +190,18 @@
                                                 <div class="col-lg-4">
                                                     <div class="mb-3">
                                                         @if (($admin->merchant->hotel_info ?? false) && count($hotel_images) > 0 && isset($hotel_images[2]))
-                                                            <img src="{{ URL::asset('assets/img/hotels/' . $admin->merchant->id . '/' . $hotel_images[2]) }}"
-                                                                id="previewImage3" alt="Default Image" width="100%"
-                                                                height="200px"
+
+                                                            @fileExists('assets/img/hotels/' . $admin->merchant->id . '/' . $hotel_images[2])
+                                                                <img src="{{ URL::asset('assets/img/hotels/' . $admin->merchant->id . '/' . $hotel_images[2]) }}"
+                                                                    id="previewImage3" alt="Default Image" width="100%"
+                                                                    height="200px"
+                                                                    style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                            @elsefileExists
+                                                                <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                                                id="previewImage1" alt="Default Image" width="100%" height="210px"
                                                                 style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                                            @endfileExists
+
                                                             <button type="button"
                                                                 style="display: block; width: 100%; border-radius: 0px 0px 20px 20px;"
                                                                 class="btn btn-primary"
@@ -206,8 +229,14 @@
                                 <div class="card-body">
                                     <h6>Preview of Featured Image</h6>
                                     @if($admin->merchant && $admin->merchant->featured_image)
-                                        <img src="{{ URL::asset('/assets/img/hotels/' . $admin->merchant->id . '/' . $admin->merchant->featured_image) }}"
-                                         alt="" style="border-radius: 10px;" width="100%" id="previewImage">
+                                        @fileExists('/assets/img/hotels/' . $admin->merchant->id . '/' . $admin->merchant->featured_image)
+                                            <img src="{{ URL::asset('/assets/img/hotels/' . $admin->merchant->id . '/' . $admin->merchant->featured_image) }}"
+                                            alt="" style="border-radius: 10px;" width="100%" id="previewImage">
+                                        @elsefileExists
+                                            <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                            id="previewImage1" alt="Default Image" width="100%"
+                                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                                        @endfileExists
                                     @else
                                         <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt="" id="previewImage" style="border-radius: 10px;" width="100%">
                                     @endif

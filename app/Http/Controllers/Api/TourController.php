@@ -19,6 +19,7 @@ class TourController extends Controller
         $tours = Tour::where('type', 'Guided Tour')
             ->where('status', 1)
             ->inRandomOrder()
+            ->with('timeslots')
             ->get();
 
         $filtered_tours = [];
@@ -47,13 +48,13 @@ class TourController extends Controller
         $tours = Tour::where('type', 'DIY Tour')->where('status', 1)->get();
 
         foreach ($tours as $tour) {
-            $tour->setAppends([]); // Exclude the "attractions" attribute for this instance
+            $tour->setAppends([]);
         }
 
         $product_categories = ProductCategory::select('id', 'name', 'description', 'featured_image')->get();
 
         foreach ($product_categories as $category) {
-            $category->setAppends([]); // Exclude the "organizations" attribute for this instance
+            $category->setAppends([]);
         }
 
         return response([

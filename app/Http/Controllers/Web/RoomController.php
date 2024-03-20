@@ -66,7 +66,7 @@ class RoomController extends Controller
 
     public function store(StoreRequest $request)
     {
-        $data = $request->except('image');
+        $data = $request->except('image', 'other_images');
 
         $room = Room::create(
             array_merge($data, [
@@ -132,7 +132,8 @@ class RoomController extends Controller
 
     public function update(UpdateRequest $request)
     {
-        $data = $request->except('image');
+        $data = $request->except('image', 'other_images');
+        // dd($request->all());
         $room = Room::where('id', $request->id)->firstOrFail();
 
         $room->update(
@@ -202,6 +203,31 @@ class RoomController extends Controller
             'status' => TRUE,
             'message' => 'Room Deleted Successfully'
         ];
+    }
+
+    public function removeImage(Request $request) {
+        $room = Room::where('id', $request->id)->first();
+        $images = json_decode($room->other_images);
+        $image_path = $request->image_path;
+
+        if(is_array($images)) {
+            if (($key = array_search($image_path, $images)) !== false) {
+                unset($images[$key]);
+                $old_upload_image = public_path('/assets/img/rooms/') . $room->id . '/' . $image_path;
+                $remove_image = @unlink($old_upload_image);
+            }
+        }
+
+        $update = $room->update([
+            'other_images' => json_encode(array_values($images))
+        ]);
+
+        if($update) {
+            return response([
+                'status' => TRUE,
+                'message' => 'Image successfully remove'
+            ]);
+        }
     }
 
     public function lookup(Request $request) {

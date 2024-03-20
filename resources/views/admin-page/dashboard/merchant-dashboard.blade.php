@@ -9,7 +9,16 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="card">
-                    <img class="card-img-top" style="max-height: 400px; object-fit: cover;" src="{{ URL::asset('assets/img/' . $type . 's/' . ($merchantInfo->id ?? null) . '/' . ($merchantInfo->featured_image ?? '')) }}">
+                    
+                    @fileExists('assets/img/' . $type . 's/' . ($merchantInfo->id ?? null) . '/' . ($merchantInfo->featured_image ?? ''))
+                        <img class="card-img-top" style="max-height: 400px; object-fit: cover;"
+                            src="{{ URL::asset('assets/img/' . $type . 's/' . ($merchantInfo->id ?? null) . '/' . ($merchantInfo->featured_image ?? '')) }}">
+                    @elsefileExists
+                        <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                            id="previewImage1" alt="Default Image" width="100%" height="210px"
+                            style="border-radius: 10px 10px 0px 0px; object-fit: cover;">
+                    @endfileExists
+
                     <div class="card-body">
                         <h5 class="card-title">{{ ($merchantInfo->name ?? null) }}</h5>
                         <p class="card-text">

@@ -111,7 +111,12 @@ class TourReservationController extends Controller
     public function getDIYTicketPassReservations(Request $request)
     {
         $user = Auth::user();
-        $reservations = TourReservation::latest('created_at')->where('status', 'approved')->where('type', 'DIY')->where('reserved_user_id', $user->id)->with('reservation_codes')->get();
+        $reservations = TourReservation::latest('created_at')
+                        ->where('status', 'approved')
+                        ->where('type', 'DIY')
+                        ->where('reserved_user_id', $user->id)
+                        ->with('reservation_codes')
+                        ->get();
 
         return response($reservations);
     }
@@ -137,6 +142,7 @@ class TourReservationController extends Controller
     public function getUserReservations(Request $request)
     {
         $user = Auth::user();
+         
         $reservations = TourReservation::latest('created_at')
         ->where('reserved_user_id', $user->id)
         ->with(['tour', 'feedback' => function ($query) use ($user) {

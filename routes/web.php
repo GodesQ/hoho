@@ -251,7 +251,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::get('rooms/edit/{id}', [RoomController::class, 'edit'])->name('rooms.edit');
     Route::post('rooms/update/{id}', [RoomController::class, 'update'])->name('rooms.update');
     Route::delete('rooms/destroy/{id?}', [RoomController::class, 'destroy'])->name('rooms.destroy');
-
+    Route::delete('rooms/remove_image', [RoomController::class, 'removeImage'])->name('rooms.remove_image');
     Route::get('rooms/lookup/{q?}', [RoomController::class, 'lookup'])->name('rooms.lookup');
 
     Route::get('products', [ProductController::class, 'index'])->name('products.index');
