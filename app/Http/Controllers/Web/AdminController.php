@@ -113,10 +113,6 @@ class AdminController extends Controller
         return back()->withSuccess('Admin updated successfully');
     }
 
-<<<<<<< HEAD
-    public function destroy(Request $request) {
-        
-=======
     public function destroy(Request $request, $id) {
         $admin = Admin::where('id', $id)->first();
         
@@ -131,7 +127,6 @@ class AdminController extends Controller
             'status' => TRUE,
             'message' => 'Admin Deleted Successfully'
         ]);
->>>>>>> 661daea4e9f5092638f6275ddec16e438ba8a128
     }
 
     public function merchantAdmins() {
