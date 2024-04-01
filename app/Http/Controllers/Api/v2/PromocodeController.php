@@ -15,7 +15,9 @@ class PromocodeController extends Controller
     }
 
     public function verify(Request $request) {
-        $promocode = PromoCode::where('code', $request->code)->firstOrFail();
+        $promocode = PromoCode::where('code', $request->code)->first();
+
+        if(!$promocode) return response(['message' => "Promocode doesn't exist."], 400);
 
         return response([
             'promocode_exist' => $promocode ? true : false,
