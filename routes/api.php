@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AppSettingController;
 use App\Http\Controllers\Api\Auth\SSOController;
 use App\Http\Controllers\Api\HotelReservationController;
 use App\Http\Controllers\Api\OrderController;
@@ -59,6 +60,8 @@ Route::get('announcements/important_announcements', [AnnouncementController::cla
 Route::get('announcements', [AnnouncementController::class, 'getAnnouncements']);
 
 Route::get('featured_merchants', [MerchantController::class, 'getFeaturedMerchants']);
+
+Route::get('app-settings/maintenance-mode', [AppSettingController::class, 'checkMaintenanceMode']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
