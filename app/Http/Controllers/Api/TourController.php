@@ -22,6 +22,10 @@ class TourController extends Controller
             ->with('timeslots')
             ->get();
 
+        $tours->each(function ($tour) {
+            $tour->setAppends([]);
+        });
+
         $filtered_tours = [];
 
         if(count($userInterests) > 0) {
