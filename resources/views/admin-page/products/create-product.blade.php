@@ -64,10 +64,10 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="quantity" class="form-label">Quantity <span
+                                        <label for="stock" class="form-label">Stock <span
                                                 class="text-danger">*</span></label>
-                                        <input type="number" name="quantity" id="quantity" class="form-control"
-                                            value="{{ old('quantity') }}">
+                                        <input type="number" name="stock" id="stock" class="form-control"
+                                            value="{{ old('stock') }}">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
