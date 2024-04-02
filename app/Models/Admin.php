@@ -61,7 +61,7 @@ class Admin extends Authenticatable
 
     public function transport()
     {
-        return $this->belongsTo(Transport::class, 'transport_id')->select('id', 'capacity', 'operator_id', 'tour_assigned_id', 'tour_assignment_ids', 'latitude', 'longitude', 'name', 'current_location', 'next_location', 'previous_location')->with('assigned_tour');
+        return $this->belongsTo(Transport::class, 'transport_id')->select('id', 'capacity', 'available_seats', 'operator_id', 'tour_assigned_id', 'hub_id', 'tour_assignment_ids', 'latitude', 'longitude', 'name', 'current_location', 'next_location', 'previous_location')->with('assigned_tour');
     }
 
     public function merchant() {

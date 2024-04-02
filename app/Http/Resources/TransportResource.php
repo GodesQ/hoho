@@ -23,10 +23,11 @@ class TransportResource extends JsonResource
             'transport_provider_id' => $this->transport_provider_id,
             'operator_id' => $this->operator_id,
             'tour_assigned_id' => $this->tour_assigned_id,
+            'hub_id' => $this->hub_id,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
             'current_location' => json_decode($this->current_location),
-            'next_location' => json_decode($this->next_location),
+            'next_location' => json_decode($this->nexlot_cation),
             'assigned_tour' => TourResource::make($this->assigned_tour),
         ];
     }

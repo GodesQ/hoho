@@ -164,6 +164,15 @@ class TourReservationController extends Controller
     public function verifyReservationCode(Request $request)
     {
         $today = date('Y-m-d');
+        $user = Auth::user();
+
+        if($user->role != 'bus_operator') {
+            return response([
+                'status' => FALSE,
+                'message' => 'The current authenticated user is not a bus operator.'
+            ]);
+        }
+
         $tour_reservation = TourReservation::where('id', $request->reservation_id)->with('tour.transport')->first();
         if (!$tour_reservation) {
             return response([
@@ -197,13 +206,13 @@ class TourReservationController extends Controller
 
         if($qrcode->status == 'hop_on') {
             $status = 'hop_off';
-            $tour_reservation->tour->transport->update([
-                'available_seats' => $tour_reservation->tour->transport->available_seats + 1,
+            $user->transport()->update([
+                'available_seats' => $user->transport->available_seats + 1,
             ]);
         } else {
             $status = 'hop_on';
-            $tour_reservation->tour->transport->update([
-                'available_seats' => $tour_reservation->tour->transport->available_seats - 1,
+            $user->transport()->update([
+                'available_seats' => $user->transport->available_seats - 1,
             ]);
         }
 
@@ -214,11 +223,11 @@ class TourReservationController extends Controller
             'status' => $status
         ]);
 
-        // ReservationCodeScanLog::create([
-        //     'reservation_code_id' => $qrcode->id,
-        //     'scan_datetime' => Carbon::now(),
-        //     'scan_type' => $status
-        // ]);
+        ReservationCodeScanLog::create([
+            'reservation_code_id' => $qrcode->id,
+            'scan_datetime' => Carbon::now(),
+            'scan_type' => $status
+        ]);
 
         return response([
             'status' => TRUE,
@@ -228,6 +237,14 @@ class TourReservationController extends Controller
 
     public function scanReservationCode(Request $request) {
         $today = date('Y-m-d');
+        $user = Auth::user();
+
+        if($user->role != 'bus_operator') {
+            return response([
+                'status' => FALSE,
+                'message' => 'The current authenticated user is not a bus operator.'
+            ]);
+        }
 
         $tour_reservation = TourReservation::where('id', $request->reservation_id)->with('tour.transport')->first();
         if (!$tour_reservation) {
@@ -262,13 +279,13 @@ class TourReservationController extends Controller
 
         if($qrcode->status == 'hop_on') {
             $status = 'hop_off';
-            $tour_reservation->tour->transport->update([
-                'available_seats' => $tour_reservation->tour->transport->available_seats + 1,
+            $user->transport()->update([
+                'available_seats' => $user->transport->available_seats + 1,
             ]);
         } else {
             $status = 'hop_on';
-            $tour_reservation->tour->transport->update([
-                'available_seats' => $tour_reservation->tour->transport->available_seats - 1,
+            $user->transport()->update([
+                'available_seats' => $user->transport->available_seats - 1,
             ]);
         }
 
@@ -281,11 +298,13 @@ class TourReservationController extends Controller
             'current_attraction' => $request->current_attraction,
         ]);
 
-        // ReservationCodeScanLog::create([
-        //     'reservation_code_id' => $qrcode->id,
-        //     'scan_datetime' => Carbon::now(),
-        //     'scan_type' => $status
-        // ]);
+        ReservationCodeScanLog::create([
+            'reservation_code_id' => $qrcode->id,
+            'scan_datetime' => Carbon::now(),
+            'scan_type' => $status,
+            'hub_type_id' => $request->current_hub,
+            'attraction_id' => $request->current_attraction,
+        ]);
 
         return response([
             'status' => TRUE,

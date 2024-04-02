@@ -16,14 +16,18 @@ class ReservationUserCode extends Model
         'scan_count',
         'start_datetime',
         'end_datetime',
-        'status'
+        'status',
+        'current_hub',
+        'current_attraction'
     ];
 
     protected $casts = [    
         'reservation_id' => 'integer',
         'scan_count' => 'integer',
         'start_datetime' => 'datetime',
-        'end_datetime' => 'datetime'
+        'end_datetime' => 'datetime',
+        'current_hub' => 'integer',
+        'current_attraction' => 'integer'
     ];
     protected $hidden = ['created_at', 'updated_at'];
 

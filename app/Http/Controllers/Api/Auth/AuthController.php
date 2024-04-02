@@ -114,10 +114,9 @@ class AuthController extends Controller
     
         if (!$user) {
             $user = Admin::where($fieldType, $request->username)->first();
+
             if ($user && $user->role === 'bus_operator') {
                 $user->load('transport');
-            } elseif (!$user) {
-                return $this->handleInvalidCredentials();
             }
         }
     
@@ -136,13 +135,15 @@ class AuthController extends Controller
 
     private function authenticate(Request $request, $fieldType) {        
         $user = $this->authenticateUser($request, $fieldType);
+
+        if (!$user) return $this->handleInvalidCredentials();
     
         if (!$user || !Hash::check($request->password, $user->password)) {
             $isOldUser = $user && $user->is_old_user;
             $response = [
                 'status' => FALSE,
-                'user' => ['is_old_user' => $isOldUser ? 1 : 0],
                 'message' => $isOldUser ? 'This is an old user. Please change password' : 'Invalid credentials.',
+                'user' => ['is_old_user' => $isOldUser ? 1 : 0],
             ];
     
             return response($response, 400);
