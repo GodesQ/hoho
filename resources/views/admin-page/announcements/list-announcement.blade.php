@@ -22,6 +22,7 @@
                             <th>Type</th>
                             <th>Name</th>
                             <th>Status</th>
+                            <th>Added At</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -55,6 +56,10 @@
                     {
                         data: 'status',
                         name: 'status',
+                    },
+                    {
+                        data: 'created_at',
+                        name: 'created_at',
                     },
                     {
                         data: 'actions',

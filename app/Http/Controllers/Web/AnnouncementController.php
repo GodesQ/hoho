@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Str;
@@ -31,6 +32,9 @@ class AnnouncementController extends Controller
                                 <a href="/admin/announcements/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
                                 <a href="javascript:void(0);" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
                             </div>';
+                })
+                ->addColumn("created_at", function ($row) {
+                    return Carbon::parse($row->created_at)->format('F d, Y');
                 })
                 ->rawColumns(['actions', 'status'])
                 ->make(true);
