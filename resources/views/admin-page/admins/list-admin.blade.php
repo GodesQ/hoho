@@ -3,7 +3,7 @@
 @section('title', 'Admins List - Philippine Hop On Hop Off')
 
 @section('content')
-    <div class="container-xxl flex-grow-1 container-p-y">
+    <div class="container-xxl container-fluid flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="fw-bold py-3 mb-4">Admins List</h4>
             <a href="{{ route('admin.admins.create') }}" class="btn btn-primary">Add Admin <i class="bx bx-plus"></i></a>
@@ -11,7 +11,7 @@
 
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive-lg text-nowrap">
+                <div class="table-responsive text-nowrap">
                     <table class="table table-striped table-borderless data-table">
                         <thead>
                             <tr>

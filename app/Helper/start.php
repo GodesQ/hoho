@@ -1,4 +1,5 @@
 <?php
+use App\Models\AppSetting;
 
 if (!function_exists('merchant_roles')) {
 
@@ -10,4 +11,14 @@ if (!function_exists('merchant_roles')) {
             'tour_operator_admin'
         ];
     }
+}
+
+if(!function_exists('maintenanceMode')) {
+
+    function maintenanceMode() {
+        $setting = AppSetting::where('code', 'hoho_mobile')->first();
+
+        return $setting->maintenance_mode;
+    }
+
 }

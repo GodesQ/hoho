@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\ApiConsumerController;
+use App\Http\Controllers\Web\AppSettingController;
 use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\ConsumerApiLogController;
 use App\Http\Controllers\Web\DeleteAccountController;
@@ -107,6 +108,8 @@ Route::view('user/reset_password_success', 'misc.success-reset-password-message'
 Route::get('merchant_form/{type}', [MerchantController::class, 'merchant_form'])->name('merchant_form')->middleware('auth:admin');
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function () {
+    Route::put('maintenance-mode', [AppSettingController::class, 'update'])->name('maintenance-mode.update');
+
     Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard')->middleware('merchant_created');
     Route::get('profile', [DashboardController::class, 'adminProfile'])->name('profile');

@@ -61,7 +61,7 @@
             @auth('admin')
                 @can('view_merchant_stores_list')
                     <li class="menu-item {{ preg_match('/admin\/merchants\/stores/', Request::path()) ? 'active' : null }}">
-                        <a href="{{ route('admin.merchants.stores.list') }}" class="menu-link">
+                        <a href="{{ route('admin.merchants.stores.list') }}" class="menu-link ">
                             <div data-i18n="Stores">Stores</div>
                         </a>
                     </li>

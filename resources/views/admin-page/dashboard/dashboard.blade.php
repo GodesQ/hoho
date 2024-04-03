@@ -17,9 +17,9 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-end">
             <div class="form-check form-switch mb-2">
-                <label class="form-check-label" for="isApproved">Maintenance Mode</label>
-                <input class="form-check-input float-right" type="checkbox" id="isApproved"
-                    name="is_approved" />
+                <label class="form-check-label" for="maintenance-mode-btn">Maintenance Mode</label>
+                <input class="form-check-input" type="checkbox" id="maintenance-mode-btn" name="is_approved"
+                    {{ maintenanceMode() ? 'checked' : null }} />
             </div>
         </div>
         <div class="row">
@@ -66,17 +66,21 @@
                                     @forelse ($topSellingTours as $topSellingTour)
                                         <li class="d-flex mb-4 pb-1">
                                             <div class="avatar flex-shrink-0 me-3">
-                                                <span class="avatar-initial rounded bg-label-primary"
-                                                ><i class="bx bx-wallet"></i
-                                                ></span>
+                                                <span class="avatar-initial rounded bg-label-primary"><i
+                                                        class="bx bx-wallet"></i></span>
                                             </div>
-                                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                            <div
+                                                class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                 <div class="me-2">
-                                                <h6 class="mb-0">{{ strlen(optional($topSellingTour->tour)->name) > 25 ? substr(optional($topSellingTour->tour)->name, 0, 25) . '...' : optional($topSellingTour->tour)->name }}</h6>
-                                                <small class="text-muted">{{ optional($topSellingTour->tour)->type }}</small>
+                                                    <h6 class="mb-0">
+                                                        {{ strlen(optional($topSellingTour->tour)->name) > 25 ? substr(optional($topSellingTour->tour)->name, 0, 25) . '...' : optional($topSellingTour->tour)->name }}
+                                                    </h6>
+                                                    <small
+                                                        class="text-muted">{{ optional($topSellingTour->tour)->type }}</small>
                                                 </div>
                                                 <div class="user-progress">
-                                                <small class="fw-semibold">₱ {{ number_format($topSellingTour->total_amount, 2) }}</small>
+                                                    <small class="fw-semibold">₱
+                                                        {{ number_format($topSellingTour->total_amount, 2) }}</small>
                                                 </div>
                                             </div>
                                         </li>
@@ -85,7 +89,7 @@
                                     @endforelse
                                 </ul>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -102,7 +106,8 @@
                                             alt="User" class="rounded" />
                                     </div>
                                     <div style="width: 80%">
-                                        <h2 style="font-weight: bold;">₱ <span id="profit-amount">{{ number_format($totalProfit, 2) }}</span></h2>
+                                        <h2 style="font-weight: bold;">₱ <span
+                                                id="profit-amount">{{ number_format($totalProfit, 2) }}</span></h2>
                                         <h6 style="line-height: 5px;">Earned this month</h6>
                                     </div>
                                 </div>
@@ -146,7 +151,8 @@
                                             </h6>
                                         </div>
                                         <div class="user-progress d-flex align-items-center gap-1">
-                                            <h6 class="mb-0">₱ {{ number_format($recent_transaction->payment_amount, 2) }}</h6>
+                                            <h6 class="mb-0">₱
+                                                {{ number_format($recent_transaction->payment_amount, 2) }}</h6>
                                             {{-- <span class="text-muted">USD</span> --}}
                                         </div>
                                     </div>
@@ -168,7 +174,6 @@
 
 @push('scripts')
     <script>
-
         document.addEventListener('DOMContentLoaded', function() {
             getTotalBookingsPerType();
         });
@@ -214,6 +219,46 @@
                     totalBookingsPerTypeChartOptions);
                 totalBookingsPerTypeChart.render();
             }
+        }
+
+        const maintenanceModeBtn = document.querySelector('#maintenance-mode-btn');
+
+        maintenanceModeBtn.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                Swal.fire({
+                    title: 'Are you sure you want to turn on maintenance mode?',
+                    text: "It can affect to mobile application",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        updateMaintenanceMode(1);
+                    } else {
+                        e.target.checked = false;
+                    }
+                })
+            } else {
+                updateMaintenanceMode(0);
+            }
+        })
+
+        const updateMaintenanceMode = (mode) => {
+            $.ajax({
+                url: "{{ route('admin.maintenance-mode.update') }}",
+                method: "PUT",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    maintenance_mode: mode,
+                },
+                success: function(response) {
+                    if (response.status) {
+                        Swal.fire('Updated!', response.message, 'success');
+                    }
+                }
+            })
         }
     </script>
 @endpush
