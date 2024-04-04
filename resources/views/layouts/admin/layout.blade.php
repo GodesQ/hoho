@@ -45,7 +45,7 @@
 
     <link rel="stylesheet" href="{{ URL::asset('assets/vendor/libs/apex-charts/apex-charts.css') }}" />
 
-    <link rel="stylesheet" href="{{ URL::asset('assets/css/selects/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ URL::asset('assets/css/selects/select2.css') }}">
     <link rel="stylesheet" href="{{ URL::asset('assets/css/wizard.css') }}">
     <link rel="stylesheet" href="{{ URL::asset('assets/css/tour-reservation-step-form.css') }}">
 
@@ -226,7 +226,7 @@
     <!-- Page JS -->
     <script src="{{ URL::asset('assets/js/dashboards-analytics.js') }}"></script>
     <script src="{{ asset('assets/js/select/form-select2.js') }}"></script>
-    <script src="{{ asset('assets/js/wizard-steps.js') }}"></script>
+    {{-- <script src="{{ asset('assets/js/wizard-steps.js') }}"></script> --}}
     <script src="{{ asset('assets/js/pages-account-settings-account.js') }}"></script>
 
     <!-- CDN JS -->

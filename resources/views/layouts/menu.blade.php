@@ -301,11 +301,18 @@
             <li class="menu-item {{ preg_match('/admin\/transactions/', Request::path()) ? 'active' : null }}">
                 <a href="{{ route('admin.transactions.list') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-money"></i>
-                    <div data-i18n="Booking Transactions">Booking Transactions</div>
+                    <div data-i18n="Transactions">Transactions</div>
                 </a>
             </li>
         @endcan
     @endauth
+
+    <li class="menu-item {{ preg_match('/admin\/travel-taxes/', Request::path()) ? 'active' : null }}">
+        <a href="{{ route('admin.travel_taxes.list') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-money"></i>
+            <div data-i18n="Travel Taxes">Travel Taxes</div>
+        </a>
+    </li>
 
     <li class="menu-item {{ preg_match('/admin\/reports/', Request::path()) ? 'active open' : null }}">
         @auth('admin')

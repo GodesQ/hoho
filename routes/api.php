@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RestaurantReservationController;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\TourFeedBackController;
+use App\Http\Controllers\Api\TravelTaxController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -138,4 +139,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('tour-feedbacks/{id}', [TourFeedBackController::class, 'show']);
     Route::put('tour-feedbacks/{id}', [TourFeedBackController::class, 'update']);
     Route::get('tour-feedbacks/tours/{tour_id}', [TourFeedBackController::class, 'getFeedBacksByTour']);
+
+    Route::post('travel-tax', [TravelTaxController::class, 'store']);
 });

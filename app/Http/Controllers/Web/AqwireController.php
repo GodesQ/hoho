@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\TravelTaxPayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
@@ -46,6 +47,27 @@ class AqwireController extends Controller
         }
     }
 
+    public function travelTaxSuccess(Request $request) {
+        $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
+
+        $transaction->update([
+            'aqwire_referenceId' => $request->referenceId,
+            'aqwire_paymentMethodCode' => $request->paymentMethodCode,
+            'aqwire_totalAmount' => $request->totalAmount,
+            'payment_status' => Str::lower('success'),
+            'payment_date' => Carbon::now()
+        ]);
+
+        $travel_tax_payment = TravelTaxPayment::where('transaction_id', $transaction->id)->first();
+
+        $travel_tax_payment->update([
+            'payment_method' => $request->paymentMethodCode,
+            'status' => 'paid',
+        ]);
+
+        return redirect('aqwire/payment/view_success');
+    }
+
     public function viewSuccess(Request $request) {
         return view('misc.transaction_messages.success');
     }
@@ -67,6 +89,27 @@ class AqwireController extends Controller
         if($update_transaction) {
             return redirect('aqwire/payment/view_cancel');
         }
+    }
+
+    public function travelTaxCancel(Request $request) {
+        $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
+
+        $transaction->update([
+            'aqwire_referenceId' => $request->referenceId,
+            'aqwire_paymentMethodCode' => $request->paymentMethodCode,
+            'aqwire_totalAmount' => $request->totalAmount,
+            'payment_status' => Str::lower('cancelled'),
+            'payment_date' => Carbon::now()
+        ]);
+
+        $travel_tax_payment = TravelTaxPayment::where('transaction_id', $transaction->id)->first();
+
+        $travel_tax_payment->update([
+            'payment_method' => $request->paymentMethodCode,
+            'status' => 'unpaid',
+        ]);
+
+        return redirect('aqwire/payment/view_cancel');
     }
 
     public function viewCancel(Request $request) {

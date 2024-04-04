@@ -13,6 +13,7 @@ use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\RestaurantReservationController;
 use App\Http\Controllers\Web\RoomController;
 use App\Http\Controllers\Web\TourBadgeController;
+use App\Http\Controllers\Web\TravelTaxController;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -90,10 +91,14 @@ Route::view('user/success_verification_message', 'misc.success_verification_mess
 Route::view('merchant-account-registered-message', 'misc.merchant-registered-message')->name('merchant_account_registered_message');
 
 Route::get('aqwire/payment/success/{id}', [AqwireController::class, 'success']);
+Route::get('aqwire/payment/travel-tax/success/{id}', [AqwireController::class, 'travelTaxSuccess']);
 Route::get('aqwire/payment/view_success', [AqwireController::class, 'viewSuccess']);
 
 Route::get('aqwire/payment/cancel/{id}', [AqwireController::class, 'cancel']);
+Route::get('aqwire/payment/travel-tax/cancel/{id}', [AqwireController::class, 'travelTaxCancel']);
 Route::get('aqwire/payment/view_cancel', [AqwireController::class, 'viewCancel']);
+
+
 
 Route::post('aqwire/payment/callback/{id}', [AqwireController::class, 'callback']);
 
@@ -398,4 +403,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
         Route::get('get_overall_sales', [DataReportController::class, 'getSalesData'])->name('get_overall_sales')->can('view_sales_report');
         Route::get('get_transaction_status_data', [DataReportController::class, 'getTransactionStatusData'])->name('get_transaction_status_data')->can('view_sales_report');
     });
+
+    Route::get('travel-taxes', [TravelTaxController::class, 'index'])->name('travel_taxes.list');
+    Route::get('travel-taxes/create', [TravelTaxController::class, 'create'])->name('travel_taxes.create');
+    Route::post('travel-taxes/store', [TravelTaxController::class, 'store'])->name('travel_taxes.store');
+    Route::get('travel-taxes/edit/{id}', [TravelTaxController::class, 'edit'])->name('travel_taxes.edit');
+    Route::put('travel-taxes/update/{id}', [TravelTaxController::class, 'update'])->name('travel_taxes.update');
+    Route::put('travel-taxes/destroy/{id}', [TravelTaxController::class, 'destroy'])->name('travel_taxes.destroy');
 });
