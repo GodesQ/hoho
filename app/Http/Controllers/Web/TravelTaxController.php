@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TravelTax\PaymentRequest;
 use App\Models\TravelTaxPayment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -44,9 +45,9 @@ class TravelTaxController extends Controller
         return view('admin-page.travel-taxes.create-travel-tax');
     }
 
-    public function store(Request $request)
+    public function store(PaymentRequest $request)
     {
-
+        dd($request->all());
     }
 
     public function edit(Request $request)
