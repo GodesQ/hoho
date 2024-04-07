@@ -23,4 +23,12 @@ class TravelTaxPayment extends Model
         "payment_time",
         "status",
     ];
+
+    public function passengers() {
+        return $this->hasMany(TravelTaxPassenger::class, 'payment_id');
+    }
+
+    public function transaction() {
+        return $this->belongsTo(Transaction::class, 'transaction_id');
+    }
 }

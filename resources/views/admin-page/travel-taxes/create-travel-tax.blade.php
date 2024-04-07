@@ -19,6 +19,13 @@
                                 <div class="alert alert-danger my-2 mb-3" style="border-left: 5px solid red;">
                                     Invalid Fields. Please check all fields before submitting the form.
                                 </div>
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
                             @endif
                             <div id="passengers-list-repeater">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -27,7 +34,7 @@
                                             class="bx bx-plus"></i></button>
                                 </div>
                                 <div class="passenger-container row border p-2 px-1 my-2 rounded">
-                                    <input type="hidden" name="passenger[0][amount]" value="1600" class="amount-field">
+                                    <input type="hidden" name="passengers[0][amount]" value="1600" class="amount-field">
                                     <div class="col-lg-12 px-1 py-2 d-flex justify-content-between">
                                         <h5>Amount: <span class="text-primary amount-text">1600.00</span></h5>
                                         <button class="btn btn-sm btn-secondary" type="button">Remove <i
@@ -46,12 +53,12 @@
                                     <div class="col-lg-3 px-1 py-2">
                                         <label for="middlename" class="form-label">Middlename</label>
                                         <input type="text" class="form-control" name="passengers[0][middlename]"
-                                            placeholder="Middlename..." required>
+                                            placeholder="Middlename...">
                                     </div>
                                     <div class="col-lg-2 px-1 py-2">
                                         <label for="suffix" class="form-label">Suffix</label>
                                         <input type="text" class="form-control" name="passengers[0][suffix]"
-                                            placeholder="Suffix..." required>
+                                            placeholder="Suffix...">
                                     </div>
                                     <div class="col-lg-6 px-1 py-2">
                                         <label for="passport_number" class="form-label">Passport Number</label>
@@ -122,6 +129,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="text-end" id="sub-amount-text">₱ 0.00</div>
+                                    <input type="hidden" name="amount" id="sub-amount-field">
                                 </div>
                             </div>
                             <div class="row">
@@ -130,6 +138,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="text-end">₱ 100.00</div>
+                                    <input type="hidden" name="processing_fee" id="processing-fee-field" value="100">
                                 </div>
                             </div>
                             <div class="row">
@@ -138,6 +147,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="text-end">₱ 0.00</div>
+                                    <input type="hidden" name="discount" id="discount-field" value="0">
                                 </div>
                             </div>
                             <hr>
@@ -146,7 +156,8 @@
                                     <h6>Total Amount:</h6>
                                 </div>
                                 <div class="col-lg-6">
-                                    <div class="text-end">₱ 0.00</div>
+                                    <div class="text-end" id="total-amount-text">₱ 0.00</div>
+                                    <input type="hidden" name="total_amount" value="" id="total-amount-field">
                                 </div>
                             </div>
                             <button class="btn btn-primary btn-block w-100">Pay <i class="bx bx-send"></i></button>
@@ -183,7 +194,7 @@
                 $("#passengers-list-repeater").append(clone);
 
                 fetchCountries();
-                computeSubAmount();
+                computeSubAndTotalAmount();
             });
 
             // Remove Passenger button click event
@@ -193,7 +204,7 @@
                     $(this).closest(".passenger-container").remove();
                 }
 
-                computeSubAmount();
+                computeSubAndTotalAmount();
             });
         });
 
@@ -209,10 +220,10 @@
                 amountField.val(1600);
                 amountText.text('1600.00');
             }
-            computeSubAmount();
+            computeSubAndTotalAmount();
         });
 
-        function computeSubAmount() {
+        function computeSubAndTotalAmount() {
             let amountFields = document.querySelectorAll('.amount-field');
             let subAmount = 0;
 
@@ -220,7 +231,13 @@
                 subAmount += parseInt(element.value);
             });
 
+            let totalAmount = subAmount + 100;
+
             $('#sub-amount-text').text(parseInt(subAmount).toFixed(2));
+            $('#sub-amount-field').val(parseInt(subAmount));
+
+            $('#total-amount-text').text(parseInt(totalAmount).toFixed(2));
+            $('#total-amount-field').val(parseInt(subAmount));
         }
 
         function fetchCountries() {
@@ -238,7 +255,7 @@
         }
 
         fetchCountries();
-        computeSubAmount();
+        computeSubAndTotalAmount();
     </script>
 
     <script></script>

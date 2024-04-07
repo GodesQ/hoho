@@ -409,5 +409,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('travel-taxes/store', [TravelTaxController::class, 'store'])->name('travel_taxes.store');
     Route::get('travel-taxes/edit/{id}', [TravelTaxController::class, 'edit'])->name('travel_taxes.edit');
     Route::put('travel-taxes/update/{id}', [TravelTaxController::class, 'update'])->name('travel_taxes.update');
-    Route::put('travel-taxes/destroy/{id}', [TravelTaxController::class, 'destroy'])->name('travel_taxes.destroy');
+    Route::delete('travel-taxes/destroy/{id}', [TravelTaxController::class, 'destroy'])->name('travel_taxes.destroy');
+    Route::put('travel-taxes/passengers/update', [TravelTaxController::class, 'updatePassenger'])->name('travel_taxes.passengers.update');
+    Route::get('travel-taxes/passengers/{passenger_id}', [TravelTaxController::class, 'getPassenger'])->name('travel_taxes.passengers');
 });
