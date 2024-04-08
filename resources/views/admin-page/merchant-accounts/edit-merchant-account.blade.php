@@ -11,7 +11,7 @@
         </div>
 
         <div class="row">
-            <div class="col-xl-5">
+            <div class="col-xxl-4 col-xl-5">
                 <div class="card">
                     <div class="card-body">
                         <h4>Merchant Information</h4>
@@ -48,15 +48,27 @@
                                 <div class="col-xl-6">{{ $merchant_account->merchant->organization->name ?? 'N/A' }}</div>
                             </div>
                         @else
-                            <div class="d-flex justify-content-center align-items-center flex-column">
-                                <h5>No Merchant Found</h5>
-                                <button class="btn btn-primary">Sync Merchant</button>
-                            </div>
+                            <form action="{{ route('admin.merchant_accounts.update_merchant') }}" method="post">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="id" id="account-id" value="{{ $merchant_account->id }}"> 
+                                <div class="d-flex justify-content-center align-items-center flex-column">
+                                    <div class="mb-3 w-100">
+                                        <label for="merchant-select-field" class="form-label">Select Merchant</label>
+                                        <select name="merchant_id" id="merchant-select-field" class="select2">
+                                            <option value="">--- SELECT MERCHANT ---</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-primary">
+                                        Sync Merchant
+                                    </button>
+                                </div>
+                            </form>
                         @endif
                     </div>
                 </div>
             </div>
-            <div class="col-xl-7">
+            <div class="col-xxl-8 col-xl-7">
                 <form action="{{ route('admin.merchant_accounts.update', $merchant_account->id) }}" method="post">
                     @csrf
                     @method('PUT')
@@ -129,3 +141,22 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            let role = $('#role').val();
+            $.ajax({
+                url: '{{ route('admin.merchants.users.roles', '') }}' + '/' + role,
+                method: 'GET',
+                success: function(data) {
+                    
+                    data.merchants.forEach(merchant => {
+                        var newOption = new Option(merchant.name, merchant.id, false, false);
+                        $('#merchant-select-field').append(newOption).trigger('change');
+                    });
+                }
+            })
+        })
+    </script>
+@endpush

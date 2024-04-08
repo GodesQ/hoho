@@ -50,6 +50,7 @@
     <link rel="stylesheet" href="{{ URL::asset('assets/css/tour-reservation-step-form.css') }}">
 
     <link rel="stylesheet" href="{{ URL::asset('assets/css/palette-callout.css') }}">
+    <link rel="stylesheet" href="{{ URL::asset('assets/css/app-transports.css') }}">
 
     <!-- Page CSS -->
 

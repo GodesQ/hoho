@@ -73,4 +73,14 @@ class MerchantAccountController extends Controller
     {
 
     }
+
+    public function updateMerchant(Request $request) {
+        $admin = Admin::findOrFail($request->id);
+
+        $admin->update([
+            'merchant_id' => $request->merchant_id,
+        ]);
+
+        return back()->withSuccess('Merchant sync successfully.');
+    }
 }

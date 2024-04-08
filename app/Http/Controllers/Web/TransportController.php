@@ -141,4 +141,12 @@ class TransportController extends Controller
         $transport = Transport::where('id', $id)->with('assigned_tour')->first();
         return $transport;
     }
+
+    public function lookup(Request $request) {
+        $transports = Transport::get();
+
+        return response([
+            'transports' => $transports,
+        ]);
+    }
 }

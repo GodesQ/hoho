@@ -99,8 +99,6 @@ Route::get('aqwire/payment/cancel/{id}', [AqwireController::class, 'cancel']);
 Route::get('aqwire/payment/travel-tax/cancel/{id}', [AqwireController::class, 'travelTaxCancel']);
 Route::get('aqwire/payment/view_cancel', [AqwireController::class, 'viewCancel']);
 
-
-
 Route::post('aqwire/payment/callback/{id}', [AqwireController::class, 'callback']);
 
 Route::get('user/verify_email', [UserAuthController::class, 'verifyEmail']);
@@ -137,6 +135,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::get('merchant-accounts/edit/{id}', [MerchantAccountController::class, 'edit'])->name('merchant_accounts.edit');
     Route::put('merchant-accounts/update/{id}', [MerchantAccountController::class,'update'])->name('merchant_accounts.update');
     Route::delete('merchant-accounts/destroy/{id}', [MerchantAccountController::class, 'destroy'])->name('merchant_accounts.destroy');
+    Route::put('merchant-accounts/update-merchant', [MerchantAccountController::class, 'updateMerchant'])->name('merchant_accounts.update_merchant');
 
     Route::get('users', [UserController::class, 'list'])->name('users.list')->can('view_users_list');
     Route::get('users/lookup', [UserController::class, 'lookup'])->name('users.lookup');
@@ -182,6 +181,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('transports/update/{id}', [TransportController::class, 'update'])->name('transports.update');
     Route::delete('transports/destroy', [TransportController::class, 'destroy'])->name('transports.destroy');
     Route::get('transports/tour/attractions/{id}', [TransportController::class, 'getTransportAttractions'])->name('transports.get_transport_attractions');
+    Route::get('transports/lookup', [TransportController::class, 'lookup'])->name('transports.lookup');
 
     Route::get('attractions', [AttractionController::class, 'list'])->name('attractions.list')->can('view_attractions_list');
     Route::get('attractions/create', [AttractionController::class, 'create'])->name('attractions.create');
@@ -209,7 +209,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::get('merchants/edit/{id}', [MerchantController::class, 'edit'])->name('merchants.edit');
     Route::post('merchants/update/{id}', [MerchantController::class, 'update'])->name('merchants.update');
     Route::delete('merchants/destroy', [MerchantController::class, 'destroy'])->name('merchants.destroy');
-
+    Route::get('merchants/users/roles/{role}', [MerchantController::class, 'merchantsByUserRole'])->name('merchants.users.roles');
 
     Route::prefix('merchants')->as('merchants.')->group(function () {
         Route::get('hotels', [MerchantHotelController::class, 'list'])->name('hotels.list')->can('view_merchant_hotels_list');

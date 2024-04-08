@@ -1,0 +1,74 @@
+.app-transports-fleet-wrapper {
+    position: relative;
+    border: none;
+    overflow: hidden;
+    height: calc(100vh - 10rem);
+}
+
+.app-transports-fleet-wrapper .app-transports-fleet-sidebar {
+    position: absolute;
+    overflow: hidden;
+    background-color: #fff;
+    flex-grow: 0;
+    flex-basis: 25rem;
+    left: calc(-21rem - 1.2rem);
+    height: 100%;
+    width: 20rem;
+    transition: all .3s;
+    z-index: 2;
+}
+
+.timeline {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    list-style: none;
+}
+
+.timeline-item {
+    border-left: 1px solid #d9dee3;
+}
+
+.ps-4 {
+    padding-left: 1.5rem !important;
+}
+
+.border-left-dashed {
+    border-left-style: dashed !important;
+}
+
+.timeline .timeline-item {
+    position: relative;
+    list-style: none;
+}
+
+.timeline .timeline-item .timeline-indicator,
+.timeline .timeline-item .timeline-indicator-advanced {
+    background-color: #fff;
+}
+
+.timeline .timeline-item .timeline-indicator,
+.timeline .timeline-item .timeline-indicator-advanced {
+    background-color: #f5f5f9;
+    position: absolute;
+    left: -0.75rem;
+    top: 0;
+    z-index: 2;
+    height: 1.5rem;
+    width: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 50%;
+    padding: 1rem 0 1rem 0;
+}
+
+@media (min-width: 768px) {
+    .app-transports-fleet-wrapper .app-transports-fleet-sidebar {
+        position: static;
+        height: auto;
+        background-color: rgba(0, 0, 0, 0) !important;
+    }
+}
