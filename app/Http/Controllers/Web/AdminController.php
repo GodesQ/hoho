@@ -25,39 +25,47 @@ use Carbon\Carbon;
 
 class AdminController extends Controller
 {
-    public function list(Request $request) {
-        if($request->ajax()) {
-            $data = Admin::get(); 
+    public function list(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Admin::whereNotIn('role', [
+                'merchant_restaurant_admin',
+                'merchant_hotel_admin',
+                'merchant_store_admin',
+                'tour_operator_admin'
+            ]);
             return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('role', function ($data) {
-                        return Str::title(Str::replace('_',' ', $data->role));
-                    })
-                    ->addColumn('is_approved', function($row) {
-                        if ($row->is_approved) {
-                            return '<span class="badge bg-label-success me-1">Yes</span>';
-                        } else {
-                            return '<span class="badge bg-label-secondary me-1">No</span>';
-                        }
-                    })
-                    ->addColumn('actions', function ($row) {
-                        return '<div class="dropdown">
-                                    <a href="/admin/admins/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
+                ->addIndexColumn()
+                ->addColumn('role', function ($data) {
+                    return Str::title(Str::replace('_', ' ', $data->role));
+                })
+                ->addColumn('is_approved', function ($row) {
+                    if ($row->is_approved) {
+                        return '<span class="badge bg-label-success me-1">Yes</span>';
+                    } else {
+                        return '<span class="badge bg-label-secondary me-1">No</span>';
+                    }
+                })
+                ->addColumn('actions', function ($row) {
+                    return '<div class="dropdown">
+                                    <a href="/admin/admins/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
                                 </div>';
-                    })
-                    ->rawColumns(['actions', 'is_approved'])
-                    ->make(true);
+                })
+                ->rawColumns(['actions', 'is_approved'])
+                ->make(true);
         }
-        
+
         return view('admin-page.admins.list-admin');
     }
 
-    public function create(Request $request) {
+    public function create(Request $request)
+    {
         $roles = Role::get();
         return view('admin-page.admins.create-admin', compact('roles'));
     }
 
-    public function store(StoreRequest $request) {
+    public function store(StoreRequest $request)
+    {
         $data = $request->except('_token', 'password');
 
         $admin = Admin::create(array_merge($data, [
@@ -65,23 +73,26 @@ class AdminController extends Controller
             'password' => Hash::make($request->password)
         ]));
 
-        if($admin) return redirect()->route('admin.admins.edit', $admin->id)->withSuccess('Admin created successfully');
+        if ($admin)
+            return redirect()->route('admin.admins.edit', $admin->id)->withSuccess('Admin created successfully');
     }
 
-    public function edit(Request $request) {
+    public function edit(Request $request)
+    {
         $roles = Role::get();
         $admin = Admin::where('id', $request->id)->firstOrFail();
 
         return view('admin-page.admins.edit-admin', compact('admin', 'roles'));
     }
 
-    public function update(UpdateRequest $request) {
+    public function update(UpdateRequest $request)
+    {
         $data = $request->except('_token');
         $admin = Admin::where('id', $request->id)->first();
 
         $image_name = $admin->username;
 
-        if($request->hasFile('admin_profile')) {
+        if ($request->hasFile('admin_profile')) {
             $old_upload_image = public_path('/assets/img/admin_profiles') . $admin->admin_profile;
             @unlink($old_upload_image);
             $file = $request->file('admin_profile');
@@ -98,7 +109,7 @@ class AdminController extends Controller
             'admin_profile' => $file_name
         ]));
 
-        if($request->has('is_approved') && !$admin->email_approved_at) {
+        if ($request->has('is_approved') && !$admin->email_approved_at) {
             $details = [
                 'email' => $request->email,
             ];
@@ -113,10 +124,11 @@ class AdminController extends Controller
         return back()->withSuccess('Admin updated successfully');
     }
 
-    public function destroy(Request $request, $id) {
+    public function destroy(Request $request, $id)
+    {
         $admin = Admin::where('id', $id)->first();
-        
-        if($admin->admin_profile) {
+
+        if ($admin->admin_profile) {
             $old_upload_image = public_path('/assets/img/admin_profiles') . $admin->admin_profile;
             @unlink($old_upload_image);
         }
@@ -129,8 +141,9 @@ class AdminController extends Controller
         ]);
     }
 
-    public function merchantAdmins() {
-        
+    public function merchantAdmins()
+    {
+
         // $auth = Auth::user();
         $results = Admin::whereNotNull('merchant_data_id')->get();
         foreach ($results as $key => $result) {
@@ -152,7 +165,7 @@ class AdminController extends Controller
                     $merchant_data = null;
                     break;
             }
-        
+
             $result->update([
                 'merchant_id' => $merchant_data->merchant_id ?? null
             ]);
@@ -161,7 +174,8 @@ class AdminController extends Controller
         echo "Success";
     }
 
-    public function operatorAdmins() {
+    public function operatorAdmins()
+    {
         $admins = Admin::whereHas('transport')->with('transport')->get();
         foreach ($admins as $key => $admin) {
             $admin->update([
@@ -173,22 +187,23 @@ class AdminController extends Controller
 
     }
 
-    public function sendMessageWithSemaphore() {
+    public function sendMessageWithSemaphore()
+    {
         // $client = new Client();
-    
+
         // $parameters = [
         //     'apikey' => '2e9288e75f56bb100bd53d018142b2e7',
         //     'number' => '+639633987953',
         //     'message' => 'I just sent my first message with Semaphore',
         // ];
-    
+
         // try {
         //     $response = $client->request('POST', 'https://semaphore.co/api/v4/messages', [
         //         'form_params' => $parameters
         //     ]);
-    
+
         //     $output = $response->getBody()->getContents();
-    
+
         //     // Show the server response
         //     echo $output;
         // } catch (\Exception $e) {

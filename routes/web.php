@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\AdminAccounts\MerchantAccountController;
 use App\Http\Controllers\Web\ApiConsumerController;
 use App\Http\Controllers\Web\AppSettingController;
 use App\Http\Controllers\Web\CartController;
@@ -129,6 +130,13 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::delete('admins/destroy/{id}', [AdminController::class, 'destroy'])->name('admins.destroy')->can('delete_admin');
     Route::get('admins/merchantAdmins', [AdminController::class, 'merchantAdmins']);
     Route::get('admins/operatorAdmins', [AdminController::class, 'operatorAdmins']);
+
+    Route::get('merchant-accounts', [MerchantAccountController::class, 'index'])->name('merchant_accounts.index');
+    Route::get('merchant-accounts/create', [MerchantAccountController::class, 'create'])->name('merchant_accounts.create');
+    Route::post('merchant-accounts/store', [MerchantAccountController::class, 'store'])->name('merchant_accounts.store');
+    Route::get('merchant-accounts/edit/{id}', [MerchantAccountController::class, 'edit'])->name('merchant_accounts.edit');
+    Route::put('merchant-accounts/update/{id}', [MerchantAccountController::class,'update'])->name('merchant_accounts.update');
+    Route::delete('merchant-accounts/destroy/{id}', [MerchantAccountController::class, 'destroy'])->name('merchant_accounts.destroy');
 
     Route::get('users', [UserController::class, 'list'])->name('users.list')->can('view_users_list');
     Route::get('users/lookup', [UserController::class, 'lookup'])->name('users.lookup');

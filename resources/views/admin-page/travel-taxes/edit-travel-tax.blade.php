@@ -78,11 +78,11 @@
                             <div class="d-flex justify-content-between align-items-start w-100 border-bottom mb-2 py-2">
                                 <h6 class="mb-1">Passenger {{ $key + 1 }}</h6>
 
-                                <a href="#" class="btn btn-primary btn-sm" data-id="{{ $passenger->id }}"
+                                {{-- <a href="#" class="btn btn-primary btn-sm" data-id="{{ $passenger->id }}"
                                     onclick="handleClickEdit(this)" data-bs-toggle="offcanvas"
                                     data-bs-target="#offcanvasEnd" aria-controls="offcanvasEnd">
                                     <i class="bx bx-edit"></i>
-                                </a>
+                                </a> --}}
 
                             </div>
                             <div class="row">

@@ -37,11 +37,23 @@
 
     @auth('admin')
         @can('view_admins_list')
-            <li class="menu-item {{ preg_match('/admin\/admins/', Request::path()) ? 'active' : null }}">
-                <a href="{{ route('admin.admins.list') }}" class="menu-link">
+            <li class="menu-item">
+                <a href="#" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bxs-user"></i>
-                    <div data-i18n="Admins">Admins</div>
+                    <div data-i18n="User Admin Accounts">Admin Accounts</div>
                 </a>
+                <ul class="menu-sub">
+                    <li class="menu-item {{ preg_match('/admin\/admins/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.admins.list') }}" class="menu-link">
+                            <div data-i18n="Super Admin Accounts">HOHO Admin Accounts</div>
+                        </a>
+                    </li>
+                    <li class="menu-item {{ preg_match('/admin\/merchant-accounts/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.merchant_accounts.index') }}" class="menu-link">
+                            <div data-i18n="Merchant Accounts">Merchant Accounts</div>
+                        </a>
+                    </li>
+                </ul>
             </li>
         @endcan
     @endauth
@@ -91,7 +103,8 @@
 
             @auth('admin')
                 @can('view_merchant_tour_providers_list')
-                    <li class="menu-item {{ preg_match('/admin\/merchants\/tour_providers/', Request::path()) ? 'active' : null }}">
+                    <li
+                        class="menu-item {{ preg_match('/admin\/merchants\/tour_providers/', Request::path()) ? 'active' : null }}">
                         <a href="{{ route('admin.merchants.tour_providers.list') }}" class="menu-link">
                             <div data-i18n="Tour Providers">Tour Providers</div>
                         </a>
@@ -131,7 +144,7 @@
             </li>
         @endcan
     @endauth
-    
+
     @auth('admin')
         @can('view_foods_list')
             <li class="menu-item {{ preg_match('/admin\/foods/', Request::path()) ? 'active' : null }}">
@@ -176,7 +189,7 @@
                     <i class='menu-icon tf-icons bx bx-book-content'></i>
                     <div data-i18n="Hotel Reservations">Hotel Reservations</div>
                 </a>
-            </li>   
+            </li>
         @endcan
     @endauth
 
@@ -307,12 +320,16 @@
         @endcan
     @endauth
 
-    <li class="menu-item {{ preg_match('/admin\/travel-taxes/', Request::path()) ? 'active' : null }}">
-        <a href="{{ route('admin.travel_taxes.list') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-money"></i>
-            <div data-i18n="Travel Taxes">Travel Taxes</div>
-        </a>
-    </li>
+    @auth('admin')
+        @can('view_travel_taxes_list')
+            <li class="menu-item {{ preg_match('/admin\/travel-taxes/', Request::path()) ? 'active' : null }}">
+                <a href="{{ route('admin.travel_taxes.list') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-money"></i>
+                    <div data-i18n="Travel Taxes">Travel Taxes</div>
+                </a>
+            </li>
+        @endcan
+    @endauth
 
     <li class="menu-item {{ preg_match('/admin\/reports/', Request::path()) ? 'active open' : null }}">
         @auth('admin')

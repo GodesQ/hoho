@@ -97,7 +97,7 @@
                                     <div class="col-xl-5 px-1 py-2">
                                         <label for="destination" class="form-label">Destination</label>
                                         <select name="passengers[0][destination]" required
-                                            class="select2 destination-field">
+                                            class="form-select destination-field">
                                             <option value="">--- SELECT DESTINATION ---</option>
                                         </select>
                                     </div>
@@ -138,7 +138,8 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="text-end">₱ 100.00</div>
-                                    <input type="hidden" name="processing_fee" id="processing-fee-field" value="100">
+                                    <input type="hidden" name="processing_fee" id="processing-fee-field"
+                                        value="100">
                                 </div>
                             </div>
                             <div class="row">
