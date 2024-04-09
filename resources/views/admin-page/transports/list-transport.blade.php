@@ -167,7 +167,7 @@
                 anchor: new google.maps.Point(20, 40)
             };
 
-            new google.maps.Marker({
+            let marker = new google.maps.Marker({
                 map,
                 position: {
                     lat: parseFloat(latitude),
@@ -175,6 +175,27 @@
                 },
                 title: name,
                 icon: busIcon
+            });
+
+            // Create a new info window
+            const infoWindow = new google.maps.InfoWindow();
+
+            // Set the content of the info window
+            const infoWindowContent = `<div>
+                                            <h6>${name}</h6>
+                                            <p style="margin-bottom: 5px;"><span style="font-weight: 700;">Latitude:</span> ${latitude}</p>
+                                            <p style="margin-bottom: 5px;"><span style="font-weight: 700;">Longitude:</span> ${longitude}</p>
+                                        </div>`;
+            infoWindow.setContent(infoWindowContent);
+
+            // Attach an event listener to the marker to open the info window when clicked
+            marker.addListener("click", () => {
+                infoWindow.open(map, marker);
+            });
+
+            // Optionally, close the info window when clicking the map
+            google.maps.event.addListener(map, "click", () => {
+                infoWindow.close();
             });
         }
 

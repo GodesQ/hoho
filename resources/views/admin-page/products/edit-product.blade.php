@@ -6,7 +6,7 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="fw-bold py-3 mb-4">Edit Product</h4>
-            <a href="{{ route('admin.products.index') }}" class="btn btn-primary">Back to List <i class="bx bx-undo"></i></a>
+            <a href="{{ route('admin.products.index') }}" class="btn btn-dark">Back to List <i class="bx bx-undo"></i></a>
         </div>
 
         <form action="{{ route('admin.products.update', $product->id) }}" method="post" enctype="multipart/form-data">

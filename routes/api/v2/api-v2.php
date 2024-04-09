@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\v2\TourBadgeController;
 use App\Http\Controllers\Api\v2\TourController;
 use App\Http\Controllers\Api\v2\TourReservationController;
 use App\Http\Controllers\Api\v2\TransportController;
+use App\Http\Controllers\Api\v2\TravelTaxController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -80,4 +81,7 @@ use Illuminate\Support\Facades\Route;
 
         Route::get('/hotel-reservations/{hotel_reservation_id}', [HotelReservationController::class, 'show']);
 
+        Route::get('travel-taxes', [TravelTaxController::class, 'index']);
+        Route::get('travel-taxes/{travel_tax_id}/passengers/{passenger_id}', [TravelTaxController::class, 'travelTaxPassenger']);
+        Route::get('travel-taxes/{travel_tax_id}', [TravelTaxController::class, 'show']);
     });
