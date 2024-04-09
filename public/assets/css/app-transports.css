@@ -2,7 +2,7 @@
     position: relative;
     border: none;
     overflow: hidden;
-    height: calc(100vh - 10rem);
+    height: calc(100vh - 20rem);
 }
 
 .app-transports-fleet-wrapper .app-transports-fleet-sidebar {

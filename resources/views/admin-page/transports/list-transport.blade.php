@@ -52,9 +52,7 @@
             </div>
         </div>
 
-
-
-        <div class="card">
+        {{-- <div class="card">
             <div class="card-body">
                 <div class="table-responsive-lg text-nowrap">
                     <table class="table   data-table">
@@ -69,12 +67,12 @@
                     </table>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 @endsection
 
 @push('scripts')
-    <script>
+    {{-- <script>
         function loadTable() {
             let table = $('.data-table').DataTable({
                 processing: true,
@@ -147,7 +145,7 @@
             })
         });
         loadTable();
-    </script>
+    </script> --}}
     <script>
         let map;
         async function initMap() {
@@ -156,8 +154,27 @@
                     lat: 14.5889842,
                     lng: 120.9768261
                 },
-                zoom: 20,
+                zoom: 13,
                 tilt: 45,
+            });
+        }
+
+        function createMarker(latitude, longitude, name) {
+            const busIcon = {
+                url: "{{ URL::asset('assets/img/icons/bus.png') }}",
+                scaledSize: new google.maps.Size(40, 40),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(20, 40)
+            };
+
+            new google.maps.Marker({
+                map,
+                position: {
+                    lat: parseFloat(latitude),
+                    lng: parseFloat(longitude)
+                },
+                title: name,
+                icon: busIcon
             });
         }
 
@@ -169,7 +186,6 @@
                 fetch(url)
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data);
                         if (data.results && data.results.length > 0) {
                             resolve(data.results[0].formatted_address);
                         } else {
@@ -188,16 +204,9 @@
             success: function(data) {
                 let html = '';
                 data.transports.forEach(transport => {
+                    createMarker(transport.latitude, transport.longitude, transport.name);
                     let current_stop = JSON.parse(transport.current_location);
                     let next_stop = JSON.parse(transport.next_location);
-                    let transportLocation;
-                    getAddressFromLatLng(transport.latitude, transport.longitude, 'AIzaSyCcjk7zETwVNURwNgnIidjFDQzVcjGaqVU')
-                        .then(address => {
-                            transportLocation = address
-                        })
-                        .catch(error => {
-                            console.error("Error:", error);
-                        });
                     html += `<div class="accordion-item shadow-none border-0 mb-0" id="fl-1">
                                     <div class="accordion-header" id="fleetOne">
                                         <div role="button" class="accordion-button shadow-none" data-bs-toggle="collapse"
