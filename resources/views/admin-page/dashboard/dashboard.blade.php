@@ -15,13 +15,17 @@
         }
     </style>
     <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="d-flex justify-content-end">
-            <div class="form-check form-switch mb-2">
-                <label class="form-check-label" for="maintenance-mode-btn">Maintenance Mode</label>
-                <input class="form-check-input" type="checkbox" id="maintenance-mode-btn" name="is_approved"
-                    {{ maintenanceMode() ? 'checked' : null }} />
-            </div>
-        </div>
+        @auth('admin')
+            @can('update_maintenance_mode')
+                <div class="d-flex justify-content-end">
+                    <div class="form-check form-switch mb-2">
+                        <label class="form-check-label" for="maintenance-mode-btn">Maintenance Mode</label>
+                        <input class="form-check-input" type="checkbox" id="maintenance-mode-btn" name="is_approved"
+                            {{ maintenanceMode() ? 'checked' : null }} />
+                    </div>
+                </div>
+            @endcan
+        @endauth
         <div class="row">
             <div class="col-lg-8 mb-4 order-0">
                 <div class="card">
