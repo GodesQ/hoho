@@ -68,10 +68,10 @@
                                                 <label for="name" class="form-label">Tour Type</label>
                                                 <select name="type" id="type" class="form-select">
                                                     <option value="">---- SELECT TOUR TYPE ----</option>
-                                                    <option {{ old('type') == 'Luxury Tour' ? 'selected' : null }} value="Luxury Tour">Luxury Tour</option>
                                                     <option {{ old('type') == 'City Tour' ? 'selected' : null }} value="City Tour">City Tour</option>
                                                     <option {{ old('type') == 'Guided Tour' ? 'selected' : null }} value="Guided Tour">Guided Tour</option>
                                                     <option {{ old('type') == 'DIY Tour' ? 'selected' : null }} value="DIY Tour">DIY Tour</option>
+                                                    <option {{ old('type') == 'Layover Tour' ? 'selected' : null }} value="Layover Tour">Layover Tour</option>
                                                     <option {{ old('type') == 'Others' ? 'selected' : null }} value="Others">Others</option>
                                                 </select>
                                             </div>

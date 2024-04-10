@@ -64,6 +64,8 @@ Route::get('featured_merchants', [MerchantController::class, 'getFeaturedMerchan
 
 Route::get('app-settings/maintenance-mode', [AppSettingController::class, 'checkMaintenanceMode']);
 
+Route::get('tours/layover', [TourController::class, 'getLayoverTours']);
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
 

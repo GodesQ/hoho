@@ -55,7 +55,8 @@
                                     </li>
                                 </ul>
                                 <hr>
-                                <form action="{{ route('admin.tours.update', $tour->id) }}" method="POST" enctype="multipart/form-data">
+                                <form action="{{ route('admin.tours.update', $tour->id) }}" method="POST"
+                                    enctype="multipart/form-data">
                                     @csrf
                                     @if ($errors->any())
                                         @foreach ($errors->all() as $error)
@@ -87,6 +88,9 @@
                                                                 City Tour</option>
                                                             <option {{ $tour->type == 'Guided Tour' ? 'selected' : null }}
                                                                 value="Guided Tour">Guided Tour</option>
+                                                            <option {{ $tour->type == 'Layover Tour' ? 'selected' : null }}
+                                                                value="Layover Tour">Layover
+                                                                Tour</option>
                                                             <option {{ $tour->type == 'DIY Tour' ? 'selected' : null }}
                                                                 value="DIY Tour">DIY
                                                                 Tour</option>
@@ -98,7 +102,8 @@
                                                 </div>
                                                 <div class="col-lg-4">
                                                     <div class="mb-3">
-                                                        <label for="featured_image" class="form-label">Featured Image</label>
+                                                        <label for="featured_image" class="form-label">Featured
+                                                            Image</label>
                                                         <input type="file" class="form-control" name="featured_image"
                                                             id="featured_image" accept="image/*">
                                                     </div>
@@ -106,7 +111,8 @@
                                                 <div class="col-lg-4">
                                                     <div class="mb-3">
                                                         <label for="tour_provider" class="form-label">Tour Provider</label>
-                                                        <select name="tour_provider_id" id="tour_provider" class="form-select">
+                                                        <select name="tour_provider_id" id="tour_provider"
+                                                            class="form-select">
                                                             <option value="">--- SELECT TOUR PROVIDER ---</option>
                                                             @foreach ($tour_providers as $tour_provider)
                                                                 <option value="{{ $tour_provider->id }}"
@@ -119,55 +125,71 @@
                                                 </div>
                                                 <div class="col-lg-4">
                                                     <?php
-                                                        $tour_interests = $tour->interests ? json_decode($tour->interests) : [];
-                                                        if(!is_array($tour_interests)) {
-                                                            $tour_interests = [];
-                                                        }
+                                                    $tour_interests = $tour->interests ? json_decode($tour->interests) : [];
+                                                    if (!is_array($tour_interests)) {
+                                                        $tour_interests = [];
+                                                    }
                                                     ?>
                                                     <div class="mb-3">
                                                         <label for="interests" class="form-label">Interests</label>
                                                         <select name="interests[]" id="interests" class="select2" multiple>
                                                             @foreach ($interests as $interest)
-                                                                <option value="{{ $interest->id }}" {{ in_array($interest->id, $tour_interests) ? 'selected' : null }} >{{ $interest->name }}</option>
+                                                                <option value="{{ $interest->id }}"
+                                                                    {{ in_array($interest->id, $tour_interests) ? 'selected' : null }}>
+                                                                    {{ $interest->name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-4">
                                                     <div class="mb-3">
-                                                        <?php $disabled_days = $tour->disabled_days ? json_decode($tour->disabled_days) : [] ?>
+                                                        <?php $disabled_days = $tour->disabled_days ? json_decode($tour->disabled_days) : []; ?>
                                                         <label for="bypass_days" class="form-label">Disabled Days</label>
-                                                        <select name="disabled_days[]" id="disabled_days" class="select2" multiple>
-                                                            <option {{ in_array(1, $disabled_days) ? 'selected' : null }} value="1">Monday</option>
-                                                            <option {{ in_array(2, $disabled_days) ? 'selected' : null }} value="2">Tuesday</option>
-                                                            <option {{ in_array(3, $disabled_days) ? 'selected' : null }} value="3">Wednesday</option>
-                                                            <option {{ in_array(4, $disabled_days) ? 'selected' : null }} value="4">Thursday</option>
-                                                            <option {{ in_array(5, $disabled_days) ? 'selected' : null }} value="5">Friday</option>
-                                                            <option {{ in_array(6, $disabled_days) ? 'selected' : null }} value="6">Saturday</option>
-                                                            <option {{ in_array(7, $disabled_days) ? 'selected' : null }} value="7">Sunday</option>
+                                                        <select name="disabled_days[]" id="disabled_days" class="select2"
+                                                            multiple>
+                                                            <option {{ in_array(1, $disabled_days) ? 'selected' : null }}
+                                                                value="1">Monday</option>
+                                                            <option {{ in_array(2, $disabled_days) ? 'selected' : null }}
+                                                                value="2">Tuesday</option>
+                                                            <option {{ in_array(3, $disabled_days) ? 'selected' : null }}
+                                                                value="3">Wednesday</option>
+                                                            <option {{ in_array(4, $disabled_days) ? 'selected' : null }}
+                                                                value="4">Thursday</option>
+                                                            <option {{ in_array(5, $disabled_days) ? 'selected' : null }}
+                                                                value="5">Friday</option>
+                                                            <option {{ in_array(6, $disabled_days) ? 'selected' : null }}
+                                                                value="6">Saturday</option>
+                                                            <option {{ in_array(7, $disabled_days) ? 'selected' : null }}
+                                                                value="7">Sunday</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-3">
                                                     <div class="mb-3">
-                                                        <label for="bypass_days" class="form-label">Number of ByPass Days</label>
-                                                        <input type="number" name="bypass_days" id="bypass_days" class="form-control" value="{{ $tour->bypass_days }}">
+                                                        <label for="bypass_days" class="form-label">Number of ByPass
+                                                            Days</label>
+                                                        <input type="number" name="bypass_days" id="bypass_days"
+                                                            class="form-control" value="{{ $tour->bypass_days }}">
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="col-lg-2">
                                                     <div class="mb-3">
                                                         <label for="minimum_pax" class="form-label">Minimum Pax</label>
-                                                        <input type="number" name="minimum_pax" id="minimum_pax" class="form-control" value="{{ $tour->minimum_pax }}">
+                                                        <input type="number" name="minimum_pax" id="minimum_pax"
+                                                            class="form-control" value="{{ $tour->minimum_pax }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-3">
                                                     <div class="mb-3">
-                                                        <label for="organization-field" class="form-label">Organization</label>
-                                                        <select name="organization_id" id="organization-field" class="form-select">
-                                                                <option value="">--- SELECT ORGANIZATION ---</option>
+                                                        <label for="organization-field"
+                                                            class="form-label">Organization</label>
+                                                        <select name="organization_id" id="organization-field"
+                                                            class="form-select">
+                                                            <option value="">--- SELECT ORGANIZATION ---</option>
                                                             @foreach ($organizations as $organization)
-                                                                <option value="{{ $organization->id }}" {{ $tour->organization_id == $organization->id ? 'selected' : null }}>
+                                                                <option value="{{ $organization->id }}"
+                                                                    {{ $tour->organization_id == $organization->id ? 'selected' : null }}>
                                                                     {{ $organization->name }}
                                                                 </option>
                                                             @endforeach
@@ -180,16 +202,18 @@
                                                             <div class="mb-3">
                                                                 <label for="under_age_limit" class="form-label">Under Age
                                                                     Limit</label>
-                                                                <input type="number" class="form-control" name="under_age_limit"
-                                                                    id="under_age_limit" value="{{ $tour->under_age_limit }}">
+                                                                <input type="number" class="form-control"
+                                                                    name="under_age_limit" id="under_age_limit"
+                                                                    value="{{ $tour->under_age_limit }}">
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-6">
                                                             <div class="mb-3">
                                                                 <label for="over_age_limit" class="form-label">Over Age
                                                                     Limit</label>
-                                                                <input type="number" class="form-control" name="over_age_limit"
-                                                                    id="over_age_limit" value="{{ $tour->over_age_limit }}">
+                                                                <input type="number" class="form-control"
+                                                                    name="over_age_limit" id="over_age_limit"
+                                                                    value="{{ $tour->over_age_limit }}">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -199,11 +223,13 @@
                                                         <div class="col-lg-6">
                                                             <label for="minimum_capacity" class="form-label">Minimum
                                                                 Capacity</label>
-                                                            <input type="number" class="form-control" name="minimum_capacity"
-                                                                id="minimum_capacity" value="{{ $tour->minimum_capacity }}">
+                                                            <input type="number" class="form-control"
+                                                                name="minimum_capacity" id="minimum_capacity"
+                                                                value="{{ $tour->minimum_capacity }}">
                                                         </div>
                                                         <div class="col-lg-6">
-                                                            <label for="capacity" class="form-label">Maximum Capacity</label>
+                                                            <label for="capacity" class="form-label">Maximum
+                                                                Capacity</label>
                                                             <input type="number" class="form-control" name="capacity"
                                                                 id="capacity" value="{{ $tour->capacity }}">
                                                         </div>
@@ -213,14 +239,16 @@
                                                     <div class="row">
                                                         <div class="col-lg-3">
                                                             <div class="mb-3">
-                                                                <label for="price" class="form-label">Default Price</label>
+                                                                <label for="price" class="form-label">Default
+                                                                    Price</label>
                                                                 <input type="text" class="form-control" name="price"
                                                                     id="price" value="{{ $tour->price }}">
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-3">
                                                             <div class="mb-3">
-                                                                <label for="bracket_price_one" class="form-label">Bracket Price
+                                                                <label for="bracket_price_one" class="form-label">Bracket
+                                                                    Price
                                                                     (Min of
                                                                     4)</label>
                                                                 <input type="text" class="form-control"
@@ -230,7 +258,8 @@
                                                         </div>
                                                         <div class="col-lg-3">
                                                             <div class="mb-3">
-                                                                <label for="bracket_price_two" class="form-label">Bracket Price
+                                                                <label for="bracket_price_two" class="form-label">Bracket
+                                                                    Price
                                                                     (Min of
                                                                     10)</label>
                                                                 <input type="text" class="form-control"
@@ -240,7 +269,8 @@
                                                         </div>
                                                         <div class="col-lg-3">
                                                             <div class="mb-3">
-                                                                <label for="bracket_price_three" class="form-label">Bracket Price
+                                                                <label for="bracket_price_three"
+                                                                    class="form-label">Bracket Price
                                                                     (Min of
                                                                     25)</label>
                                                                 <input type="text" class="form-control"
@@ -252,14 +282,16 @@
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
-                                                        <label for="date_duration" class="form-label">Date Duration</label>
+                                                        <label for="date_duration" class="form-label">Date
+                                                            Duration</label>
                                                         <input type="text" class="form-control" name="date_duration"
                                                             id="date_duration" readonly>
                                                         <div class="row">
                                                             <div class="col-lg-6">
                                                                 <div class="my-2">
                                                                     <input type="text" class="form-control"
-                                                                        name="start_date_duration" id="start_date_duration"
+                                                                        name="start_date_duration"
+                                                                        id="start_date_duration"
                                                                         value="{{ $tour->start_date_duration }}" readonly>
                                                                 </div>
                                                             </div>
@@ -275,18 +307,22 @@
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
-                                                        <label for="total_duration" class="form-label">Total Duration</label>
+                                                        <label for="total_duration" class="form-label">Total
+                                                            Duration</label>
                                                         <input type="text" class="form-control" name="tour_duration"
-                                                            id="total_duration" value="{{ $tour->tour_duration }}" readonly>
+                                                            id="total_duration" value="{{ $tour->tour_duration }}"
+                                                            readonly>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-12">
                                                     <?php $attractions_assignment_ids = $tour->attractions_assignments_ids ? json_decode($tour->attractions_assignments_ids) : []; ?>
                                                     <div class="mb-3">
-                                                        <label for="attractions_assignments_ids" class="form-label">Attractions
+                                                        <label for="attractions_assignments_ids"
+                                                            class="form-label">Attractions
                                                             Assignment</label>
                                                         <select name="attractions_assignments_ids[]"
-                                                            id="attractions_assignments_ids" class="select2 form-select" multiple>
+                                                            id="attractions_assignments_ids" class="select2 form-select"
+                                                            multiple>
                                                             @foreach ($attractions as $attraction)
                                                                 <option
                                                                     {{ in_array($attraction->id, $attractions_assignment_ids) ? 'selected' : null }}
@@ -304,19 +340,22 @@
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
-                                                        <label for="operating_hours" class="form-label">Operating Hours</label>
+                                                        <label for="operating_hours" class="form-label">Operating
+                                                            Hours</label>
                                                         <textarea name="operating_hours" id="operating_hours" cols="30" rows="5" class="form-control">{{ $tour->operating_hours }}</textarea>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
-                                                        <label for="tour_itinerary" class="form-label">Tour Itinerary</label>
+                                                        <label for="tour_itinerary" class="form-label">Tour
+                                                            Itinerary</label>
                                                         <textarea name="tour_itinerary" id="tour_itinerary" cols="30" rows="5" class="form-control">{{ $tour->tour_itinerary }}</textarea>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
-                                                        <label for="tour_inclusions" class="form-label">Tour Inclusions</label>
+                                                        <label for="tour_inclusions" class="form-label">Tour
+                                                            Inclusions</label>
                                                         <textarea name="tour_inclusions" id="tour_inclusions" cols="30" rows="5" class="form-control">{{ $tour->tour_inclusions }}</textarea>
                                                     </div>
                                                 </div>
@@ -331,8 +370,8 @@
                                                                     Cancellable</label>
                                                             </div>
                                                             <div class="form-check form-switch mb-2">
-                                                                <input class="form-check-input" type="checkbox" id="isRefundable"
-                                                                    name="is_refundable"
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    id="isRefundable" name="is_refundable"
                                                                     {{ $tour->is_refundable ? 'checked' : null }} />
                                                                 <label class="form-check-label" for="isRefundable">Is
                                                                     Refundable</label>
@@ -340,17 +379,18 @@
                                                         </div>
                                                         <div class="col-lg-6">
                                                             <div class="form-check ">
-                                                                <input name="status" class="form-check-input" type="radio"
-                                                                    value="1" id="statusActive"
+                                                                <input name="status" class="form-check-input"
+                                                                    type="radio" value="1" id="statusActive"
                                                                     {{ $tour->status ? 'checked' : null }} />
                                                                 <label class="form-check-label" for="statusActive"> Active
                                                                 </label>
                                                             </div>
                                                             <div class="form-check">
-                                                                <input name="status" class="form-check-input" type="radio"
-                                                                    value="0" id="statusInactive"
+                                                                <input name="status" class="form-check-input"
+                                                                    type="radio" value="0" id="statusInactive"
                                                                     {{ !$tour->status ? 'checked' : null }} />
-                                                                <label class="form-check-label" for="statusInactive"> In Active
+                                                                <label class="form-check-label" for="statusInactive"> In
+                                                                    Active
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -358,14 +398,15 @@
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
-        
+
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="tab-pane fade" id="navs-tour-timeslot" role="tabpanel">
                                             <div class="w-100 mb-3 d-flex justify-content-end">
-                                                <button class="btn btn-primary" type="button" onclick="addTimeSlot()">Add Time
+                                                <button class="btn btn-primary" type="button"
+                                                    onclick="addTimeSlot()">Add Time
                                                     Slot</button>
                                             </div>
                                             <div class="timeslot-container">
@@ -373,15 +414,19 @@
                                                     <div class="row timeslot my-3">
                                                         <div class="col-lg-5">
                                                             <input type="time" name="start_time[]"
-                                                                class="form-control start-time-field" value="{{ $timeslot->start_time->format('H:i') }}">
+                                                                class="form-control start-time-field"
+                                                                value="{{ $timeslot->start_time->format('H:i') }}">
                                                         </div>
                                                         <div class="col-lg-5">
                                                             <input type="time" name="end_time[]"
-                                                                class="form-control end-time-field" value="{{ $timeslot->end_time->format('H:i') }}">
+                                                                class="form-control end-time-field"
+                                                                value="{{ $timeslot->end_time->format('H:i') }}">
                                                         </div>
-                                                        <div class="col-lg-2 d-flex justify-content-center align-items-center">
+                                                        <div
+                                                            class="col-lg-2 d-flex justify-content-center align-items-center">
                                                             <button type="button" class="btn btn-danger"
-                                                                onclick="removeTimeSlot(this)"><i class="bx bx-trash"></i></button>
+                                                                onclick="removeTimeSlot(this)"><i
+                                                                    class="bx bx-trash"></i></button>
                                                         </div>
                                                     </div>
                                                 @endforeach
@@ -424,7 +469,7 @@
             const timeslotContainer = document.querySelector('.timeslot-container');
             const timeslots = document.querySelectorAll('.timeslot');
 
-            if(timeslots && timeslots.length > 0) {
+            if (timeslots && timeslots.length > 0) {
                 const newTimeSlot = timeslots[0].cloneNode(true);
                 const startTimeInput = newTimeSlot.querySelector('.start-time-field');
                 const endTimeInput = newTimeSlot.querySelector('.end-time-field');
@@ -568,7 +613,7 @@
             // Loop through each table row
             document.querySelectorAll('.qr-code').forEach(function(qrCodeContainer) {
                 const badgeCode = qrCodeContainer.getAttribute('data-badge-code');
-                const qrCodeImage = generateQRCode(qrCodeContainer,badgeCode);
+                const qrCodeImage = generateQRCode(qrCodeContainer, badgeCode);
 
                 // Create a "Download" button element
                 const downloadButton = document.createElement('button');

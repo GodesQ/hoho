@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\AdminAccounts\MerchantAccountController;
 use App\Http\Controllers\Web\ApiConsumerController;
+use App\Http\Controllers\Web\ApiPermissionController;
 use App\Http\Controllers\Web\AppSettingController;
 use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\ConsumerApiLogController;
@@ -398,6 +399,13 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
 
     Route::get('consumer-api-logs', [ConsumerApiLogController::class, 'index'])->name('consumer_api_logs.list');
     Route::get('consumer-api-logs/show/{id}', [ConsumerApiLogController::class, 'show'])->name('consumer_api_logs.show');
+
+    Route::get('api-permissions', [ApiPermissionController::class, 'index'])->name('api_permissions.index');
+    Route::get('api-permissions/create', [ApiPermissionController::class, 'create'])->name('api_permissions.create');
+    Route::post('api-permissions/store', [ApiPermissionController::class, 'store'])->name('api_permissions.store');
+    Route::get('api-permissions/edit/{id}', [ApiPermissionController::class, 'edit'])->name('api_permissions.edit');
+    Route::put('api-permissions/update/{id}', [ApiPermissionController::class, 'update'])->name('api_permissions.update');
+    Route::delete('api-permissions/destroy', [ApiPermissionController::class, 'destroy'])->name('api_permissions.destroy');
     
     Route::prefix('reports')->as('reports.')->group(function () {
         Route::get('user_demographics', [DataReportController::class, 'user_demographics'])->name('user_demographics');
@@ -420,4 +428,5 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::delete('travel-taxes/destroy/{id}', [TravelTaxController::class, 'destroy'])->name('travel_taxes.destroy');
     Route::put('travel-taxes/passengers/update', [TravelTaxController::class, 'updatePassenger'])->name('travel_taxes.passengers.update');
     Route::get('travel-taxes/passengers/{passenger_id}', [TravelTaxController::class, 'getPassenger'])->name('travel_taxes.passengers');
+
 });

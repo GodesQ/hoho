@@ -16,18 +16,18 @@ class UserService
     {
         $users = User::query();
 
-        if($request->search['value'] && $request->ajax()) {
+        if ($request->search['value'] && $request->ajax()) {
             $searchValue = $request->search['value'];
             $users = $users->where('username', 'LIKE', $searchValue . '%')
-                        ->orWhere('email', 'LIKE', $searchValue . '%')
-                        ->orWhere('contact_no', 'LIKE', $searchValue . '%');
+                ->orWhere('email', 'LIKE', $searchValue . '%')
+                ->orWhere('contact_no', 'LIKE', $searchValue . '%');
         }
 
         return $users;
     }
 
     public function generateUsersDataTable($data)
-    {   
+    {
 
         return DataTables::of($data)
             ->addIndexColumn()
@@ -49,7 +49,7 @@ class UserService
                 }
             })
             ->addColumn('registered_date', function ($row) {
-               return date_format($row->created_at,'M d, Y h:i A');
+                return date_format($row->created_at, 'M d, Y h:i A');
             })
             ->addColumn('actions', function ($row) {
                 return '<div class="dropdown">
@@ -85,7 +85,7 @@ class UserService
     }
 
     public function createUser($request)
-    {   
+    {
         $data = $request->validated();
         $account_uid = $this->generateRandomUuid();
 
@@ -145,7 +145,7 @@ class UserService
                 'birthdate' => $request->birthdate,
                 'country_of_residence' => $request->country_of_residence,
                 'contact_no' => $result['contactNumber'] ?? null,
-                'countryCode' => $result['countryCode'] ? preg_replace("/[^0-9]/", "", $result['countryCode']) :  null,
+                'countryCode' => $result['countryCode'] ? preg_replace("/[^0-9]/", "", $result['countryCode']) : null,
                 'isoCode' => $result['isoCode'] ?? null,
             ]);
 

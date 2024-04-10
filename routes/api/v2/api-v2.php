@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Route;
         Route::get('announcements/{id}', [AnnouncementController::class, 'show']);
 
         Route::get('attractions', [AttractionController::class, 'index']);
-        Route::get('attractions/{attraction_id}', [AttractionController::class, 'show']);
+        Route::get('attractions/{attraction_id}', [AttractionController::class, 'show']);   
         Route::get('attractions/organizations/{organization_id}', [AttractionController::class, 'attractionsByOrganization']);
 
         Route::get('organizations', [OrganizationController::class, 'index']);
@@ -46,7 +46,7 @@ use Illuminate\Support\Facades\Route;
         Route::get('transports/{transport_id}', [TransportController::class, 'show']);
 
         Route::post('tour-reservations', [TourReservationController::class, 'store']);
-        Route::post('tour-reservations/bulk', [TourReservationController::class, 'bulk']);
+        // Route::post('tour-reservations/bulk', [TourReservationController::class, 'bulk']);
         Route::post('tour-reservations/guest', [TourReservationController::class, 'storeGuestReservation']);
         Route::get('tour-reservations/users/{user_id}/reservation-dates', [TourReservationController::class, 'userTourReservationDates']);
         Route::get('tour-reservations/users/{user_id}', [TourReservationController::class, 'userTourReservations']);
