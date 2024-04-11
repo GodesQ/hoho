@@ -442,10 +442,14 @@
         @endcan
     @endauth
 
-    <li class="menu-header small text-uppercase"><span class="menu-header-text">API</span></li>
+    @auth('admin')
+        @canany(['view_api_consumers_list', 'view_consumer_api_logs_list', 'view_api_permissions_list'])
+            <li class="menu-header small text-uppercase"><span class="menu-header-text">API</span></li>
+        @endcanany
+    @endauth
 
     @auth('admin')
-        @can('view_unavailable_dates_list')
+        @can('view_api_consumers_list')
             <li class="menu-item {{ preg_match('/admin\/api-consumers/', Request::path()) ? 'active' : null }}">
                 <a href="{{ route('admin.api_consumers.list') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-user"></i>
@@ -466,12 +470,16 @@
         @endcan
     @endauth
 
-    <li class="menu-item {{ preg_match('/admin\/api-permissions/', Request::path()) ? 'active' : null }}">
-        <a href="{{ route('admin.api_permissions.index') }}" class="menu-link">
-            <i class='menu-icon tf-icons bx bx-lock-alt'></i>
-            <div data-i18n="API Permissions">API Permissions</div>
-        </a>
-    </li>
+    @auth('admin')
+        @can('view_api_permissions_list')
+            <li class="menu-item {{ preg_match('/admin\/api-permissions/', Request::path()) ? 'active' : null }}">
+                <a href="{{ route('admin.api_permissions.index') }}" class="menu-link">
+                    <i class='menu-icon tf-icons bx bx-lock-alt'></i>
+                    <div data-i18n="API Permissions">API Permissions</div>
+                </a>
+            </li>
+        @endcan
+    @endauth
 
 
     <!-- Roles & Permissions -->

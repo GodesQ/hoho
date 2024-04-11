@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreRequest;
 use App\Http\Requests\Product\UpdateRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 use App\Models\Merchant;
@@ -51,8 +52,13 @@ class ProductController extends Controller
     }
 
     public function create(Request $request)
-    {
-        $merchants = Merchant::where('type', 'Store')->get();
+    {   
+        $user = Auth::guard('admin')->user();
+        if($user->role == 'merchant_store_admin') {
+            $merchants = Merchant::where('type','Store')->where('id', $user->merchant_id)->get();
+        } else {
+            $merchants = Merchant::where('type', 'Hotel')->get();
+        }
         return view('admin-page.products.create-product', compact('merchants'));
     }
 
@@ -113,7 +119,13 @@ class ProductController extends Controller
 
     public function edit($id)
     {   
-        $merchants = Merchant::where('type', 'Store')->get();
+        $user = Auth::guard('admin')->user();
+        if($user->role == 'merchant_store_admin') {
+            $merchants = Merchant::where('type','Store')->where('id', $user->merchant_id)->get();
+        } else {
+            $merchants = Merchant::where('type', 'Hotel')->get();
+        }
+
         $product = Product::where('id', $id)->with('merchant')->firstOrFail();
         return view('admin-page.products.edit-product', compact('merchants','product'));
     }
@@ -190,9 +202,14 @@ class ProductController extends Controller
     }
 
     public function lookup(Request $request) {
+        $user = Auth::guard('admin')->user();
+
         $searchQuery = $request->input('q');
         $products = Product::orWhere('name', 'LIKE', "%$searchQuery%")
             ->select('id', 'name', 'merchant_id')
+            ->when($user->is_merchant, function($q) use ($user) {
+                $q->where('merchant_id', $user->merchant_id);
+            })
             ->with('merchant')
             ->get();
 
