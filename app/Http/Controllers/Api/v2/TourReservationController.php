@@ -13,7 +13,8 @@ class TourReservationController extends Controller
 {  
 
     public function userTourReservations(Request $request, $user_id) {
-        return TourReservation::where('reserved_user_id', $user_id)->with('tour', 'feedback')->get();
+        $reservations = TourReservation::where('reserved_user_id', $user_id)->with('tour', 'feedback')->get();
+        return TourReservationResource::collection($reservations);
     }
 
     public function show(Request $request, $tour_reservation_id) {

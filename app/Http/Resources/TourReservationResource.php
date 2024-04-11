@@ -24,7 +24,7 @@ class TourReservationResource extends JsonResource
             "amount"=> $this->amount,
             "reserved_user_id"=> $this->reserved_user_id,
             "reference_code"=> $this->reference_code,
-            "order_transaction_id"=> $this->order_transaction_id,
+            // "order_transaction_id"=> $this->order_transaction_id,
             "start_date"=> $this->start_date,
             "end_date"=> $this->end_date,
             "status"=> $this->status,
@@ -33,10 +33,9 @@ class TourReservationResource extends JsonResource
             "payment_method"=> $this->payment_method,
             "referral_code"=> $this->referral_code,
             "promo_code"=> $this->promo_code,
-            "requirement_file_path"=> $this->requirement_file_path,
             "discount_amount"=> $this->discount_amount,
             // "passengers"=> $this->when($this->passenger_ids, $this->passengers),
-            "tour" => $this->tour,
+            "tour" => TourResource::make($this->tour),
             "feedback" => $this->feedback,
         ];
     }
