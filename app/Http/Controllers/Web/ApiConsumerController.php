@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\APIConsumer\StoreRequest;
 use App\Models\ApiConsumer;
+use App\Models\ApiPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
@@ -52,8 +53,9 @@ class ApiConsumerController extends Controller
     }
 
     public function edit(Request $request, $id) {
+        $permissions = ApiPermission::all();
         $consumer = ApiConsumer::findOrFail($id);
-        return view('admin-page.api_consumers.edit-api-consumer', compact('consumer'));
+        return view('admin-page.api_consumers.edit-api-consumer', compact('consumer', 'permissions'));
     }
 
     public function update(StoreRequest $request, $id) {

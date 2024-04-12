@@ -116,8 +116,11 @@
                             @method('PUT')
                             <label for="permissions" class="form-label">Permissions</label>
                             <select name="" id="" class="select2" multiple>
-
+                                @foreach ($permissions as $permission)
+                                    <option value="{{ $permission->id }}">{{ $permission->name }}</option>
+                                @endforeach
                             </select>
+                            <button class="btn btn-primary mt-3">Save Permission</button>
                         </form>
                     </div>
                 </div>

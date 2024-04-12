@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Food\StoreRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 use App\Models\Food;
@@ -47,8 +48,14 @@ class FoodController extends Controller
     }
 
     public function create()
-    {
-        $merchants = Merchant::where('type', 'Restaurant')->where('is_active', 1)->get();
+    {   
+        $user = Auth::guard('admin')->user();
+        if($user->role == 'merchant_restaurant_admin') {
+            $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->where('is_active', 1)->get();
+        } else {
+            $merchants = Merchant::where('type', 'Restaurant')->where('is_active', 1)->get();
+        }
+
         $foodCategories = FoodCategory::with('merchant')->get();
         return view('admin-page.foods.create-food', compact('merchants', 'foodCategories'));
     }
@@ -74,7 +81,14 @@ class FoodController extends Controller
     public function edit(Request $request, $id)
     {
         $food = Food::findOrFail($id);
-        $merchants = Merchant::where('type', 'Restaurant')->where('is_active', 1)->get();
+        $user = Auth::guard('admin')->user();
+        
+        if($user->role == 'merchant_restaurant_admin') {
+            $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->where('is_active', 1)->get();
+        } else {
+            $merchants = Merchant::where('type', 'Restaurant')->where('is_active', 1)->get();
+        }
+
         $foodCategories = FoodCategory::with('merchant')->get();
         return view('admin-page.foods.edit-food', compact('food', 'merchants', 'foodCategories'));
     }

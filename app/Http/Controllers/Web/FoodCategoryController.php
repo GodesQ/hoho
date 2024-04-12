@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FoodCategory\StoreRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 use App\Models\FoodCategory;
@@ -36,7 +37,13 @@ class FoodCategoryController extends Controller
 
     public function create()
     {
-        $merchants = Merchant::where('type', 'Restaurant')->where('is_active', 1)->get();
+        $user = Auth::guard('admin')->user();
+        
+        if($user->role == 'merchant_restaurant_admin') {
+            $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->where('is_active', 1)->get();
+        } else {
+            $merchants = Merchant::where('type', 'Restaurant')->where('is_active', 1)->get();
+        }
         return view("admin-page.food_categories.create-food-category", compact('merchants'));
     }
 
@@ -55,7 +62,14 @@ class FoodCategoryController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $merchants = Merchant::where('type', 'Restaurant')->where('is_active', 1)->get();
+        $user = Auth::guard('admin')->user();
+        
+        if($user->role == 'merchant_restaurant_admin') {
+            $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->where('is_active', 1)->get();
+        } else {
+            $merchants = Merchant::where('type', 'Restaurant')->where('is_active', 1)->get();
+        }
+        
         $foodCategory = FoodCategory::findOrFail($id);
         return view("admin-page.food_categories.edit-food-category", compact('foodCategory', 'merchants'));
     }

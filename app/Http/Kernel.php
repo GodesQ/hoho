@@ -68,5 +68,6 @@ class Kernel extends HttpKernel
         'permission_access' =>  \App\Http\Middleware\PermissionAccess::class,
         'merchant_created' => \App\Http\Middleware\IsMerchantCreated::class,
         'api_base_authorization' => \App\Http\Middleware\BaseAuthorizationMiddleware::class,
+        'maintenance_mode' => \App\Http\Middleware\MaintenanceMode::class,
     ];
 }

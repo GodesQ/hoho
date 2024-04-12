@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\v2\AuthController;
 use App\Http\Controllers\Api\v2\HotelReservationController;
 use App\Http\Controllers\Api\v2\InterestController;
 use App\Http\Controllers\Api\v2\MerchantController;
+use App\Http\Controllers\Api\v2\OrderController;
 use App\Http\Controllers\Api\v2\OrganizationController;
 use App\Http\Controllers\Api\v2\ProductController;
 use App\Http\Controllers\Api\v2\PromocodeController;
@@ -87,4 +88,8 @@ use Illuminate\Support\Facades\Route;
         Route::get('travel-taxes', [TravelTaxController::class, 'index']);
         Route::get('travel-taxes/{travel_tax_id}/passengers/{passenger_id}', [TravelTaxController::class, 'travelTaxPassenger']);
         Route::get('travel-taxes/{travel_tax_id}', [TravelTaxController::class, 'show']);
+
+        Route::get('orders', [OrderController::class, 'index']);
+        Route::get('orders/users/{user_id}', [OrderController::class, 'userOrders']);
+        Route::get('orders/{order_id}', [OrderController::class, 'show']);
     });

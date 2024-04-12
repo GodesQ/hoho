@@ -228,7 +228,7 @@
                     createMarker(transport.latitude, transport.longitude, transport.name);
                     let current_stop = JSON.parse(transport.current_location);
                     let next_stop = JSON.parse(transport.next_location);
-                    html += `<div class="accordion-item shadow-none border-0 mb-0" id="fl-1">
+                    html += `<div class="accordion-item shadow-none border-0 mb-0" id="fl-1" onClick="handleFocusTransport(${transport.latitude}, ${transport.longitude})">
                                     <div class="accordion-header" id="fleetOne">
                                         <div role="button" class="accordion-button shadow-none" data-bs-toggle="collapse"
                                             data-bs-target="#fleet${transport.id}" aria-expanded="true" aria-controls="fleet${transport.id}">
@@ -289,6 +289,10 @@
                 $('#fleet').html(html);
             }
         })
+
+        function handleFocusTransport(latitude, longitude) {
+            map.setCenter({lat: parseFloat(latitude), lng: parseFloat(longitude)});
+        }
     </script>
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcjk7zETwVNURwNgnIidjFDQzVcjGaqVU&libraries=places&callback=initMap">
