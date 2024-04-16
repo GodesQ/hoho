@@ -54,17 +54,15 @@ class ApiConsumerController extends Controller
 
     public function edit(Request $request, $id) {
         $permissions = ApiPermission::all();
-        $consumer = ApiConsumer::findOrFail($id);
+        $consumer = ApiConsumer::where('id', $id)->with('permissions')->firstOrFail();
         return view('admin-page.api_consumers.edit-api-consumer', compact('consumer', 'permissions'));
     }
 
     public function update(StoreRequest $request, $id) {
         $data = $request->validated();
-        $api_code = $this->generateAPICode($request->consumer_name);
         $consumer = ApiConsumer::findOrFail($id);
         
         $consumer->update($data);
-
         return back()->withSuccess('Consumer updated successfully');
     }
 

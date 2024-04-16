@@ -14,8 +14,8 @@ class LayoverTourReservationDetail extends Model
         "arrival_datetime",
         "flight_to",
         "departure_datetime",
-        "flight_from",,
+        "flight_from",
         "passport_number",
-        "special_instruction",
+        "special_instruction"
     ];
 }

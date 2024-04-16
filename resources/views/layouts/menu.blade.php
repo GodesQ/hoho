@@ -357,6 +357,11 @@
                             <div data-i18n="Tour Reservations Report">Tour Reservations Report</div>
                         </a>
                     </li>
+                    <li class="menu-item {{ preg_match('/admin\/reports\/user-demographics/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.reports.user_demographics') }}" class="menu-link">
+                            <div data-i18n="User Demographics">User Demographics</div>
+                        </a>
+                    </li>
                 @endcan
             @endauth
             {{-- <li

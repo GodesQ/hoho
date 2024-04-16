@@ -12,4 +12,8 @@ class ApiConsumer extends Model
     protected $table = 'api_consumers';
 
     protected $fillable = ['consumer_name', 'api_code', 'api_key', 'contact_email', 'contact_phone', 'platform', 'status'];
+
+    public function permissions() {
+        return $this->hasMany(ConsumerPermission::class, 'consumer_id');
+    }
 }

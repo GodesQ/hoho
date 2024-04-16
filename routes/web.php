@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\ApiPermissionController;
 use App\Http\Controllers\Web\AppSettingController;
 use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\ConsumerApiLogController;
+use App\Http\Controllers\Web\ConsumerPermissionController;
 use App\Http\Controllers\Web\DeleteAccountController;
 use App\Http\Controllers\Web\FoodCategoryController;
 use App\Http\Controllers\Web\FoodController;
@@ -390,6 +391,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('unavailable_dates/update/{id}', [TourUnavailableDateController::class, 'update'])->name('unavailable_dates.update');
     Route::delete('unavailable_dates/destroy', [TourUnavailableDateController::class, 'destroy'])->name('unavailable_dates.destroy');
 
+    Route::get('travel-taxes', [TravelTaxController::class, 'index'])->name('travel_taxes.list');
+    Route::get('travel-taxes/create', [TravelTaxController::class, 'create'])->name('travel_taxes.create');
+    Route::post('travel-taxes/store', [TravelTaxController::class, 'store'])->name('travel_taxes.store');
+    Route::get('travel-taxes/edit/{id}', [TravelTaxController::class, 'edit'])->name('travel_taxes.edit');
+    Route::put('travel-taxes/update/{id}', [TravelTaxController::class, 'update'])->name('travel_taxes.update');
+    Route::delete('travel-taxes/destroy/{id}', [TravelTaxController::class, 'destroy'])->name('travel_taxes.destroy');
+    Route::put('travel-taxes/passengers/update', [TravelTaxController::class, 'updatePassenger'])->name('travel_taxes.passengers.update');
+    Route::get('travel-taxes/passengers/{passenger_id}', [TravelTaxController::class, 'getPassenger'])->name('travel_taxes.passengers');
+
     Route::get('api-consumers', [ApiConsumerController::class, 'index'])->name('api_consumers.list');
     Route::get('api-consumers/create', [ApiConsumerController::class, 'create'])->name('api_consumers.create');
     Route::post('api-consumers/store', [ApiConsumerController::class, 'store'])->name('api_consumers.store');
@@ -406,9 +416,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::get('api-permissions/edit/{id}', [ApiPermissionController::class, 'edit'])->name('api_permissions.edit');
     Route::put('api-permissions/update/{id}', [ApiPermissionController::class, 'update'])->name('api_permissions.update');
     Route::delete('api-permissions/destroy', [ApiPermissionController::class, 'destroy'])->name('api_permissions.destroy');
-    
+
+    Route::put('consumer-permissions', [ConsumerPermissionController::class, 'update'])->name('consumer_permissions.update');
+
     Route::prefix('reports')->as('reports.')->group(function () {
-        Route::get('user_demographics', [DataReportController::class, 'user_demographics'])->name('user_demographics');
+        Route::get('user-demographics', [DataReportController::class, 'user_demographics'])->name('user_demographics');
         Route::get('sales_report', [DataReportController::class, 'sales_report'])->name('sales_report')->can('view_sales_report');
         Route::get('tour_reservations_report', [DataReportController::class, 'tour_reservations_report'])->name('tour_reservations_report');
         Route::get('tour_reservations_report/get_data', [DataReportController::class, 'getTourReservationData'])->name('tour_reservations_report.get_data');
@@ -418,15 +430,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
         Route::get('get_total_bookings_per_type', [DataReportController::class, 'getTotalBookingsPerType'])->name('get_total_bookings_per_type')->can('view_sales_report');
         Route::get('get_overall_sales', [DataReportController::class, 'getSalesData'])->name('get_overall_sales')->can('view_sales_report');
         Route::get('get_transaction_status_data', [DataReportController::class, 'getTransactionStatusData'])->name('get_transaction_status_data')->can('view_sales_report');
+
     });
-
-    Route::get('travel-taxes', [TravelTaxController::class, 'index'])->name('travel_taxes.list');
-    Route::get('travel-taxes/create', [TravelTaxController::class, 'create'])->name('travel_taxes.create');
-    Route::post('travel-taxes/store', [TravelTaxController::class, 'store'])->name('travel_taxes.store');
-    Route::get('travel-taxes/edit/{id}', [TravelTaxController::class, 'edit'])->name('travel_taxes.edit');
-    Route::put('travel-taxes/update/{id}', [TravelTaxController::class, 'update'])->name('travel_taxes.update');
-    Route::delete('travel-taxes/destroy/{id}', [TravelTaxController::class, 'destroy'])->name('travel_taxes.destroy');
-    Route::put('travel-taxes/passengers/update', [TravelTaxController::class, 'updatePassenger'])->name('travel_taxes.passengers.update');
-    Route::get('travel-taxes/passengers/{passenger_id}', [TravelTaxController::class, 'getPassenger'])->name('travel_taxes.passengers');
-
 });

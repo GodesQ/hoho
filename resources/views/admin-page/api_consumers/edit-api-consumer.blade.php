@@ -111,13 +111,20 @@
                         </form>
                     </div>
                     <div class="tab-pane fade" id="navs-consumer-permissions" role="tabpanel">
-                        <form method="POST" action="">
+                        <?php
+                            $permissions_array = $consumer->permissions->toArray();
+                            $permission_ids = array_map(function ($item) {
+                                return $item['permission_id'];
+                            }, $permissions_array);                        
+                        ?>
+                        <form method="POST" action="{{ route('admin.consumer_permissions.update') }}">
                             @csrf
                             @method('PUT')
+                            <input type="hidden" name="consumer_id" id="consumer-id-field" value="{{ $consumer->id }}">
                             <label for="permissions" class="form-label">Permissions</label>
-                            <select name="" id="" class="select2" multiple>
+                            <select name="permissions[]" id="permissions" class="select2" multiple>
                                 @foreach ($permissions as $permission)
-                                    <option value="{{ $permission->id }}">{{ $permission->name }}</option>
+                                    <option value="{{ $permission->id }}" {{ in_array($permission->id, $permission_ids) ? 'selected' : null }}>{{ $permission->name }}</option>
                                 @endforeach
                             </select>
                             <button class="btn btn-primary mt-3">Save Permission</button>
