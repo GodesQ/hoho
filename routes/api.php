@@ -44,7 +44,7 @@ use App\Http\Controllers\Api\TourBadgeController;
 //     return $request->user();
 // });
 
-Route::middleware(["maintenance_mode"])->group(function () {
+// Route::middleware(["maintenance_mode"])->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
 
@@ -145,4 +145,4 @@ Route::middleware(["maintenance_mode"])->group(function () {
 
         Route::post('travel-tax', [TravelTaxController::class, 'store']);
     });
-});
+// });
