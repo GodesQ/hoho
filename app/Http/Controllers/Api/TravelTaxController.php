@@ -68,6 +68,7 @@ class TravelTaxController extends Controller
                     'destination' => $passenger['destination'],
                     'departure_date' => $passenger['departure_date'],
                     'passenger_type' => $passenger['passenger_type'],
+                    'amount' => $passenger['amount']
                 ]);
 
                 if($passenger['passenger_type'] == 'primary' && !$primary_passenger) $primary_passenger = $passenger;

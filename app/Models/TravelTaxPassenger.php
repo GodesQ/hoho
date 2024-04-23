@@ -23,5 +23,6 @@ class TravelTaxPassenger extends Model
         "destination",
         "departure_date",
         "passenger_type",
+        "amount",
     ];
 }

@@ -13,38 +13,73 @@ use Illuminate\Support\Facades\DB;
 
 class DataReportController extends Controller
 {
-    public function user_demographics(Request $request) {
+    public function user_demographics(Request $request)
+    {
         return view('admin-page.reports.user_demographics');
     }
 
-    public function sales_report(Request $request) {
+    public function sales_report(Request $request)
+    {
         return view('admin-page.reports.sales-report');
     }
 
-    public function tour_reservations_report(Request $request) {
+    public function tour_reservations_report(Request $request)
+    {
         return view('admin-page.reports.tour_reservations_report');
     }
 
-    public function getTourReservationData(TourReservationReportRequest $request) {
-        $tour_reservations = TourReservation::whereBetween('start_date', [$request->from_date, $request->to_date])
-                                ->where('type', $request->tour_type)
-                                ->when($request->status, function ($q) use ($request) {
-                                    return $q->where('status', $request->status);
-                                })
-                                ->has('user')
-                                ->with('user')
-                                ->orderBy('start_date', 'desc')
-                                ->get();
+    public function getUsersByLocation(Request $request)
+    {
+
+    }
+
+    public function getUsersPerMonth(Request $request) {
         
+    }
+
+    public function getUsersByAge(Request $request)
+    {
+        $users = User::selectRaw('
+            SUM(CASE WHEN age BETWEEN 4 AND 6 THEN 1 ELSE 0 END) AS "4-6",
+            SUM(CASE WHEN age BETWEEN 7 AND 9 THEN 1 ELSE 0 END) AS "7-9",
+            SUM(CASE WHEN age BETWEEN 10 AND 12 THEN 1 ELSE 0 END) AS "10-12",
+            SUM(CASE WHEN age BETWEEN 13 AND 15 THEN 1 ELSE 0 END) AS "13-15",
+            SUM(CASE WHEN age BETWEEN 16 AND 30 THEN 1 ELSE 0 END) AS "16-30",
+            SUM(CASE WHEN age BETWEEN 31 AND 45 THEN 1 ELSE 0 END) AS "31-45",
+            SUM(CASE WHEN age BETWEEN 46 AND 65 THEN 1 ELSE 0 END) AS "46-65",
+            SUM(CASE WHEN age BETWEEN 66 AND 85 THEN 1 ELSE 0 END) AS "66-85"
+        ')->first();
+
+        $users->setAppends([]);
+
+        return response([
+            'status' => true,
+            'result' => $users,
+        ]);
+    }
+
+    public function getTourReservationData(TourReservationReportRequest $request)
+    {
+        $tour_reservations = TourReservation::whereBetween('start_date', [$request->from_date, $request->to_date])
+            ->where('type', $request->tour_type)
+            ->when($request->status, function ($q) use ($request) {
+                return $q->where('status', $request->status);
+            })
+            ->has('user')
+            ->with('user')
+            ->orderBy('start_date', 'desc')
+            ->get();
+
         return view('admin-page.printable_pages.reservation_print_page', compact('tour_reservations'));
     }
 
-    public function getCurrentMonthProfit(Request $request) {
+    public function getCurrentMonthProfit(Request $request)
+    {
         $currentMonth = now()->format('Y-m');
 
         $totalProfit = Transaction::where('payment_status', 'success')
-        ->where(DB::raw('DATE_FORMAT(payment_date, "%Y-%m")'), $currentMonth)
-        ->sum('payment_amount');
+            ->where(DB::raw('DATE_FORMAT(payment_date, "%Y-%m")'), $currentMonth)
+            ->sum('payment_amount');
 
         return response([
             'status' => TRUE,
@@ -52,17 +87,18 @@ class DataReportController extends Controller
         ]);
     }
 
-    public function getTopSellingTours(Request $request) {
+    public function getTopSellingTours(Request $request)
+    {
         $currentMonth = now()->format('Y-m');
 
         $topSellingTours = TourReservation::select('tour_id', DB::raw('count(*) as total_reservations'), DB::raw('sum(amount) as total_amount'))
-        ->where('status', 'approved')
-        ->where(DB::raw('DATE_FORMAT(created_at, "%Y-%m")'), $currentMonth)
-        ->groupBy('tour_id')
-        ->orderBy('total_reservations', 'desc')
-        ->take(4)
-        ->with('tour')
-        ->get();
+            ->where('status', 'approved')
+            ->where(DB::raw('DATE_FORMAT(created_at, "%Y-%m")'), $currentMonth)
+            ->groupBy('tour_id')
+            ->orderBy('total_reservations', 'desc')
+            ->take(4)
+            ->with('tour')
+            ->get();
 
         $total_orders = TourReservation::where('status', 'approved')->count();
 
@@ -73,7 +109,8 @@ class DataReportController extends Controller
         ]);
     }
 
-    function getTotalBookingsPerType(Request $request) {
+    function getTotalBookingsPerType(Request $request)
+    {
         $totalDIYTours = TourReservation::where('status', 'approved')->where('type', 'DIY')->count();
         $totalGuidedTours = TourReservation::where('status', 'approved')->where('type', 'Guided')->count();
 
@@ -100,7 +137,7 @@ class DataReportController extends Controller
             $salesData[] = $transactions->where('month', $month)->first()->total_sales ?? 0;
         }
 
-        $monthNames = array_map(function($month) {
+        $monthNames = array_map(function ($month) {
             return \Carbon\Carbon::create(now()->year, $month, 1)->format('M');
         }, $months);
 
@@ -116,15 +153,15 @@ class DataReportController extends Controller
 
 
         $transactions = Transaction::select('payment_status', DB::raw('max(transaction_date) as transaction_date'), DB::raw('count(*) as total'))
-        ->whereMonth('transaction_date', $months[8])
-        ->groupBy('payment_status')
-        ->get();
+            ->whereMonth('transaction_date', $months[8])
+            ->groupBy('payment_status')
+            ->get();
 
         foreach ($months as $month) {
             $transactions = Transaction::select('payment_status', DB::raw('max(transaction_date) as transaction_date'), DB::raw('count(*) as total'))
-            ->whereMonth('transaction_date', $month)
-            ->groupBy('payment_status')
-            ->get();
+                ->whereMonth('transaction_date', $month)
+                ->groupBy('payment_status')
+                ->get();
             // dd($transactions);
 
             $statusData = [
