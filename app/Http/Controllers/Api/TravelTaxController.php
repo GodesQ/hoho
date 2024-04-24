@@ -118,7 +118,6 @@ class TravelTaxController extends Controller
 
             if ($statusCode == 400) {
                 $content = json_decode($response->getBody()->getContents());
-                dd($content);
                 throw new ErrorException($content->message . ' in Aqwire Payment Gateway.');
             }
 
