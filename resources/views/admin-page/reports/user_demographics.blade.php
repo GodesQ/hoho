@@ -32,6 +32,15 @@
         </div>
     </div> --}}
 
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5>Users Per Month (2024)</h5>
+        </div>
+        <div class="card-body">
+            <div id="user-per-month-graph"></div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-lg-6">
             <div class="card">
@@ -63,6 +72,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             getUsersByAge();
+            getUsersByLocation();
+            getUsersPerMonth();
         });
 
         function getUsersByAge() {
@@ -71,6 +82,25 @@
                 .then(data => {
                     var result = Object.entries(data.result);
                     setUsersByAge(result);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function getUsersByLocation() {
+            fetch("{{ route('admin.reports.user_demographics.user_locations') }}")
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.result);
+                    setUsersByLocation(data.result);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function getUsersPerMonth() {
+            fetch("{{ route('admin.reports.user_demographics.user_months') }}")
+                .then(response => response.json())
+                .then(data => {
+                    setUsersPerMonthChart(data.result);
                 })
                 .catch(error => console.error('Error:', error));
         }
@@ -107,6 +137,109 @@
                     usersByAgeChartOptions);
                 usersByAgeChart.render();
             }
+        }
+
+        function setUsersByLocation(result) {
+            const countries = result.map(res => res.country_of_residence);
+            const totals = result.map(res => res.total_user);
+
+            const usersByLocationEl = document.querySelector('#user-by-location-graph'),
+                usersByLocationChartOptions = {
+                    series: [{
+                        data: totals
+                    }],
+                    chart: {
+                        stacked: true,
+                        type: 'bar',
+                        toolbar: {
+                            show: false
+                        },
+                        height: 300,
+                    },
+                    plotOptions: {
+                        bar: {
+                            borderRadius: 10,
+                            horizontal: false,
+                            startingShape: 'rounded',
+                            endingShape: 'rounded'
+                        }
+                    },
+                    colors: [config.colors.primary, config.colors.info],
+                    xaxis: {
+                        categories: countries,
+                    }
+                };
+            if (typeof usersByLocationEl !== undefined && usersByLocationEl !== null) {
+                const usersByLocationChart = new ApexCharts(usersByLocationEl,
+                    usersByLocationChartOptions);
+                usersByLocationChart.render();
+            }
+        }
+
+        function setUsersPerMonthChart(result) {
+            let usersPerMonthChartEl = document.querySelector('#user-per-month-graph');
+            const months = result.map(res => res.month_name);
+            const totals = result.map(res => res.total_user);
+
+            const usersPerMonthChart = new ApexCharts(usersPerMonthChartEl, {
+                series: [{
+                    data: totals,
+                }],
+                chart: {
+                    height: 215,
+                    parentHeightOffset: 0,
+                    parentWidthOffset: 0,
+                    toolbar: {
+                        show: false
+                    },
+                    type: 'area'
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    width: 2,
+                    curve: 'smooth'
+                },
+                legend: {
+                    show: false
+                },
+                markers: {
+                    size: 6,
+                    colors: 'transparent',
+                    strokeColors: 'transparent',
+                    strokeWidth: 4,
+                    discrete: [{
+                        fillColor: config.colors.white,
+                        seriesIndex: 0,
+                        dataPointIndex: 7,
+                        strokeColor: config.colors.primary,
+                        strokeWidth: 2,
+                        size: 6,
+                        radius: 8
+                    }],
+                    hover: {
+                        size: 7
+                    }
+                },
+                colors: [config.colors.primary],
+                xaxis: {
+                    categories: months,
+                    axisBorder: {
+                        show: false
+                    },
+                    axisTicks: {
+                        show: false
+                    },
+                    labels: {
+                        show: true,
+                        style: {
+                            fontSize: '13px',
+                        }
+                    }
+                }
+            });
+            usersPerMonthChart.render();
         }
     </script>
 @endpush

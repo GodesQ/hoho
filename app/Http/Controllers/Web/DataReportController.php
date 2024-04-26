@@ -30,11 +30,36 @@ class DataReportController extends Controller
 
     public function getUsersByLocation(Request $request)
     {
+        $userCounts = User::select('country_of_residence', \DB::raw('COUNT(1) as total_user'))
+            ->whereNotNull('country_of_residence')
+            ->groupBy('country_of_residence')
+            ->orderByDesc('total_user')
+            ->limit(8)
+            ->get();
 
+        $userCounts->each(fn($user) => $user->setAppends([]));
+
+        return response([
+            'status' => true,
+            'result' => $userCounts
+        ]);
     }
 
-    public function getUsersPerMonth(Request $request) {
-        
+    public function getUsersPerMonth(Request $request)
+    {
+
+        $userCounts = User::select(DB::raw('MONTH(created_at) as month, MONTHNAME(created_at) AS month_name, COUNT(*) as total_user'))
+            ->whereYear('created_at', '=', 2024)
+            ->groupBy('month_name', 'month')
+            ->orderBy('month', 'ASC')
+            ->get();
+
+        $userCounts->each(fn($user) => $user->setAppends([]));
+
+        return response([
+            'status' => true,
+            'result' => $userCounts
+        ]);
     }
 
     public function getUsersByAge(Request $request)
