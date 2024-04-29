@@ -37,7 +37,7 @@ class BookingService
 
             $subAmount = intval($request->amount) ?? 0;
 
-            if($request->promo_code) {
+            if ($request->promo_code) {
                 $totalOfDiscount = (intval($request->amount) - intval($request->discounted_amount));
             } else {
                 $totalOfDiscount = 0;
@@ -47,7 +47,7 @@ class BookingService
             $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
 
             // if 100% discount
-            if($subAmount == $totalOfDiscount) {
+            if ($subAmount == $totalOfDiscount) {
                 $totalAmount -= $totalOfAdditionalCharges;
             }
 
@@ -95,7 +95,7 @@ class BookingService
                     $tour = Tour::where('id', $request->tour_id)->first();
 
                     if ($tour && $tour->tour_provider && optional($tour->tour_provider)->contact_email) {
-                        
+
                         $details = [
                             'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
                             'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
@@ -117,7 +117,7 @@ class BookingService
                     return redirect($responseData['paymentUrl']);
                 }
             }
-            
+
         } catch (\Exception $exception) {
             dd($exception->getMessage());
         }
@@ -125,81 +125,76 @@ class BookingService
 
     public function createMultipleBooking(Request $request)
     {
-        return DB::transaction(function () use ($request) {
-            // dd(json_decode($request->items));
-            // Remove the line below, as it's just for testing purposes
+        $reference_no = $this->generateReferenceNo();
+        $additional_charges = $this->generateAdditionalCharges();
 
-            $reference_no = $this->generateReferenceNo();
-            $additional_charges = $this->generateAdditionalCharges();
+        if (is_string($request->items) && is_array(json_decode($request->items, true)) && (json_last_error() == JSON_ERROR_NONE)) {
+            $items = json_decode($request->items, true);
+        } else {
+            $items = $request->items;
+        }
 
-            if (is_string($request->items) && is_array(json_decode($request->items, true)) && (json_last_error() == JSON_ERROR_NONE)) {
-                $items = json_decode($request->items, true);
-            } else {
+        $subAmount = 0;
+        $totalOfDiscount = 0;
+        $totalOfAdditionalCharges = 0;
+
+        /**
+         * Calculates the subAmount, totalOfDiscount, and totalOfAdditionalCharges by iterating over the items
+         */
+        foreach ($items as $key => $item) {
+            $subAmount += intval($item['amount']) ?? 0;
+
+            $totalOfDiscount += (intval($item['amount']) - (intval($item['discounted_amount']) ?? intval($item['amount'])));
+
+            $totalOfAdditionalCharges += $this->getTotalOfAdditionalCharges($item['number_of_pass'], $additional_charges);
+        }
+
+        if (config('services.checkout.type') == "HPP") {
+            $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
+
+            $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
+
+            $this->createMultipleReservation($request, $transaction, $additional_charges);
+
+            $response = $this->sendPaymentRequest($transaction);
+
+            if (!$response['status'] || !$response['status'] == 'FAIL') {
+                return response([
+                    'status' => "failed",
+                    'message' => 'Failed to submit request for transaction',
+                    'data' => $response['result']->data
+                ]);
+            }
+
+            $responseData = json_decode($response['result']->getBody(), true);
+
+            if ($responseData['status'] != 'SUCCESS') {
+                $logMessage = "An error occurred during the payment process with the following parameters: " .
+                    config('services.aqwire.merchant_code') . " | " . config('services.aqwire.client_id') . " | " . config('services.aqwire.secret_key');
+                dd($logMessage);
+            }
+
+            $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+
+            if (is_array($request->items)) {
                 $items = $request->items;
+            } else {
+                $items = json_decode($request->items, true);
             }
 
-            $subAmount = 0;
-            $totalOfDiscount = 0;
-            $totalOfAdditionalCharges = 0;
+            $this->sendMultipleBookingNotification($items, $transaction);
 
-            /**
-             * Calculates the subAmount, totalOfDiscount, and totalOfAdditionalCharges by iterating over the items
-             */
-            foreach ($items as $key => $item) {
-                $subAmount += intval($item['amount']) ?? 0;
+            $this->mailService->sendPaymentRequestMail($transaction, $responseData['paymentUrl'], $responseData['data']['expiresAt']);
 
-                $totalOfDiscount += (intval($item['amount']) - (intval($item['discounted_amount']) ?? intval($item['amount'])));
-
-                $totalOfAdditionalCharges += $this->getTotalOfAdditionalCharges($item['number_of_pass'], $additional_charges);
+            if ($request->is('api/*')) {
+                return response([
+                    'status' => 'paying',
+                    'url' => $responseData['paymentUrl']
+                ]);
+            } else {
+                return redirect($responseData['paymentUrl']);
             }
-
-            if (config('services.checkout.type') == "HPP") {
-                $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
-
-                $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
-
-                $this->createMultipleReservation($request, $transaction, $additional_charges);
-
-                $response = $this->sendPaymentRequest($transaction);
-
-                if (!$response['status'] || !$response['status'] == 'FAIL') {
-                    return response([
-                        'status' => "failed",
-                        'message' => 'Failed to submit request for transaction',
-                        'data' => $response['result']->data
-                    ]);
-                }
-
-                $responseData = json_decode($response['result']->getBody(), true);
-
-                if ($responseData['status'] != 'SUCCESS') {
-                    $logMessage = "An error occurred during the payment process with the following parameters: " .
-                        config('services.aqwire.merchant_code') . " | " . config('services.aqwire.client_id') . " | " . config('services.aqwire.secret_key');
-                    dd($logMessage);
-                }
-
-                $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
-
-                if (is_array($request->items)) {
-                    $items = $request->items;
-                } else {
-                    $items = json_decode($request->items, true);
-                }
-
-                $this->sendMultipleBookingNotification($items, $transaction);
-
-                $this->mailService->sendPaymentRequestMail($transaction, $responseData['paymentUrl'], $responseData['data']['expiresAt']);
-
-                if ($request->is('api/*')) {
-                    return response([
-                        'status' => 'paying',
-                        'url' => $responseData['paymentUrl']
-                    ]);
-                } else {
-                    return redirect($responseData['paymentUrl']);
-                }
-            }
-        });
+        }
     }
 
 
@@ -382,7 +377,7 @@ class BookingService
                 $recipientEmail = env('APP_ENVIRONMENT') == 'LIVE' ? $tour->tour_provider->contact_email : 'james@godesq.com';
                 Mail::to($recipientEmail)->cc('philippinehoho@tourism.gov.ph')->send(new TourProviderBookingNotification($details));
             }
-            
+
         }
     }
 

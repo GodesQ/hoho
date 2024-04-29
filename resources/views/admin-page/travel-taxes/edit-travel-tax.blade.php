@@ -72,83 +72,90 @@
         <div class="row">
             <div class="col-lg-8">
                 <h5>Passenger Info</h5>
-                @foreach ($travel_tax->passengers as $key => $passenger)
-                    <div class="card my-2">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start w-100 border-bottom mb-2 py-2">
-                                <h6 class="mb-1">Passenger {{ $key + 1 }}</h6>
+                <div class="accordion mt-3" id="passengers-list">
+                    @foreach ($travel_tax->passengers as $key => $passenger)
+                        <div class="card accordion-item {{ $loop->first ? 'active' : null }}">
+                            <h2 class="accordion-header" id="heading{{ $key }}">
+                                <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                    data-bs-target="#accordion{{ $key }}" aria-expanded="true"
+                                    aria-controls="accordion{{ $key }}">
+                                    Passenger {{ $key + 1 }}
+                                </button>
+                            </h2>
 
-                                {{-- <a href="#" class="btn btn-primary btn-sm" data-id="{{ $passenger->id }}"
-                                    onclick="handleClickEdit(this)" data-bs-toggle="offcanvas"
-                                    data-bs-target="#offcanvasEnd" aria-controls="offcanvasEnd">
-                                    <i class="bx bx-edit"></i>
-                                </a> --}}
-
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-3 my-2">
-                                    <label for="" class="form-label" style="font-weight: bold;">First
-                                        Name</label>
-                                    <h6>{{ $passenger->firstname }}</h6>
-                                </div>
-                                <div class="col-lg-3 my-2">
-                                    <label for="" class="form-label" style="font-weight: bold;">Last Name</label>
-                                    <h6>{{ $passenger->lastname }}</h6>
-                                </div>
-                                <div class="col-lg-3 my-2">
-                                    <label for="" class="form-label" style="font-weight: bold;">Middle
-                                        Name</label>
-                                    <h6>{{ $passenger->middlename ?? 'N/A' }}</h6>
-                                </div>
-                                <div class="col-lg-3 my-2">
-                                    <label for="" class="form-label" style="font-weight: bold;">Suffix</label>
-                                    <h6>{{ $passenger->suffix ?? 'N/A' }}</h6>
-                                </div>
-                                <div class="col-lg-3 my-2">
-                                    <label for="" class="form-label" style="font-weight: bold;">Passport
-                                        Number</label>
-                                    <h6>{{ $passenger->passport_number }}</h6>
-                                </div>
-                                <div class="col-lg-3 my-2">
-                                    <label for="" class="form-label" style="font-weight: bold;">Ticket
-                                        Number</label>
-                                    <h6>{{ $passenger->ticket_number }}</h6>
-                                </div>
-                                <div class="col-lg-3 my-2">
-                                    <label for="" class="form-label" style="font-weight: bold;">Departure
-                                        Date</label>
-                                    <h6>{{ date_format(new \DateTime($passenger->departure_date), 'F d, Y') }}</h6>
-                                </div>
-                                <div class="col-lg-3 my-2">
-                                    <label for="" class="form-label" style="font-weight: bold;">Passenger
-                                        Type</label><br>
-                                    <div
-                                        class="badge bg-{{ $passenger->passenger_type == 'primary' ? 'primary' : 'secondary' }}">
-                                        {{ $passenger->passenger_type }}</div>
-                                </div>
-                                <div class="col-lg-3 my-2">
-                                    <label for="" class="form-label" style="font-weight: bold;">Email
-                                        Address</label>
-                                    <h6>{{ $passenger->email_address }}</h6>
-                                </div>
-                                <div class="col-lg-3 my-2">
-                                    <label for="" class="form-label" style="font-weight: bold;">Mobile
-                                        Number</label>
-                                    <h6>{{ $passenger->mobile_number }}</h6>
-                                </div>
-                                <div class="col-lg-3 my-2">
-                                    <label for="" class="form-label"
-                                        style="font-weight: bold;">Destination</label>
-                                    <h6>{{ $passenger->destination }}</h6>
-                                </div>
-                                <div class="col-lg-3 my-2">
-                                    <label for="" class="form-label" style="font-weight: bold;">Class</label>
-                                    <h6>{{ strtoupper($passenger->class) }}</h6>
+                            <div id="accordion{{ $key }}" class="accordion-collapse collapse {{ $loop->first ? 'show' : null }}"
+                                data-bs-parent="#passengers-list">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-lg-3 my-2">
+                                            <label for="" class="form-label" style="font-weight: bold;">First
+                                                Name</label>
+                                            <h6>{{ $passenger->firstname }}</h6>
+                                        </div>
+                                        <div class="col-lg-3 my-2">
+                                            <label for="" class="form-label" style="font-weight: bold;">Last
+                                                Name</label>
+                                            <h6>{{ $passenger->lastname }}</h6>
+                                        </div>
+                                        <div class="col-lg-3 my-2">
+                                            <label for="" class="form-label" style="font-weight: bold;">Middle
+                                                Name</label>
+                                            <h6>{{ $passenger->middlename ?? 'N/A' }}</h6>
+                                        </div>
+                                        <div class="col-lg-3 my-2">
+                                            <label for="" class="form-label"
+                                                style="font-weight: bold;">Suffix</label>
+                                            <h6>{{ $passenger->suffix ?? 'N/A' }}</h6>
+                                        </div>
+                                        <div class="col-lg-3 my-2">
+                                            <label for="" class="form-label" style="font-weight: bold;">Passport
+                                                Number</label>
+                                            <h6>{{ $passenger->passport_number }}</h6>
+                                        </div>
+                                        <div class="col-lg-3 my-2">
+                                            <label for="" class="form-label" style="font-weight: bold;">Ticket
+                                                Number</label>
+                                            <h6>{{ $passenger->ticket_number }}</h6>
+                                        </div>
+                                        <div class="col-lg-3 my-2">
+                                            <label for="" class="form-label" style="font-weight: bold;">Departure
+                                                Date</label>
+                                            <h6>{{ date_format(new \DateTime($passenger->departure_date), 'F d, Y') }}</h6>
+                                        </div>
+                                        <div class="col-lg-3 my-2">
+                                            <label for="" class="form-label" style="font-weight: bold;">Passenger
+                                                Type</label><br>
+                                            <div
+                                                class="badge bg-{{ $passenger->passenger_type == 'primary' ? 'primary' : 'secondary' }}">
+                                                {{ $passenger->passenger_type }}</div>
+                                        </div>
+                                        <div class="col-lg-3 my-2">
+                                            <label for="" class="form-label" style="font-weight: bold;">Email
+                                                Address</label>
+                                            <h6>{{ $passenger->email_address }}</h6>
+                                        </div>
+                                        <div class="col-lg-3 my-2">
+                                            <label for="" class="form-label" style="font-weight: bold;">Mobile
+                                                Number</label>
+                                            <h6>{{ $passenger->mobile_number }}</h6>
+                                        </div>
+                                        <div class="col-lg-3 my-2">
+                                            <label for="" class="form-label"
+                                                style="font-weight: bold;">Destination</label>
+                                            <h6>{{ $passenger->destination }}</h6>
+                                        </div>
+                                        <div class="col-lg-3 my-2">
+                                            <label for="" class="form-label"
+                                                style="font-weight: bold;">Class</label>
+                                            <h6>{{ strtoupper($passenger->class) }}</h6>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
+                
             </div>
             <div class="col-lg-4">
                 <h5>Payment Summary</h5>

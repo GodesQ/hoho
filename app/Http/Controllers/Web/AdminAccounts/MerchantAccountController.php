@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\AdminAccounts;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -44,8 +45,9 @@ class MerchantAccountController extends Controller
     }
 
     public function create()
-    {
-        return view('admin-page.merchant-accounts.create-merchant-account');
+    {   
+        $roles = Role::all();
+        return view('admin-page.merchant-accounts.create-merchant-account', compact('roles'));
     }
 
     public function store(Request $request)

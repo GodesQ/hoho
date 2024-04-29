@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TourReservation\StoreRequest;
 use App\Models\TourUnavailableDate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -88,7 +89,7 @@ class TourReservationController extends Controller
     }
 
     public function storeTourReservation(Request $request)
-    {
+    {   
         $user = User::where('id', $request->reserved_user_id)->first();
 
         if (!$user->firstname || !$user->lastname) {
