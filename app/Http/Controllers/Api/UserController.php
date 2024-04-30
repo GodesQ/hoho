@@ -46,7 +46,7 @@ class UserController extends Controller
         : response([
             'status' => FALSE,
             'message' => 'User profile failed to update'
-        ]);
+        ], 400);
     }
 
     public function updateInterest(Request $request)
