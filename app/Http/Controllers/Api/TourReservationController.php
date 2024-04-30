@@ -244,7 +244,7 @@ class TourReservationController extends Controller
             return response([
                 'status' => FALSE,
                 'message' => 'The current authenticated user is not a bus operator.'
-            ]);
+            ], 400);
         }
 
         $tour_reservation = TourReservation::where('id', $request->reservation_id)->with('tour.transport')->first();
@@ -253,7 +253,7 @@ class TourReservationController extends Controller
                 'status' => FALSE,
                 'message' => 'Failed! No Tour Reservation Found',
                 'tour_reservation' => $tour_reservation
-            ]);
+            ], 404);
         }
 
         $qrcode = $tour_reservation->reservation_codes()->where('code', $request->code)->first();
@@ -262,7 +262,7 @@ class TourReservationController extends Controller
             return response([
                 'status' => FALSE,
                 'message' => 'Failed! Invalid QR Code',
-            ]);
+            ], 400);
         }
 
         // return response($this->getDatesInRange($tour_reservation->start_date, $tour_reservation->end_date));
@@ -274,7 +274,7 @@ class TourReservationController extends Controller
                 return response([
                     'status' => FALSE,
                     'message' => 'Failed! You already use this QR Code in other date.',
-                ]);
+                ], 400);
             }
         }
 

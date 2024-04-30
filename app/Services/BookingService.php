@@ -160,11 +160,12 @@ class BookingService
             $response = $this->sendPaymentRequest($transaction);
 
             if (!$response['status'] || !$response['status'] == 'FAIL') {
+                $transaction->delete();
                 return response([
                     'status' => "failed",
                     'message' => 'Failed to submit request for transaction',
                     'data' => $response['result']->data
-                ]);
+                ], 400);
             }
 
             $responseData = json_decode($response['result']->getBody(), true);

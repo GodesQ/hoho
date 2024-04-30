@@ -79,7 +79,8 @@ class TourController extends Controller
         // Calculate the difference in hours
         $total_hours = $arrival_datetime->diffInHours($departure_datetime);
 
-        if($total_hours < 5) {
+        // Minimum of 5 hours
+        if($total_hours <= 5) {
             return response([
                 'status' => FALSE,
                 'message' => 'Layover Tours is not available for your specified time',

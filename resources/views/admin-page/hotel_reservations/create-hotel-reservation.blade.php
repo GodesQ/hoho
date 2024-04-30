@@ -12,16 +12,31 @@
 
         <div class="card">
             <div class="card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                
                 <form action="{{ route('admin.hotel_reservations.store') }}" method="post">
                     @csrf
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="reserved_user_id" class="form-label">Reserved User <span class="text-danger">*</span></label>
+                                <label for="reserved_user_id" class="form-label">Reserved User <span
+                                        class="text-danger">*</span></label>
                                 <select name="reserved_user_id" id="user" class="reserved_users form-select"
                                     style="width: 100%;">
                                 </select>
-                                <div class="text-danger">@error('reserved_user_id'){{ $message }}@enderror</div>
+                                <div class="text-danger">
+                                    @error('reserved_user_id')
+                                        {{ $message }}
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -30,53 +45,82 @@
                                 <select class="select2" name="hotel_id" id="merchant-field">
                                     <option value="">--- SELECT MERCHANT ---</option>
                                     @foreach ($merchant_hotels as $hotel)
-                                        <option value="{{ $hotel->id }}" {{ $hotel->id == old('hotel_id') ? 'selected' : null }}>{{ $hotel->name }}</option>
+                                        <option value="{{ $hotel->id }}"
+                                            {{ $hotel->id == old('hotel_id') ? 'selected' : null }}>{{ $hotel->name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="room-id-field" class="form-label">Room <span class="text-danger">*</span></label>
+                                <label for="room-id-field" class="form-label">Room <span
+                                        class="text-danger">*</span></label>
                                 <select name="room_id" id="room-id-field" class="select2"></select>
-                                <div class="text-danger">@error('room_id'){{ $message }}@enderror</div>
+                                <div class="text-danger">
+                                    @error('room_id')
+                                        {{ $message }}
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="number-of-pax-field" class="form-label">Number of Pax <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="number_of_pax" id="number-of-pax-field" value="{{ old('number_of_pax') }}">
-                                <div class="text-danger">@error('number_of_pax'){{ $message }}@enderror</div>
+                                <label for="number-of-pax-field" class="form-label">Number of Pax <span
+                                        class="text-danger">*</span></label>
+                                <input type="number" class="form-control" name="number_of_pax" id="number-of-pax-field"
+                                    value="{{ old('number_of_pax') }}">
+                                <div class="text-danger">
+                                    @error('number_of_pax')
+                                        {{ $message }}
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="reservation-date-field" class="form-label">Reservation Date <span class="text-danger">*</span></label>
-                                <input type="date" name="reservation_date" id="reservation-date-field" class="form-control" value="{{ old('reservation_date') }}">
-                                <div class="text-danger">@error('reservation_date'){{ $message }}@enderror</div>
+                                <label for="reservation-date-field" class="form-label">Reservation Date <span
+                                        class="text-danger">*</span></label>
+                                <input type="date" name="reservation_date" id="reservation-date-field"
+                                    class="form-control" value="{{ old('reservation_date') }}">
+                                <div class="text-danger">
+                                    @error('reservation_date')
+                                        {{ $message }}
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="reservation-time-field" class="form-label">Reservation Time <span class="text-danger">*</span></label>
-                                <input type="time" name="reservation_time" id="reservation-time-field" class="form-control" value="{{ old('reservation_time') }}">
-                                <div class="text-danger">@error('reservation_time'){{ $message }}@enderror</div>
+                                <label for="reservation-time-field" class="form-label">Reservation Time <span
+                                        class="text-danger">*</span></label>
+                                <input type="time" name="reservation_time" id="reservation-time-field"
+                                    class="form-control" value="{{ old('reservation_time') }}">
+                                <div class="text-danger">
+                                    @error('reservation_time')
+                                        {{ $message }}
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
                                 <label for="status-field" class="form-label">Status</label>
                                 <select name="status" id="status-field" class="form-select">
-                                    <option value="pending" {{ old('status') == 'pending' ? 'selected' : null }}>Pending</option>
-                                    <option value="declined" {{ old('status') == 'declined' ? 'selected' : null }}>Declined</option>
-                                    <option value="approved" {{ old('status') == 'approved' ? 'selected' : null }}>Approved</option>
+                                    <option value="pending" {{ old('status') == 'pending' ? 'selected' : null }}>Pending
+                                    </option>
+                                    <option value="declined" {{ old('status') == 'declined' ? 'selected' : null }}>Declined
+                                    </option>
+                                    <option value="approved" {{ old('status') == 'approved' ? 'selected' : null }}>Approved
+                                    </option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
                                 <label for="approved-date-field" class="form-label">Approved Date</label>
-                                <input type="text" name="approved_date" id="approved-date-field" disabled class="form-control">
+                                <input type="text" name="approved_date" id="approved-date-field" disabled
+                                    class="form-control">
                             </div>
                         </div>
                     </div>
@@ -106,7 +150,7 @@
         $('#merchant-field').on('change', function(e) {
             let merchant_id = e.target.value;
             $.ajax({
-                url: '{{ route("admin.rooms.lookup") }}' + '/' + merchant_id + '?type=merchant',
+                url: '{{ route('admin.rooms.lookup') }}' + '/' + merchant_id + '?type=merchant',
                 method: 'GET',
                 success: function(data) {
                     data.rooms.forEach(room => {
@@ -117,23 +161,22 @@
             })
         })
 
-        $(function(){
+        $(function() {
             var dtToday = new Date();
-            
+
             var month = dtToday.getMonth() + 1;
             var day = dtToday.getDate();
             var year = dtToday.getFullYear();
-            if(month < 10)
+            if (month < 10)
                 month = '0' + month.toString();
-            if(day < 10)
+            if (day < 10)
                 day = '0' + day.toString();
-            
+
             var maxDate = year + '-' + month + '-' + day;
 
             // or instead:
             // var maxDate = dtToday.toISOString().substr(0, 10);
             $('#reservation-date-field').attr('min', maxDate);
         });
-
     </script>
 @endpush

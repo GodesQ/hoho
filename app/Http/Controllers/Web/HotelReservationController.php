@@ -53,13 +53,13 @@ class HotelReservationController extends Controller
                     }
 
                     if ($row->status == 'declined') {
-                        return '<div class="badge bg-label-success">Declined</div>';
+                        return '<div class="badge bg-label-danger">Declined</div>';
                     }
                 })
                 ->addColumn('actions', function ($row) {
                     $output = '<div class="dropdown">';
                         
-                    $output .= '<a href="/admin/hotel-reservations/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a> ';
+                    $output .= '<a href="'. route('admin.hotel_reservations.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a> ';
 
                     if($row->status != 'approved') {
                         $output .= '<button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>';
