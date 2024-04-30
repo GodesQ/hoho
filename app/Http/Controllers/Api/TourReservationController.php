@@ -88,7 +88,7 @@ class TourReservationController extends Controller
         ]);
     }
 
-    public function storeTourReservation(Request $request)
+    public function storeTourReservation(StoreRequest $request)
     {   
         $user = User::where('id', $request->reserved_user_id)->first();
 

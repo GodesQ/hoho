@@ -75,15 +75,20 @@
                 <div class="accordion mt-3" id="passengers-list">
                     @foreach ($travel_tax->passengers as $key => $passenger)
                         <div class="card accordion-item {{ $loop->first ? 'active' : null }}">
-                            <h2 class="accordion-header" id="heading{{ $key }}">
+                            <h2 class="accordion-header d-flex " id="heading{{ $key }}">
                                 <button type="button" class="accordion-button" data-bs-toggle="collapse"
                                     data-bs-target="#accordion{{ $key }}" aria-expanded="true"
                                     aria-controls="accordion{{ $key }}">
                                     Passenger {{ $key + 1 }}
                                 </button>
+                                {{-- <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="offcanvas"
+                                    data-bs-target="#offcanvasEnd" data-id="{{ $passenger->id }}" aria-controls="offcanvasEnd" onclick="handleClickEdit(this)">
+                                    <i class="bx bx-edit"></i>
+                                </button> --}}
                             </h2>
 
-                            <div id="accordion{{ $key }}" class="accordion-collapse collapse {{ $loop->first ? 'show' : null }}"
+                            <div id="accordion{{ $key }}"
+                                class="accordion-collapse collapse {{ $loop->first ? 'show' : null }}"
                                 data-bs-parent="#passengers-list">
                                 <div class="accordion-body">
                                     <div class="row">
@@ -155,7 +160,7 @@
                         </div>
                     @endforeach
                 </div>
-                
+
             </div>
             <div class="col-lg-4">
                 <h5>Payment Summary</h5>

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Requests\TourReservation\StoreRequest;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -140,7 +141,7 @@ class BookingService
 
         /**
          * Calculates the subAmount, totalOfDiscount, and totalOfAdditionalCharges by iterating over the items
-         */
+        */
         foreach ($items as $key => $item) {
             $subAmount += intval($item['amount']) ?? 0;
 
