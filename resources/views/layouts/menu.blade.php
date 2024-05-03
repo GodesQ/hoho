@@ -364,22 +364,14 @@
                     </li>
                 @endcan
             @endauth
-            {{-- <li
-                class="menu-item {{ preg_match('/admin\/reports/', Request::path()) ? 'active' : null }}">
-                <a href="{{ route('admin.reports.user_demographics') }}" class="menu-link">
-                    <div data-i18n="Users Demographics">Users Demographics</div>
-                </a>
-            </li> --}}
         </ul>
     </li>
-
 
     @auth('admin')
         @canany(['view_interests_list', 'view_referrals_list', 'view_promo_codes_list', 'view_product_categories_list'])
             <li class="menu-header small text-uppercase"><span class="menu-header-text">Others</span></li>
         @endcanany
     @endauth
-
 
     @auth('admin')
         @can('view_interests_list')

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Requests\TourReservation\StoreRequest;
+use App\Models\LayoverTourReservationDetail;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -199,7 +200,6 @@ class BookingService
         }
     }
 
-
     # HELPERS
 
     private function getHMACSignatureHash($text, $secret_key)
@@ -348,10 +348,22 @@ class BookingService
                 'created_user_type' => 'guest'
             ]);
 
+            if($item['type'] == "Layover") {
+                LayoverTourReservationDetail::create([
+                    'reservation_id' => $reservation->id,
+                    'arrival_datetime' => $item['arrival_datetime'],
+                    'flight_to' => $item['flight_to'],
+                    'departure_datetime' => $item['departure_datetime'],
+                    'flight_from' => $item['flight_from'],
+                    'passport_number' => $item['passport_number'],
+                    'special_instruction' => $item['special_instruction']
+                ]);
+            }
+
             if ($request->has('requirement') && $request->file('requirement')->isValid()) {
                 $file = $request->file('requirement');
                 $file_name = Str::random(7) . '.' . $file->getClientOriginalExtension();
-                $save_file = $file->move(public_path() . '/assets/img/tour_reservations/requirements/' . $reservation->id, $file_name);
+                $file->move(public_path() . '/assets/img/tour_reservations/requirements/' . $reservation->id, $file_name);
             } else {
                 $file_name = null;
             }
@@ -369,7 +381,7 @@ class BookingService
             $tour = Tour::where('id', $item['tour_id'])->first();
 
             $details = [
-                'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
+                'tour_provider_name' => $tour->tour_provider->merchant->name ?? '',
                 'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
                 'trip_date' => $item['trip_date'],
                 'tour_name' => $tour->name
