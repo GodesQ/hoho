@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -53,5 +54,15 @@ class AuthController extends Controller
             'token' => $token,
         ], 200);
 
+    }
+
+    public function logout(Request $request) {
+        $user = Auth::user();
+
+        if($user) {
+            Auth::logout();
+        }
+
+        return response(['message'=> 'Logout Successfully'], 200);
     }
 }

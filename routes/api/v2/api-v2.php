@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Route;
     Route::post('login', [AuthController::class, 'login']);
 
     Route::group(['middleware' => ['api_base_authorization']], function () {
+        Route::post('logout', [AuthController::class, 'logout']);
         Route::put('users/profile', [UserController::class, 'updateProfile']);
 
         Route::get('announcements', [AnnouncementController::class, 'index']);
