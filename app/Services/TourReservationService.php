@@ -507,7 +507,6 @@ class TourReservationService
         return $this->_generateDataTable($data, $request);
     }
 
-
     private function _generateDataTable($data, $request)
     {
         return DataTables::of($data)
@@ -535,7 +534,7 @@ class TourReservationService
             })
             ->addColumn('actions', function ($row) {
                 $output = '<div class="dropdown">
-                    <a href="/admin/tour_reservations/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>';
+                    <a href="'. route('admin.tour_reservations.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>';
 
                 $output .= $row->status === 'pending' && optional($row->transaction)->payment_status != 'success' ? '<button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>' : '';
 
@@ -573,7 +572,6 @@ class TourReservationService
 
 
     # HELPERS
-
     private function getHMACSignatureHash($text, $secret_key)
     {
         $key = $secret_key;

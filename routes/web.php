@@ -194,14 +194,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::delete('attractions/remove_image', [AttractionController::class, 'removeImage'])->name('attractions.remove_image');
     // Route::get('attractions/update_attractions', [AttractionController::class, 'update_attractions']);
 
-    Route::get('tour_reservations', [TourReservationController::class, 'list'])->name('tour_reservations.list')->can('view_tour_reservations_list')->middleware('merchant_created');
-    Route::get('tour_reservations/create', [TourReservationController::class, 'create'])->name('tour_reservations.create')->middleware('merchant_created');
-    Route::post('tour_reservations/store', [TourReservationController::class, 'store'])->name('tour_reservations.store');
-    Route::get('tour_reservations/edit/{id}', [TourReservationController::class, 'edit'])->name('tour_reservations.edit');
-    Route::post('tour_reservations/update/{id}', [TourReservationController::class, 'update'])->name('tour_reservations.update');
-    Route::delete('tour_reservations/destroy', [TourReservationController::class, 'destroy'])->name('tour_reservations.destroy');
+    Route::get('tour-reservations', [TourReservationController::class, 'list'])->name('tour_reservations.list')->can('view_tour_reservations_list')->middleware('merchant_created');
+    Route::get('tour-reservations/create', [TourReservationController::class, 'create'])->name('tour_reservations.create')->middleware('merchant_created');
+    Route::post('tour-reservations/store', [TourReservationController::class, 'store'])->name('tour_reservations.store');
+    Route::get('tour-reservations/edit/{id}', [TourReservationController::class, 'edit'])->name('tour_reservations.edit');
+    Route::put('tour-reservations/update/{id}', [TourReservationController::class, 'update'])->name('tour_reservations.update');
+    Route::delete('tour-reservations/destroy', [TourReservationController::class, 'destroy'])->name('tour_reservations.destroy');
 
-    Route::get("tour_reservations/sync_customer_details", [TourReservationController::class, 'syncCustomerDetails']);
+    Route::get("tour-reservations/sync-customer-details", [TourReservationController::class, 'syncCustomerDetails']);
 
     Route::get('tour_reservations/reservation_codes/{reservation_id}', [TourReservationController::class, 'get_tour_reservation_codes'])->name('tour_reservations.reservation_codes');
 

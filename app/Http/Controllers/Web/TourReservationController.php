@@ -74,8 +74,7 @@ class TourReservationController extends Controller
     }
 
     public function edit(Request $request) {
-        $reservation = TourReservation::where('id', $request->id)->with('user', 'tour', 'transaction', 'reservation_codes')->firstOrFail();
-        // dd($reservation);
+        $reservation = TourReservation::where('id', $request->id)->with('user', 'tour', 'transaction', 'reservation_codes', 'customer_details')->firstOrFail();
         $ticket_passes = TicketPass::get();
         return view('admin-page.tour_reservations.edit-tour-reservation', compact('reservation', 'ticket_passes'));
     }
@@ -161,7 +160,7 @@ class TourReservationController extends Controller
         $tour_reservations = TourReservation::with('user')->whereHas('user')->get();
 
         foreach ($tour_reservations as $key => $tour_reservation) {
-            TourReservationCustomerDetail::create([
+            TourReservationCustomerDetail::updateOrCreate([
                 'tour_reservation_id' => $tour_reservation->id,
                 'firstname' => $tour_reservation->user->lastname,
                 'lastname' => $tour_reservation->user->lastname,

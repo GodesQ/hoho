@@ -70,6 +70,40 @@
             });
         }
 
+        $(document).on("click", ".remove-btn", function(e) {
+            let id = $(this).attr("id");
+            Swal.fire({
+                title: 'Remove Order',
+                text: "Do you really want to delete this order?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#6f0d00',
+                cancelButtonColor: '#ff3e1d',
+                confirmButtonText: 'Yes, remove it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('admin.orders.destroy', '') }}" + '/' + id,
+                        method: "DELETE",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                        },
+                        success: function(response) {
+                            if (response.status) {
+                                Swal.fire('Removed!', response.message, 'success').then(
+                                    result => {
+                                        if (result.isConfirmed) {
+                                            toastr.success(response.message, 'Success');
+                                            location.reload();
+                                        }
+                                    })
+                            }
+                        }
+                    })
+                }
+            })
+        });
+
         loadTable();
     </script>
 @endpush

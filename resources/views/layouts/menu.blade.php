@@ -173,7 +173,7 @@
 
     @auth('admin')
         @can('view_tour_reservations_list')
-            <li class="menu-item {{ preg_match('/admin\/tour_reservations/', Request::path()) ? 'active' : null }}">
+            <li class="menu-item {{ preg_match('/admin\/tour-reservations/', Request::path()) ? 'active' : null }}">
                 <a href="{{ route('admin.tour_reservations.list') }}" class="menu-link">
                     <i class='menu-icon tf-icons bx bx-book-content'></i>
                     <div data-i18n="Tour Reservations">Tour Reservations</div>

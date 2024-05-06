@@ -96,14 +96,14 @@ class TourReservationController extends Controller
             return response([
                 'status' => 'failed',
                 'message' => 'Please complete your name before continue to checkout'
-            ]);
+            ], 400);
         }
 
         if (!$user->contact_no) {
             return response([
                 'status' => 'failed',
                 'message' => "Please provide a contact number to continue"
-            ]);
+            ], 400);
         }
 
         return $this->bookingService->createMultipleBooking($request);

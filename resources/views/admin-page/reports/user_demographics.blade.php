@@ -8,30 +8,6 @@
         <h4 class="fw-bold py-3 mb-4">User Demographics</h4>
     </div>
 
-    {{-- <div class="row mb-3">
-        <div class="col-xl-4">
-            <div class="card">
-                <div class="card-body">
-
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-4">
-            <div class="card">
-                <div class="card-body">
-
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-4">
-            <div class="card">
-                <div class="card-body">
-
-                </div>
-            </div>
-        </div>
-    </div> --}}
-
     <div class="card mb-3">
         <div class="card-header">
             <h5>Users Per Month (2024)</h5>

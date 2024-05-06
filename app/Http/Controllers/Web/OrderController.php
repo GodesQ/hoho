@@ -130,7 +130,13 @@ class OrderController extends Controller
     }
     
     public function destroy($id) {
-    
+        $order = Order::findOrFail($id);
+        $order->delete();
+
+        return response([
+            'status' => TRUE,
+            'message' => 'Order deleted successfully'
+        ]);
     }
 
     private function calculateTotalAmount($price, $quantity) {

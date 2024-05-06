@@ -88,7 +88,7 @@
                             <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
                                 style="width:35px; border-radius: 5px;" alt="">
                         </span>
-                        <span class="app-brand-text demo menu-text fw-bolder ms-2">Menu</span>
+                        <span class="app-brand-text text-uppercase fw-bolder ms-2">HOP ON HOP OFF</span>
                     </a>
 
                     <a href="javascript:void(0);"

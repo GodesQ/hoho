@@ -93,65 +93,65 @@
                                 <div class="accordion-body">
                                     <div class="row">
                                         <div class="col-lg-3 my-2">
-                                            <label for="" class="form-label" style="font-weight: bold;">First
+                                            <label for="" class="form-label fw-semibold text-primary">First
                                                 Name</label>
                                             <h6>{{ $passenger->firstname }}</h6>
                                         </div>
                                         <div class="col-lg-3 my-2">
-                                            <label for="" class="form-label" style="font-weight: bold;">Last
+                                            <label for="" class="form-label fw-semibold text-primary">Last
                                                 Name</label>
                                             <h6>{{ $passenger->lastname }}</h6>
                                         </div>
                                         <div class="col-lg-3 my-2">
-                                            <label for="" class="form-label" style="font-weight: bold;">Middle
+                                            <label for="" class="form-label fw-semibold text-primary">Middle
                                                 Name</label>
                                             <h6>{{ $passenger->middlename ?? 'N/A' }}</h6>
                                         </div>
                                         <div class="col-lg-3 my-2">
-                                            <label for="" class="form-label"
-                                                style="font-weight: bold;">Suffix</label>
+                                            <label for=""
+                                                class="form-label fw-semibold text-primary">Suffix</label>
                                             <h6>{{ $passenger->suffix ?? 'N/A' }}</h6>
                                         </div>
                                         <div class="col-lg-3 my-2">
-                                            <label for="" class="form-label" style="font-weight: bold;">Passport
+                                            <label for="" class="form-label fw-semibold text-primary">Passport
                                                 Number</label>
                                             <h6>{{ $passenger->passport_number }}</h6>
                                         </div>
                                         <div class="col-lg-3 my-2">
-                                            <label for="" class="form-label" style="font-weight: bold;">Ticket
+                                            <label for="" class="form-label fw-semibold text-primary">Ticket
                                                 Number</label>
                                             <h6>{{ $passenger->ticket_number }}</h6>
                                         </div>
                                         <div class="col-lg-3 my-2">
-                                            <label for="" class="form-label" style="font-weight: bold;">Departure
+                                            <label for="" class="form-label fw-semibold text-primary">Departure
                                                 Date</label>
                                             <h6>{{ date_format(new \DateTime($passenger->departure_date), 'F d, Y') }}</h6>
                                         </div>
                                         <div class="col-lg-3 my-2">
-                                            <label for="" class="form-label" style="font-weight: bold;">Passenger
+                                            <label for="" class="form-label fw-semibold text-primary">Passenger
                                                 Type</label><br>
                                             <div
                                                 class="badge bg-{{ $passenger->passenger_type == 'primary' ? 'primary' : 'secondary' }}">
                                                 {{ $passenger->passenger_type }}</div>
                                         </div>
                                         <div class="col-lg-3 my-2">
-                                            <label for="" class="form-label" style="font-weight: bold;">Email
+                                            <label for="" class="form-label fw-semibold text-primary">Email
                                                 Address</label>
                                             <h6>{{ $passenger->email_address }}</h6>
                                         </div>
                                         <div class="col-lg-3 my-2">
-                                            <label for="" class="form-label" style="font-weight: bold;">Mobile
+                                            <label for="" class="form-label fw-semibold text-primary">Mobile
                                                 Number</label>
                                             <h6>{{ $passenger->mobile_number }}</h6>
                                         </div>
                                         <div class="col-lg-3 my-2">
-                                            <label for="" class="form-label"
-                                                style="font-weight: bold;">Destination</label>
+                                            <label for=""
+                                                class="form-label fw-semibold text-primary">Destination</label>
                                             <h6>{{ $passenger->destination }}</h6>
                                         </div>
                                         <div class="col-lg-3 my-2">
-                                            <label for="" class="form-label"
-                                                style="font-weight: bold;">Class</label>
+                                            <label for=""
+                                                class="form-label fw-semibold text-primary">Class</label>
                                             <h6>{{ strtoupper($passenger->class) }}</h6>
                                         </div>
                                     </div>

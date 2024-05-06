@@ -56,7 +56,7 @@ class TourReservation extends Model
         return $this->belongsTo(User::class, 'reserved_user_id');
     }
 
-    public function customer_detail() {
+    public function customer_details() {
         return $this->hasOne(TourReservationCustomerDetail::class, 'tour_reservation_id');
     }
 

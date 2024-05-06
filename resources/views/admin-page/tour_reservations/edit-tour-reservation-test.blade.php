@@ -27,7 +27,7 @@
             <div class="title-section">
                 <h4 class="fw-medium mb-2">Tour Reservation Details</h4>
                 <h6 class="fw-medium text-primary"><a href="{{ route('admin.dashboard') }}"
-                        class="text-muted fw-light">Dashboard /</a> <a href="{{ route('admin.tour_reservations.list') }}" class="text-muted fw-light">Tour Reservations /</a> Tour Reservation Details</h6>
+                        class="text-muted fw-light">Dashboard /</a> Tour Reservation Details</h6>
             </div>
             <div class="action-section btn-group">
                 <a href="{{ route('admin.tour_reservations.list') }}" class="btn btn-dark btn-sm"><i class="bx bx-undo"></i>
