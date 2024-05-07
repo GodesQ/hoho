@@ -28,4 +28,8 @@ class TravelTaxController extends Controller
 
         return TravelTaxPassengerResource::make($passenger);
     }
+
+    public function store(Request $request) {
+        
+    }
 }

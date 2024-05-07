@@ -133,7 +133,7 @@ use App\Http\Controllers\Api\TourBadgeController;
         Route::get('products/{id}', [ProductController::class, 'getProduct']);
 
         Route::post('orders', [OrderController::class, 'store']);
-        Route::post('orders/bulk', [OrderController::class, 'bulk_store']); // Change from post to get
+        Route::post('orders/bulk', [OrderController::class, 'bulk_store']);
         Route::get('orders/users/{user_id}', [OrderController::class, 'getUserOrders']);
         Route::get('orders/{order_id}', [OrderController::class, 'show']);
 

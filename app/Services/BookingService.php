@@ -130,7 +130,7 @@ class BookingService
         $reference_no = $this->generateReferenceNo();
         $additional_charges = $this->generateAdditionalCharges();
 
-        if (is_string($request->items) && is_array(json_decode($request->items, true)) && (json_last_error() == JSON_ERROR_NONE)) {
+        if (is_string($request->items) && is_array(json_decode($request->items, true))) {
             $items = json_decode($request->items, true);
         } else {
             $items = $request->items;
@@ -143,7 +143,7 @@ class BookingService
         /**
          * Calculates the subAmount, totalOfDiscount, and totalOfAdditionalCharges by iterating over the items
         */
-        foreach ($items as $key => $item) {
+        foreach ($items as $item) {
             $subAmount += intval($item['amount']) ?? 0;
 
             $totalOfDiscount += (intval($item['amount']) - (intval($item['discounted_amount']) ?? intval($item['amount'])));

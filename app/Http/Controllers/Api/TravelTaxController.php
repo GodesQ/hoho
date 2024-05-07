@@ -7,6 +7,7 @@ use App\Http\Requests\TravelTax\PaymentRequest;
 use App\Models\Transaction;
 use App\Models\TravelTaxPassenger;
 use App\Models\TravelTaxPayment;
+use App\Services\AqwireService;
 use Carbon\Carbon;
 use ErrorException;
 use Illuminate\Http\Request;
@@ -14,7 +15,14 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class TravelTaxController extends Controller
-{
+{   
+    public $aqwireService;
+
+    public function __construct(AqwireService $aqwireService)
+    {
+        $this->aqwireService = $aqwireService;
+    }
+
     public function store(PaymentRequest $request)
     {
         try {
@@ -29,7 +37,6 @@ class TravelTaxController extends Controller
                 'total_discount' => $request->discount,
                 'transaction_type' => 'travel_tax',
                 'payment_amount' => $totalAmount,
-                'additional_charges' => null,
                 'aqwire_paymentMethodCode' => $request->payment_method ?? null,
                 'order_date' => Carbon::now(),
                 'transaction_date' => Carbon::now(),
@@ -51,27 +58,17 @@ class TravelTaxController extends Controller
             ]);
 
             $primary_passenger = null;
-            $pasengers_ids = [];
 
             foreach ($request->passengers as $key => $passenger) {
-                $passenger = TravelTaxPassenger::create([
-                    'payment_id' => $travel_tax_payment->id,
-                    'firstname' => $passenger['firstname'],
-                    'lastname' => $passenger['lastname'],
-                    'middlename' => $passenger['middlename'],
-                    'suffix' => $passenger['suffix'],
-                    'passport_number' => $passenger['passport_number'],
-                    'ticket_number' => $passenger['ticket_number'],
-                    'class' => $passenger['class'],
-                    'mobile_number' => $passenger['mobile_number'],
-                    'email_address' => $passenger['email_address'],
-                    'destination' => $passenger['destination'],
-                    'departure_date' => $passenger['departure_date'],
-                    'passenger_type' => $passenger['passenger_type'],
-                    'amount' => $passenger['amount']
-                ]);
+                $passenger = TravelTaxPassenger::create(array_merge(['payment_id' => $travel_tax_payment->id], $passenger));
 
-                if($passenger['passenger_type'] == 'primary' && !$primary_passenger) $primary_passenger = $passenger;
+                if($passenger['passenger_type'] == 'primary' && !$primary_passenger) {
+                    $primary_passenger = $passenger;
+                }
+            }
+
+            if(!$primary_passenger) {
+                throw new ErrorException("The primary passenger was not found.", 400);
             }
 
             # Create Request Model for Payment Gateway
@@ -98,31 +95,9 @@ class TravelTaxController extends Controller
                 'note' => 'Payment for Travel Tax',
             ];
 
-            # Generate URL Endpoint and Auth Token for Payment Gateway
-            if (env('APP_ENVIRONMENT') == 'LIVE') {
-                $url_create = 'https://payments.aqwire.io/api/v3/transactions/create';
-                $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
-            } else {
-                $url_create = 'https://payments-sandbox.aqwire.io/api/v3/transactions/create';
-                $authToken = $this->getHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
-            }
-
-            $response = Http::withHeaders([
-                'accept' => 'application/json',
-                'content-type' => 'application/json',
-                'Qw-Merchant-Id' => config('services.aqwire.merchant_code'),
-                'Authorization' => 'Bearer ' . $authToken,
-            ])->post($url_create, $requestModel);
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode == 400) {
-                $content = json_decode($response->getBody()->getContents());
-                throw new ErrorException($content->message . ' in Aqwire Payment Gateway.');
-            }
-
-            $responseData = json_decode($response->getBody(), true);
-
+            // Pay using aqwire
+            $responseData = $this->aqwireService->pay($requestModel);
+            
             $transaction->update([
                 'aqwire_transactionId' => $responseData['data']['transactionId'] ?? null,
                 'payment_url' => $responseData['paymentUrl'] ?? null,
@@ -138,35 +113,12 @@ class TravelTaxController extends Controller
         } catch (ErrorException $e) {
             $transaction->delete();
             $travel_tax_payment->delete();
+
             return response([
                 'status' => 'failed',
                 'message' => $e->getMessage(),
             ], 400);
         }
-    }
-
-    private function getHMACSignatureHash($text, $secret_key)
-    {
-        $key = $secret_key;
-        $message = $text;
-
-        $hex = hash_hmac('sha256', $message, $key);
-        $bin = hex2bin($hex);
-
-        return base64_encode($bin);
-    }
-
-    private function getLiveHMACSignatureHash($text, $key)
-    {
-        $keyBytes = utf8_encode($key);
-        $textBytes = utf8_encode($text);
-
-        $hashBytes = hash_hmac('sha256', $textBytes, $keyBytes, true);
-
-        $base64Hash = base64_encode($hashBytes);
-        $base64Hash = str_replace(['+', '/'], ['-', '_'], $base64Hash);
-
-        return $base64Hash;
     }
 
     private function computeTotalAmount($amount, $processing_fee, $discount)
