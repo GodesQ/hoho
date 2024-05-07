@@ -61,7 +61,7 @@ class UserController extends Controller
         : response([
             'status' => FALSE,
             'message' => 'User Interest failed to update'
-        ]);
+        ], 400);
     }
 
     public function destroyAccount(Request $request)
@@ -85,7 +85,7 @@ class UserController extends Controller
             : response([
                 'status' => false,
                 'message' => 'User failed to delete',
-            ], 500);
+            ], 400);
     }
 
     public function changePassword(Request $request)
