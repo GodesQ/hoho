@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Http\Requests\TourReservation\StoreRequest;
 use App\Models\LayoverTourReservationDetail;
+use App\Models\TourReservationCustomerDetail;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -314,6 +316,8 @@ class BookingService
             $items = json_decode($request->items, true);
         }
 
+        $user = User::findOrFail($request->reserved_user_id);
+
         foreach ($items as $key => $item) {
             $trip_date = Carbon::create($item['trip_date']);
 
@@ -346,6 +350,15 @@ class BookingService
                 'discount_amount' => $subAmount - $totalOfDiscount,
                 'created_by' => $request->reserved_user_id,
                 'created_user_type' => 'guest'
+            ]);
+
+            TourReservationCustomerDetail::create([
+                'tour_reservation_id' => $reservation->id,
+                'firstname' => $user->firstname,
+                'lastname' => $user->lastname,
+                'email' => $user->email,
+                'contact_no' => '+' . $user->countryCode . $user->contact_no,
+                'address' => null,
             ]);
 
             if($item['type'] == "Layover") {
