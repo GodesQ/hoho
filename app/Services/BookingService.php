@@ -6,6 +6,7 @@ use App\Http\Requests\TourReservation\StoreRequest;
 use App\Models\LayoverTourReservationDetail;
 use App\Models\TourReservationCustomerDetail;
 use App\Models\User;
+use ErrorException;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -55,7 +56,7 @@ class BookingService
                 $totalAmount -= $totalOfAdditionalCharges;
             }
 
-            $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
+            $transaction = $this->storeTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
 
             if (!$transaction) {
                 return back()->with('fail', 'Failed to Create Transaction');
@@ -138,6 +139,10 @@ class BookingService
             $items = $request->items;
         }
 
+        if(!is_array($items)) {
+            throw new ErrorException("Invalid type of items");
+        }
+
         $subAmount = 0;
         $totalOfDiscount = 0;
         $totalOfAdditionalCharges = 0;
@@ -148,19 +153,19 @@ class BookingService
         foreach ($items as $item) {
             $subAmount += intval($item['amount']) ?? 0;
 
-            $totalOfDiscount += (intval($item['amount']) - (intval($item['discounted_amount']) ?? intval($item['amount'])));
-
+            $totalOfDiscount += intval($item['amount']) - (intval($item['discounted_amount']) ?? intval($item['amount']));
             $totalOfAdditionalCharges += $this->getTotalOfAdditionalCharges($item['number_of_pass'], $additional_charges);
         }
+
 
         if (config('services.checkout.type') == "HPP") {
             $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
 
-            $transaction = $this->createTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
+            $transaction = $this->storeTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
 
             $this->createMultipleReservation($request, $transaction, $additional_charges);
 
-            $response = $this->sendPaymentRequest($transaction);
+            $response = $this->sendPaymentRequest($transaction); 
 
             if (!$response['status'] || !$response['status'] == 'FAIL') {
                 $transaction->delete();
@@ -257,7 +262,7 @@ class BookingService
         return $convenience_fee + $travel_pass;
     }
 
-    private function createTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
+    private function storeTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
     {
         $transaction = Transaction::create([
             'reference_no' => $reference_no,
@@ -279,8 +284,10 @@ class BookingService
     }
 
     private function createReservation($request, $transaction, $totalAmount, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
-    {
-        $trip_date = Carbon::create($request->trip_date);
+    {   
+        $user = User::findOrFail($request->reserved_user_id);
+        $trip_start_date = Carbon::parse($request->trip_date);
+        $trip_end_date = $request->type == 'Guided' ? $trip_start_date->addDays(1) : $this->getDateOfDIYPass($request->ticket_pass, $trip_start_date);
 
         $reservation = TourReservation::create([
             'tour_id' => $request->tour_id,
@@ -293,8 +300,8 @@ class BookingService
             'passenger_ids' => $request->passenger_ids ? json_encode($request->passenger_ids) : json_encode([$request->reserved_user_id]),
             'reference_code' => $transaction->reference_no,
             'order_transaction_id' => $transaction->id,
-            'start_date' => $request->trip_date,
-            'end_date' => $request->type == 'Guided' ? $trip_date->addDays(1) : $this->getDateOfDIYPass($request->ticket_pass, $trip_date),
+            'start_date' =>  $trip_start_date,
+            'end_date' => $trip_end_date,
             'status' => 'pending',
             'number_of_pass' => $request->number_of_pass,
             'ticket_pass' => $request->type == 'DIY' ? $request->ticket_pass : null,
@@ -303,6 +310,15 @@ class BookingService
             'promo_code' => $request->promo_code,
             'created_by' => Auth::guard('admin')->user()->id,
             'created_user_type' => Auth::guard('admin')->user()->role,
+        ]);
+
+        TourReservationCustomerDetail::create([
+            'tour_reservation_id' => $reservation->id,
+            'firstname' => $user->firstname,
+            'lastname' => $user->lastname,
+            'email' => $user->email,
+            'contact_no' => '+' . $user->countryCode . $user->contact_no,
+            'address' => null,
         ]);
 
         return $reservation;
