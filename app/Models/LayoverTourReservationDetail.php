@@ -9,7 +9,7 @@ class LayoverTourReservationDetail extends Model
 {
     use HasFactory;
     protected $table = "layover_tour_reservation_details";
-    protected $fiilable = [
+    protected $fillable = [
         "reservation_id",
         "arrival_datetime",
         "flight_to",
