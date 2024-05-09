@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TourReservation\StoreRequest;
 use App\Models\TourUnavailableDate;
+use ErrorException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -62,7 +63,7 @@ class TourReservationController extends Controller
 
 
         foreach ($tourReservations as $reservation) {
-            if($reservation->start_date && $reservation->end_date) {
+            if ($reservation->start_date && $reservation->end_date) {
                 $startDate = $reservation->start_date;
                 $endDate = $reservation->end_date;
 
@@ -89,42 +90,45 @@ class TourReservationController extends Controller
     }
 
     public function storeTourReservation(StoreRequest $request)
-    {   
-        $user = User::where('id', $request->reserved_user_id)->first();
+    {
+        try {
+            $user = User::where('id', $request->reserved_user_id)->first();
 
-        if (!$user->firstname || !$user->lastname) {
-            return response([
-                'status' => 'failed',
-                'message' => 'Please complete your name before continue to checkout'
+            if (!$user->firstname || !$user->lastname) {
+                throw new ErrorException("Please complete your name before continuing to checkout");
+            }
+
+            if (!$user->contact_no) {
+                throw new ErrorException("Please provide a contact number to continue");
+            }
+
+            return $this->bookingService->createMultipleBooking($request);
+
+        } catch (ErrorException $e) {
+            return response()->json([
+                "status" => 'failed',
+                "message" => $e->getMessage(),
             ], 400);
         }
-
-        if (!$user->contact_no) {
-            return response([
-                'status' => 'failed',
-                'message' => "Please provide a contact number to continue"
-            ], 400);
-        }
-
-        return $this->bookingService->createMultipleBooking($request);
     }
 
     public function getDIYTicketPassReservations(Request $request)
     {
         $user = Auth::user();
         $reservations = TourReservation::latest('created_at')
-                        ->where('status', 'approved')
-                        ->where('type', 'DIY')
-                        ->where('reserved_user_id', $user->id)
-                        ->with('reservation_codes')
-                        ->get();
+            ->where('status', 'approved')
+            ->where('type', 'DIY')
+            ->where('reserved_user_id', $user->id)
+            ->with('reservation_codes')
+            ->get();
 
         return response($reservations);
     }
 
-    public function getDIYTicketPassReservation(Request $request) {
+    public function getDIYTicketPassReservation(Request $request)
+    {
         $reservation_code = ReservationUserCode::where('id', $request->id)->first();
-        
+
         if (!$reservation_code) {
             return response([
                 'status' => FALSE,
@@ -143,13 +147,16 @@ class TourReservationController extends Controller
     public function getUserReservations(Request $request)
     {
         $user = Auth::user();
-         
+
         $reservations = TourReservation::latest('created_at')
-        ->where('reserved_user_id', $user->id)
-        ->with(['tour', 'feedback' => function ($query) use ($user) {
-            $query->where('customer_id', $user->id); // Limit to retrieve only one feedback
-        }])
-        ->get();
+            ->where('reserved_user_id', $user->id)
+            ->with([
+                'tour',
+                'feedback' => function ($query) use ($user) {
+                    $query->where('customer_id', $user->id); // Limit to retrieve only one feedback
+                }
+            ])
+            ->get();
 
         foreach ($reservations as $reservation) {
             $reservation->setAppends([]); // Exclude the "attractions" attribute for this instance
@@ -167,7 +174,7 @@ class TourReservationController extends Controller
         $today = date('Y-m-d');
         $user = Auth::user();
 
-        if($user->role != 'bus_operator') {
+        if ($user->role != 'bus_operator') {
             return response([
                 'status' => FALSE,
                 'message' => 'The current authenticated user is not a bus operator.'
@@ -205,7 +212,7 @@ class TourReservationController extends Controller
             }
         }
 
-        if($qrcode->status == 'hop_on') {
+        if ($qrcode->status == 'hop_on') {
             $status = 'hop_off';
             $user->transport()->update([
                 'available_seats' => $user->transport->available_seats + 1,
@@ -236,11 +243,12 @@ class TourReservationController extends Controller
         ]);
     }
 
-    public function scanReservationCode(Request $request) {
+    public function scanReservationCode(Request $request)
+    {
         $today = date('Y-m-d');
         $user = Auth::user();
 
-        if($user->role != 'bus_operator') {
+        if ($user->role != 'bus_operator') {
             return response([
                 'status' => FALSE,
                 'message' => 'The current authenticated user is not a bus operator.'
@@ -278,7 +286,7 @@ class TourReservationController extends Controller
             }
         }
 
-        if($qrcode->status == 'hop_on') {
+        if ($qrcode->status == 'hop_on') {
             $status = 'hop_off';
             $user->transport()->update([
                 'available_seats' => $user->transport->available_seats + 1,
@@ -311,7 +319,7 @@ class TourReservationController extends Controller
             'status' => TRUE,
             'message' => $status == 'hop_on' ? 'Success! You can now ride the HOHO bus.' : 'Thank you for riding with us! Have a great day!',
         ]);
-    } 
+    }
 
     # HELPERS
     public function getDatesInRange($start_date, $end_date)

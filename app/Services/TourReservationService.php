@@ -194,8 +194,6 @@ class TourReservationService
             ], 201);
 
         } catch (HttpException $e) {
-            // if (env('APP_ENVIRONMENT') != 'LIVE') dd($e);
-
             return response([
                 'status' => 'failed',
                 'message' => 'Transaction Failed to Submit',
@@ -203,8 +201,6 @@ class TourReservationService
             ], 400);
 
         } catch (\ErrorException $e) {
-            // if (env('APP_ENVIRONMENT') != 'LIVE') dd($e);
-
             return response([
                 'status' => 'failed',
                 'message' => 'Transaction Failed to Submit',
@@ -212,8 +208,6 @@ class TourReservationService
             ], 400);
 
         } catch (Exception $e) {
-            // if (env('APP_ENVIRONMENT') != 'LIVE') dd($e);
-
             return response([
                 'status' => 'failed',
                 'message' => 'Transaction Failed to Submit',
@@ -221,8 +215,6 @@ class TourReservationService
             ], 400);
 
         } catch (\Error $e) {
-            // if (env('APP_ENVIRONMENT') != 'LIVE') dd($e);
-
             return response([
                 'status' => 'failed',
                 'message' => 'Transaction Failed to Submit',
@@ -396,8 +388,6 @@ class TourReservationService
             ], 201);
 
         } catch (HttpException $e) {
-            // if (env('APP_ENVIRONMENT') != 'LIVE') dd($e);
-
             return response([
                 'status' => 'failed',
                 'message' => 'Transaction Failed to Submit',
@@ -405,8 +395,6 @@ class TourReservationService
             ], 400);
 
         } catch (\ErrorException $e) {
-            // if (env('APP_ENVIRONMENT') != 'LIVE') dd($e);
-
             return response([
                 'status' => 'failed',
                 'message' => 'Transaction Failed to Submit',
@@ -414,8 +402,6 @@ class TourReservationService
             ], 400);
 
         } catch (Exception $e) {
-            // if (env('APP_ENVIRONMENT') != 'LIVE') dd($e);
-
             return response([
                 'status' => 'failed',
                 'message' => 'Transaction Failed to Submit',
@@ -423,8 +409,6 @@ class TourReservationService
             ], 400);
 
         } catch (\Error $e) {
-            // if (env('APP_ENVIRONMENT') != 'LIVE') dd($e);
-
             return response([
                 'status' => 'failed',
                 'message' => 'Transaction Failed to Submit',
