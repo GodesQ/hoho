@@ -48,15 +48,19 @@ class MerchantHotelService
                     })
                     ->editColumn('is_featured', function($row) {
                         if ($row->merchant->is_featured) {
-                            return '<span class="badge bg-label-success me-1">Yes</span>';
+                            return '<span class="badge bg-label-success me-1"><i class="bx bx-check"></i></span>';
                         } else {
-                            return '<span class="badge bg-label-secondary me-1">No</span>';
+                            return '<span class="badge bg-label-danger me-1"><i class="bx bx-x"></i></span>';
                         }
                     })
                     ->editColumn('actions', function ($row) {
                         return '<div class="dropdown">
-                                    <a href="/admin/merchants/hotels/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>
+                                    <a href="' . route('admin.merchants.hotels.edit', $row->id) . '" class="btn btn-outline-primary btn-sm">
+                                        <i class="bx bx-edit-alt me-1"></i>
+                                    </a>
+                                    <a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm">
+                                        <i class="bx bx-trash me-1"></i>
+                                    </a>
                                 </div>';
                     })
                     ->rawColumns(['actions', 'featured_image', 'is_featured'])

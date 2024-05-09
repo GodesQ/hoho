@@ -1,15 +1,114 @@
 <?php
 
 namespace App\Services;
-use Illuminate\Http\Request;
 
-class TravelTaxService {
-    public function __construct() {
-    
+use App\Models\Transaction;
+use App\Models\TravelTaxPassenger;
+use App\Models\TravelTaxPayment;
+use Carbon\Carbon;
+use App\Enum\TransactionTypeEnum;
+use ErrorException;
+use Illuminate\Support\Str;
+
+class TravelTaxService
+{
+    public $aqwireService;
+
+    public function __construct(AqwireService $aqwireService)
+    {
+        $this->aqwireService = $aqwireService;
     }
 
-    public function storeTraveTax(Request $request) {
-        
+    public function createTravelTax($request)
+    {
+        try {
+            $referenceNumber = $this->generateReferenceNo();
+
+            $totalAmount = $this->computeTotalAmount($request->amount, $request->processing_fee, $request->discount);
+
+            $transaction = $this->storeTransaction($request, $referenceNumber, $totalAmount);
+
+            $travel_tax_payment = $this->storeTravelTaxPayment($request, $transaction, $totalAmount);
+
+            // Declare primary passenger for customer of aqwire payment service
+            $primary_passenger = null;
+
+            foreach ($request->passengers as $key => $passenger) {
+                $passenger_data = array_merge(['payment_id' => $travel_tax_payment->id], $passenger);
+                $passenger = TravelTaxPassenger::create($passenger_data);
+
+                if ($passenger['passenger_type'] === 'primary' && !$primary_passenger) {
+                    $primary_passenger = $passenger;
+                }
+            }
+
+            if (!$primary_passenger) {
+                throw new ErrorException("The primary passenger is not found.", 400);
+            }
+
+            // Create request model for payment request
+            $requestModel = $this->aqwireService->createRequestModel($transaction, $primary_passenger);
+
+            // Pay using aqwire
+            $responseData = $this->aqwireService->pay($requestModel);
+
+            $transaction->update([
+                'aqwire_transactionId' => $responseData['data']['transactionId'] ?? null,
+                'payment_url' => $responseData['paymentUrl'] ?? null,
+                'payment_status' => Str::lower($responseData['data']['status'] ?? ''),
+                'payment_details' => json_encode($responseData),
+            ]);
+
+            return [
+                'transaction' => $transaction,
+                'travel_tax_payment' => $travel_tax_payment,
+                'url' => $responseData['paymentUrl'],
+            ];
+
+        } catch (ErrorException $e) {
+            $transaction->delete();
+            $travel_tax_payment->delete();
+
+            throw $e;
+        }
+    }
+
+    private function storeTransaction($request, $referenceNumber, $totalAmount)
+    {
+        $transaction = Transaction::create([
+            'reference_no' => $referenceNumber,
+            'sub_amount' => $request->amount,
+            'total_additional_charges' => 0,
+            'total_discount' => $request->discount,
+            'transaction_type' => TransactionTypeEnum::TRAVEL_TAX,
+            'payment_amount' => $totalAmount,
+            'aqwire_paymentMethodCode' => $request->payment_method ?? null,
+            'order_date' => Carbon::now(),
+            'transaction_date' => Carbon::now(),
+        ]);
+
+        return $transaction;
+    }
+
+    private function storeTravelTaxPayment($request, $transaction, $totalAmount) {
+        $transactionNumber = $this->generateTransactionNumber();
+
+        $travel_tax_payment = TravelTaxPayment::create([
+            'transaction_id' => $transaction->id,
+            'transaction_number' => $transactionNumber,
+            'reference_number' => $transaction->reference_no,
+            'transaction_time' => Carbon::now(),
+            'currency' => 'PHP',
+            'amount' => $request->amount,
+            'processing_fee' => $request->processing_fee,
+            'discount' => $request->discount,
+            'total_amount' => $totalAmount,
+            'payment_method' => $request->payment_method ?? null,
+            'payment_time' => Carbon::now(),
+            'status' => 'unpaid',
+        ]);
+
+        return $travel_tax_payment;
     }
 
     private function computeTotalAmount($amount, $processing_fee, $discount)

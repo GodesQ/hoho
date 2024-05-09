@@ -1,7 +1,7 @@
 @extends('layouts.admin.layout')
 
 @section('title')
-    Tour Reservation Details -
+    Tour Reservation Details - {{ $reservation->id }}
 @endsection
 
 @section('content')
@@ -49,18 +49,18 @@
                                     <li>
                                         <div class="fw-semibold text-primary form-label"><i class="bx bx-user"></i> Name
                                         </div>
-                                        {{ $reservation->customer_details->firstname }}
-                                        {{ $reservation->customer_details->lastname }}
+                                        {{ $reservation->customer_details->firstname ?? '' }}
+                                        {{ $reservation->customer_details->lastname ?? '' }}
                                     </li>
                                     <li>
                                         <div class="fw-semibold text-primary form-label"><i class="bx bx-phone"></i> Phone
                                         </div>
-                                        {{ $reservation->customer_details->contact_no }}
+                                        {{ $reservation->customer_details->contact_no ?? '' }}
                                     </li>
                                     <li>
                                         <div class="fw-semibold text-primary form-label"><i class="bx bx-envelope"></i>
                                             Email </div>
-                                        {{ $reservation->customer_details->email }}
+                                        {{ $reservation->customer_details->email ?? '' }}
                                     </li>
                                 </ul>
                             </div>
@@ -75,11 +75,11 @@
                                     </div>
                                     <div class="col-lg-4 mb-4">
                                         <div class="fw-semibold text-primary form-label">Tour Type </div>
-                                        {{ $reservation->tour->type }}
+                                        {{ $reservation->tour->type ?? '' }}
                                     </div>
                                     <div class="col-lg-4 mb-4">
                                         <div class="fw-semibold text-primary form-label">Default Price </div>
-                                        {{ number_format($reservation->tour->price, 2) }}
+                                        {{ number_format(($reservation->tour->price ?? 0), 2) }}
                                     </div>
                                     <div class="col-lg-4 mb-4">
                                         <div class="fw-semibold text-primary form-label">Reference Code </div>

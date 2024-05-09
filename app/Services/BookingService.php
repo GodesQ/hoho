@@ -139,7 +139,7 @@ class BookingService
             $items = $request->items;
         }
 
-        if(!is_array($items)) {
+        if (!is_array($items)) {
             throw new ErrorException("Invalid type of items");
         }
 
@@ -149,61 +149,52 @@ class BookingService
 
         /**
          * Calculates the subAmount, totalOfDiscount, and totalOfAdditionalCharges by iterating over the items
-        */
+         */
         foreach ($items as $item) {
             $subAmount += intval($item['amount']) ?? 0;
-
             $totalOfDiscount += intval($item['amount']) - (intval($item['discounted_amount']) ?? intval($item['amount']));
             $totalOfAdditionalCharges += $this->getTotalOfAdditionalCharges($item['number_of_pass'], $additional_charges);
         }
 
+        $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
 
-        if (config('services.checkout.type') == "HPP") {
-            $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
+        $transaction = $this->storeTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
 
-            $transaction = $this->storeTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
+        $this->createMultipleReservation($request, $transaction, $additional_charges);
 
-            $this->createMultipleReservation($request, $transaction, $additional_charges);
+        $response = $this->sendPaymentRequest($transaction);
 
-            $response = $this->sendPaymentRequest($transaction); 
+        if (!$response['status'] || !$response['status'] == 'FAIL') {
+            
+            $transaction->delete();
+            return response([
+                'status' => "failed",
+                'message' => 'Failed to submit request for transaction',
+                'data' => $response['result']->data
+            ], 400);
+        }
 
-            if (!$response['status'] || !$response['status'] == 'FAIL') {
-                $transaction->delete();
-                return response([
-                    'status' => "failed",
-                    'message' => 'Failed to submit request for transaction',
-                    'data' => $response['result']->data
-                ], 400);
-            }
+        $responseData = json_decode($response['result']->getBody(), true);
 
-            $responseData = json_decode($response['result']->getBody(), true);
+        if ($responseData['status'] != 'SUCCESS') {
+            $logMessage = "An error occurred during the payment process with the following parameters: " .
+                config('services.aqwire.merchant_code') . " | " . config('services.aqwire.client_id') . " | " . config('services.aqwire.secret_key');
+            dd($logMessage);
+        }
 
-            if ($responseData['status'] != 'SUCCESS') {
-                $logMessage = "An error occurred during the payment process with the following parameters: " .
-                    config('services.aqwire.merchant_code') . " | " . config('services.aqwire.client_id') . " | " . config('services.aqwire.secret_key');
-                dd($logMessage);
-            }
+        $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
 
-            $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+        $this->sendMultipleBookingNotification($items, $transaction);
 
-            if (is_array($request->items)) {
-                $items = $request->items;
-            } else {
-                $items = json_decode($request->items, true);
-            }
+        $this->mailService->sendPaymentRequestMail($transaction, $responseData['paymentUrl'], $responseData['data']['expiresAt']);
 
-            $this->sendMultipleBookingNotification($items, $transaction);
-
-            $this->mailService->sendPaymentRequestMail($transaction, $responseData['paymentUrl'], $responseData['data']['expiresAt']);
-
-            if ($request->is('api/*')) {
-                return response([
-                    'status' => 'paying',
-                    'url' => $responseData['paymentUrl']
-                ]);
-            } else {
-                return redirect($responseData['paymentUrl']);
-            }
+        if ($request->is('api/*')) {
+            return response([
+                'status' => 'paying',
+                'url' => $responseData['paymentUrl']
+            ]);
+        } else {
+            return redirect($responseData['paymentUrl']);
         }
     }
 
@@ -284,7 +275,7 @@ class BookingService
     }
 
     private function createReservation($request, $transaction, $totalAmount, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
-    {   
+    {
         $user = User::findOrFail($request->reserved_user_id);
         $trip_start_date = Carbon::parse($request->trip_date);
         $trip_end_date = $request->type == 'Guided' ? $trip_start_date->addDays(1) : $this->getDateOfDIYPass($request->ticket_pass, $trip_start_date);
@@ -300,7 +291,7 @@ class BookingService
             'passenger_ids' => $request->passenger_ids ? json_encode($request->passenger_ids) : json_encode([$request->reserved_user_id]),
             'reference_code' => $transaction->reference_no,
             'order_transaction_id' => $transaction->id,
-            'start_date' =>  $trip_start_date,
+            'start_date' => $trip_start_date,
             'end_date' => $trip_end_date,
             'status' => 'pending',
             'number_of_pass' => $request->number_of_pass,
@@ -377,7 +368,7 @@ class BookingService
                 'address' => null,
             ]);
 
-            if($item['type'] == "Layover") {
+            if ($item['type'] == "Layover") {
                 LayoverTourReservationDetail::create([
                     'reservation_id' => $reservation->id,
                     'arrival_datetime' => $item['arrival_datetime'],
