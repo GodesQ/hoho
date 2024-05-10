@@ -54,11 +54,6 @@ class TourReservationService
             }
 
             foreach ($items as $key => $item) {
-                /*  (For Each Item)
-                    - Sub Amount
-                    - Total of Discount (total amount - discounted amount) 
-                    - Total of Additional Charges (number of pax * additional charges)
-                */
                 $subAmount += intval($item['amount']) ?? 0;
                 $totalOfDiscount += (intval($item['amount'] ?? 0) - (intval($item['discounted_amount'] ?? 0) ?? intval($item['amount'])));
                 $totalOfAdditionalCharges += $this->getTotalOfAdditionalCharges(($item['number_of_pax'] ?? 0), $additionalCharges);

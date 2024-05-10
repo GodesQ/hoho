@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enum\TransactionTypeEnum;
 use App\Http\Requests\TourReservation\StoreRequest;
 use App\Models\LayoverTourReservationDetail;
 use App\Models\TourReservationCustomerDetail;
@@ -130,71 +131,75 @@ class BookingService
 
     public function createMultipleBooking(Request $request)
     {
-        $reference_no = $this->generateReferenceNo();
-        $additional_charges = $this->generateAdditionalCharges();
+        try {
+            $additional_charges = $this->generateAdditionalCharges();
 
-        if (is_string($request->items) && is_array(json_decode($request->items, true))) {
-            $items = json_decode($request->items, true);
-        } else {
             $items = $request->items;
-        }
 
-        if (!is_array($items)) {
-            throw new ErrorException("Invalid type of items");
-        }
+            if (is_string($items) && is_array(json_decode($items, true))) {
+                $items = json_decode($items, true);
+            }
 
-        $subAmount = 0;
-        $totalOfDiscount = 0;
-        $totalOfAdditionalCharges = 0;
+            if (!is_array($items))
+                throw new ErrorException("Invalid type of items.");
 
-        /**
-         * Calculates the subAmount, totalOfDiscount, and totalOfAdditionalCharges by iterating over the items
-         */
-        foreach ($items as $item) {
-            $subAmount += intval($item['amount']) ?? 0;
-            $totalOfDiscount += intval($item['amount']) - (intval($item['discounted_amount']) ?? intval($item['amount']));
-            $totalOfAdditionalCharges += $this->getTotalOfAdditionalCharges($item['number_of_pass'], $additional_charges);
-        }
+            $subAmount = 0;
+            $totalOfDiscount = 0;
+            $totalOfAdditionalCharges = 0;
 
-        $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
+            foreach ($items as $item) {
+                $discounted_amount = intval($item['discounted_amount']) ?? intval($item['amount']);
 
-        $transaction = $this->storeTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
+                $subAmount += intval($item['amount']) ?? 0;
+                $totalOfDiscount += intval($item['amount']) - $discounted_amount;
+                $totalOfAdditionalCharges += $this->getTotalOfAdditionalCharges($item['number_of_pass'], $additional_charges);
+            }
 
-        $this->createMultipleReservation($request, $transaction, $additional_charges);
+            $totalAmount = $this->getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount);
 
-        $response = $this->sendPaymentRequest($transaction);
+            $transaction = $this->storeTransaction($request, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
 
-        if (!$response['status'] || !$response['status'] == 'FAIL') {
-            
-            $transaction->delete();
-            return response([
-                'status' => "failed",
-                'message' => 'Failed to submit request for transaction',
-                'data' => $response['result']->data
-            ], 400);
-        }
+            // foreach ($items as $key => $item) {
+            //     $reservation = $this->storeReservation($request, $transaction, $item);
+            // }
 
-        $responseData = json_decode($response['result']->getBody(), true);
+            $this->createMultipleReservation($request, $transaction, $additional_charges);
 
-        if ($responseData['status'] != 'SUCCESS') {
-            $logMessage = "An error occurred during the payment process with the following parameters: " .
-                config('services.aqwire.merchant_code') . " | " . config('services.aqwire.client_id') . " | " . config('services.aqwire.secret_key');
-            dd($logMessage);
-        }
+            $response = $this->sendPaymentRequest($transaction);
 
-        $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+            if (!$response['status'] || !$response['status'] == 'FAIL') {
+                $transaction->delete();
+                return response([
+                    'status' => "failed",
+                    'message' => 'Failed to submit request for transaction',
+                    'data' => $response['result']->data
+                ], 400);
+            }
 
-        $this->sendMultipleBookingNotification($items, $transaction);
+            $responseData = json_decode($response['result']->getBody(), true);
 
-        $this->mailService->sendPaymentRequestMail($transaction, $responseData['paymentUrl'], $responseData['data']['expiresAt']);
+            if ($responseData['status'] != 'SUCCESS') {
+                $logMessage = "An error occurred during the payment process with the following parameters: " .
+                    config('services.aqwire.merchant_code') . " | " . config('services.aqwire.client_id') . " | " . config('services.aqwire.secret_key');
+                dd($logMessage);
+            }
 
-        if ($request->is('api/*')) {
-            return response([
-                'status' => 'paying',
-                'url' => $responseData['paymentUrl']
-            ]);
-        } else {
-            return redirect($responseData['paymentUrl']);
+            $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+
+            $this->sendMultipleBookingNotification($items, $transaction);
+
+            $this->mailService->sendPaymentRequestMail($transaction, $responseData['paymentUrl'], $responseData['data']['expiresAt']);
+
+            if ($request->is('api/*')) {
+                return response([
+                    'status' => 'paying',
+                    'url' => $responseData['paymentUrl']
+                ]);
+            } else {
+                return redirect($responseData['paymentUrl']);
+            }
+        } catch (ErrorException $e) {
+            throw $e;
         }
     }
 
@@ -226,7 +231,7 @@ class BookingService
 
     private function getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount)
     {
-        # NOTE: The amount of each booking was already been set, This function is for additional charges, discounted amount to sum up all of the bookings for transactions.
+        # NOTE: The amount of each booking was already been set, This function is for additional charges, discounted amount to sum up all of the bookings for this transaction.
         return ($subAmount - $totalOfDiscount) + $totalOfAdditionalCharges;
     }
 
@@ -246,22 +251,27 @@ class BookingService
 
     private function getTotalOfAdditionalCharges($number_of_pass, $additional_charges)
     {
-        $convenience_fee = $additional_charges['Convenience Fee'] * $number_of_pass;
-        // $travel_pass = $additional_charges['Travel Pass'] * $number_of_pass;
-        $travel_pass = ($additional_charges['Travel Pass'] ?? 0) * $number_of_pass;
+        try {
+            $convenience_fee = $additional_charges['Convenience Fee'] * $number_of_pass;            
+            $travel_pass = ($additional_charges['Travel Pass'] ?? 0) * $number_of_pass;
 
-        return $convenience_fee + $travel_pass;
+            return $convenience_fee + $travel_pass;
+        } catch (ErrorException $e) {
+            throw $e;
+        }
     }
 
-    private function storeTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
+    private function storeTransaction($request, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
     {
+        $reference_no = $this->generateReferenceNo();
+
         $transaction = Transaction::create([
             'reference_no' => $reference_no,
             'transaction_by_id' => $request->reserved_user_id,
             'sub_amount' => $subAmount ?? $totalAmount,
             'total_additional_charges' => $totalOfAdditionalCharges ?? 0,
             'total_discount' => $totalOfDiscount ?? 0,
-            'transaction_type' => 'book_tour',
+            'transaction_type' => TransactionTypeEnum::BOOK_TOUR,
             'payment_amount' => $totalAmount,
             'additional_charges' => json_encode($additional_charges),
             'payment_status' => 'pending',
@@ -313,6 +323,33 @@ class BookingService
         ]);
 
         return $reservation;
+    }
+
+    private function storeReservation($request, $transaction, $item) {
+        $user = User::findOrFail($request->reserved_user_id);
+
+        // $reservation = TourReservation::create([
+        //     'tour_id' => $item['tour_id'],
+        //     'type' => $item['type'],
+        //     'total_additional_charges' => $transaction->total_additional_charges,
+        //     'discount' => $transaction->discount,
+        //     'sub_amount' => $transaction->sub_amount,
+        //     'amount' => $totalAmount,
+        //     'reserved_user_id' => $request->reserved_user_id,
+        //     'passenger_ids' => $request->has('passenger_ids') ? json_encode($request->passenger_ids) : json_encode([$request->reserved_user_id]),
+        //     'reference_code' => $transaction->reference_no,
+        //     'order_transaction_id' => $transaction->id,
+        //     'start_date' => $item['trip_date'],
+        //     'end_date' => $item['type'] == 'Guided' ? $trip_date->addDays(1) : $this->getDateOfDIYPass($item['ticket_pass'], $trip_date),
+        //     'status' => 'pending',
+        //     'number_of_pass' => $item['number_of_pass'],
+        //     'ticket_pass' => $item['type'] == 'DIY' ? $item['ticket_pass'] : null,
+        //     'promo_code' => $request->promo_code,
+        //     'requirement_file_path' => null,
+        //     'discount_amount' => $subAmount - $totalOfDiscount,
+        //     'created_by' => $request->reserved_user_id,
+        //     'created_user_type' => 'guest'
+        // ]);
     }
 
     private function createMultipleReservation($request, $transaction, $additional_charges)
