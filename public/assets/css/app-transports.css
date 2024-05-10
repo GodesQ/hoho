@@ -7,15 +7,19 @@
 
 .app-transports-fleet-wrapper .app-transports-fleet-sidebar {
     position: absolute;
-    overflow: hidden;
     background-color: #fff;
     flex-grow: 0;
+    overflow: auto;
     flex-basis: 25rem;
     left: calc(-21rem - 1.2rem);
     height: 100%;
     width: 20rem;
     transition: all .3s;
     z-index: 2;
+}
+
+.app-transports-fleet-wrapper .app-transports-fleet-sidebar.active {
+    left: 0 !important;
 }
 
 .timeline {
@@ -69,6 +73,11 @@
     .app-transports-fleet-wrapper .app-transports-fleet-sidebar {
         position: static;
         height: auto;
+        width: 22rem;
         background-color: rgba(0, 0, 0, 0) !important;
+    }
+
+    .app-transports-fleet-wrapper .app-transports-fleet-sidebar.active {
+        left: 0 !important;
     }
 }

@@ -92,17 +92,16 @@ class TourReservationController extends Controller
     public function storeTourReservation(StoreRequest $request)
     {
         try {
-            $user = User::where('id', $request->reserved_user_id)->first();
+            $booking = $this->bookingService->createMultipleBooking($request);
 
-            if (!$user->firstname || !$user->lastname) {
-                throw new ErrorException("Please complete your name before continuing to checkout");
-            }
-
-            if (!$user->contact_no) {
-                throw new ErrorException("Please provide a contact number to continue");
-            }
-
-            return $this->bookingService->createMultipleBooking($request);
+            if ($request->is('api/*')) {
+                return response([
+                    'status' => 'paying',
+                    'url' => $booking['payment_url']
+                ], 201);
+            } 
+            
+            return redirect($booking['payment_url']);
 
         } catch (ErrorException $e) {
             return response()->json([

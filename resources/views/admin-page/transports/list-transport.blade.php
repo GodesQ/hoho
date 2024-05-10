@@ -21,9 +21,9 @@
         <div class="card my-1">
             <div class="card-body">
                 <div class="d-flex app-transports-fleet-wrapper">
-                    <div class="flex-shrink-0 position-fixed m-4 d-md-none w-auto z-1">
+                    <div class="flex-shrink-0 position-fixed m-4 d-md-none w-auto bg-white" style="z-index: 100">
                         <button class="btn btn-label-white border border-2 z-2 p-2" data-bs-toggle="sidebar" data-overlay=""
-                            data-target="#app-logistics-fleet-sidebar"><i class="bx bx-menu"></i></button>
+                            data-target="#app-transports-fleet-sidebar" id="fleet-sidebar-menu-btn"><i class="bx bx-menu"></i></button>
                     </div>
 
                     <div class="app-transports-fleet-sidebar col h-100" id="app-transports-fleet-sidebar">
@@ -150,6 +150,7 @@
         let map;
         async function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
+                disableDefaultUI: true,
                 center: {
                     lat: 14.5889842,
                     lng: 120.9768261
@@ -293,6 +294,18 @@
         function handleFocusTransport(latitude, longitude) {
             map.setCenter({lat: parseFloat(latitude), lng: parseFloat(longitude)});
         }
+
+        let fleetSidebarMenuBtn = document.querySelector('#fleet-sidebar-menu-btn');
+
+        fleetSidebarMenuBtn.addEventListener('click', function (e) {
+            let dataTarget = fleetSidebarMenuBtn.getAttribute('data-target');
+            let elementTarget = document.querySelector(dataTarget);
+            if(elementTarget.classList.contains('active')) {
+                elementTarget.classList.remove('active');
+            } else {
+                elementTarget.classList.add('active');
+            }
+        })
     </script>
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcjk7zETwVNURwNgnIidjFDQzVcjGaqVU&libraries=places&callback=initMap">

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use ErrorException;
+use Exception;
 use Illuminate\Support\Facades\Http;
 
 class AqwireService
@@ -42,7 +43,10 @@ class AqwireService
     }
 
     public function createRequestModel($transaction, $customer)
-    {
+    {   
+        $customer_email = $customer->email_address ?? $customer->email;
+        $customer_mobile_number = $customer->mobile_number ?? ("+" . $customer->countryCode . $customer->contact_no);
+
         $requestModel = [
             'uniqueId' => $transaction->reference_no,
             'currency' => 'PHP',
@@ -50,20 +54,20 @@ class AqwireService
             'amount' => $transaction->payment_amount,
             'customer' => [
                 'name' => $customer->firstname . ' ' . $customer->lastname,
-                'email' => $customer->email_address,
-                'mobile' => $customer->mobile_number,
+                'email' => $customer_email,
+                'mobile' => $customer_mobile_number,
             ],
             'project' => [
-                'name' => 'Philippines Hop-On Hop-Off Travel Tax Payment',
+                'name' => 'Philippines Hop On Hop Off',
                 'unitNumber' => '00000',
-                'category' => 'Travel Tax Payment'
+                'category' => 'payment for hoho'
             ],
             'redirectUrl' => [
                 'success' => env('AQWIRE_TEST_TRAVEL_TAX_SUCCESS_URL') . $transaction->id,
                 'cancel' => env('AQWIRE_TEST_TRAVEL_TAX_CANCEL_URL') . $transaction->id,
                 'callback' => env('AQWIRE_TEST_CALLBACK_URL') . $transaction->id
             ],
-            'note' => 'Payment for Travel Tax',
+            'note' => 'Payment for Philippines Hop On Hop Off',
         ];
 
         return $requestModel;
