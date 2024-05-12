@@ -140,6 +140,12 @@ class BookingService
             if (!$user->firstname || !$user->lastname || !$user->contact_no)
                 throw new ErrorException("The first name, last name and contact number must be filled in correctly in your profile to continue.");
 
+            $phone_number = "+" . $user->countryCode . $user->contact_no;
+            
+            if (!preg_match('/^\+\d{10,12}$/', $phone_number)) {
+                throw new ErrorException("The contact number must be a valid E.164 format.");
+            }
+
             $additional_charges = $this->generateAdditionalCharges();
 
             $items = $request->items;
@@ -191,7 +197,7 @@ class BookingService
             ];
 
         } catch (ErrorException $e) {
-            $transaction->delete();
+            if(isset($transaction)) $transaction->delete();
             throw $e;
         }
     }
