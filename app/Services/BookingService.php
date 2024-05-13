@@ -176,7 +176,7 @@ class BookingService
             foreach ($items as $item) {
                 $reservation = $this->storeReservation($request, $transaction, $item);
 
-                if ($item['type'] == TourTypeEnum::LAYOVER_TOUR) {
+                if ($item['type'] === TourTypeEnum::LAYOVER_TOUR) {
                     $this->storeLayoverTourDetails($reservation, $item);
                 }
             }

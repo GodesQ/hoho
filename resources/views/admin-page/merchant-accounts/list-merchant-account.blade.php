@@ -67,7 +67,11 @@
                         data: 'actions',
                         name: 'actions'
                     }
-                ]
+                ],
+                columnDefs: [{
+                    targets: [4, 5], // Index of the column you want to disable sorting for
+                    orderable: false
+                }],
             })
         }
 

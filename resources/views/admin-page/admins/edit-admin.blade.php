@@ -122,6 +122,8 @@
 
 @push('scripts')
     <script>
+        disableFutureDates();
+
         // Function to handle file selection and display preview image
         function handleFileSelect(event) {
             const file = event.target.files[0];
@@ -149,5 +151,11 @@
             Age = Math.floor(Age / (1000*60*60*24*365.25));
             document.getElementById("age").value = Age;
         }
+
+        function disableFutureDates() {
+            let today = new Date().toISOString().split('T')[0];
+            document.getElementById('birthdate').setAttribute("max", today);
+        }
+        
     </script>
 @endpush

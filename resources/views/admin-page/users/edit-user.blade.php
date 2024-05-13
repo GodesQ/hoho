@@ -217,6 +217,7 @@
 
 @push('scripts')
     <script>
+        
         const selectElement = document.getElementById('countryCode');
 
         fetch("{{ URL::asset('assets/data/phonecountrycodes.json') }}")
@@ -241,5 +242,13 @@
             Age = Math.floor(Age / (1000*60*60*24*365.25));
             document.getElementById("age").value = Age;
         }
+
+        function disableFutureDates() {
+            let today = new Date().toISOString().split('T')[0];
+            console.log(today);
+            document.getElementById('birthdate').setAttribute("max", today);
+        }
+
+        disableFutureDates();
     </script>
 @endpush

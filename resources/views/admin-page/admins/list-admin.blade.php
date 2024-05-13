@@ -42,8 +42,7 @@
                 ajax: {
                     url: "{{ route('admin.admins.list') }}"
                 },
-                columns: [
-                    {
+                columns: [{
                         data: 'id',
                         name: 'id'
                     },
@@ -68,12 +67,10 @@
                         name: 'actions'
                     }
                 ],
-                columnDefs: [
-                    {
-                    targets: 3, // Index of the column you want to disable sorting for
+                columnDefs: [{
+                    targets: [4, 5], // Index of the column you want to disable sorting for
                     orderable: false
-                    }
-                ],
+                }],
                 order: [
                     [0, 'desc'] // Sort by the first column (index 0) in descending order
                 ]
