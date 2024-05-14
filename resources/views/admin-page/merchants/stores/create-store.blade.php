@@ -52,9 +52,6 @@
                                         <label for="type" class="form-label">Merchant Type <span class="text-danger">*</span></label>
                                         <select name="type" id="type" class="form-select" required>
                                             <option value="Store">Store</option>
-                                            <option value="Hotel">Hotel</option>
-                                            <option value="Tour Provider">Tour Provider</option>
-                                            <option value="Restaurant">Restaurant</option>
                                         </select>
                                         <span class="text-danger">@error('type'){{ $message }}@enderror</span>
                                     </div>
@@ -231,12 +228,12 @@
                         <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt="" id="previewImage" style="border-radius: 10px;" width="100%">
                     </div>
                 </div>
-                <div class="card mt-2">
+                {{-- <div class="card mt-2">
                     <div class="card-body">
                         <h6>Preview of Brochure</h6>
                         <iframe id="pdfPreview" width="100%" height="500px" frameborder="0"></iframe>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

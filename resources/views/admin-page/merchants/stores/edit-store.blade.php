@@ -60,14 +60,8 @@
                                         <label for="type" class="form-label">Merchant Type <span
                                                 class="text-danger">*</span></label>
                                         <select name="type" id="type" class="form-select" required>
-                                            <option {{ $store->merchant->type == 'Hotel' ? 'selected' : null }}
-                                                value="Hotel">Hotel</option>
                                             <option {{ $store->merchant->type == 'Store' ? 'selected' : null }}
                                                 value="Store">Store</option>
-                                            <option {{ $store->merchant->type == 'Tour Provider' ? 'selected' : null }}
-                                                value="Tour Provider">Tour Provider</option>
-                                            <option {{ $store->merchant->type == 'Restaurant' ? 'selected' : null }}
-                                                value="Restaurant">Restaurant</option>
                                         </select>
                                         <div class="text-danger">@error('type'){{ $message }}@enderror</div>
                                     </div>
@@ -347,7 +341,7 @@
                         @endif
                     </div>
                 </div>
-                <div class="card mt-2">
+                {{-- <div class="card mt-2">
                     <div class="card-body">
                         <h6>Preview of Brochure</h6>
                         @if($store->brochure) 
@@ -357,7 +351,7 @@
                             <iframe id="pdfPreview" width="100%" height="500px" frameborder="0"></iframe>
                         @endif
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

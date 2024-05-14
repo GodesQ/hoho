@@ -1,36 +1,42 @@
-@extends('layouts.admin.layout')    
+@extends('layouts.admin.layout')
 
 @section('title', 'Hop On Hop Off - List Announcements')
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center">
-        <h4 class="fw-bold py-3 mb-4">Announcements List</h4>
-        @auth('admin')
-            @can('create_announcement')
-                <a href="{{ route('admin.announcements.create') }}" class="btn btn-primary">Add Announcement <i class="bx bx-plus"></i></a>
-            @endcan
-        @endauth
-    </div>
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <section class="section-header d-flex justify-content-between align-items-center">
+            <div class="title-section">
+                <h4 class="fw-medium mb-2">Announcements</h4>
+                <h6 class="fw-medium text-primary"><a href="{{ route('admin.dashboard') }}"
+                        class="text-muted fw-light">Dashboard /</a> Announcements</h6>
+            </div>
+            @auth('admin')
+                @can('create_announcement')
+                    <div class="action-section btn-group">
+                        <a href="{{ route('admin.announcements.create') }}" class="btn btn-primary"><i class="bx bx-plus"></i> Add Announcement</a>
+                    </div>
+                @endcan
+            @endauth
+        </section>
 
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive data-wrap">
-                <table class="table data-table">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Name</th>
-                            <th>Status</th>
-                            <th>Added At</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                </table>
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive data-wrap">
+                    <table class="table data-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Added At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @push('scripts')
@@ -44,8 +50,7 @@
                 ajax: {
                     url: "{{ route('admin.announcements.list') }}"
                 },
-                columns: [
-                    {
+                columns: [{
                         data: 'type',
                         name: 'type',
                     },
@@ -67,12 +72,10 @@
                     }
                 ],
 
-                columnDefs: [
-                    {
+                columnDefs: [{
                     targets: [3], // Index of the column you want to disable sorting for
                     orderable: false
-                    }
-                ],
+                }],
                 order: [
                     [0, 'asc'] // Sort by the first column (index 0) in descending order
                 ]

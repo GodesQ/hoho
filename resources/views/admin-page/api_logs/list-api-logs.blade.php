@@ -4,9 +4,13 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center">
-        <h4 class="fw-bold py-3 mb-4">Consumer API Logs</h4>
-    </div>
+    <section class="section-header d-flex justify-content-between align-items-center">
+        <div class="title-section">
+            <h4 class="fw-medium mb-2">API Logs</h4>
+            <h6 class="fw-medium text-primary"><a href="{{ route('admin.dashboard') }}"
+                    class="text-muted fw-light">Dashboard /</a> API Logs</h6>
+        </div>
+    </section>
 
     <div class="card">
         <div class="card-body">
