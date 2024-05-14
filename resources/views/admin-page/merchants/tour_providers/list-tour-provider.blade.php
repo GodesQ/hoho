@@ -4,10 +4,16 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center">
-        <h4 class="fw-bold py-3 mb-4">Tour Providers List</h4>
-        <a href="{{ route('admin.merchants.tour_providers.create') }}" class="btn btn-primary">Add Tour Provider <i class="bx bx-plus"></i></a>
-    </div>
+    <section class="section-header d-flex justify-content-between align-items-center">
+        <div class="title-section">
+            <h4 class="fw-medium mb-2">Merchant Tour Provider</h4>
+            <h6 class="fw-medium text-primary"><a href="{{ route('admin.dashboard') }}"
+                    class="text-muted fw-light">Dashboard /</a> Merchant Tour Provider</h6>
+        </div>
+        <div class="action-section btn-group">
+            <a href="{{ route('admin.merchants.tour_providers.create') }}" class="btn btn-primary"><i class="bx bx-plus"></i> Add Hotel</a>
+        </div>
+    </section>
 
     <div class="card">
         <div class="card-body">

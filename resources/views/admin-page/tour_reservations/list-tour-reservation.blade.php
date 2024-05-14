@@ -4,16 +4,21 @@
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="d-flex justify-content-between align-items-center">
-            <h4 class="fw-bold py-3 mb-4">Tour Reservations List</h4>
-            @auth('admin')
-                @can('book_tour')
-                    <a href="{{ route('admin.tour_reservations.create') }}" class="btn btn-primary">
-                        Add Reservation <i class="bx bx-plus"></i>
-                    </a>
-                @endcan
-            @endauth
-        </div>
+        <section class="section-header d-flex justify-content-between align-items-center">
+            <div class="title-section">
+                <h4 class="fw-medium mb-2">Tour Reservations</h4>
+                <h6 class="fw-medium text-primary"><a href="{{ route('admin.dashboard') }}"
+                        class="text-muted fw-light">Dashboard /</a> Tour Reservations</h6>
+            </div>
+            <div class="action-section btn-group">
+                @auth('admin')
+                    @can('book_tour')
+                        <a href="{{ route('admin.tour_reservations.create') }}" class="btn btn-primary"><i class="bx bx-plus"></i>
+                            Add Tour Reservation</a>
+                    @endcan
+                @endauth
+            </div>
+        </section>
 
         <div class="card">
             <div class="card-body">
@@ -94,8 +99,7 @@
                             d.trip_date = $('#trip_date').val()
                     }
                 },
-                columns: [
-                    {
+                columns: [{
                         data: 'id',
                         name: 'id'
                     },

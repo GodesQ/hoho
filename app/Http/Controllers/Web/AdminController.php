@@ -72,6 +72,8 @@ class AdminController extends Controller
             'is_approved' => $request->has('is_approved') ? true : false,
             'password' => Hash::make($request->password)
         ]));
+        
+        
 
         if ($admin)
             return redirect()->route('admin.admins.edit', $admin->id)->withSuccess('Admin created successfully');

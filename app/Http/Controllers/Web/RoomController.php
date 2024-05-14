@@ -32,14 +32,14 @@ class RoomController extends Controller
                 })
                 ->addColumn('status', function ($row) {
                     if($row->is_active) {
-                        return '<span class="badge bg-success">Active</span>';
+                        return '<span class="badge bg-label-success">Active</span>';
                     } else {
-                        return '<span class="badge bg-warning">Inactive</span>';
+                        return '<span class="badge bg-label-warning">Inactive</span>';
                     }
                 })
                 ->addColumn('actions', function ($row) {
                     return '<div class="dropdown">
-                                        <a href="/admin/rooms/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
+                                        <a href="'. route('admin.rooms.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a> 
                                         <button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
                                     </div>';
                 })

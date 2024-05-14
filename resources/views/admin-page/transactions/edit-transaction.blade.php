@@ -92,7 +92,7 @@
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <label for="payment_details" class="form-label">Payment Details</label>
-                                        <textarea readonly id="payment_details" cols="30" rows="5" class="form-control">{{ $transaction->payment_details }}</textarea>
+                                        <textarea readonly id="payment_details" cols="30" rows="10" class="form-control">{{ $transaction->payment_details }}</textarea>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -185,3 +185,13 @@
         </form>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            let payment_details_field = document.querySelector('#payment_details');
+            let obj = JSON.parse(payment_details_field.value);
+            payment_details_field.value = JSON.stringify(obj, undefined, 4);
+        })
+    </script>
+@endpush

@@ -4,10 +4,16 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center">
-        <h4 class="fw-bold py-3 mb-4">Rooms List</h4>
-        <a href="{{ route('admin.rooms.create') }}" class="btn btn-primary">Add Room <i class="bx bx-plus"></i></a>
-    </div>
+    <section class="section-header d-flex justify-content-between align-items-center">
+        <div class="title-section">
+            <h4 class="fw-medium mb-2">Rooms</h4>
+            <h6 class="fw-medium text-primary"><a href="{{ route('admin.dashboard') }}"
+                    class="text-muted fw-light">Dashboard /</a> Rooms</h6>
+        </div>
+        <div class="action-section btn-group">
+            <a href="{{ route('admin.rooms.create') }}" class="btn btn-primary"><i class="bx bx-plus"></i> Add Room</a>
+        </div>
+    </section>
 
     <div class="card">
         <div class="card-body">
@@ -15,8 +21,8 @@
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>Merchant</th>
                         <th>Room Name</th>
+                        <th>Merchant</th>
                         <th>Price</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -44,14 +50,14 @@
                         name: 'id'
                     },
                     {
+                        data: 'room_name',
+                        name: 'room_name'
+                    },
+                    {
                         data: 'merchant',
                         name: 'merchant',
                         orderable: false,
                         searchable: false,
-                    },
-                    {
-                        data: 'room_name',
-                        name: 'room_name'
                     },
                     {
                         data: 'price',

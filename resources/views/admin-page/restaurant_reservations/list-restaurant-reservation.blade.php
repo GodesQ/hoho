@@ -4,11 +4,16 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center">
-        <h4 class="fw-bold py-3 mb-4">Restaurant Reservations List</h4>
-        <a href="{{ route('admin.restaurant_reservations.create') }}" class="btn btn-primary">Add Restaurant Reservation <i
-                class="bx bx-plus"></i></a>
-    </div>
+    <section class="section-header d-flex justify-content-between align-items-center">
+        <div class="title-section">
+            <h4 class="fw-medium mb-2">Restaurant Reservations</h4>
+            <h6 class="fw-medium text-primary"><a href="{{ route('admin.dashboard') }}"
+                    class="text-muted fw-light">Dashboard /</a> Restaurant Reservations</h6>
+        </div>
+        <div class="action-section btn-group">
+            <a href="{{ route('admin.restaurant_reservations.create') }}" class="btn btn-primary"><i class="bx bx-plus"></i> Add Restaurant Reservation</a>
+        </div>
+    </section>
 
     <div class="card">
         <div class="table-responsive card-body">

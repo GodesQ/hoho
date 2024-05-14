@@ -141,7 +141,7 @@ class BookingService
                 throw new ErrorException("The first name, last name and contact number must be filled in correctly in your profile to continue.");
 
             $phone_number = "+" . $user->countryCode . $user->contact_no;
-            
+
             if (!preg_match('/^\+\d{10,12}$/', $phone_number)) {
                 throw new ErrorException("The contact number must be a valid E.164 format.");
             }
@@ -163,7 +163,7 @@ class BookingService
 
             foreach ($items as $item) {
                 $discounted_amount = intval($item['discounted_amount']) ?? intval($item['amount']);
-                
+
                 $subAmount += intval($item['amount']) ?? 0;
                 $totalOfDiscount += intval($item['amount']) - $discounted_amount;
                 $totalOfAdditionalCharges += $this->getTotalOfAdditionalCharges($item['number_of_pass'], $additional_charges);
@@ -197,7 +197,8 @@ class BookingService
             ];
 
         } catch (ErrorException $e) {
-            if(isset($transaction)) $transaction->delete();
+            if (isset($transaction))
+                $transaction->delete();
             throw $e;
         }
     }
