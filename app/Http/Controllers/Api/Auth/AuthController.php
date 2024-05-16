@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\SSORegisterRequest;
+use App\Services\AuthService;
+use ErrorException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -16,23 +19,33 @@ use App\Models\User;
 use App\Http\Requests\Auth\RegisterRequest;
 
 class AuthController extends Controller
-{
-    public function login(Request $request) {
-        $validator = \Validator::make($request->all(), [
-            'username' => ['required'],
-            'password' => ['required'],
-        ]);
+{   
+    private $authService;
+    public function __construct(AuthService $authService) {
+        $this->authService = $authService;
+    }
 
-        if ($validator->fails()) {
+    public function login(LoginRequest $request) {
+
+        try {
+            $auth = $this->authService->login($request);
+
+            return response([
+                'status' => TRUE,
+                'user' => $auth['user'],
+                'token' => $auth['token'],
+            ], 200);
+
+        } catch(ErrorException $e) {
             return response()->json([
                 'status' => false,
-                'message' => $validator->errors()
-            ], 401);
+                'message' => $e->getMessage(),
+            ], 400);
         }
 
-        # Find the user based on email or username
-        $fieldType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-        return $this->authenticate($request, $fieldType);
+        // # Find the user based on email or username
+        // $fieldType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        // return $this->authenticate($request, $fieldType);
     }
 
     public function dash(Request $request) {
