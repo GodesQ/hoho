@@ -32,7 +32,7 @@ class AuthService
                 throw new ErrorException('Invalid Credentials.');
             }
 
-            $this->validationVerifiedUserEmail($user);
+            $this->validateUserVerifiedEmail($user);
 
             $token = $user->createToken("API TOKEN")->plainTextToken;
 
@@ -48,7 +48,11 @@ class AuthService
 
     public function register()
     {
-
+        try {
+            //code...
+        } catch (ErrorException $th) {
+            //throw $th;
+        }
     }
 
     public function changePassword()
@@ -103,10 +107,38 @@ class AuthService
         }
     }
 
-    private function validationVerifiedUserEmail($user)
+    private function validateUserVerifiedEmail($user)
     {
         if ($user instanceof User && !$user->is_verify) {
-            throw new ErrorException("Please verify your email first before signing in.");
+            throw new ErrorException("Please verify your email before signing in. Don't forget to check your spam or junk folder.");
         }
+    }
+
+    private function generateRandomUuid() {
+        $data = random_bytes(16);
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // Version 4 (random)
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // Variant (RFC 4122)
+
+        $uuid = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+        return $uuid;
+    }
+
+    private function checkContactNumberJSON($requestContactNo) {
+        if (is_string($requestContactNo) && is_array(json_decode($requestContactNo, true)) && (json_last_error() == JSON_ERROR_NONE)) {
+            $data = json_decode($requestContactNo, true);
+            $countryCode = $data['countryCode'];
+            $isoCode = $data['isoCode'] ?? null;
+            $contactNumber = $data['number'];
+        } else {
+            $countryCode = null;
+            $isoCode = null;
+            $contactNumber = trim($requestContactNo);
+        }
+
+        return [
+            'countryCode' => $countryCode,
+            'isoCode' => $isoCode,
+            'contactNumber' => $contactNumber
+        ];
     }
 }
