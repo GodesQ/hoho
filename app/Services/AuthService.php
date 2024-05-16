@@ -27,7 +27,7 @@ class AuthService
             if(!Hash::check($request->password, $user->password)) {
                 $isOldUser = $user && $user->is_old_user;
 
-                if($isOldUser) throw new ErrorException('This is an old user. Please reset your password.');
+                if($isOldUser) throw new ErrorException('Your account requires a password reset. Please update your password to continue.');
 
                 throw new ErrorException('Invalid Credentials.');
             }
