@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
+use App\Enum\UserRoleEnum;
+use App\Mail\EmailVerification;
 use App\Models\Admin;
 use App\Models\User;
 use ErrorException;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Request;
 
 class AuthService
@@ -46,12 +49,39 @@ class AuthService
         }
     }
 
-    public function register()
+    public function register($request)
     {
         try {
-            //code...
-        } catch (ErrorException $th) {
-            //throw $th;
+            $data = $request->validated();
+            $account_uid = $this->generateRandomUuid();
+    
+            $contact_no_format = $this->checkContactNumberJSON($request->contact_no);
+    
+            $user = User::create(array_merge($data, [
+                'account_uid' => $account_uid,
+                'country_of_residence' => $request->country_of_residence,
+                'contact_no' =>  preg_replace('/[^0-9]/', '', $contact_no_format['contactNumber']),
+                'countryCode' => preg_replace("/[^0-9]/", "", $contact_no_format['countryCode']),
+                'isoCode' => $contact_no_format['isoCode'],
+                'is_first_time_philippines' => $request->has('is_first_time_philippines'),
+                'is_international_tourist' => $request->has('is_international_tourist'),
+                'role' => UserRoleEnum::GUEST
+            ]));
+    
+            // SEND EMAIL FOR VERIFICATION
+            $details = ['email' => $request->email, 'username' => $request->username];
+            Mail::to($request->email)->send(new EmailVerification($details));
+
+            return $user;
+    
+            // if($user) {
+            //     return response([
+            //         'status' => TRUE,
+            //         'message' => 'User registered successfully'
+            //     ]);
+            // }
+        } catch (ErrorException $e) {
+            throw $e;
         }
     }
 
