@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AttractionResource;
+use App\Http\Resources\MerchantResource;
 use App\Http\Resources\OrganizationResource;
 use Illuminate\Http\Request;
 
@@ -69,13 +71,16 @@ class OrganizationController extends Controller
 
         $featuredAttractions = array_values($featuredAttractions);
 
-        $organization->filtered_merchants = $filteredMerchants;
-        $organization->featured_attractions = $featuredAttractions;
 
-        if ($organization) {
+        $organizationResource  = OrganizationResource::make($organization);
+
+        $organizationResource->filtered_merchants = MerchantResource::collection($filteredMerchants);
+        $organizationResource->featured_attractions = $featuredAttractions;
+        
+        if ($organizationResource) {
             return response([
                 'status' => TRUE,
-                'organization' => $organization,
+                'organization' => $organizationResource,
             ]);
         }
 
