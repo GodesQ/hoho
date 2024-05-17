@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\OrganizationResource;
 use Illuminate\Http\Request;
 
 use App\Models\Organization;
@@ -15,7 +16,7 @@ class OrganizationController extends Controller
         $organizations = Organization::get();
         return response([
             'status' => TRUE,
-            'organizations' => $organizations
+            'organizations' => OrganizationResource::collection($organizations),
         ]);
     }
 
