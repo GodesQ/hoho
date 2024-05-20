@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Traits;
+use App\Models\Food;
 use App\Models\HotelReservation;
 use App\Models\Order;
 use App\Models\RestaurantReservation;
@@ -35,7 +36,10 @@ trait DashboardTrait {
 
         $recent_restaurant_reservations = RestaurantReservation::where('merchant_id', $user->merchant_id)->limit(5)->get();
 
-        return view('admin-page.dashboard.merchants.restaurant-dashboard', compact('recent_restaurant_reservations', 'type', 'merchantInfo'));
+        $foods_count = Food::where('merchant_id', $user->merchant_id)->count();
+        $restaurant_reservations_count =  RestaurantReservation::where('merchant_id', $user->merchant_id)->get()->count();
+
+        return view('admin-page.dashboard.merchants.restaurant-dashboard', compact('recent_restaurant_reservations', 'type', 'merchantInfo', 'foods_count', 'restaurant_reservations_count'));
     }
 
     public function storeDashboard($merchantInfo) {
