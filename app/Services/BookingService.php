@@ -128,7 +128,7 @@ class BookingService
             }
 
         } catch (\Exception $exception) {
-           return back()->with('failed', $exception->getMessage());
+           return back()->with('fail', $exception->getMessage());
         }
     }
 
