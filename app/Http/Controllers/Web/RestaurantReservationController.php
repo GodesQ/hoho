@@ -40,7 +40,7 @@ class RestaurantReservationController extends Controller
                     ->addColumn('actions', function ($row) {
                         $output = '<div class="dropdown">';
                             
-                        $output .= '<a href="/admin/restaurant-reservations/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>';
+                        $output .= '<a href="'. route('admin.restaurant_reservations.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>';
     
                         if($row->status != 'approved') {
                             $output .= '<button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>';

@@ -15,7 +15,8 @@ class AttractionController extends Controller
 
     public function getAttraction(Request $request) {
         $attraction = Attraction::where('id', $request->id)->with('organization')->firstOrFail();
-        return response($attraction);
+        
+        return response()->json($attraction);
 
         // return response([
         //     'status' => TRUE,
