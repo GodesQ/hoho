@@ -111,7 +111,7 @@
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <label for="status-field" class="form-label text-primary">Status</label>
-                                        <select name="status" id="status-field" class="form-select">
+                                        <select name="status" id="status-field" class="form-select select2">
                                             <option value="pending"
                                                 {{ $reservation->status == 'pending' ? 'selected' : null }}>Pending
                                             </option>

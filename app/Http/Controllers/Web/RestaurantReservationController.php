@@ -26,15 +26,15 @@ class RestaurantReservationController extends Controller
                     })
                     ->addColumn('status', function ($row) {
                         if ($row->status == 'pending') {
-                            return '<div class="badge bg-warning">Pending</div>';
+                            return '<div class="badge bg-label-warning">Pending</div>';
                         }
     
                         if ($row->status == 'approved') {
-                            return '<div class="badge bg-success">Approved</div>';
+                            return '<div class="badge bg-label-success">Approved</div>';
                         }
     
                         if ($row->status == 'declined') {
-                            return '<div class="badge bg-success">Declined</div>';
+                            return '<div class="badge bg-label-danger">Declined</div>';
                         }
                     })
                     ->addColumn('actions', function ($row) {
