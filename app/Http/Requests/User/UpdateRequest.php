@@ -32,6 +32,7 @@ class UpdateRequest extends FormRequest
             "birthdate" => "nullable|date",
             "age" => "nullable|numeric",
             "gender" => "nullable|in:Male,Female",
+            "countryCode" => "nullable",
             "contact_no" => "nullable|max:11",
             "interests" => "nullable|array",
             "role" => "nullable|in:guest,anonymous",
