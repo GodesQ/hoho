@@ -93,7 +93,8 @@ class RoomController extends Controller
 
         if($request->has('other_images')) {
             foreach ($request->other_images as $key => $image) {
-                $name = Str::snake(Str::lower($request->name)) . '_' . 'other_image' . '_'  . time();
+                $time = time() . $key;
+                $name = Str::snake(Str::lower($request->room_name)) . '_' . 'other_image' . '_'  . $time;
                 $filename = $name . '.' . $image->getClientOriginalExtension();
                 $image->move(public_path() . '/assets/img/rooms/' . $room->id, $filename);
 
@@ -166,7 +167,8 @@ class RoomController extends Controller
         // Other Images
         if($request->has('other_images')) {
             foreach ($request->other_images as $key => $image) {
-                $name = Str::snake(Str::lower($request->name)) . '_' . 'other_image' . '_'  . time();
+                $time = time() . $key;
+                $name = Str::snake(Str::lower($request->name)) . '_' . 'other_image' . '_'  . $time;
                 $filename = $name . '.' . $image->getClientOriginalExtension();
                 $image->move(public_path() . '/assets/img/rooms/' . $room->id, $filename);
 

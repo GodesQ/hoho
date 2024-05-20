@@ -6,7 +6,7 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="fw-bold py-3 mb-4">Add Room</h4>
-            <a href="{{ route('admin.rooms.index') }}" class="btn btn-primary">Back to List <i class="bx bx-undo"></i></a>
+            <a href="{{ route('admin.rooms.index') }}" class="btn btn-dark">Back to List <i class="bx bx-undo"></i></a>
         </div>
 
         <form action="{{ route('admin.rooms.store') }}" method="post" enctype="multipart/form-data">
@@ -193,6 +193,21 @@
                 reader.onload = function(event) {
                     previewImage.src = event.target.result;
                 };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handlePreviewImage(event, previewImageId) {
+            const file = event.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    const previewImage = document.getElementById(previewImageId);
+                    console.log(previewImage);
+                    previewImage.src = event.target.result;
+                };
+
                 reader.readAsDataURL(file);
             }
         }
