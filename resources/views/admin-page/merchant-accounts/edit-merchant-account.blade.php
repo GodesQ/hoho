@@ -14,7 +14,12 @@
             <div class="col-xxl-4 col-xl-5">
                 <div class="card">
                     <div class="card-body">
-                        <h4>Merchant Information</h4>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4>Merchant Information</h4>
+                            @if($merchant_account->merchant)
+                                <button class="btn btn-primary btn-sm" type="button" id="unsync-btn" data-id="{{ $merchant_account->id }}">Unsync Merchant</button>
+                            @endif
+                        </div>
                         <hr>
                         @if ($merchant_account->merchant)
                             <div class="row">
@@ -60,7 +65,7 @@
                                         </select>
                                     </div>
                                     <button class="btn btn-primary">
-                                        Sync Merchant
+                                        <i class="bx bx-sync"></i> Sync Merchant 
                                     </button>
                                 </div>
                             </form>
@@ -133,7 +138,7 @@
                                 </div>
                             </div>
                             <hr>
-                            <button class="btn btn-primary">Save Merchant Account</button>
+                            <button class="btn btn-primary"><i class="bx bx-save"></i> Save Merchant Account</button>
                         </div>
                     </div>
                 </form>
@@ -150,11 +155,45 @@
                 url: '{{ route('admin.merchants.users.roles', '') }}' + '/' + role,
                 method: 'GET',
                 success: function(data) {
-                    
                     data.merchants.forEach(merchant => {
                         var newOption = new Option(merchant.name, merchant.id, false, false);
                         $('#merchant-select-field').append(newOption).trigger('change');
                     });
+                }
+            })
+        })
+
+        $('#unsync-btn').on('click', function (e) {
+            let dataId = $(e.target).attr('data-id');
+            Swal.fire({
+                title: 'Unsync Merchant',
+                text: "Do you really want to unsync this account to merchant?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#6f0d00',
+                cancelButtonColor: '#545454',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('admin.merchant_accounts.unsync_merchant') }}",
+                        method: "PATCH",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            id: dataId
+                        },
+                        success: function(response) {
+                            if (response.status) {
+                                Swal.fire('Unsync!', response.message, 'success').then(
+                                    result => {
+                                        if (result.isConfirmed) {
+                                            toastr.success(response.message, 'Success');
+                                            location.reload();
+                                        }
+                                    })
+                            }
+                        }
+                    })
                 }
             })
         })

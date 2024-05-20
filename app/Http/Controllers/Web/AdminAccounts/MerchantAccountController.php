@@ -85,4 +85,17 @@ class MerchantAccountController extends Controller
 
         return back()->withSuccess('Merchant sync successfully.');
     }
+
+    public function unsyncMerchant(Request $request) {
+        $admin = Admin::findOrFail($request->id);
+        
+        $admin->update([
+            'merchant_id' => null,
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message'=> 'Merchant successfully unsync.'
+        ]);
+    }
 }
