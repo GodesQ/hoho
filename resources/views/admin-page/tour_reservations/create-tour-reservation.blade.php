@@ -97,15 +97,6 @@
                                             max="4"></select>
                                     </div>
                                 </div>
-                                {{-- <div class="col-lg-6">
-                                    <div class="mb-3">
-                                        <label for="referral_codes" class="form-label">Referral Code</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="Referral Code" />
-                                            <button class="btn btn-primary" type="button" id="button-addon2">Verify</button>
-                                        </div>
-                                    </div>
-                                </div> --}}
                                 <div class="col-lg-12 diy_ticket_pass">
                                     <div class="mb-3">
                                         <div class="form-label">DIY Ticket Pass</div>
@@ -124,26 +115,6 @@
                                                 </label>
                                             </div>
                                         @endforeach
-                                        {{-- <div class="form-check form-check-inline">
-                                            <input class="form-check-input diy_ticket_pass_radio" type="radio"
-                                                name="ticket_pass" id="two_day_diy_ticket_pass" value="2 Day Pass" />
-                                            <label class="form-check-label" for="two_day_diy_ticket_pass"
-                                                style="cursor: pointer;">
-                                                <img src="https://metrohoho.s3.ap-southeast-1.amazonaws.com/tickets/2-day.png"
-                                                    alt="2 Day Ticket Pass" width="120px">
-                                                <h6 class="text-center my-2">₱ 1799.00</h6>
-                                            </label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input diy_ticket_pass_radio" type="radio"
-                                                name="ticket_pass" id="three_day_diy_ticket_pass" value="3 Day Pass" />
-                                            <label class="form-check-label" for="three_day_diy_ticket_pass"
-                                                style="cursor: pointer;">
-                                                <img src="https://metrohoho.s3.ap-southeast-1.amazonaws.com/tickets/3-day.png"
-                                                    alt="3 Day Ticket Pass" width="120px">
-                                                <h6 class="text-center my-2">₱ 2499.00</h6>
-                                            </label>
-                                        </div> --}}
                                     </div>
                                 </div>
                             </div>
@@ -155,14 +126,14 @@
                         <div class="card-body">
                             <h6 style="font-weight: 600;">Promo Code</h6>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Apply Promo Code" name="promo_code"
-                                    id="promo_code" />
+                                <input type="text" class="form-control" placeholder="Apply Promo Code"
+                                    name="promo_code" id="promo_code" />
                                 <button class="btn btn-primary" type="button" id="apply-promocode-btn">Apply</button>
                             </div>
                             <h6 class="mt-3" style="font-weight: 600;">Referral Code</h6>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Apply Referral Code" name="referral_code"
-                                    id="referral_code" />
+                                <input type="text" class="form-control" placeholder="Apply Referral Code"
+                                    name="referral_code" id="referral_code" />
                             </div>
                         </div>
                     </div>
@@ -267,7 +238,9 @@
 @endsection
 
 @push('scripts')
+
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         $(function() {
 
@@ -278,22 +251,27 @@
                 dateToday.setDate(dateToday.getDate() + 5); // Add 5 days
             }
 
-            $("#trip_date").datepicker({
-                minDate: dateToday,
-                changeMonth: true,
-                changeYear: true,
-                dateFormat: 'yy-mm-dd',
-                beforeShowDay: function(date) {
-                    // Check if the day of the week is Monday (0 for Sunday, 1 for Monday, etc.)
-                    if (date.getDay() === 1) {
-                    // Disable Monday dates
-                    return [false, "ui-state-disabled"];
-                    } else {
-                    // Enable other dates
-                    return [true, ""];
-                    }
-                }
+            $("#trip_date").flatpickr({
+                enableTime: false,
+                dateFormat: "Y-m-d",
             });
+
+            // $("#trip_date").datepicker({
+            //     minDate: dateToday,
+            //     changeMonth: true,
+            //     changeYear: true,
+            //     dateFormat: 'yy-mm-dd',
+            //     beforeShowDay: function(date) {
+            //         // Check if the day of the week is Monday (0 for Sunday, 1 for Monday, etc.)
+            //         if (date.getDay() === 1) {
+            //         // Disable Monday dates
+            //         return [false, "ui-state-disabled"];
+            //         } else {
+            //         // Enable other dates
+            //         return [true, ""];
+            //         }
+            //     }
+            // });
         });
 
         $('.reserved_users, .registered_passengers').select2({
@@ -343,16 +321,19 @@
         const promo_code_input = document.querySelector('#promo_code');
         const book_btn = document.querySelector('#book-btn');
 
-        toastr.options = {closeButton: true, timeOut: 2000};
+        toastr.options = {
+            closeButton: true,
+            timeOut: 2000
+        };
 
         apply_promocode_btn.addEventListener('click', function(e) {
-            if(amount.value == '') return  toastr.error('Invalid Amount Value', 'Fail');
+            if (amount.value == '') return toastr.error('Invalid Amount Value', 'Fail');
 
             $.ajax({
                 url: `/api/promocodes/verify/${promo_code_input.value}`,
                 method: 'GET',
                 success: function(response) {
-                    if(response.is_promocode_exist) {
+                    if (response.is_promocode_exist) {
                         toastr.success('PromoCode Exists', 'Success');
                         enabledBookButton();
                         computeDiscountAmount(response.promocode);
@@ -366,7 +347,7 @@
         });
 
         function computeDiscountAmount(promocode) {
-            if(promocode.discount_type == 'percentage') {
+            if (promocode.discount_type == 'percentage') {
                 let discount = amount.value * (promocode.discount_amount / 100);
                 total_discount_text.textContent = `₱ ${addCommasToNumberWithDecimal(discount)}`;
                 discount_input.value = discount;
@@ -375,7 +356,7 @@
         }
 
         promo_code_input.addEventListener('input', function(e) {
-            if(e.target.value != '') {
+            if (e.target.value != '') {
                 disabledBookButton();
             } else {
                 enabledBookButton();
@@ -445,7 +426,7 @@
                 tour_text.innerHTML = '';
             }
 
-            if(promo_code_input.value != '') {
+            if (promo_code_input.value != '') {
                 apply_promocode_btn.click();
             }
 
@@ -495,7 +476,7 @@
                 let totalAmount = (subAmount - discount_input.value) + totalConvenienceFee;
 
                 // if 100% discount
-                if(discount_input.value == subAmount) {
+                if (discount_input.value == subAmount) {
                     totalAmount -= totalConvenienceFee;
                 }
 
@@ -504,7 +485,7 @@
 
                 // dispay total amount including total convenience and travel pass
                 total_amount_text.textContent = `₱ ${addCommasToNumberWithDecimal(totalAmount)}`;
-                
+
             }
 
 
@@ -520,7 +501,7 @@
                     let totalAmount = (subAmount - discount_input.value) + totalConvenienceFee;
 
                     // if 100% discount
-                    if(discount_input.value == subAmount) {
+                    if (discount_input.value == subAmount) {
                         totalAmount -= totalConvenienceFee;
                     }
 

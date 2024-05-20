@@ -60,7 +60,7 @@ class BookingService
                 $totalAmount -= $totalOfAdditionalCharges;
             }
 
-            $transaction = $this->storeTransaction($request, $reference_no, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
+            $transaction = $this->storeTransaction($request, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
 
             if (!$transaction) {
                 return back()->with('fail', 'Failed to Create Transaction');
