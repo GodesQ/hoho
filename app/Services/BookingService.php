@@ -39,7 +39,7 @@ class BookingService
     }
 
     public function createBookReservation(Request $request)
-    {
+    {   
         try {
             $reference_no = $this->generateReferenceNo();
             $additional_charges = $this->generateAdditionalCharges();
@@ -128,7 +128,7 @@ class BookingService
             }
 
         } catch (\Exception $exception) {
-            dd($exception->getMessage());
+           return back()->with('failed', $exception->getMessage());
         }
     }
 
