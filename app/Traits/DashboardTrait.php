@@ -4,6 +4,7 @@ namespace App\Traits;
 use App\Models\Food;
 use App\Models\HotelReservation;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\RestaurantReservation;
 use App\Models\Room;
 use Illuminate\Support\Facades\Auth;
@@ -50,6 +51,12 @@ trait DashboardTrait {
             return $q->where('merchant_id', $user->merchant_id);
         })->limit(5)->get();
 
-        return view('admin-page.dashboard.merchants.store-dashboard', compact('recent_store_orders', 'type', 'merchantInfo'));
+        $products_count = Product::where('merchant_id', $user->merchant_id)->count();
+
+        $orders_count = Order::whereHas('product', function($q) use ($user) {
+            return $q->where('merchant_id', $user->merchant_id);
+        })->count();
+
+        return view('admin-page.dashboard.merchants.store-dashboard', compact('recent_store_orders', 'type', 'merchantInfo', 'products_count', 'orders_count'));
     }
 }
