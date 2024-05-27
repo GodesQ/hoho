@@ -95,10 +95,12 @@ Route::view('merchant-account-registered-message', 'misc.merchant-registered-mes
 
 Route::get('aqwire/payment/success/{id}', [AqwireController::class, 'success']);
 Route::get('aqwire/payment/travel-tax/success/{id}', [AqwireController::class, 'travelTaxSuccess']);
+Route::get('aqwire/payment/order/success/{id}', [AqwireController::class, 'orderSuccess']);
 Route::get('aqwire/payment/view_success', [AqwireController::class, 'viewSuccess']);
 
 Route::get('aqwire/payment/cancel/{id}', [AqwireController::class, 'cancel']);
 Route::get('aqwire/payment/travel-tax/cancel/{id}', [AqwireController::class, 'travelTaxCancel']);
+Route::get('aqwire/payment/order/cancel/{id}', [AqwireController::class, 'orderCancel']);
 Route::get('aqwire/payment/view_cancel', [AqwireController::class, 'viewCancel']);
 
 Route::post('aqwire/payment/callback/{id}', [AqwireController::class, 'callback']);

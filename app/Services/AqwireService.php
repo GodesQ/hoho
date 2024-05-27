@@ -43,9 +43,31 @@ class AqwireService
     }
 
     public function createRequestModel($transaction, $customer)
-    {   
+    {
         $customer_email = $customer->email_address ?? $customer->email;
         $customer_mobile_number = $customer->mobile_number ?? ("+" . $customer->countryCode . $customer->contact_no);
+
+        $success = '';
+        $cancel = '';
+
+        switch ($transaction->transaction_type) {
+            case 'book_tour':
+                $success = env('AQWIRE_TEST_SUCCESS_URL');
+                $cancel = env('AQWIRE_TEST_CANCEL_URL');
+                break;
+            case 'travel_tax':
+                $success = env('AQWIRE_TEST_TRAVEL_TAX_SUCCESS_URL');
+                $cancel = env('AQWIRE_TEST_TRAVEL_TAX_CANCEL_URL');
+                break;
+            case 'order':
+                    $success = env('AQWIRE_TEST_ORDER_SUCCESS_URL');
+                    $cancel = env('AQWIRE_TEST_ORDER_CANCEL_URL');
+                break;
+            default: 
+                $success = env('AQWIRE_TEST_SUCCESS_URL');
+                $cancel = env('AQWIRE_TEST_CANCEL_URL');
+                break;
+        }
 
         $requestModel = [
             'uniqueId' => $transaction->reference_no,
@@ -63,8 +85,8 @@ class AqwireService
                 'category' => 'payment for hoho'
             ],
             'redirectUrl' => [
-                'success' => env('AQWIRE_TEST_TRAVEL_TAX_SUCCESS_URL') . $transaction->id,
-                'cancel' => env('AQWIRE_TEST_TRAVEL_TAX_CANCEL_URL') . $transaction->id,
+                'success' => $success . $transaction->id,
+                'cancel' => $cancel . $transaction->id,
                 'callback' => env('AQWIRE_TEST_CALLBACK_URL') . $transaction->id
             ],
             'note' => 'Payment for Philippines Hop On Hop Off',

@@ -7,13 +7,24 @@ use App\Http\Requests\Order\StoreRequest;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Transaction;
+use App\Models\User;
+use App\Services\AqwireService;
 use Carbon\Carbon;
+use ErrorException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
-{
-    public function store(StoreRequest $request) {
+{   
+    private $aqwireService;
+
+    public function __construct(AqwireService $aqwireService) {
+        $this->aqwireService = $aqwireService;
+    } 
+
+    public function store(StoreRequest $request)
+    {
         $data = $request->validated();
 
         $product = Product::where('id', $request->product_id)->first();
@@ -38,12 +49,12 @@ class OrderController extends Controller
             ]);
 
             $order = Order::create(array_merge($request->validated(), [
-                'transaction_id' => $transaction->id, 
+                'transaction_id' => $transaction->id,
                 'reference_code' => $transaction->reference_no,
                 'sub_amount' => $product->price,
                 'total_amount' => $totalAmount,
                 'payment_method' => 'cash',
-                'status' => 'pending', 
+                'status' => 'pending',
             ]));
 
             return [
@@ -59,58 +70,99 @@ class OrderController extends Controller
         ], 201);
     }
 
-    public function bulk_store(Request $request) {
-        $items = json_decode($request->items);
-        $orders = [];
+    public function bulk_store(Request $request)
+    {
+        try {
+            $items = json_decode($request->items);
+            $orders = [];
 
-        if(is_array($items)) {
-            foreach ($items as $key => $item) {
-                $itemArray = (array) $item; // Convert stdClass object to array
-                $product = Product::where('id', $itemArray['product_id'])->first();
-                $totalAmount = $this->calculateTotalAmount($product->price, $itemArray['quantity']);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $user = User::where('id', $request->customer_id)->first();
+
+                $transaction_amount = 0;
                 $reference_no = $this->generateReferenceNo();
-            
+
+                if (is_array(($items))) {
+                    foreach ($items as $item) {
+                        $itemArray = (array) $item; // Convert stdClass object to array
+                        $product = Product::where('id', $itemArray['product_id'])->first();
+                        $totalAmount = $this->calculateTotalAmount($product->price, $itemArray['quantity']);
+
+                        $transaction_amount += $totalAmount;
+                    }
+                }
+
                 $transaction = Transaction::create([
                     'reference_no' => $reference_no,
                     'transaction_by_id' => $request->customer_id,
-                    'sub_amount' => $product->price,
+                    'sub_amount' => $transaction_amount,
                     'total_additional_charges' => 0,
                     'total_discount' => 0,
                     'transaction_type' => 'order',
-                    'payment_amount' => $totalAmount,
+                    'payment_amount' => $transaction_amount,
                     'additional_charges' => null,
                     'payment_status' => 'pending',
                     'resolution_status' => 'pending',
                     'aqwire_paymentMethodCode' => null,
-                    'order_date' => Carbon::parse($itemArray['order_date'])->format('Y-m-d'),
+                    'order_date' => Carbon::now(),
                     'transaction_date' => Carbon::now(),
                 ]);
-            
-                $order = Order::create([
-                    'product_id' => $itemArray['product_id'],
-                    'customer_id' => $request->customer_id,
-                    'quantity' => $itemArray['quantity'],
-                    'order_date' => $itemArray['order_date'],
-                    'transaction_id' => $transaction->id, 
-                    'reference_code' => $transaction->reference_no,
-                    'sub_amount' => $product->price,
-                    'total_amount' => $totalAmount,
-                    'payment_method' => 'cash',
-                    'status' => 'pending', 
-                ]);
-            
-                array_push($orders, $order);
+
+                if (is_array($items)) {
+                    foreach ($items as $key => $item) {
+                        $itemArray = (array) $item; // Convert stdClass object to array
+                        $product = Product::where('id', $itemArray['product_id'])->first();
+                        $totalAmount = $this->calculateTotalAmount($product->price, $itemArray['quantity']);
+
+                        $order = Order::create([
+                            'product_id' => $itemArray['product_id'],
+                            'customer_id' => $request->customer_id,
+                            'quantity' => $itemArray['quantity'],
+                            'order_date' => $itemArray['order_date'],
+                            'transaction_id' => $transaction->id,
+                            'reference_code' => $transaction->reference_no,
+                            'sub_amount' => $product->price,
+                            'total_amount' => $totalAmount,
+                            'payment_method' => 'cash',
+                            'status' => 'pending',
+                        ]);
+
+                        array_push($orders, $order);
+                    }
+
+                    $payment_request_model = $this->aqwireService->createRequestModel($transaction, $user);
+
+                    $payment_response = $this->aqwireService->pay($payment_request_model);
+
+                    $transaction->update([
+                        'aqwire_transactionId' => $payment_response['data']['transactionId'],
+                        'payment_url' => $payment_response['paymentUrl'],
+                        'payment_status' => Str::lower($payment_response['data']['status']),
+                        'payment_details' => json_encode($payment_response),
+                        'additional_charges' => null,
+                    ]);
+
+                    return response([
+                        'status' => 'paying',
+                        'message' => 'Order successfully submitted. Please wait for approval of merchant.',
+                        'payment_url' => $payment_response['paymentUrl'],
+                    ]);
+                }
+
+            } else {
+                throw new ErrorException("The items are not in a valid JSON format.");
             }
 
+        } catch (ErrorException $e) {
             return response([
-                'status' => TRUE,
-                'message' => 'Order successfully submitted. Please wait for approval of merchant.',
-                'orders' => $orders,
-            ]);
+                'status' => 'failed',
+                'message' => $e->getMessage(),
+            ], 400);
         }
     }
 
-    public function show(Request $request, $order_id) {
+    public function show(Request $request, $order_id)
+    {
         $order = Order::where('id', $order_id)->with('product')->first();
 
         return response([
@@ -119,7 +171,8 @@ class OrderController extends Controller
         ]);
     }
 
-    public function getUserOrders(Request $request, $user_id) {
+    public function getUserOrders(Request $request, $user_id)
+    {
         $orders = Order::where('customer_id', $user_id)->with('product')->get();
 
         return response([
@@ -128,8 +181,9 @@ class OrderController extends Controller
         ]);
     }
 
-    private function calculateTotalAmount($price, $quantity) {
-        return $price * $quantity;    
+    private function calculateTotalAmount($price, $quantity)
+    {
+        return $price * $quantity;
     }
 
     private function generateReferenceNo()
