@@ -9,13 +9,20 @@ use App\Models\Merchant;
 use App\Models\RestaurantReservation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class RestaurantReservationController extends Controller
 {
     public function index(Request $request) {
         if($request->ajax()) {
+            $user = Auth::guard('admin')->user();
             $data = RestaurantReservation::query();
+
+            if($user->role == 'merchant_restaurant_admin') {
+                $data->where('merchant_id', $user->merchant_id);
+            }
+            
             return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('reserved_user_id', function ($row) {
