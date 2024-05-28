@@ -136,6 +136,13 @@
                                             value="{{ $merchant_account->role }}" disabled>
                                     </div>
                                 </div>
+                                <div class="col-lg-6">
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="isApproved"
+                                            name="is_approved" {{ $merchant_account->is_approved ? 'checked' : null }} />
+                                        <label class="form-check-label" for="isApproved">Is Approved?</label>
+                                    </div>
+                                </div>
                             </div>
                             <hr>
                             <button class="btn btn-primary"><i class="bx bx-save"></i> Save Merchant Account</button>
