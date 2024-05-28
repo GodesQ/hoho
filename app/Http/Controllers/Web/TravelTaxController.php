@@ -12,7 +12,6 @@ use Carbon\Carbon;
 use ErrorException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 
 class TravelTaxController extends Controller

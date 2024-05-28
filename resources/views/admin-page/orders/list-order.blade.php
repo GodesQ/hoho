@@ -57,7 +57,8 @@
                     },
                     {
                         data: 'product_id',
-                        name: 'product_id'
+                        name: 'product_id',
+                        orderable: false,
                     },
                     {
                         data: 'total_amount',
@@ -66,11 +67,18 @@
                     {
                         data: 'status',
                         name: 'status',
+                        orderable: false,
+                        searchable: false,
                     },
                     {
                         data: 'actions',
                         name: 'actions',
+                        orderable: false,
+                        searchable: false,
                     }
+                ],
+                order: [
+                    [0, 'desc'] // Sort by the first column (index 0) in descending order
                 ]
             });
         }

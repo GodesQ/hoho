@@ -9,14 +9,22 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Services\AqwireService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Str;
 
 use DB;
 
 class OrderController extends Controller
-{
+{   
+    private $aqwireService;
+
+    public function __construct(AqwireService $aqwireService) {
+        $this->aqwireService = $aqwireService;
+    }
+
     public function index(Request $request) {
         if($request->ajax()) {
             $orders = Order::with('product', 'customer');
@@ -61,7 +69,10 @@ class OrderController extends Controller
         $product = Product::where('id', $request->product_id)->first();
         $totalAmount = $this->calculateTotalAmount($product->price, $request->quantity);
 
-        $transaction = DB::transaction(function () use ($request, $product, $totalAmount) {
+        $db_transaction = DB::transaction(function () use ($request, $product, $totalAmount) {
+
+            $user = User::where('id', $request->customer_id)->first();
+            
             $reference_no = $this->generateReferenceNo();
             $transaction = Transaction::create([
                 'reference_no' => $reference_no,
@@ -88,13 +99,25 @@ class OrderController extends Controller
                 'status' => 'pending', 
             ]));
 
+            $payment_request_model = $this->aqwireService->createRequestModel($transaction, $user);
+            $payment_response = $this->aqwireService->pay($payment_request_model);
+
+            $transaction->update([
+                'aqwire_transactionId' => $payment_response['data']['transactionId'] ?? null,
+                'payment_url' => $payment_response['paymentUrl'] ?? null,
+                'payment_status' => Str::lower($payment_response['data']['status'] ?? ''),
+                'payment_details' => json_encode($payment_response),
+            ]);
+
             return [
                 'transaction' => $transaction,
                 'order' => $order,
+                'payment_url' => $payment_response['paymentUrl'],
             ];
         });
 
-        return redirect()->route('admin.orders.show', ($transaction['order']->id ?? 0))->withSuccess('Order successfully saved');
+        return redirect($db_transaction['payment_url']);
+
     }
 
     public function show($id) { 
