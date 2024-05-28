@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\AdminAccounts;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Role;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -66,7 +67,9 @@ class MerchantAccountController extends Controller
         $data = $request->except('_token', 'username');
         $merchant_account = Admin::where("id", $id)->with('merchant')->first();
 
-        $merchant_account->update($data);
+        $merchant_account->update(array_merge($data, [
+            'merchant_email_approved_at' => $request->has('is_approved') ? Carbon::now() : null,
+        ]));
 
         return back()->withSuccess('Merchant account updated successfully.');
     }
