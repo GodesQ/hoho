@@ -18,9 +18,11 @@ class BookingConfirmationMail extends Mailable
      */
 
      protected $details;
-    public function __construct($details)
+     protected $pdf;
+    public function __construct($details, $pdf)
     {
         $this->details = $details;
+        $this->pdf = $pdf;
     }
 
     /**
@@ -31,6 +33,14 @@ class BookingConfirmationMail extends Mailable
     public function build()
     {
         $details = $this->details;
-        return $this->subject('Booking Confirmation For Passenger' . ' - ' . $details['tour_name'])->view('emails.booking-confirmation', compact('details'));
+        $email = $this->subject('Booking Confirmation For Passenger' . ' - ' . $details['tour_name'])->view('emails.booking-confirmation', compact('details'));
+
+        if($details['type'] == 'DIY') {
+            $email->attachData($this->pdf->output(), 'qrcodes.pdf', [
+                'mime' => 'application/pdf',
+            ]);
+        }
+
+        return $email;
     }
 }

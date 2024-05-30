@@ -21,6 +21,8 @@ use App\Models\ReservationUserCode;
 use App\Models\TicketPass;
 
 use App\Mail\BookingConfirmationMail;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 use Yajra\DataTables\DataTables;
 use DB;
@@ -92,7 +94,7 @@ class TourReservationController extends Controller
 
         if($request->status == 'approved') {
             $number_of_pass = $reservation->number_of_pass;
-            $this->generateReservationCode($number_of_pass, $reservation);
+            $reservations_codes = $this->generateReservationCode($number_of_pass, $reservation);
 
             if($reservation->user) {
                 $what = $reservation->type == 'DIY' ? (
@@ -114,7 +116,17 @@ class TourReservationController extends Controller
                     'tour_name' => optional($reservation->tour)->name
                 ];
 
-                Mail::to(optional($reservation->user)->email)->send(new BookingConfirmationMail($details));
+                $pdf = null;
+                
+                if($reservation->type == 'DIY') {
+                    $qrCodes = [];
+                    foreach ($reservations_codes as $key => $code) {
+                        $qrCodes[] = base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate($code));
+                    }
+                    $pdf = PDF::loadView('pdf.qrcodes', ['qrCodes' => $qrCodes]);
+                }
+
+                Mail::to(optional($reservation->user)->email)->send(new BookingConfirmationMail($details, $pdf));
             }
 
         }
@@ -176,6 +188,7 @@ class TourReservationController extends Controller
         // Generate the random letter part
         // Assuming you have str_random function available
         $random_letters = strtoupper(Str::random(5));
+        $reservation_codes = [];
 
         for ($i = 1; $i <= $number_of_pass; $i++) {
             // Generate the pass number with leading zeros (e.g., -001)
@@ -191,7 +204,11 @@ class TourReservationController extends Controller
                     'reservation_id' => $reservation->id,
                     'code' => $code
                 ]);
+
+                array_push($reservation_codes, $create_code->code);
             }
         }
+
+        return $reservation_codes;
     }
 }
