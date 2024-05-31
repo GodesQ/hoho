@@ -48,6 +48,8 @@ class OrganizationService
 
             $this->uploadAndUpdateImage($request, $path, $file_name, $image_fields, $organization);
 
+            LoggerService::log('create', Organization::class, ['added' => $request->all()]);
+
             return $organization;
 
         } catch (\Exception $e) {
@@ -69,11 +71,19 @@ class OrganizationService
                 'is_active' => $request->has('is_active')
             ]));
 
+            // Get the first changes after updating the organization 
+            $firstChanges = $organization->getChanges();
+
             $path = "organizations/{$organization->id}/";
             $file_name = Str::snake(Str::lower($request->name));
             $image_fields = ['featured_image', 'icon', 'images'];
 
             $this->uploadAndUpdateImage($request, $path, $file_name, $image_fields, $organization);
+
+            // Get the second changes after saving images in the organization
+            $secondChanges = $organization->getChanges();
+
+            LoggerService::log('update', Organization::class, ['changes' => array_merge($firstChanges, $secondChanges)]);
 
             return $organization;
 
@@ -106,6 +116,8 @@ class OrganizationService
             }
 
             $delete_organization = $organization->delete();
+
+            LoggerService::log('delete', Organization::class, null);
 
             return $delete_organization;
 

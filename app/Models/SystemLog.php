@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Log extends Model
+class SystemLog extends Model
 {
     use HasFactory;
-    protected $table = 'logs';
-    protected $fillable = ['log', 'user_log_id'];
+    protected $table = "system_logs";
+    protected $fillable = ['user_id', 'action', 'model', 'context'];
 }

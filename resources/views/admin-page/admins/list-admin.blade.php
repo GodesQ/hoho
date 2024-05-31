@@ -84,5 +84,7 @@
             })
         }
         loadTable();
+
+        
     </script>
 @endpush

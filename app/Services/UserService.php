@@ -97,6 +97,12 @@ class UserService
             ]),
         );
 
+        $attributes_with_value = array_filter($user->getAttributes(), function ($value, $key) {
+            return !is_null($value) && $key !== 'password';
+        }, ARRAY_FILTER_USE_BOTH);
+
+        LoggerService::log('create', User::class, ['added' => $attributes_with_value]);
+
         return $user;
     }
 
@@ -114,6 +120,8 @@ class UserService
                 'interest_ids' => $request->has('interest_ids') ? json_encode($request->interest_ids) : null,
             ]),
         );
+
+        LoggerService::log('update', User::class, ['changes' => $user->getChanges()]);
 
         return $update_user;
     }

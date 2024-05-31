@@ -9,6 +9,7 @@ use App\Mail\EmailVerification;
 use App\Models\Admin;
 use App\Models\Interest;
 use App\Models\User;
+use App\Services\LoggerService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -82,6 +83,8 @@ class UserController extends Controller
         }
 
         $delete_user = $this->userService->deleteUser($user);
+
+        LoggerService::log('delete', User::class, null);
 
         return $delete_user
             ? response([

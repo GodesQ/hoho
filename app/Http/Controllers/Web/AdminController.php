@@ -9,6 +9,7 @@ use App\Models\MerchantHotel;
 use App\Models\MerchantRestaurant;
 use App\Models\MerchantStore;
 use App\Models\MerchantTourProvider;
+use App\Services\LoggerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -49,6 +50,7 @@ class AdminController extends Controller
                 ->addColumn('actions', function ($row) {
                     return '<div class="dropdown">
                                     <a href="/admin/admins/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
+                                    <a href="#" id="' . $row->id . '" class="btn btn-outline-danger btn-sm"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                 })
                 ->rawColumns(['actions', 'is_approved'])
@@ -73,7 +75,7 @@ class AdminController extends Controller
             'password' => Hash::make($request->password)
         ]));
         
-        
+        LoggerService::log('create', Admin::class, ['added' => $request->all()]);
 
         if ($admin)
             return redirect()->route('admin.admins.edit', $admin->id)->withSuccess('Admin created successfully');
@@ -111,6 +113,8 @@ class AdminController extends Controller
             'admin_profile' => $file_name
         ]));
 
+        LoggerService::log('update', Admin::class, ['changes' => $admin->getChanges()]);
+
         if ($request->has('is_approved') && !$admin->email_approved_at) {
             $details = [
                 'email' => $request->email,
@@ -121,6 +125,8 @@ class AdminController extends Controller
             $admin->update([
                 'merchant_email_approved_at' => Carbon::now()
             ]);
+
+            LoggerService::log('update', Admin::class, ['changes' => $admin->getChanges()]);
         }
 
         return back()->withSuccess('Admin updated successfully');
@@ -136,6 +142,8 @@ class AdminController extends Controller
         }
 
         $admin->delete();
+
+        LoggerService::log('delete', Admin::class, null);
 
         return response([
             'status' => TRUE,
