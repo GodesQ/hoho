@@ -22,7 +22,6 @@ class MerchantController extends Controller
                 'message'=> 'No Merchant Found'
             ], 400);
         }
-        // return response($merchant);
 
         switch ($merchant->type) {
             case 'Store':

@@ -91,6 +91,9 @@
                                                             <option {{ $tour->type == 'Layover Tour' ? 'selected' : null }}
                                                                 value="Layover Tour">Layover
                                                                 Tour</option>
+                                                            <option {{ $tour->type == 'Seasonal Tour' ? 'selected' : null }}
+                                                                    value="Seasonal Tour">Seasonal
+                                                                    Tour</option>
                                                             <option {{ $tour->type == 'DIY Tour' ? 'selected' : null }}
                                                                 value="DIY Tour">DIY
                                                                 Tour</option>

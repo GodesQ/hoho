@@ -428,6 +428,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
         Route::get('user-demographics/user-ages', [DataReportController::class, 'getUsersByAge'])->name('user_demographics.user_ages');
         Route::get('user-demographics/user-locations', [DataReportController::class, 'getUsersByLocation'])->name('user_demographics.user_locations');
 
+        Route::get('travel-taxes-report', [DataReportController::class, 'travel_taxes_report'])->name('travel_taxes_report');
+
         Route::get('sales_report', [DataReportController::class, 'sales_report'])->name('sales_report')->can('view_sales_report');
         Route::get('tour_reservations_report', [DataReportController::class, 'tour_reservations_report'])->name('tour_reservations_report');
         Route::get('tour_reservations_report/get_data', [DataReportController::class, 'getTourReservationData'])->name('tour_reservations_report.get_data');
