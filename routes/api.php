@@ -91,6 +91,7 @@ use App\Http\Controllers\Api\TourBadgeController;
 
         Route::get('tours/guided', [TourController::class, 'getGuidedTours']);
         Route::get('tours/diy', [TourController::class, 'getDIYTours']);
+        Route::get('tours/seasonal', [TourController::class, 'getSeasonalTours']);
 
         Route::get('transports', [TransportController::class, 'getTransports']);
         Route::get('transport/{id}', [TransportController::class, 'getTransport']);

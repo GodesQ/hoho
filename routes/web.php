@@ -176,8 +176,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('tour_badges/update/{id}', [TourBadgeController::class, 'update'])->name('tour_badges.update');
     Route::delete('tour_badges/destroy', [TourBadgeController::class, 'destroy'])->name('tour_badges.destroy');
 
-    // Route::post('tour_badges/store', [TourBadgeController::class, 'store'])->name('tour_badges.store');
-
     Route::get('transports', [TransportController::class, 'list'])->name('transports.list')->can('view_transports_list');
     Route::get('transports/create', [TransportController::class, 'create'])->name('transports.create');
     Route::post('transports/store', [TransportController::class, 'store'])->name('transports.store');
@@ -427,6 +425,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
         Route::get('user-demographics/user-months', [DataReportController::class, 'getUsersPerMonth'])->name('user_demographics.user_months');
         Route::get('user-demographics/user-ages', [DataReportController::class, 'getUsersByAge'])->name('user_demographics.user_ages');
         Route::get('user-demographics/user-locations', [DataReportController::class, 'getUsersByLocation'])->name('user_demographics.user_locations');
+
+        Route::get('travel-taxes-report', [DataReportController::class, 'travel_taxes_report'])->name('travel_taxes_report');
 
         Route::get('sales_report', [DataReportController::class, 'sales_report'])->name('sales_report')->can('view_sales_report');
         Route::get('tour_reservations_report', [DataReportController::class, 'tour_reservations_report'])->name('tour_reservations_report');

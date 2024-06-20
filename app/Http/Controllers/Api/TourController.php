@@ -99,4 +99,17 @@ class TourController extends Controller
         ]);
 
     }
+
+    public function getSeasonalTours(Request $request) {
+        $tours = Tour::where('type', 'Seasonal Tour')->get();
+
+        foreach ($tours as $tour) {
+            $tour->setAppends([]);
+        }
+
+        return response([
+            'status'=> TRUE,
+            'tours' => $tours
+        ]);
+    }
 }

@@ -333,7 +333,7 @@
 
     <li class="menu-item {{ preg_match('/admin\/reports/', Request::path()) ? 'active open' : null }}">
         @auth('admin')
-            @canany(['view_sales_report'])
+            @canany(['view_sales_report', 'view_travel_tax_report'])
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-chart"></i>
                     <div data-i18n="Reports">Reports</div>
@@ -357,9 +357,18 @@
                             <div data-i18n="Tour Reservations Report">Tour Reservations Report</div>
                         </a>
                     </li>
-                    <li class="menu-item {{ preg_match('/admin\/reports\/user-demographics/', Request::path()) ? 'active' : null }}">
+                    <li
+                        class="menu-item {{ preg_match('/admin\/reports\/user-demographics/', Request::path()) ? 'active' : null }}">
                         <a href="{{ route('admin.reports.user_demographics') }}" class="menu-link">
                             <div data-i18n="User Demographics">User Demographics</div>
+                        </a>
+                    </li>
+                @endcan
+                @can('view_travel_tax_report')
+                    <li
+                        class="menu-item {{ preg_match('/admin\/reports\/travel-taxes-report/', Request::path()) ? 'active' : null }}">
+                        <a href="{{ route('admin.reports.travel_taxes_report') }}" class="menu-link">
+                            <div data-i18n="Travel Taxes Report">Travel Taxes Report</div>
                         </a>
                     </li>
                 @endcan

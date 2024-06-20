@@ -27,7 +27,8 @@
             <div class="title-section">
                 <h4 class="fw-medium mb-2">Tour Reservation Details</h4>
                 <h6 class="fw-medium text-primary"><a href="{{ route('admin.dashboard') }}"
-                        class="text-muted fw-light">Dashboard /</a> <a href="{{ route('admin.tour_reservations.list') }}" class="text-muted fw-light">Tour Reservations /</a> Tour Reservation Details</h6>
+                        class="text-muted fw-light">Dashboard /</a> <a href="{{ route('admin.tour_reservations.list') }}"
+                        class="text-muted fw-light">Tour Reservations /</a> Tour Reservation Details</h6>
             </div>
             <div class="action-section btn-group">
                 <a href="{{ route('admin.tour_reservations.list') }}" class="btn btn-dark btn-sm"><i class="bx bx-undo"></i>
@@ -79,7 +80,7 @@
                                     </div>
                                     <div class="col-lg-4 mb-4">
                                         <div class="fw-semibold text-primary form-label">Default Price </div>
-                                        {{ number_format(($reservation->tour->price ?? 0), 2) }}
+                                        {{ number_format($reservation->tour->price ?? 0, 2) }}
                                     </div>
                                     <div class="col-lg-4 mb-4">
                                         <div class="fw-semibold text-primary form-label">Reference Code </div>
@@ -110,7 +111,7 @@
                                     </div>
                                     <div class="col-lg-6 mb-4">
                                         <div class="fw-semibold text-primary form-label">Trip Date </div>
-                                        <input type="date" name="trip_date" value="{{ $reservation->start_date }}"
+                                        <input type="date" name="trip_date" id="trip_date" value="{{ $reservation->start_date }}"
                                             class="form-control">
                                     </div>
                                     <div class="col-lg-6 mb-4">
@@ -235,3 +236,12 @@
             </form>
         </div>
     @endsection
+
+    @push('scripts')
+        <script>
+            $("#trip_date").flatpickr({
+                enableTime: false,
+                dateFormat: "Y-m-d",
+            });
+        </script>
+    @endpush

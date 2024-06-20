@@ -28,6 +28,14 @@ class DataReportController extends Controller
         return view('admin-page.reports.tour_reservations_report');
     }
 
+    public function travel_taxes_report(Request $request) {
+        return view('admin-page.reports.travel-taxes-report');
+    }
+
+    public function getTravelTaxCustomersPerMonth(Request $request) {
+        
+    }
+
     public function getUsersByLocation(Request $request)
     {
         $userCounts = User::select('country_of_residence', \DB::raw('COUNT(1) as total_user'))

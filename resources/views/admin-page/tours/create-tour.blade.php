@@ -72,6 +72,7 @@
                                                     <option {{ old('type') == 'Guided Tour' ? 'selected' : null }} value="Guided Tour">Guided Tour</option>
                                                     <option {{ old('type') == 'DIY Tour' ? 'selected' : null }} value="DIY Tour">DIY Tour</option>
                                                     <option {{ old('type') == 'Layover Tour' ? 'selected' : null }} value="Layover Tour">Layover Tour</option>
+                                                    <option {{ old('type') == 'Seasonal Tour' ? 'selected' : null }} value="Seasonal Tour">Seasonal Tour</option>
                                                     <option {{ old('type') == 'Others' ? 'selected' : null }} value="Others">Others</option>
                                                 </select>
                                             </div>

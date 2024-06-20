@@ -219,6 +219,7 @@
     <script src="{{ URL::asset('assets/js/select/select2.full.min.js') }}"></script>
     <script src="{{ asset('assets/js/jquery.steps.min.js') }}"></script>
     <script src="{{ URL::asset('assets/vendor/js/menu.js') }}"></script>
+    <script src="{{ URL::asset('vendor/apexcharts/apexcharts.js') }}"></script>
 
     <!-- Vendors JS -->
     <script src="{{ URL::asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
@@ -228,6 +229,7 @@
 
     <!-- Page JS -->
     <script src="{{ URL::asset('assets/js/dashboards-analytics.js') }}"></script>
+
     <script src="{{ asset('assets/js/select/form-select2.js') }}"></script>
     {{-- <script src="{{ asset('assets/js/wizard-steps.js') }}"></script> --}}
     <script src="{{ asset('assets/js/pages-account-settings-account.js') }}"></script>
@@ -245,6 +247,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     {{-- <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1UJdBuEc_a3P3i-efUeZIJmMQ5VXZGgU&libraries=places&callback=initMap">
