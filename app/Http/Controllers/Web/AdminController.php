@@ -50,7 +50,7 @@ class AdminController extends Controller
                 ->addColumn('actions', function ($row) {
                     return '<div class="dropdown">
                                     <a href="/admin/admins/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <a href="#" id="' . $row->id . '" class="btn btn-outline-danger btn-sm"><i class="bx bx-trash me-1"></i></a>
+                                    <a href="#" id="' . $row->id . '" class="btn btn-outline-danger btn-sm remove-btn"><i class="bx bx-trash me-1"></i></a>
                                 </div>';
                 })
                 ->rawColumns(['actions', 'is_approved'])
@@ -75,7 +75,7 @@ class AdminController extends Controller
             'password' => Hash::make($request->password)
         ]));
         
-        LoggerService::log('create', Admin::class, ['added' => $request->all()]);
+        // LoggerService::log('create', Admin::class, ['added' => $request->all()]);
 
         if ($admin)
             return redirect()->route('admin.admins.edit', $admin->id)->withSuccess('Admin created successfully');
@@ -143,7 +143,7 @@ class AdminController extends Controller
 
         $admin->delete();
 
-        LoggerService::log('delete', Admin::class, null);
+        // LoggerService::log('delete', Admin::class, null);
 
         return response([
             'status' => TRUE,
