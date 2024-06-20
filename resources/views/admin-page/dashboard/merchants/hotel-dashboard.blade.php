@@ -124,12 +124,12 @@
                                                     href="{{ route('admin.hotel_reservations.edit', $recent_hotel_reservation->id) }}">{{ $recent_hotel_reservation->room->room_name ?? null }}</a>
                                             </h6>
                                         </div>
-                                        <div class="user-progress text-end">
+                                        <div class="user-progress text-xxl-end">
                                             <small class="text-mute d-block mb-1">
                                                 {{ $recent_hotel_reservation->reservation_date->format('M d, y') }}
                                                 {{ date_format(new \DateTime($recent_hotel_reservation->reservation_time), 'h:i A') }}
                                             </small>
-                                            <h6 class="mb-0 text-end">{{ $recent_hotel_reservation->number_of_pax }} Pax
+                                            <h6 class="mb-0">{{ $recent_hotel_reservation->number_of_pax }} Pax
                                             </h6>
                                         </div>
                                     </div>
