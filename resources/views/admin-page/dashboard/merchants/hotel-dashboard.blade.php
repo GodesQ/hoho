@@ -121,7 +121,9 @@
                                                 {{ (strlen($recent_hotel_reservation->reserved_user->email) <= 20 ? $recent_hotel_reservation->reserved_user->email : substr($recent_hotel_reservation->reserved_user->email, 0, 20) . '...') ?? 'Deleted User' }}</small>
                                             <h6 class="mb-0">
                                                 <a
-                                                    href="{{ route('admin.hotel_reservations.edit', $recent_hotel_reservation->id) }}">{{ $recent_hotel_reservation->room->room_name ?? null }}</a>
+                                                    href="{{ route('admin.hotel_reservations.edit', $recent_hotel_reservation->id) }}">
+                                                    {{ $recent_hotel_reservation->room->room_name ?? null }}
+                                                </a>
                                             </h6>
                                         </div>
                                         <div class="user-progress text-xxl-end">
@@ -135,7 +137,7 @@
                                     </div>
                                 </li>
                             @empty
-                                <li class="d-flex mb-4 pb-1">No Hotel Reservations Found</li>
+                                <li class="d-flex mb-4 pb-1">No Hotel Reservation Found</li>
                             @endforelse
                         </ul>
                     </div>

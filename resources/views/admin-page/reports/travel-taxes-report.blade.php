@@ -17,7 +17,7 @@
                 <div class="col-xl-8">
                     <div class="card">
                         <div class="card-body">
-                            <div id="column-basic-chart"></div>
+                            {{-- <div id="column-basic-chart"></div> --}}
                         </div>
                     </div>
                 </div>

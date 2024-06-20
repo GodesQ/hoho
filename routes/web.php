@@ -176,8 +176,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('tour_badges/update/{id}', [TourBadgeController::class, 'update'])->name('tour_badges.update');
     Route::delete('tour_badges/destroy', [TourBadgeController::class, 'destroy'])->name('tour_badges.destroy');
 
-    // Route::post('tour_badges/store', [TourBadgeController::class, 'store'])->name('tour_badges.store');
-
     Route::get('transports', [TransportController::class, 'list'])->name('transports.list')->can('view_transports_list');
     Route::get('transports/create', [TransportController::class, 'create'])->name('transports.create');
     Route::post('transports/store', [TransportController::class, 'store'])->name('transports.store');
