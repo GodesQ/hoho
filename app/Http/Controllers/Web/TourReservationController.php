@@ -118,7 +118,7 @@ class TourReservationController extends Controller
 
                 $pdf = null;
                 
-                if($reservation->type == 'DIY') {
+                if($reservation->type == 'DIY Tour' || $reservation->type == 'DIY') {
                     $qrCodes = [];
                     foreach ($reservations_codes as $key => $code) {
                         $qrCodes[] = base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate($code));
