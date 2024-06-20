@@ -117,8 +117,8 @@
                                     </div>
                                     <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                         <div class="me-2">
-                                            <small
-                                                class="text-muted d-block mb-1">{{ $recent_hotel_reservation->reserved_user ? $recent_hotel_reservation->reserved_user->email : 'Deleted User' }}</small>
+                                            <small class="text-muted d-block mb-1">
+                                                {{ (strlen($recent_hotel_reservation->reserved_user->email) <= 20 ? $recent_hotel_reservation->reserved_user->email : substr($recent_hotel_reservation->reserved_user->email, 0, 20) . '...') ?? 'Deleted User' }}</small>
                                             <h6 class="mb-0">
                                                 <a
                                                     href="{{ route('admin.hotel_reservations.edit', $recent_hotel_reservation->id) }}">{{ $recent_hotel_reservation->room->room_name ?? null }}</a>
@@ -126,7 +126,7 @@
                                         </div>
                                         <div class="user-progress text-end">
                                             <small class="text-mute d-block mb-1">
-                                                {{ $recent_hotel_reservation->reservation_date->format('M d, Y') }}
+                                                {{ $recent_hotel_reservation->reservation_date->format('M d, y') }}
                                                 {{ date_format(new \DateTime($recent_hotel_reservation->reservation_time), 'h:i A') }}
                                             </small>
                                             <h6 class="mb-0 text-end">{{ $recent_hotel_reservation->number_of_pax }} Pax
