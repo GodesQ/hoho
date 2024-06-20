@@ -82,7 +82,7 @@ class TourReservationController extends Controller
     }
 
     public function update(Request $request) {
-        $reservation = TourReservation::where('id', $request->id)->with('user')->first();
+        $reservation = TourReservation::where('id', $request->id)->with('user', 'customer_details')->first();
 
         $trip_date = Carbon::parse($request->trip_date);
 
@@ -96,7 +96,7 @@ class TourReservationController extends Controller
             $number_of_pass = $reservation->number_of_pass;
             $reservations_codes = $this->generateReservationCode($number_of_pass, $reservation);
 
-            if($reservation->user) {
+            if($reservation->customer_details) {
                 $what = $reservation->type == 'DIY' ? (
                                 $reservation->ticket_pass . " x " . $reservation->number_of_pass . " pax " . "(Valid for 24 hours from first tap)"
                             )
@@ -108,7 +108,7 @@ class TourReservationController extends Controller
                 $when = $trip_date->format('l, F j, Y');
 
                 $details = [
-                    'name' => $reservation->user->firstname . ' ' . $reservation->user->lastname,
+                    'name' => $reservation->customer_details->firstname . ' ' . $reservation->customer_details->lastname,
                     'what' => $what,
                     'when' => $when,
                     'where' => 'Robinson’s Manila',
@@ -126,7 +126,7 @@ class TourReservationController extends Controller
                     $pdf = PDF::loadView('pdf.qrcodes', ['qrCodes' => $qrCodes]);
                 }
 
-                Mail::to(optional($reservation->user)->email)->send(new BookingConfirmationMail($details, $pdf));
+                Mail::to(optional($reservation->customer_details)->email)->send(new BookingConfirmationMail($details, $pdf));
             }
 
         }
