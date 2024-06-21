@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\TourResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -109,7 +110,7 @@ class TourController extends Controller
 
         return response([
             'status'=> TRUE,
-            'tours' => $tours
+            TourResource::collection($tours)
         ]);
     }
 }
