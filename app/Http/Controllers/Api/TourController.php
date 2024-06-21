@@ -110,7 +110,7 @@ class TourController extends Controller
 
         return response([
             'status'=> TRUE,
-            $tours,
+            'tours' => $tours,
         ]);
     }
 }
