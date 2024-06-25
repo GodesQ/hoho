@@ -29,7 +29,7 @@ class StoreRequest extends FormRequest
             'items.*.user_id' => 'nullable|integer',
             'items.*.tour_id' => 'required|integer',
             'items.*.trip_date' => 'required|date',
-            'items.*.type' => 'required|string|in:Guided,DIY,Layover',
+            'items.*.type' => 'required|string|in:Guided,DIY,Layover,Seasonal',
             'items.*.ticket_pass' => 'nullable|string',
             'items.*.number_of_pass' => 'required|integer',
             'items.*.amount' => 'required|numeric',
