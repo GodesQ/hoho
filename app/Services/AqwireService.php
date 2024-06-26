@@ -46,7 +46,7 @@ class AqwireService
     public function createRequestModel($transaction, $customer)
     {
         $customer_email = $customer->email_address ?? $customer->email;
-        $customer_mobile_number = $customer->mobile_number ?? ("+" . $customer->countryCode . $customer->contact_no);
+        $customer_mobile_number = "+" . ($customer->mobile_number ?? $customer->countryCode . $customer->contact_no);
 
         $success = '';
         $cancel = '';
