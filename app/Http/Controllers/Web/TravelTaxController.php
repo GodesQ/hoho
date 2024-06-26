@@ -75,20 +75,19 @@ class TravelTaxController extends Controller
                             $dates = explode(' to ', $transaction_date_query);
                             $start_date = $dates[0] ?? '';
                             $end_date = $dates[1] ?? '';
+
+                            $query->where(function ($query) use ($start_date, $end_date) {
+                                $query->whereDate('transaction_time', '>=', $start_date)
+                                ->whereDate('transaction_time', '<=', $end_date);
+                            });
+
                         } else {
                             $start_date = $transaction_date_query;
+                            $end_date = '';
+
+                            $query->whereDate('transaction_time', $start_date);
                         }
-
-                        $query->where(function ($query) use ($start_date, $end_date) {
-                            $query->whereDate('transaction_time', '>=', $start_date)
-                            ->when(!empty($end_date), function ($query) use ($end_date) {
-                                $query->whereDate('transaction_time', '<=', $end_date);
-                            });
-                        });
                     }
-
-
-
                 })
                 ->rawColumns(['actions', 'status'])
                 ->make(true);
