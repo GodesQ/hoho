@@ -427,6 +427,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
         Route::get('user-demographics/user-locations', [DataReportController::class, 'getUsersByLocation'])->name('user_demographics.user_locations');
 
         Route::get('travel-taxes-report', [DataReportController::class, 'travel_taxes_report'])->name('travel_taxes_report');
+        Route::get('travel-taxes-report/total-payment-amount', [DataReportController::class, 'getTravelTaxTotalPayment'])->name('travel_taxes_report.total_payment_amount');
+        Route::get('travel-taxes-report/transactions-per-month', [DataReportController::class, 'getTravelTaxTxnCountPerMonth'])->name('travel_taxes_report.trasanctions_count_per_month');
 
         Route::get('sales_report', [DataReportController::class, 'sales_report'])->name('sales_report')->can('view_sales_report');
         Route::get('tour_reservations_report', [DataReportController::class, 'tour_reservations_report'])->name('tour_reservations_report');
@@ -437,6 +439,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
         Route::get('get_total_bookings_per_type', [DataReportController::class, 'getTotalBookingsPerType'])->name('get_total_bookings_per_type')->can('view_sales_report');
         Route::get('get_overall_sales', [DataReportController::class, 'getSalesData'])->name('get_overall_sales')->can('view_sales_report');
         Route::get('get_transaction_status_data', [DataReportController::class, 'getTransactionStatusData'])->name('get_transaction_status_data')->can('view_sales_report');
+
 
     });
 });

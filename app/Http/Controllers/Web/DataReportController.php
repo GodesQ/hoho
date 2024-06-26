@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Report\TourReservationReportRequest;
+use App\Models\TravelTaxPayment;
+use App\Services\TravelTaxReportService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Models\User;
@@ -34,6 +37,25 @@ class DataReportController extends Controller
 
     public function getTravelTaxCustomersPerMonth(Request $request) {
         
+    }
+    
+    public function getTravelTaxTxnCountPerMonth(Request $request) {
+        $results = TravelTaxReportService::getTravelTaxTxnCountPerMonth();
+        
+        return response()->json([
+            'status' => TRUE,
+            'results' => $results
+        ]);
+    }
+
+    public function getTravelTaxTotalPayment(Request $request) {
+        $total_amount = TravelTaxPayment::whereMonth('created_at', Carbon::now()->format('m'))
+                        ->sum('total_amount');
+        
+        return response()->json([
+            'status' => TRUE,
+            'total_amount' => $total_amount,
+        ]);
     }
 
     public function getUsersByLocation(Request $request)

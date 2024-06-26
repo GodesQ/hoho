@@ -10,11 +10,6 @@
                 <h6 class="fw-medium text-primary"><a href="{{ route('admin.dashboard') }}"
                         class="text-muted fw-light">Dashboard /</a> Travel Tax Reports</h6>
             </div>
-            {{-- <div class="action-section btn-group">
-                <a href="{{ route('admin.tour_reservations.list') }}" class="btn btn-dark btn-sm"><i class="bx bx-undo"></i>
-                    Back to List</a>
-                <button class="btn btn-danger btn-sm"><i class="bx bx-trash"></i> Delete</button>
-            </div> --}}
         </section>
 
         <div class="row">
@@ -22,7 +17,7 @@
                 <div class="card">
                     <div class="card-header border-bottom pb-2">
                         <div class="card-title mb-2">
-                            <h4 class="m-0 me-2">Total Amount (Jun)</h4>
+                            <h4 class="m-0 me-2">Total Amount ({{ Carbon::now()->format('M') }})</h4>
                             {{-- <small class="text-muted">42.82k Total Sales</small> --}}
                         </div>
                     </div>
@@ -33,7 +28,7 @@
                                     alt="User" class="rounded" />
                             </div>
                             <div style="width: 80%">
-                                <h2 style="font-weight: bold;">₱ <span id="profit-amount">0.00</span></h2>
+                                <h2 style="font-weight: bold;">₱ <span id="total-payment-amount">0.00</span></h2>
                                 <h6 style="line-height: 5px;">Total Amount This Month </h6>
                             </div>
                             {{-- <div>
@@ -81,14 +76,28 @@
                 </div>
                 <br>
                 <div class="row">
-                    <div class="col-lg-6">
+                    <div class="col-lg-8">
                         <div class="card">
                             <div class="card-body">
-
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title">Monthly Total Transactions</h5>
+                                    <h6 class="text-primary">{{ date('Y') }}</h6>
+                                </div>
+                                <table class="table table-striped table-bordered rounded" id="monthly-total-transactions">
+                                    <thead>
+                                        <tr>
+                                            <th>Month</th>
+                                            <th style="text-align: center;">Transaction Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-4">
                         <div class="card">
                             <div class="card-body">
 
@@ -105,16 +114,17 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Make the request
-            getTotalProfit();
+            getTotalTravelTaxPayment();
             getTopSellingTours();
             getTotalBookingsPerType();
+            getTravelTaxTxnCountPerMonth();
         });
 
-        function getTotalProfit() {
-            fetch("{{ route('admin.reports.get_profit') }}")
+        function getTotalTravelTaxPayment() {
+            fetch("{{ route('admin.reports.travel_taxes_report.total_payment_amount') }}")
                 .then(response => response.json())
                 .then(data => {
-                    document.querySelector('#profit-amount').innerText = data.total_profit;
+                    document.querySelector('#total-payment-amount').innerText = parseInt(data.total_amount).toFixed(2);
                 })
                 .catch(error => console.error('Error:', error));
         }
@@ -137,6 +147,24 @@
                     setTotalBookingTypeChart(data);
                 })
                 .catch(error => console.error('Error:', error));
+        }
+
+        function getTravelTaxTxnCountPerMonth() {
+            fetch("{{ route('admin.reports.travel_taxes_report.trasanctions_count_per_month') }}")
+                .then(response => response.json())
+                .then(data => {
+                    let monthly_total_transactions_table_body = document.querySelector('#monthly-total-transactions tbody');
+                    let output = '';
+                    if(data.results.length > 0) {
+                        data.results.forEach(result => {
+                            output += `<tr>
+                                    <td>${result.month_name}</td>
+                                    <td align="center">${result.total_count}</td>
+                                </tr>`;
+                        })
+                        monthly_total_transactions_table_body.innerHTML = output;
+                    }
+                })
         }
 
         function displayTopSellingTours(data) {
@@ -178,7 +206,7 @@
                 height: 350,
                 type: 'pie',
             },
-            labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
+            labels: ['USA', 'Brazil', 'Australia', 'Japan', 'South Korea'],
             series: [44, 55, 13, 43, 22],
             responsive: [{
                 breakpoint: 1200,
@@ -221,9 +249,7 @@
                     }
                 }
             }],
-            fill: {
-                colors: [config.colors.primary, config.colors.info],
-            }
+
         }
 
         var pie_simple_chart = new ApexCharts(
