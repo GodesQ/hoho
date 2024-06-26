@@ -66,23 +66,24 @@ class TravelTaxController extends Controller
                     }
 
                     if ($transaction_date_query) {
-                        $dates = [];
+
+                        $start_date = '';
+                        $end_date = '';
 
                         // Check if the query contains the word "to"
                         if (strpos($transaction_date_query, 'to') !== false) {
                             $dates = explode(' to ', $transaction_date_query);
+                            $start_date = $dates[0] ?? '';
+                            $end_date = $dates[1] ?? '';
                         } else {
-                            $dates[] = $transaction_date_query;
+                            $start_date = $transaction_date_query;
                         }
 
-                        // Trim any whitespace from the dates
-                        $dates = array_map('trim', $dates);
-
-                        $query->when(count($dates) > 1, function ($query) use ($dates) {
-                            $query->whereBetween('transaction_time', $dates);
-                        })
-                        ->when(count($dates) == 1, function ($query) use ($dates) {
-                            $query->whereDate('transaction_time', $dates[0]);
+                        $query->where(function ($query) use ($start_date, $end_date) {
+                            $query->whereDate('transaction_time', '>=', $start_date)
+                            ->when(!empty($end_date), function ($query) use ($end_date) {
+                                $query->whereDate('transaction_time', '<=', $end_date);
+                            });
                         });
                     }
 
