@@ -15,10 +15,11 @@ use Illuminate\Support\Facades\Http;
 use Yajra\DataTables\DataTables;
 
 class TravelTaxController extends Controller
-{   
+{
     public $travelTaxService;
 
-    public function __construct(TravelTaxService $travelTaxService) {
+    public function __construct(TravelTaxService $travelTaxService)
+    {
         $this->travelTaxService = $travelTaxService;
     }
 
@@ -28,6 +29,9 @@ class TravelTaxController extends Controller
             $data = TravelTaxPayment::query();
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn("total_passengers", function ($row) {
+                    return $row->passengers->count();
+                })
                 ->addColumn('transaction_at', function ($row) {
                     return Carbon::parse($row->transaction_time)->format('F d, Y h:i A');
                 })
@@ -47,6 +51,44 @@ class TravelTaxController extends Controller
                                 <button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
                             </div>';
                 })
+                ->filter(function ($query) use ($request) {
+                    $status_query = $request->query('status');
+                    $transaction_date_query = $request->query('transaction_date');
+                    $search_query = $request->query('search_value');
+
+                    if ($search_query) {
+                        $query->where('transaction_number', $search_query)
+                            ->orWhere('reference_number', 'like', '%' . $search_query . '%');
+                    }
+
+                    if ($status_query) {
+                        $query->where('status', $status_query);
+                    }
+
+                    if ($transaction_date_query) {
+                        $dates = [];
+
+                        // Check if the query contains the word "to"
+                        if (strpos($transaction_date_query, 'to') !== false) {
+                            $dates = explode(' to ', $transaction_date_query);
+                        } else {
+                            $dates[] = $transaction_date_query;
+                        }
+
+                        // Trim any whitespace from the dates
+                        $dates = array_map('trim', $dates);
+
+                        $query->when(count($dates) > 1, function ($query) use ($dates) {
+                            $query->whereBetween('transaction_time', $dates);
+                        })
+                        ->when(count($dates) == 1, function ($query) use ($dates) {
+                            $query->whereDate('transaction_time', $dates[0]);
+                        });
+                    }
+
+
+
+                })
                 ->rawColumns(['actions', 'status'])
                 ->make(true);
         }
@@ -62,7 +104,7 @@ class TravelTaxController extends Controller
     public function store(PaymentRequest $request)
     {
         try {
-            
+
             $travelTax = $this->travelTaxService->createTravelTax($request);
             return redirect($travelTax['url']);
 
@@ -87,19 +129,21 @@ class TravelTaxController extends Controller
 
     }
 
-    public function getPassenger(Request $request, $passenger_id) {
+    public function getPassenger(Request $request, $passenger_id)
+    {
         $passenger = TravelTaxPassenger::where('id', $passenger_id)->first();
 
         return response([
-            'status' => TRUE, 
+            'status' => TRUE,
             'passenger' => $passenger,
         ]);
     }
 
-    public function updatePassenger(Request $request) {
+    public function updatePassenger(Request $request)
+    {
         $passenger = TravelTaxPassenger::where('id', $request->id)->first();
         $passenger->update($request->all());
-        
+
         return back()->withSuccess('Passenger updated successfully.');
     }
 
