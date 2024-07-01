@@ -84,7 +84,7 @@ class BookingService
                 return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Reservation Successfully');
             } else {
                 $response = $this->sendPaymentRequest($transaction);
-
+                
                 if (!$response['status'] || !$response['status'] == 'FAIL') {
                     $reservation->delete();
                     $transaction->delete();

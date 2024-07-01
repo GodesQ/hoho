@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\TravelTaxPayment;
+use Carbon\Carbon;
 use DB;
 
 class TravelTaxReportService
@@ -19,7 +20,7 @@ class TravelTaxReportService
             DB::raw('YEAR(transaction_time) as year'),
             DB::raw('MONTH(transaction_time) as month'),
             DB::raw('COUNT(*) as total_count')
-        )   
+        )
             ->whereYear('transaction_time', date('Y'))
             ->groupBy('year', 'month', 'month_name')
             ->orderBy('year')
@@ -27,5 +28,15 @@ class TravelTaxReportService
             ->get();
 
         return $results;
+    }
+
+    public static function getTravelTaxTotalPayment()
+    {
+        $total_amount = TravelTaxPayment::whereMonth('created_at', Carbon::now()->format('m'))
+            ->sum('total_amount');
+
+        return $total_amount;
+
+        
     }
 }

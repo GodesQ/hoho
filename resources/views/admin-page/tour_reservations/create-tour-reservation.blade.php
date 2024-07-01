@@ -43,18 +43,25 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <div class="form-check form-check-inline mt-3">
+                                        <div class="form-check form-check-inline mt-3 d-block">
                                             <input class="form-check-input" type="radio" name="type" id="guided_tour"
                                                 value="Guided" required />
                                             <label class="form-check-label" for="guided_tour">
                                                 Guided Tour
                                             </label>
                                         </div>
-                                        <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline d-block">
                                             <input class="form-check-input" type="radio" name="type" id="diy_tour"
                                                 value="DIY" required />
                                             <label class="form-check-label" for="diy_tour">
                                                 DIY Tour
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="type" id="seasonal_tour"
+                                                value="Seasonal" required />
+                                            <label class="form-check-label" for="seasonal_tour">
+                                                Seasonal Tour
                                             </label>
                                         </div>
                                     </div>
@@ -375,7 +382,7 @@
                 url: route,
                 method: "GET",
                 success: function(response) {
-                    let tours = response;
+                    let tours = response.tours;
 
                     tourSelect.innerHTML = `<option value=''>--- SELECT A ${placeholder} TOUR ---</option>`;
                     tours.forEach(function(tour) {

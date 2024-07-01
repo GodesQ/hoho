@@ -58,7 +58,7 @@ class TourReservationController extends Controller
         $tours = Tour::get();
         $ticket_passes = TicketPass::get();
         
-        return view('admin-page.tour_reservations.create-tour-reservation', compact('diy_tours', 'guided_tours', 'tours', 'ticket_passes'));
+        return view('admin-page.tour_reservations.test-create-tour-reservation', compact('diy_tours', 'guided_tours', 'tours', 'ticket_passes'));
     }
 
     public function store(Request $request) {

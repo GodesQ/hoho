@@ -49,8 +49,7 @@ class DataReportController extends Controller
     }
 
     public function getTravelTaxTotalPayment(Request $request) {
-        $total_amount = TravelTaxPayment::whereMonth('created_at', Carbon::now()->format('m'))
-                        ->sum('total_amount');
+        $total_amount = TravelTaxReportService::getTravelTaxTotalPayment();
         
         return response()->json([
             'status' => TRUE,

@@ -45,13 +45,53 @@ class TourController extends Controller
     }
 
     public function getDiyTours(Request $request) {
-        $diy_tours = Tour::where('type', 'DIY Tour')->get();
-        return response($diy_tours);
+        $diy_tours = Tour::where('type', 'DIY Tour')->where('status', 1)->get();
+        return response()->json([
+            'tours' => $diy_tours
+        ]);
     }
 
     public function getGuidedTours(Request $request) {
-        $guided_tours = Tour::where('type', 'Guided Tour')->get();
-        return response($guided_tours);
+        $guided_tours = Tour::where('type', 'Guided Tour')->where('status', 1)->get();
+        return response()->json([
+            'tours' => $guided_tours
+        ]);
+    }
+
+    public function getSeasonalTours(Request $request) {
+        $seasonal_tours = Tour::where('type', 'Seasonal Tour')->where('status', 1)->get();
+        return response()->json([
+            'tours' => $seasonal_tours
+        ]);
+    }
+
+    public function getTransitTours(Request $request)
+    {
+        $arrival_datetime = Carbon::parse($request->query('arrival_datetime'));
+        $departure_datetime = Carbon::parse($request->query('departure_datetime'));
+
+        // Calculate the difference in hours
+        $total_hours = $arrival_datetime->diffInHours($departure_datetime);
+
+        // Minimum of 5 hours
+        if($total_hours <= 5) {
+            return response([
+                'status' => FALSE,
+                'message' => 'Layover Tours is not available for your specified time. Please provide a valid arrival and departure date and time.',
+            ], 400);
+        } 
+
+        $tours = Tour::where('type', 'Layover Tour')->where('status', 1)->get();
+
+        foreach ($tours as $tour) {
+            $tour->setAppends([]);
+        }
+
+        return response([
+            'status' => TRUE,
+            'tours' => $tours
+        ]);
+
     }
 
     public function create(Request $request) {

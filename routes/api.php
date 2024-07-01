@@ -65,8 +65,6 @@ use App\Http\Controllers\Api\TourBadgeController;
 
     Route::get('app-settings/maintenance-mode', [AppSettingController::class, 'checkMaintenanceMode']);
 
-    Route::get('tours/layover', [TourController::class, 'getLayoverTours']);
-
     Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('logout', [AuthController::class, 'logout']);
 
@@ -91,6 +89,7 @@ use App\Http\Controllers\Api\TourBadgeController;
 
         Route::get('tours/guided', [TourController::class, 'getGuidedTours']);
         Route::get('tours/diy', [TourController::class, 'getDIYTours']);
+        Route::get('tours/transit', [TourController::class, 'getTransitTours']);
         Route::get('tours/seasonal', [TourController::class, 'getSeasonalTours']);
 
         Route::get('transports', [TransportController::class, 'getTransports']);

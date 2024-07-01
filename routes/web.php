@@ -163,6 +163,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::get('tours', [TourController::class, 'list'])->name('tours.list')->can('view_tours_list')->middleware('merchant_created');
     Route::get('tours/diy', [TourController::class, 'getDiyTours'])->name('tours.diy')->middleware('merchant_created');
     Route::get('tours/guided', [TourController::class, 'getGuidedTours'])->name('tours.guided')->middleware('merchant_created');
+    Route::get('tours/seasonal', [TourController::class, 'getSeasonalTours'])->name('tours.seasonal')->middleware('merchant_created');
+    Route::get('tours/transit', [TourController::class, 'getTransitTours'])->name('tours.transit')->middleware('merchant_created');
     Route::get('tours/create', [TourController::class, 'create'])->name('tours.create')->middleware('merchant_created');
     Route::post('tours/store', [TourController::class, 'store'])->name('tours.store')->middleware('merchant_created');
     Route::get('tours/edit/{id}', [TourController::class, 'edit'])->name('tours.edit')->middleware('merchant_created');
