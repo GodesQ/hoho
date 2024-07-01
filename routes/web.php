@@ -146,6 +146,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::get('users/lookup', [UserController::class, 'lookup'])->name('users.lookup');
     Route::get('users/create', [UserController::class, 'create'])->name('users.create')->can('create_user');
     Route::post('users/store', [UserController::class, 'store'])->name('users.store')->can('create_user');
+    Route::get('users/show/{id}', [UserController::class, 'show'])->name('users.show');
     Route::get('users/edit/{id}', [UserController::class, 'edit'])->name('users.edit')->can('edit_user');
     Route::post('users/update/{id}', [UserController::class, 'update'])->name('users.update')->can('update_user');
     Route::delete('users/destroy', [UserController::class, 'destroy'])->name('users.destroy')->can('delete_user');

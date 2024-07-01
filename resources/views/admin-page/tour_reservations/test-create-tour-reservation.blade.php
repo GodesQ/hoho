@@ -194,7 +194,7 @@
                                                     <div class="mb-3">
                                                         <label for="reserved_user" class="form-label">Reserved
                                                             User</label>
-                                                        <select name="reserved_user_id" id="user"
+                                                        <select name="reserved_user_id" id="user-id-field"
                                                             class="reserved_users form-select" style="width: 100%;"
                                                             required>
                                                         </select>
@@ -202,9 +202,9 @@
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
-                                                        <label for="trip_date" class="form-label">Trip Date</label>
+                                                        <label for="trip-date-field" class="form-label">Trip Date</label>
                                                         <input type="text" readonly placeholder="Select a Trip Date"
-                                                            class="form-control" name="trip_date" id="trip_date"
+                                                            class="form-control" name="trip_date" id="trip-date-field"
                                                             required>
                                                     </div>
                                                 </div>
@@ -218,7 +218,7 @@
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
-                                                        <label class="form-label">Registered Passengers</label>
+                                                        <label class="form-label">Registered Passengers (Optional)</label>
                                                         <select name="passenger_ids[]" id="passengers"
                                                             class="registered_passengers form-select" style="width: 100%;"
                                                             multiple max="4"></select>
@@ -229,7 +229,7 @@
 
                                         <!-- Step 4 -->
                                         <h6>Summary</h6>
-                                        
+
                                         <fieldset>
                                             {{-- <div class="loading-container d-flex justify-content-center align-items-center flex-column">
                                                 <img src="{{ URL::asset('assets/img/icons/loading.gif') }}" alt="">
@@ -242,39 +242,38 @@
                                                         <div class="col-xl-6">
                                                             <label for="" class="form-label text-primary">First
                                                                 Name</label>
-                                                            <h6 id="firstname-text">James Benedict</h6>
+                                                            <h6 id="firstname-text"></h6>
                                                         </div>
                                                         <div class="col-xl-6">
                                                             <label for="" class="form-label text-primary">Last
                                                                 Name</label>
-                                                            <h6 id="lastname-text">Initial</h6>
+                                                            <h6 id="lastname-text"></h6>
                                                         </div>
                                                         <div class="col-xl-6">
                                                             <label for=""
                                                                 class="form-label text-primary">Email</label>
-                                                            <h6 id="email-text">james@test.com</h6>
+                                                            <h6 id="email-text"></h6>
                                                         </div>
                                                         <div class="col-xl-6">
                                                             <label for="" class="form-label text-primary">Contact
                                                                 Number</label>
-                                                            <h6 id="contact-text">+639912323234</h6>
+                                                            <h6 id="contact-text"></h6>
                                                         </div>
                                                         <div class="col-xl-6">
                                                             <label for="" class="form-label text-primary">Number
                                                                 of Pax</label>
-                                                            <h6 id="pax-text">4 Pax</h6>
+                                                            <h6 id="pax-text"></h6>
                                                         </div>
                                                         <div class="col-xl-6">
                                                             <label for=""
                                                                 class="form-label text-primary">Reservation
                                                                 Date</label>
-                                                            <h6 id="pax-text">June 20, 2024</h6>
+                                                            <h6 id="trip-date-text"></h6>
                                                         </div>
                                                         <div class="col-xl-12">
                                                             <label for=""
                                                                 class="form-label text-primary">Tour</label>
-                                                            <h6 id="pax-text">Heritage Majesty Tour - Malacañang &
-                                                                Intramuros Chronicles</h6>
+                                                            <h6 id="tour-name-text"></h6>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -295,7 +294,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-xl-6">
-                                                            <h6 id="sub_amount_text">₱ 0.00</h6>
+                                                            <h6 id="sub-amount-text">₱ 0.00</h6>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -304,7 +303,7 @@
                                                                 Convenience Fee </div>
                                                         </div>
                                                         <div class="col-xl-6">
-                                                            <h6 id="total_convenience_fee_text">₱ 0.00</h6>
+                                                            <h6 id="total-convenience-fee-text">₱ 0.00</h6>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -323,7 +322,7 @@
                                                                 Amount</div>
                                                         </div>
                                                         <div class="col-xl-6">
-                                                            <h6 id="total_amount_text">₱ 0.00</h6>
+                                                            <h6 id="total-amount-text">₱ 0.00</h6>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -352,7 +351,7 @@
                 dateFormat: "Y-m-d H:i",
             })
 
-            $("#trip_date").flatpickr({
+            $("#trip-date-field").flatpickr({
                 enableTime: false,
                 dateFormat: "Y-m-d",
             });
@@ -390,7 +389,7 @@
                     if (!validateTransitDetails()) {
                         toastr.error(
                             'Please fill out the transit details fields before proceeding to the next step.'
-                            )
+                        )
                         return false;
                     }
                 }
@@ -406,15 +405,24 @@
                     return false;
                 }
 
+                if(currentIndex == 2) {
+                    if(!validateReservationDetails()) {
+                        toastr.error('Please complete the reservation details before proceeding to the next step.', 'Fail');
+                        return false;
+                    }
+                }
+
                 if (newIndex == 1) {
                     getTours();
                 }
 
                 return true;
             },
-            onStepChanged: function (event, currentIndex, priorIndex) {
-                if(currentIndex == 3) {
-                    computeCheckoutAmount();
+            onStepChanged: function(event, currentIndex, priorIndex) {
+                if (currentIndex == 3) {
+                    computeAndDisplayCheckoutAmount();
+                    fetchAndDisplayUserInfo();
+                    displayReservationDetails();
                 }
             },
             onFinished: function(event, currentIndex) {
@@ -433,6 +441,11 @@
             $('#tour-type').val(type);
         });
 
+        $('#number-of-pax-field').change((e) => {
+            let pax = e.target.value;
+            computeConvenienceFee(pax);
+        });
+
         function validateTransitDetails() {
             return ['#arrival-datetime-field',
                 '#departure-datetime-field',
@@ -440,6 +453,10 @@
                 '#flight-from-field',
                 '#flight-to-field'
             ].every(field => $(field).val());
+        }
+
+        function validateReservationDetails() {
+            return ['#user-id-field', '#number-of-pax-field', '#trip-date-field',].every(field => $(field).val());
         }
 
         function populateNumberOfPax() {
@@ -457,7 +474,8 @@
             const type = $('#tour-type').val();
             const arrival_datetime = $('#arrival-datetime-field').val();
             const departure_datetime = $('#departure-datetime-field').val();
-            const url = `/admin/tours/${type}?arrival_datetime=${arrival_datetime}&departure_datetime=${departure_datetime}`;
+            const url =
+                `/admin/tours/${type}?arrival_datetime=${arrival_datetime}&departure_datetime=${departure_datetime}`;
 
             try {
                 const response = await $.get(url);
@@ -468,6 +486,7 @@
                             type="radio" name="tour_id"
                             id="${tour.id}"
                             value="${tour.id}"
+                            data-name="${tour.name}"
                             data-prices="${JSON.stringify([tour.price, tour.bracket_price_one, tour.bracket_price_two, tour.bracket_price_three])}" />
                         <label for="${tour.id}" style="cursor: pointer;">
                             <img src="../../../assets/img/tours/${tour.id}/${tour.featured_image}" style="width: 100%;" class="rounded" />
@@ -483,14 +502,94 @@
             }
         }
 
-        function computeCheckoutAmount() {
-            let tour_type = $('#tour-type').val();
-            let number_of_pax = $('#number-of-pax-field');
+        function computeConvenienceFee(pax) {
+            let sum = 99 * pax;
+            $('#total-convenience-fee-text').html(`₱ ${addCommasToNumberWithDecimal(sum)}`);
 
-            if(tour_type == 'diy') {
-                let ticket_pass = $('input[name="ticket_pass"]:checked').data('amount');
-                
+            return sum;
+        }
+
+        function computeSubAmount(amount, pax) {
+            let sum = amount * pax;
+            $('#sub-amount-text').html(`₱ ${addCommasToNumberWithDecimal(sum)}`);
+
+            return sum;
+        }
+
+        function computeAndDisplayCheckoutAmount() {
+            let tour_type = $('#tour-type').val();
+            let number_of_pax = $('#number-of-pax-field').val();
+            let total_of_convenience_fee = computeConvenienceFee(number_of_pax);
+            let total_amount;
+            let sub_amount;
+
+            if (tour_type === 'diy') {
+
+                let ticket_pass_price = $('input[name="ticket_pass"]:checked').data('amount');
+                sub_amount = computeSubAmount(ticket_pass_price, number_of_pax);
+                total_amount = sub_amount + total_of_convenience_fee;
+
+            } else if (tour_type === 'guided' || tour_type === 'seasonal') {
+
+                let tour_selected_bracket_price = getTourSelectedBracketPrice(number_of_pax);
+                sub_amount = computeSubAmount(tour_selected_bracket_price, number_of_pax);
+                total_amount = sub_amount + total_of_convenience_fee;
+
             }
+
+            $('#total-amount-text').html(`₱ ${addCommasToNumberWithDecimal(total_amount)}`);
+        }
+
+        function getTourSelectedBracketPrice(number_of_pax) {
+            let tour = $('input[name="tour_id"]:checked');
+            let tour_prices = tour.data('prices');
+
+            if (Array.isArray(tour_prices) && tour_prices.length > 0) {
+
+                let priceIndex = 0;
+
+                if (number_of_pax <= 9 && number_of_pax >= 4) {
+                    priceIndex = 1;
+                } else if (number_of_pax <= 24 && number_of_pax >= 10) {
+                    priceIndex = 2;
+                } else if (number_of_pax >= 25) {
+                    priceIndex = 3;
+                }
+
+                const selectedPrice = tour_prices[priceIndex] ?? tour_prices[0];
+                console.log(selectedPrice);
+                return selectedPrice;
+            }
+
+            return 0;
+        }
+
+        function fetchAndDisplayUserInfo() {
+            let user_id = $('#user-id-field').val();
+            if(!user_id) return toastr.error('Failed to get the user information. Please select a valid user.', 'Fail');
+
+            $.ajax({
+                method: "GET",
+                url: `/admin/users/show/${user_id}`,
+                success: function (response) {
+                    if(!response.user) toastr.error('No user found.', 'Fail');
+                    $('#firstname-text').text(response.user.firstname ?? 'First Name Not Found');
+                    $('#lastname-text').text(response.user.lastname ?? 'Last Name Not Found');
+                    $('#email-text').text(response.user.email);
+                    $('#contact-text').text(response.user.contact_no ?? 'Contact Number Not Found');
+
+                }
+            })
+        }
+
+        function displayReservationDetails() {
+            let number_of_pax = $('#number-of-pax-field').val();
+            let tour = $('input[name="tour_id"]:checked');
+            let trip_date = $('#trip-date-field').val(); 
+
+            $('#pax-text').text(`${number_of_pax} Pax`);
+            $('#trip-date-text').text(trip_date);
+            $('#tour-name-text').text(tour.data('name'));
         }
 
         function clearFields(fields) {
@@ -526,7 +625,7 @@
             }
         }
 
-        function addCommasToNumberWithDecimal(number) {
+        function addCommasToNumberWithDecimal(number = 0) {
             var parts = number.toFixed(2).toString().split(".");
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             return parts.join(".");
