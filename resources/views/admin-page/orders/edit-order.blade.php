@@ -64,8 +64,7 @@
                         <h4>Product</h4>
                         <div class="row">
                             <div class="col-lg-3">
-                                <img src="{{ asset('assets/img/products/1/' . $order->product->image) }}" class="w-100 rounded product-image" style="object-fit: cover;" alt="">
-                            </div>
+                                <img src="{{ asset('assets/img/products/' . $order->product->id . '/' . $order->product->image) }}" class="w-100 rounded product-image" style="object-fit: cover;" alt="">                            </div>
                             <div class="col-lg-6">
                                 <h5 style="margin-bottom: 10px;" class="product-name-text">{{ $order->product->name }}</h5>
                                 <h6 class="text-primary product-price-text" style="margin-bottom: 10px;">₱ {{ number_format($order->product->price, 2)}}</h6>

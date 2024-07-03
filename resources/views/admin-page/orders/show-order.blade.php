@@ -37,7 +37,7 @@
                             <h4>Product</h4>
                             <div class="row">
                                 <div class="col-lg-3">
-                                    <img src="{{ asset('assets/img/products/1/' . $order->product->image) }}" class="w-100 rounded product-image" style="object-fit: cover;" alt="">
+                                    <img src="{{ asset('assets/img/products/' . $order->product->id . '/' . $order->product->image) }}" class="w-100 rounded product-image" style="object-fit: cover;" alt="">
                                 </div>
                                 <div class="col-lg-6">
                                     <h5 style="margin-bottom: 10px;" class="product-name-text">{{ $order->product->name }}</h5>
