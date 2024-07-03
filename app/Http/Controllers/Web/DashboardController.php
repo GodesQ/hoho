@@ -45,6 +45,10 @@ class DashboardController extends Controller
                 return $this->storeDashboard($merchantInfo);
             }
 
+            if($user->role == 'tour_operator_admin') {
+                return $this->tourOperatorDashboard($merchantInfo);
+            }
+
             $recentTourReservations = TourReservation::with('user', 'tour')->where('created_by', $user->id)->with('tour', 'user')->latest()->limit(5)->get();
             $type = config('roles.' . $user->role, null);
     

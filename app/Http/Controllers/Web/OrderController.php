@@ -74,6 +74,7 @@ class OrderController extends Controller
             $user = User::where('id', $request->customer_id)->first();
             
             $reference_no = $this->generateReferenceNo();
+            
             $transaction = Transaction::create([
                 'reference_no' => $reference_no,
                 'transaction_by_id' => $request->customer_id,

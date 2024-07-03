@@ -7,6 +7,8 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\RestaurantReservation;
 use App\Models\Room;
+use App\Models\Tour;
+use App\Models\TourReservation;
 use Illuminate\Support\Facades\Auth;
 
 trait DashboardTrait {
@@ -58,5 +60,21 @@ trait DashboardTrait {
         })->count();
 
         return view('admin-page.dashboard.merchants.store-dashboard', compact('recent_store_orders', 'type', 'merchantInfo', 'products_count', 'orders_count'));
+    }
+
+    public function tourOperatorDashboard($merchantInfo) {
+        $user = Auth::guard('admin')->user();
+        $type = config('roles.' . $user->role, null);
+
+        $tours_count = Tour::where('tour_provider_id', $user->merchant->tour_provider_info->id)->count();
+
+        $recent_tour_reservations = TourReservation::with('user', 'tour')
+                                            ->where('created_by', $user->id)
+                                            ->with('tour', 'user')->latest()
+                                            ->limit(5)
+                                            ->get();
+
+        return view('admin-page.dashboard.merchants.tour-provider-dashboard', compact('recent_tour_reservations','type','merchantInfo', 'tours_count'));
+
     }
 }

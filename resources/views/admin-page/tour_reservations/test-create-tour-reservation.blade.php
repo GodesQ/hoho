@@ -42,6 +42,13 @@
         .diy-ticket-pass-details.active {
             display: block;
         }
+
+        #edit-promocode-btn {
+            display: none;
+        }
+        #edit-promocode-btn.active {
+            display: block;
+        }
     </style>
     <div class="container-xxl flex-grow-1 container-p-y app-content">
         <section class="section-header d-flex justify-content-between align-items-center">
@@ -75,8 +82,8 @@
                             </div>
                             <div class="card-content collapse show">
                                 <div class="card-body">
-                                    <form action="#" class="number-tab-steps wizard-circle">
-
+                                    <form action="{{ route('admin.tour_reservations.store') }}" method="POST" class="number-tab-steps wizard-circle" id="book-tour-form">
+                                        @csrf
                                         <!-- Step 1 -->
                                         <h6>Tour Type</h6>
                                         <fieldset>
@@ -236,98 +243,131 @@
                                                 <h5>Getting all information</h5>
                                             </div> --}}
                                             <div class="row">
-                                                <div class="col-xl-6">
+                                                <div class="col-xl-7">
                                                     <h4 class="text-bold mb-3">Reservation Details</h4>
-                                                    <div class="row">
-                                                        <div class="col-xl-6">
-                                                            <label for="" class="form-label text-primary">First
-                                                                Name</label>
-                                                            <h6 id="firstname-text"></h6>
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-xl-6">
+                                                                    <label for="" class="form-label text-primary">First
+                                                                        Name</label>
+                                                                    <h6 id="firstname-text"></h6>
+                                                                </div>
+                                                                <div class="col-xl-6">
+                                                                    <label for="" class="form-label text-primary">Last
+                                                                        Name</label>
+                                                                    <h6 id="lastname-text"></h6>
+                                                                </div>
+                                                                <div class="col-xl-6">
+                                                                    <label for=""
+                                                                        class="form-label text-primary">Email</label>
+                                                                    <h6 id="email-text"></h6>
+                                                                </div>
+                                                                <div class="col-xl-6">
+                                                                    <label for="" class="form-label text-primary">Contact
+                                                                        Number</label>
+                                                                    <h6 id="contact-text"></h6>
+                                                                </div>
+                                                                <div class="col-xl-6">
+                                                                    <label for="" class="form-label text-primary">Number
+                                                                        of Pax</label>
+                                                                    <h6 id="pax-text"></h6>
+                                                                </div>
+                                                                <div class="col-xl-6">
+                                                                    <label for=""
+                                                                        class="form-label text-primary">Reservation
+                                                                        Date</label>
+                                                                    <h6 id="trip-date-text"></h6>
+                                                                </div>
+                                                                <div class="col-xl-12">
+                                                                    <label for=""
+                                                                        class="form-label text-primary">Tour</label>
+                                                                    <h6 id="tour-name-text"></h6>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-xl-6">
-                                                            <label for="" class="form-label text-primary">Last
-                                                                Name</label>
-                                                            <h6 id="lastname-text"></h6>
+                                                    </div>
+                                                    <div class="card my-3">
+                                                        <div class="card-header">
+                                                            <h5 class="card-title fw-bold">Promo & Referral Codes</h5>
                                                         </div>
-                                                        <div class="col-xl-6">
-                                                            <label for=""
-                                                                class="form-label text-primary">Email</label>
-                                                            <h6 id="email-text"></h6>
-                                                        </div>
-                                                        <div class="col-xl-6">
-                                                            <label for="" class="form-label text-primary">Contact
-                                                                Number</label>
-                                                            <h6 id="contact-text"></h6>
-                                                        </div>
-                                                        <div class="col-xl-6">
-                                                            <label for="" class="form-label text-primary">Number
-                                                                of Pax</label>
-                                                            <h6 id="pax-text"></h6>
-                                                        </div>
-                                                        <div class="col-xl-6">
-                                                            <label for=""
-                                                                class="form-label text-primary">Reservation
-                                                                Date</label>
-                                                            <h6 id="trip-date-text"></h6>
-                                                        </div>
-                                                        <div class="col-xl-12">
-                                                            <label for=""
-                                                                class="form-label text-primary">Tour</label>
-                                                            <h6 id="tour-name-text"></h6>
+                                                        <div class="card-body">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <h6 style="font-weight: 600;">Promo Code</h6>
+                                                                <a href="javascript:void(0);" id="edit-promocode-btn"><i class="bx bx-edit"></i> Change promo code?</a>
+                                                            </div>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" placeholder="Apply Promo Code"
+                                                                    name="promo_code" id="promocode-field" />
+                                                                <button class="btn btn-primary" type="button" id="apply-promocode-btn">Apply</button>
+                                                            </div>
+                                                            <h6 class="mt-3" style="font-weight: 600;">Referral Code</h6>
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control" placeholder="Apply Referral Code"
+                                                                    name="referral_code" id="referral_code" />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xl-6">
+                                                <div class="col-xl-5">
                                                     <h4 class="text-bold mb-3">Checkout Summary</h4>
-                                                    <div class="row">
-                                                        <div class="col-xl-6">
-                                                            <div class="text-primary text-uppercase form-label">Convenience
-                                                                Fee</div>
-                                                        </div>
-                                                        <div class="col-xl-6">
-                                                            <h6>₱ 99.00 / Pax</h6>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-xl-6">
-                                                            <div class="text-primary text-uppercase form-label">Sub Amount
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-xl-6">
+                                                                    <div class="text-primary text-uppercase form-label">Convenience
+                                                                        Fee</div>
+                                                                </div>
+                                                                <div class="col-xl-6">
+                                                                    <h6>₱ 99.00 / Pax</h6>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-xl-6">
-                                                            <h6 id="sub-amount-text">₱ 0.00</h6>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-xl-6">
-                                                            <div class="text-primary text-uppercase form-label">Total
-                                                                Convenience Fee </div>
-                                                        </div>
-                                                        <div class="col-xl-6">
-                                                            <h6 id="total-convenience-fee-text">₱ 0.00</h6>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-xl-6">
-                                                            <div class="text-primary text-uppercase form-label">Total Of
-                                                                Discount </div>
-                                                        </div>
-                                                        <div class="col-xl-6">
-                                                            <h6 id="total_discount_text">₱ 0.00</h6>
-                                                        </div>
-                                                    </div>
-                                                    <hr>
-                                                    <div class="row">
-                                                        <div class="col-xl-6">
-                                                            <div class="text-primary text-uppercase form-label">Total
-                                                                Amount</div>
-                                                        </div>
-                                                        <div class="col-xl-6">
-                                                            <h6 id="total-amount-text">₱ 0.00</h6>
+                                                            <div class="row">
+                                                                <div class="col-xl-6">
+                                                                    <div class="text-primary text-uppercase form-label">Sub Amount
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xl-6">
+                                                                    <h6 id="sub-amount-text">₱ 0.00</h6>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xl-6">
+                                                                    <div class="text-primary text-uppercase form-label">Total
+                                                                        Convenience Fee </div>
+                                                                </div>
+                                                                <div class="col-xl-6">
+                                                                    <h6 id="total-convenience-fee-text">₱ 0.00</h6>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xl-6">
+                                                                    <div class="text-primary text-uppercase form-label">Total Of
+                                                                        Discount </div>
+                                                                </div>
+                                                                <div class="col-xl-6">
+                                                                    <h6 id="total-discount-text">₱ 0.00</h6>
+                                                                </div>
+                                                            </div>
+                                                            <hr>
+                                                            <div class="row">
+                                                                <div class="col-xl-6">
+                                                                    <div class="text-primary text-uppercase form-label">Total
+                                                                        Amount</div>
+                                                                </div>
+                                                                <div class="col-xl-6">
+                                                                    <h6 id="total-amount-text">₱ 0.00</h6>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </fieldset>
+                                        <input type="hidden" name="amount" id="sub-amount-field">
+                                        <input type="hidden" name="discounted_amount" id="discounted-amount-field">
+                                        <input type="hidden" id="discount-field" value="0">
+                                        <input type="hidden" id="total-amount-field">
                                     </form>
                                 </div>
                             </div>
@@ -426,9 +466,47 @@
                 }
             },
             onFinished: function(event, currentIndex) {
-                alert("Form submitted.");
+                $('#book-tour-form').submit();
             }
         });
+
+        $('#apply-promocode-btn').click(function (e) {
+            let sub_amount = $('#sub-amount-field').val();
+            let promocode = $('#promocode-field').val();
+
+            if (sub_amount == '') return toastr.error('Invalid Amount Value', 'Fail');
+            if (promocode == '') return toastr.error('Invalid Promocode Value', 'Fail');
+
+            $.ajax({
+                url: `/api/promocodes/verify/${promocode}`,
+                method: 'GET',
+                success: function(response) {
+                    if(!response.is_promocode_exist) return toastr.error('Invalid PromoCode', 'Fail');
+
+                    toastr.success('PromoCode Exist', 'Success');
+
+                    // set the promocode field to readonly
+                    $('#promocode-field').prop('readonly', true);
+                    $('#edit-promocode-btn').addClass('active');
+
+                    computeDiscount(response.promocode);
+                    computeAndDisplayCheckoutAmount();
+                }
+            });
+        })
+
+        $('#edit-promocode-btn').click(function (e) {
+            let sub_amount = $('#sub-amount-field').val();
+
+            $('#edit-promocode-btn').removeClass('active');
+            $('#promocode-field').prop('readonly', false);
+            $('#promocode-field').val('');
+            $('#total-discount-text').text(`₱ ${addCommasToNumberWithDecimal(0)}`);
+            $('#discount-field').val(0);
+            $('#discounted-amount-field').val(parseInt(sub_amount) - 0);
+
+            computeAndDisplayCheckoutAmount();
+        })
 
         $('.tour-type-option').click((e) => {
             let type = $(e.target).data('type');
@@ -512,31 +590,53 @@
         function computeSubAmount(amount, pax) {
             let sum = amount * pax;
             $('#sub-amount-text').html(`₱ ${addCommasToNumberWithDecimal(sum)}`);
+            $('#sub-amount-field').val(sum);
 
             return sum;
+        }
+
+        function computeDiscount(promocode) {
+            if (promocode.discount_type == 'percentage') {
+                let sub_amount = $('#sub-amount-field').val();
+                let percentage = promocode.discount_amount / 100
+
+                // Compute the total discount when the type is percentage
+                let discount = sub_amount * percentage;
+                
+                
+                $('#total-discount-text').text(`₱ ${addCommasToNumberWithDecimal(discount)}`);
+                $('#discount-field').val(discount);
+                $('#discounted-amount-field').val(parseInt(sub_amount) - discount);
+            }
         }
 
         function computeAndDisplayCheckoutAmount() {
             let tour_type = $('#tour-type').val();
             let number_of_pax = $('#number-of-pax-field').val();
+            let discount = $('#discount-field').val();
             let total_of_convenience_fee = computeConvenienceFee(number_of_pax);
             let total_amount;
             let sub_amount;
+            
 
             if (tour_type === 'diy') {
 
                 let ticket_pass_price = $('input[name="ticket_pass"]:checked').data('amount');
                 sub_amount = computeSubAmount(ticket_pass_price, number_of_pax);
-                total_amount = sub_amount + total_of_convenience_fee;
+                total_amount = (sub_amount - discount) + total_of_convenience_fee;
 
             } else if (tour_type === 'guided' || tour_type === 'seasonal') {
 
                 let tour_selected_bracket_price = getTourSelectedBracketPrice(number_of_pax);
                 sub_amount = computeSubAmount(tour_selected_bracket_price, number_of_pax);
-                total_amount = sub_amount + total_of_convenience_fee;
+                total_amount = (sub_amount - discount) + total_of_convenience_fee;
 
             }
 
+            // When calculating the checkout amount for the initial amount, add the sub amount to the discounted amount field.
+            $('#discounted-amount-field').val(sub_amount);
+            
+            $('#total-amount-field').val(total_amount);
             $('#total-amount-text').html(`₱ ${addCommasToNumberWithDecimal(total_amount)}`);
         }
 

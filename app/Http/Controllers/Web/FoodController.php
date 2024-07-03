@@ -84,9 +84,9 @@ class FoodController extends Controller
         $user = Auth::guard('admin')->user();
         
         if($user->role == 'merchant_restaurant_admin') {
-            $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->where('is_active', 1)->get();
+            $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->get();
         } else {
-            $merchants = Merchant::where('type', 'Restaurant')->where('is_active', 1)->get();
+            $merchants = Merchant::where('type', 'Restaurant')->get();
         }
 
         $foodCategories = FoodCategory::with('merchant')->get();

@@ -27,6 +27,9 @@ class AdminAuthController extends Controller
     public function login(Request $request)
     {   
         if(Auth::guard('admin')->check()) {
+            if($request->query('redirectTo')) {
+                return redirect($request->query('redirectTo'));
+            }
             return redirect()->route('admin.dashboard');
         }
 

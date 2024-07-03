@@ -5,15 +5,28 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\HotelReservation\StoreRequest;
 use App\Http\Requests\HotelReservation\UpdateRequest;
+use App\Mail\HotelReservationConfirmation;
+use App\Models\Admin;
 use App\Models\HotelReservation;
 use App\Models\Merchant;
+use App\Models\Transaction;
 use App\Models\User;
+use App\Services\AqwireService;
+use Carbon\Carbon;
+use ErrorException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 
 class HotelReservationController extends Controller
-{
+{   
+    private $aqwireService;
+    public function __construct(AqwireService $aqwireService) {
+        $this->aqwireService = $aqwireService;
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -84,6 +97,7 @@ class HotelReservationController extends Controller
                                 return $query->where('id', $user->merchant_id);
                             })
                             ->get();
+                            
         return view('admin-page.hotel_reservations.create-hotel-reservation', compact('merchant_hotels'));
     }
 
@@ -93,6 +107,21 @@ class HotelReservationController extends Controller
         $reservation = HotelReservation::create(array_merge($data, [
             'approved_date' => $request->status == 'approved' ? date('Y-m-d') : null,
         ]));
+
+        if($reservation) {
+            $details = [
+                'hotel_name' => $reservation->room->merchant->name,
+                'room_name' => $reservation->room->room_name,
+                'reserved_customer' => ($reservation->reserved_user->lastname) . ', ' . ($reservation->reserved_user->firstname),
+                'reservation_date' => $reservation->reservation_date,
+                'reservation_time' => $reservation->reservation_time,
+                'reservation_link' => route('admin.login') . '?redirectTo=' . route('admin.hotel_reservations.edit', $reservation->id),
+            ];
+
+            $hotel_admin = Admin::where('merchant_id', $reservation->room->merchant->id)->first();
+            Mail::to('jamesgarnfil15@gmail.com')->send(new HotelReservationConfirmation($details));
+
+        }
 
         return redirect()->route('admin.hotel_reservations.edit', $reservation->id)->with('success', 'Hotel reservation added successfully.');
     }
@@ -113,15 +142,56 @@ class HotelReservationController extends Controller
 
     public function update(UpdateRequest $request, $id)
     {   
-        $data = $request->validated();
+        try {
+            $data = $request->validated();
 
-        $reservation = HotelReservation::where('id', $id)->firstOrFail();
+            $reservation = HotelReservation::where('id', $id)->firstOrFail();
 
-        $reservation->update(array_merge($data, [
-            'approved_date' => $request->status == 'approved' ? date('Y-m-d') : null,
-        ]));
+            $reservation->update(array_merge($data, [
+                'approved_date' => $request->status == 'approved' ? Carbon::now() : null,
+            ]));
 
-        return back()->withSuccess('Hotel reservation updated successfully');
+            if($request->status == 'approved' && $reservation->payment_status == 'unpaid') {
+                $reference_no = $this->generateReferenceNo();
+                
+                $transaction = Transaction::create([
+                    'reference_no' => $reference_no,
+                    'transaction_by_id' => $request->customer_id,
+                    'sub_amount' => $reservation->room->price,
+                    'total_additional_charges' => 0,
+                    'total_discount' => 0,
+                    'transaction_type' => 'order',
+                    'payment_amount' => $reservation->room->price,
+                    'additional_charges' => null,
+                    'payment_status' => 'pending',
+                    'resolution_status' => 'pending',
+                    'aqwire_paymentMethodCode' => null,
+                    'order_date' => $request->order_date,
+                    'transaction_date' => Carbon::now(),
+                ]);
+
+                $reservation->update([
+                    'reference_number' => $transaction->reference_no,
+                ]);
+
+                $payment_request_model = $this->aqwireService->createRequestModel($transaction, $reservation->reserved_user);
+                $payment_response = $this->aqwireService->pay($payment_request_model);
+
+                $transaction->update([
+                    'aqwire_transactionId' => $payment_response['data']['transactionId'] ?? null,
+                    'payment_url' => $payment_response['paymentUrl'] ?? null,
+                    'payment_status' => Str::lower($payment_response['data']['status'] ?? ''),
+                    'payment_details' => json_encode($payment_response),
+                ]);
+
+                return redirect($payment_response['paymentUrl'] ?? '');
+            }
+
+            return back()->withSuccess('Hotel reservation updated successfully');
+        } catch (ErrorException $e) {
+            return back()->with('fail', $e->getMessage());
+        }
+
     }
 
     public function destroy(Request $request, $id)
@@ -134,5 +204,10 @@ class HotelReservationController extends Controller
             'status' => TRUE,
             'message' => 'Hotel Reservation deleted successfully'
         ]);
+    }
+
+    private function generateReferenceNo()
+    {
+        return date('Ym') . '-' . 'OHR' . rand(100000, 10000000);
     }
 }
