@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use ErrorException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
@@ -148,6 +149,8 @@ class HotelReservationController extends Controller
     public function update(UpdateRequest $request, $id)
     {   
         try {
+            DB::beginTransaction();
+
             $data = $request->validated();
 
             $reservation = HotelReservation::where('id', $id)->firstOrFail();
@@ -158,7 +161,7 @@ class HotelReservationController extends Controller
                 $reference_no = $this->generateReferenceNo();
                 $checkin_date = Carbon::parse($request->checkin_date);
                 $checkout_date = Carbon::parse($request->checkout_date);
-
+                
                 // Calculate the difference
                 $total_days = $checkin_date->diffInDays($checkout_date);
 
@@ -211,9 +214,12 @@ class HotelReservationController extends Controller
                 'approved_date' => $request->status == 'approved' ? Carbon::now() : null,
             ]));
 
+            DB::commit();
+
             return back()->withSuccess('Hotel reservation updated successfully');
 
         } catch (ErrorException $e) {
+            DB::rollback();
             return back()->with('fail', $e->getMessage());
         }
 
