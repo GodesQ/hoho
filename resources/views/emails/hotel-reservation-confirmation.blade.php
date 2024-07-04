@@ -128,7 +128,9 @@
                                                             <br>
                                                             <b>Customer Name:</b> {{ $details['reserved_customer'] }}
                                                             <br>
-                                                            <b>Reservation Date and Time:</b>  {{date_format(new DateTime($details['reservation_date']), "F d, Y")}} {{date_format(new DateTime($details['reservation_time']), "H:i A")}}
+                                                            <b>Check-In Date:</b>  {{date_format(new DateTime($details['checkin_date']), "F d, Y")}}
+                                                            <br>
+                                                            <b>Check-Out Date:</b>  {{date_format(new DateTime($details['checkout_date']), "F d, Y")}}
                                                             <br><br>
                                                             Please review and approve the booking at your earliest convenience by clicking on the link below:
                                                             <br><br>

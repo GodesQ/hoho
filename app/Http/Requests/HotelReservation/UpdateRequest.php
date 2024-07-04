@@ -24,9 +24,8 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'number_of_pax' => 'required|numeric',
-            'reservation_date' => 'required|date',
-            'reservation_time' => 'required',
+            'checkin_date' => 'required|date',
+            'checkout_date' => 'required|date|after:checkin_date',
             'status' => 'required|in:pending,declined,approved'
         ];
     }

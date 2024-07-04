@@ -122,26 +122,28 @@
                                                     <div style="margin-bottom: 1rem;">
                                                         <div><b>Dear {{ $details['reserved_customer'] }},</b></div> <br>
                                                         <div>
-                                                            We are excited to inform you that your reservation for [Reservation Details] has been approved! 🥳                                                            <br><br>
+                                                            We are excited to inform you that your reservation for {{ $details['merchant_name'] }} has been approved! 🥳                                                            <br><br>
                                                             <b>Room Name:</b> {{ $details['room_name'] }}
                                                             <br>
                                                             <b>Customer Name:</b> {{ $details['reserved_customer'] }}
                                                             <br>
-                                                            <b>Reservation Date and Time:</b>  {{date_format(new DateTime($details['reservation_date']), "F d, Y")}} {{date_format(new DateTime($details['reservation_time']), "H:i A")}}
+                                                            <b>Reservation Date:</b>  
+                                                                {{date_format(new DateTime($details['checkin_date']), "F d, Y")}} - {{date_format(new DateTime($details['checkout_date']), "F d, Y")}}
                                                             <br><br>
-                                                            Please review and approve the booking at your earliest convenience by clicking on the link below:
+                                                            To finalize your reservation, please complete the payment by clicking on the link below:
                                                             <br><br>
-                                                            <a style="color: #6f0d00;" href="{{ $details['reservation_link'] }}">Reservation Details Link</a>
+                                                            <a style="color: #6f0d00;" href="{{ $details['payment_link'] }}">Complete Your Payment</a>
                                                             <br><br>
-                                                            If you require any further information or have any concerns, please do not hesitate to reach out.
-                                                            <br><br>
-                                                            Thank you for your prompt attention to this matter.
-                                                        </div> <br><br>
-                                                        <div>
-                                                            Sincerely,
-                                                            <br>
-                                                            Philippine Hop On Hop Off
-                                                        </div>
+                                                            <?php
+                                                                $utcTimestamp = $details['expiration_date'] ?? null;
+                                                                $utcDateTime = new DateTime($utcTimestamp, new DateTimeZone('UTC'));
+                                                                $manilaTimeZone = new DateTimeZone('Asia/Manila');
+                                                                
+                                                                $utcDateTime->setTimezone($manilaTimeZone);
+                                                                $manilaTimestamp = $utcDateTime->format('Y-m-d h:i A');
+                                                            ?>
+                                                            Expiration Date: {{ $details['expiration_date'] ? $manilaTimestamp : null }}
+                                                        </div> 
                                                     </div>
                                                 </td>
                                             </tr>

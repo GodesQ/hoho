@@ -65,6 +65,12 @@ class AqwireService
                     $success = env('AQWIRE_TEST_ORDER_SUCCESS_URL');
                     $cancel = env('AQWIRE_TEST_ORDER_CANCEL_URL');
                 break;
+
+            case 'hotel_reservation':
+                    $success = env('AQWIRE_TEST_HOTEL_RESERVATION_SUCCESS_URL');
+                    $cancel = env('AQWIRE_TEST_HOTEL_RESERVATION_CANCEL_URL');
+                break;
+
             default: 
                 $success = env('AQWIRE_TEST_SUCCESS_URL');
                 $cancel = env('AQWIRE_TEST_CANCEL_URL');

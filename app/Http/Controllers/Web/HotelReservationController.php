@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Enum\TransactionTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\HotelReservation\StoreRequest;
 use App\Http\Requests\HotelReservation\UpdateRequest;
+use App\Mail\HotelReservationApproved;
 use App\Mail\HotelReservationConfirmation;
 use App\Models\Admin;
 use App\Models\HotelReservation;
@@ -104,7 +106,10 @@ class HotelReservationController extends Controller
     public function store(StoreRequest $request)
     {
         $data = $request->validated();
+        $number_of_pax = $request->adult_quantity + $request->children_quantity;
+
         $reservation = HotelReservation::create(array_merge($data, [
+            'number_of_pax' => $number_of_pax,
             'approved_date' => $request->status == 'approved' ? date('Y-m-d') : null,
         ]));
 
@@ -113,8 +118,8 @@ class HotelReservationController extends Controller
                 'hotel_name' => $reservation->room->merchant->name,
                 'room_name' => $reservation->room->room_name,
                 'reserved_customer' => ($reservation->reserved_user->lastname) . ', ' . ($reservation->reserved_user->firstname),
-                'reservation_date' => $reservation->reservation_date,
-                'reservation_time' => $reservation->reservation_time,
+                'checkin_date' => $reservation->checkin_date,
+                'checkout_date' => $reservation->checkout_date,
                 'reservation_link' => route('admin.login') . '?redirectTo=' . route('admin.hotel_reservations.edit', $reservation->id),
             ];
 
@@ -146,32 +151,35 @@ class HotelReservationController extends Controller
             $data = $request->validated();
 
             $reservation = HotelReservation::where('id', $id)->firstOrFail();
+            $number_of_pax = $request->adult_quantity + $request->children_quantity;
 
-            $reservation->update(array_merge($data, [
-                'approved_date' => $request->status == 'approved' ? Carbon::now() : null,
-            ]));
 
-            if($request->status == 'approved' && $reservation->payment_status == 'unpaid') {
+            if(!$reservation->transaction_id && $reservation->payment_status === 'unpaid' && $request->status === 'approved' ) {
                 $reference_no = $this->generateReferenceNo();
-                
+                $checkin_date = Carbon::parse($request->checkin_date);
+                $checkout_date = Carbon::parse($request->checkout_date);
+
+                // Calculate the difference
+                $total_days = $checkin_date->diffInDays($checkout_date);
+
+                $additional_charges = 99; // Required Additional Charges
+
+                $total_amount = ( $reservation->room->price * $total_days ) + $additional_charges;
+
                 $transaction = Transaction::create([
                     'reference_no' => $reference_no,
-                    'transaction_by_id' => $request->customer_id,
+                    'transaction_by_id' => $reservation->reserved_user->id,
                     'sub_amount' => $reservation->room->price,
-                    'total_additional_charges' => 0,
-                    'total_discount' => 0,
-                    'transaction_type' => 'order',
-                    'payment_amount' => $reservation->room->price,
-                    'additional_charges' => null,
-                    'payment_status' => 'pending',
-                    'resolution_status' => 'pending',
-                    'aqwire_paymentMethodCode' => null,
-                    'order_date' => $request->order_date,
+                    'total_additional_charges' => $additional_charges,
+                    'transaction_type' => TransactionTypeEnum::HOTEL_RESERVATION,
+                    'payment_amount' => $total_amount,
+                    'order_date' => Carbon::now(),
                     'transaction_date' => Carbon::now(),
                 ]);
 
                 $reservation->update([
                     'reference_number' => $transaction->reference_no,
+                    'transaction_id' => $transaction->id,
                 ]);
 
                 $payment_request_model = $this->aqwireService->createRequestModel($transaction, $reservation->reserved_user);
@@ -184,10 +192,27 @@ class HotelReservationController extends Controller
                     'payment_details' => json_encode($payment_response),
                 ]);
 
-                return redirect($payment_response['paymentUrl'] ?? '');
+                $details = [
+                    'reserved_customer' => $reservation->reserved_user->firstname . ' ' . $reservation->reserved_user->lastname,
+                    'room_name' => $reservation->room->room_name,
+                    'merchant_name' => $reservation->room->merchant->name,
+                    'checkin_date' => $request->checkin_date,
+                    'checkout_date' => $request->checkout_date,
+                    'payment_link' => $payment_response['paymentUrl'] ?? '',
+                    'expiration_date' => $payment_response['data']['expiresAt'] ?? null,
+                ];
+
+                // This notification will send to the customer
+                Mail::to($reservation->reserved_user->email)->send(new HotelReservationApproved($details));
             }
 
+            $reservation->update(array_merge($data, [
+                'number_of_pax' => $number_of_pax,
+                'approved_date' => $request->status == 'approved' ? Carbon::now() : null,
+            ]));
+
             return back()->withSuccess('Hotel reservation updated successfully');
+
         } catch (ErrorException $e) {
             return back()->with('fail', $e->getMessage());
         }

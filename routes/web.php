@@ -93,14 +93,18 @@ Route::get('/send_message', [AdminController::class, 'sendMessageWithSemaphore']
 Route::view('user/success_verification_message', 'misc.success_verification_message')->name('user.success_verification_message');
 Route::view('merchant-account-registered-message', 'misc.merchant-registered-message')->name('merchant_account_registered_message');
 
+Route::post('aqwire/transaction/paid', [AqwireController::class, 'webhook_paid']);
+
 Route::get('aqwire/payment/success/{id}', [AqwireController::class, 'success']);
 Route::get('aqwire/payment/travel-tax/success/{id}', [AqwireController::class, 'travelTaxSuccess']);
 Route::get('aqwire/payment/order/success/{id}', [AqwireController::class, 'orderSuccess']);
+Route::get('aqwire/payment/hotel-reservation/success/{id}', [AqwireController::class, 'hotelReservationSuccess']);
 Route::get('aqwire/payment/view_success', [AqwireController::class, 'viewSuccess']);
 
 Route::get('aqwire/payment/cancel/{id}', [AqwireController::class, 'cancel']);
 Route::get('aqwire/payment/travel-tax/cancel/{id}', [AqwireController::class, 'travelTaxCancel']);
 Route::get('aqwire/payment/order/cancel/{id}', [AqwireController::class, 'orderCancel']);
+Route::get('aqwire/payment/hotel-reservation/cancel/{id}', [AqwireController::class, 'hotelReservationCancel']);
 Route::get('aqwire/payment/view_cancel', [AqwireController::class, 'viewCancel']);
 
 Route::post('aqwire/payment/callback/{id}', [AqwireController::class, 'callback']);
