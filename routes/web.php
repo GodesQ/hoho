@@ -15,6 +15,7 @@ use App\Http\Controllers\Web\OrderController;
 use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\RestaurantReservationController;
 use App\Http\Controllers\Web\RoomController;
+use App\Http\Controllers\Web\SystemLogController;
 use App\Http\Controllers\Web\TourBadgeController;
 use App\Http\Controllers\Web\TravelTaxController;
 use Illuminate\Support\Facades\Request;
@@ -449,4 +450,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
 
 
     });
+
+    Route::get('system-logs', [SystemLogController::class, 'index'])->name('system_logs.list');
 });

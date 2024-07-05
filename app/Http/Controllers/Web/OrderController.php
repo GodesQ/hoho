@@ -11,6 +11,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Services\AqwireService;
 use Carbon\Carbon;
+use ErrorException;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Str;
@@ -18,63 +19,67 @@ use Illuminate\Support\Str;
 use DB;
 
 class OrderController extends Controller
-{   
+{
     private $aqwireService;
 
-    public function __construct(AqwireService $aqwireService) {
+    public function __construct(AqwireService $aqwireService)
+    {
         $this->aqwireService = $aqwireService;
     }
 
-    public function index(Request $request) {
-        if($request->ajax()) {
+    public function index(Request $request)
+    {
+        if ($request->ajax()) {
             $orders = Order::with('product', 'customer');
 
             return DataTables::of($orders)
-            ->editColumn('customer_id', function ($order) {
-                return view('components.user-contact', ['user' => $order->customer]);
-            })
-            ->editColumn('product_id', function ($order) {
-                return view('components.merchant-product', ['product' => $order->product ]);
-            })
-            ->editColumn('total_amount', function ($order) {
-                return '₱ ' . number_format($order->total_amount, 2);
-            })
-            ->addColumn('actions', function ($row) {
-                $output = '<div class="dropdown">';
-                    
-                $output .= '<a title="View Order" href="/admin/orders/show/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-file me-1"></i></a> ';
+                ->editColumn('customer_id', function ($order) {
+                    return view('components.user-contact', ['user' => $order->customer]);
+                })
+                ->editColumn('product_id', function ($order) {
+                    return view('components.merchant-product', ['product' => $order->product]);
+                })
+                ->editColumn('total_amount', function ($order) {
+                    return '₱ ' . number_format($order->total_amount, 2);
+                })
+                ->addColumn('actions', function ($row) {
+                    $output = '<div class="dropdown">';
 
-                if($row->status != 'approved') {
-                    $output .= '<button title="Delete Order" type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>';
-                }
-                
-                $output .= '</div>';
+                    $output .= '<a title="View Order" href="/admin/orders/show/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-file me-1"></i></a> ';
 
-                return $output;
-            })
-            ->rawColumns(['actions'])
-            ->make(true);
+                    if ($row->status != 'approved') {
+                        $output .= '<button title="Delete Order" type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>';
+                    }
+
+                    $output .= '</div>';
+
+                    return $output;
+                })
+                ->rawColumns(['actions'])
+                ->make(true);
         }
 
         return view('admin-page.orders.list-order');
     }
 
-    public function create() {
+    public function create()
+    {
         return view('admin-page.orders.create-order');
     }
 
-    public function store(StoreRequest $request) {
-        $data = $request->validated();
+    public function store(StoreRequest $request)
+    {
+        try {
+            DB::beginTransaction();
 
-        $product = Product::where('id', $request->product_id)->first();
-        $totalAmount = $this->calculateTotalAmount($product->price, $request->quantity);
+            $data = $request->validated();
 
-        $db_transaction = DB::transaction(function () use ($request, $product, $totalAmount) {
+            $product = Product::where('id', $request->product_id)->first();
+            $totalAmount = $this->calculateTotalAmount($product->price, $request->quantity);
 
             $user = User::where('id', $request->customer_id)->first();
-            
             $reference_no = $this->generateReferenceNo();
-            
+
             $transaction = Transaction::create([
                 'reference_no' => $reference_no,
                 'transaction_by_id' => $request->customer_id,
@@ -92,12 +97,12 @@ class OrderController extends Controller
             ]);
 
             $order = Order::create(array_merge($request->validated(), [
-                'transaction_id' => $transaction->id, 
+                'transaction_id' => $transaction->id,
                 'reference_code' => $transaction->reference_no,
                 'sub_amount' => $product->price,
                 'total_amount' => $totalAmount,
                 'payment_method' => 'cash',
-                'status' => 'pending', 
+                'status' => 'pending',
             ]));
 
             $payment_request_model = $this->aqwireService->createRequestModel($transaction, $user);
@@ -110,28 +115,29 @@ class OrderController extends Controller
                 'payment_details' => json_encode($payment_response),
             ]);
 
-            return [
-                'transaction' => $transaction,
-                'order' => $order,
-                'payment_url' => $payment_response['paymentUrl'],
-            ];
-        });
+            DB::commit();
 
-        return redirect($db_transaction['payment_url']);
-
+            return redirect($payment_response['paymentUrl']);
+        } catch (ErrorException $e) {
+            DB::rollBack();
+            return back()->with('fail', $e->getMessage());
+        }
     }
 
-    public function show($id) { 
+    public function show($id)
+    {
         $order = Order::findOrFail($id);
         return view('admin-page.orders.show-order', compact('order'));
     }
 
-    public function edit(Request $request, $id) {
+    public function edit(Request $request, $id)
+    {
         $order = Order::findOrFail($id);
         return view('admin-page.orders.edit-order', compact('order'));
     }
 
-    public function update(UpdateRequest $request, $id) { 
+    public function update(UpdateRequest $request, $id)
+    {
         $order = Order::findOrFail($id);
 
         $product = Product::where('id', $order->product_id)->first();
@@ -152,8 +158,9 @@ class OrderController extends Controller
 
         return back()->withSuccess('Order updated successfully');
     }
-    
-    public function destroy($id) {
+
+    public function destroy($id)
+    {
         $order = Order::findOrFail($id);
         $order->delete();
 
@@ -163,8 +170,9 @@ class OrderController extends Controller
         ]);
     }
 
-    private function calculateTotalAmount($price, $quantity) {
-        return $price * $quantity;    
+    private function calculateTotalAmount($price, $quantity)
+    {
+        return $price * $quantity;
     }
 
     private function generateReferenceNo()

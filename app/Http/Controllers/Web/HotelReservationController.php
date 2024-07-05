@@ -162,18 +162,19 @@ class HotelReservationController extends Controller
                 $checkin_date = Carbon::parse($request->checkin_date);
                 $checkout_date = Carbon::parse($request->checkout_date);
                 
-                // Calculate the difference
                 $total_days = $checkin_date->diffInDays($checkout_date);
 
-                $additional_charges = 99; // Required Additional Charges
+                $additional_charges = getConvenienceFee();
 
-                $total_amount = ( $reservation->room->price * $total_days ) + $additional_charges;
+                $total_amount_of_all_days = $reservation->room->price * $total_days; // The price is multiplied by the number of days stayed.
+                $total_amount = $this->computeTotalAmount($total_amount_of_all_days, $additional_charges);
 
                 $transaction = Transaction::create([
                     'reference_no' => $reference_no,
                     'transaction_by_id' => $reservation->reserved_user->id,
                     'sub_amount' => $reservation->room->price,
                     'total_additional_charges' => $additional_charges,
+                    'additional_charges' => json_encode(['Convenience Fee' => 99]),
                     'transaction_type' => TransactionTypeEnum::HOTEL_RESERVATION,
                     'payment_amount' => $total_amount,
                     'order_date' => Carbon::now(),
@@ -235,6 +236,10 @@ class HotelReservationController extends Controller
             'status' => TRUE,
             'message' => 'Hotel Reservation deleted successfully'
         ]);
+    }
+
+    private function computeTotalAmount($amount, $additional_charges) {
+        return $amount + $additional_charges;
     }
 
     private function generateReferenceNo()

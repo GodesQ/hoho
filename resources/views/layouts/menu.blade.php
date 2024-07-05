@@ -449,6 +449,17 @@
     @endauth
 
     @auth('admin')
+        @can('view_unavailable_dates_list')
+            <li class="menu-item {{ preg_match('/admin\/system-logs/', Request::path()) ? 'active' : null }}">
+                <a href="{{ route('admin.system_logs.list') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="System Logs">System Logs</div>
+                </a>
+            </li>
+        @endcan
+    @endauth
+
+    @auth('admin')
         @canany(['view_api_consumers_list', 'view_consumer_api_logs_list', 'view_api_permissions_list'])
             <li class="menu-header small text-uppercase"><span class="menu-header-text">API</span></li>
         @endcanany
