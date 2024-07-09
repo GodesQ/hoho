@@ -44,7 +44,7 @@ class TravelTaxController extends Controller
 
     public function getUserTravelTaxPayments(Request $request) {
         $user = Auth::user();
-        $payments = TravelTaxPayment::where('user_id', $user->id)->latest()->get();
+        $payments = TravelTaxPayment::where('user_id', $user->id)->with('passengers')->latest()->get();
         
         return response([
             'status' => TRUE,
