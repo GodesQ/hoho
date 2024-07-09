@@ -104,7 +104,6 @@ class TravelTaxController extends Controller
     public function store(PaymentRequest $request)
     {
         try {
-
             $travelTax = $this->travelTaxService->createTravelTax($request);
             return redirect($travelTax['url']);
 
@@ -121,7 +120,7 @@ class TravelTaxController extends Controller
 
     public function update(Request $request)
     {
-
+        
     }
 
     public function destroy(Request $request)
@@ -145,44 +144,5 @@ class TravelTaxController extends Controller
         $passenger->update($request->all());
 
         return back()->withSuccess('Passenger updated successfully.');
-    }
-
-    private function getHMACSignatureHash($text, $secret_key)
-    {
-        $key = $secret_key;
-        $message = $text;
-
-        $hex = hash_hmac('sha256', $message, $key);
-        $bin = hex2bin($hex);
-
-        return base64_encode($bin);
-    }
-
-    private function getLiveHMACSignatureHash($text, $key)
-    {
-        $keyBytes = utf8_encode($key);
-        $textBytes = utf8_encode($text);
-
-        $hashBytes = hash_hmac('sha256', $textBytes, $keyBytes, true);
-
-        $base64Hash = base64_encode($hashBytes);
-        $base64Hash = str_replace(['+', '/'], ['-', '_'], $base64Hash);
-
-        return $base64Hash;
-    }
-
-    private function computeTotalAmount($amount, $processing_fee, $discount)
-    {
-        return ($amount + $processing_fee) - $discount;
-    }
-
-    private function generateReferenceNo()
-    {
-        return date('Ym') . '-' . 'OTRX' . rand(100000, 10000000);
-    }
-
-    private function generateTransactionNumber()
-    {
-        return 'TN' . date('Ym') . rand(100000, 10000000);
     }
 }
