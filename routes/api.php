@@ -144,5 +144,6 @@ use App\Http\Controllers\Api\TourBadgeController;
         Route::get('tour-feedbacks/tours/{tour_id}', [TourFeedBackController::class, 'getFeedBacksByTour']);
 
         Route::post('travel-tax', [TravelTaxController::class, 'store']);
+        Route::get('travel-tax/users/{user_id}', [TravelTaxController::class, 'getUserTravelTaxPayments']);
     });
 // });
