@@ -135,6 +135,8 @@ class BookingService
     public function createMultipleBooking(Request $request)
     {
         try {
+            DB::beginTransaction();
+
             $user = User::where('id', $request->reserved_user_id)->first();
 
             if (!$user->firstname || !$user->lastname || !$user->contact_no)
@@ -191,14 +193,15 @@ class BookingService
 
             $this->mailService->sendPaymentRequestMail($transaction, $payment_response['paymentUrl'], $payment_response['data']['expiresAt']);
 
+            DB::commit();
+
             return [
                 'transaction' => $transaction,
                 'payment_url' => $payment_response['paymentUrl']
             ];
 
         } catch (ErrorException $e) {
-            if (isset($transaction))
-                $transaction->delete();
+            DB::rollBack();
             throw $e;
         }
     }
