@@ -5,4 +5,5 @@ class TourTypeEnum{
     const DIY_TOUR = 'DIY';
     const GUIDED_TOUR = 'Guided';
     const LAYOVER_TOUR = 'Layover';
+    const SEASONAL_TOUR = 'Seasonal';
 }
