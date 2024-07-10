@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\Attraction;
+use ErrorException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 
@@ -15,6 +17,8 @@ class AttractionService
 
     public function createAttraction(Request $request) {
         try {
+            DB::beginTransaction();
+
             $data = $request->except('_token', 'organization_ids', 'images', 'featured_image', 'interests');
 
             $attraction = Attraction::create(array_merge($data, [
@@ -29,35 +33,40 @@ class AttractionService
                 'is_featured' => $request->has('is_featured'),
                 'status' => $request->has('is_active'),
             ]));
+
+            $file_name = null;
     
             if($request->hasFile('featured_image')) {
                 $file = $request->file('featured_image');
                 $file_name = Str::snake(Str::lower($request->name)) . '.' . $file->getClientOriginalExtension();
-                $save_file = $file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $file_name);
-            } else {
-                $file_name = $attraction->featured_image;
+                $path = "attractions/" . $attraction->id . "/";
+                FileService::upload($path, $file_name, $file);
             }
     
             $images = [];
-            if($request->images) {
+
+            if($request->images && is_array($request->images)) {
                 foreach ($request->images as $key => $image) {
-                    $uniqueId = Str::random(5);
-                    $image_file = $image;
-                    $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $uniqueId . '.' . $image_file->getClientOriginalExtension();
-                    $save_file = $image_file->move(public_path() . '/assets/img/attractions/' . $attraction->id, $image_file_name);
+                    $uniqueId = Str::random(5) . time();
+                    $image_file_name = Str::snake(Str::lower($request->name)) . '_image_' . $uniqueId . '.' . $image->getClientOriginalExtension();
+                    $path = "attractions/" . $attraction->id . "/";
+                    FileService::upload($path, $image, $image_file_name);
                     
                     array_push($images, $image_file_name);
                 }
             }
     
-            $update_attraction = $attraction->update([
+            $attraction->update([
                 'featured_image' => $file_name,
                 'images' => count($images) > 0 ? json_encode($images) : null,
             ]);
+
+            DB::commit();
             
             return $attraction;
-        } catch (\Exception $e) {
-            return redirect()->back()->with('fail', $e->getMessage());
+        } catch (ErrorException $e) {
+            DB::rollBack();
+            throw $e;
         }
     }
 
