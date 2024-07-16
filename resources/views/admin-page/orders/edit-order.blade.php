@@ -8,7 +8,7 @@
         <h4 class="fw-bold py-3 mb-4">Edit Order</h4>
         <div class="d-flex gap-1">
             <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-primary">View Order Details <i class="bx bx-file"></i></a>
-            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-primary">Back to List <i class="bx bx-undo"></i></a> 
+            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-dark">Back to List <i class="bx bx-undo"></i></a> 
         </div>
     </div>
 

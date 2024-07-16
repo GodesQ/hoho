@@ -261,23 +261,6 @@
                 enableTime: false,
                 dateFormat: "Y-m-d",
             });
-
-            // $("#trip_date").datepicker({
-            //     minDate: dateToday,
-            //     changeMonth: true,
-            //     changeYear: true,
-            //     dateFormat: 'yy-mm-dd',
-            //     beforeShowDay: function(date) {
-            //         // Check if the day of the week is Monday (0 for Sunday, 1 for Monday, etc.)
-            //         if (date.getDay() === 1) {
-            //         // Disable Monday dates
-            //         return [false, "ui-state-disabled"];
-            //         } else {
-            //         // Enable other dates
-            //         return [true, ""];
-            //         }
-            //     }
-            // });
         });
 
         $('.reserved_users, .registered_passengers').select2({

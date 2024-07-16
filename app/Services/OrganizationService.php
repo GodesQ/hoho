@@ -9,11 +9,9 @@ use Yajra\DataTables\DataTables;
 
 class OrganizationService
 {
-    protected $fileManagerService;
 
-    public function __construct(FileManagerService $fileManagerService)
+    public function __construct()
     {
-        $this->fileManagerService = $fileManagerService;
     }
 
     public function getOrganizations(Request $request)
@@ -76,8 +74,8 @@ class OrganizationService
 
             $path = "organizations/{$organization->id}/";
             $file_name = Str::snake(Str::lower($request->name));
-            $image_fields = ['featured_image', 'icon', 'images'];
 
+            $image_fields = ['featured_image', 'icon', 'images'];
             $this->uploadAndUpdateImage($request, $path, $file_name, $image_fields, $organization);
 
             // Get the second changes after saving images in the organization
@@ -229,4 +227,3 @@ class OrganizationService
         }
     }
 }
-?>

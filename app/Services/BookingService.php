@@ -100,7 +100,7 @@ class BookingService
                 $this->mailService->sendPaymentRequestMail($transaction, $responseData['paymentUrl'], $responseData['data']['expiresAt']);
 
                 // Send notification to tour provider
-                if (env('APP_ENVIRONMENT') == 'LIVE') {
+                if (config('app.env') === 'production') {
                     $tour = Tour::where('id', $request->tour_id)->first();
 
                     if ($tour && $tour->tour_provider && optional($tour->tour_provider)->contact_email) {
@@ -411,7 +411,7 @@ class BookingService
             ];
 
             if ($tour?->tour_provider?->contact_email) {
-                $recipientEmail = env('APP_ENVIRONMENT') === 'LIVE' ? $tour->tour_provider->contact_email : 'james@godesq.com';
+                $recipientEmail = config('app.env') === 'production' ? $tour->tour_provider->contact_email : config('mail.test_receiver');
                 Mail::to($recipientEmail)->cc('philippinehoho@tourism.gov.ph')->send(new TourProviderBookingNotification($details));
             }
 
@@ -423,7 +423,7 @@ class BookingService
         try {
             $requestModel = $this->setRequestModel($transaction);
 
-            if (env('APP_ENVIRONMENT') == 'LIVE') {
+            if (config('app.env') === 'production') {
                 $url_create = 'https://payments.aqwire.io/api/v3/transactions/create';
                 $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
             } else {

@@ -15,7 +15,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped table-borderless data-table">
+                    <table class="table table-striped table-borderless data-table w-100">
                         <thead>
                             <tr>
                                 <th>Id</th>

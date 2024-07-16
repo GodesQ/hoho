@@ -140,7 +140,7 @@
                                                                 $manilaTimeZone = new DateTimeZone('Asia/Manila');
                                                                 
                                                                 $utcDateTime->setTimezone($manilaTimeZone);
-                                                                $manilaTimestamp = $utcDateTime->format('Y-m-d h:i A');
+                                                                $manilaTimestamp = $utcDateTime->format('F d, Y h:i A');
                                                             ?>
                                                             Expiration Date: {{ $details['expiration_date'] ? $manilaTimestamp : null }}
                                                         </div> 

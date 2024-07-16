@@ -108,7 +108,7 @@ Route::get('aqwire/payment/order/cancel/{id}', [AqwireController::class, 'orderC
 Route::get('aqwire/payment/hotel-reservation/cancel/{id}', [AqwireController::class, 'hotelReservationCancel']);
 Route::get('aqwire/payment/view_cancel', [AqwireController::class, 'viewCancel']);
 
-Route::post('aqwire/payment/callback/{id}', [AqwireController::class, 'callback']);
+Route::match(['get', 'post'], 'aqwire/payment/callback', [AqwireController::class, 'callback']);
 
 Route::get('user/verify_email', [UserAuthController::class, 'verifyEmail']);
 
@@ -129,25 +129,27 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('profile', [DashboardController::class, 'saveProfile'])->name('profile.post');
     Route::post('change_password', [DashboardController::class, 'changePassword'])->name('change_password.post');
 
-    Route::get('admins', [AdminController::class, 'list'])->name('admins.list')->can('view_admins_list');
-    Route::get('admins/create', [AdminController::class, 'create'])->name('admins.create')->can('create_admin');
-    Route::post('admins/store', [AdminController::class, 'store'])->name('admins.store')->can('create_admin');
-    Route::get('admins/edit/{id}', [AdminController::class, 'edit'])->name('admins.edit')->can('edit_admin');
-    Route::post('admins/update/{id}', [AdminController::class, 'update'])->name('admins.update')->can('update_admin');
-    Route::delete('admins/destroy/{id}', [AdminController::class, 'destroy'])->name('admins.destroy')->can('delete_admin');
+    Route::get('admins', [AdminController::class, 'list'])->name('admins.list')->can('view_admins_list')->can('view_admins_list');
+    Route::get('admins/create', [AdminController::class, 'create'])->name('admins.create')->can('create_admin')->can('create_admin');
+    Route::post('admins/store', [AdminController::class, 'store'])->name('admins.store')->can('create_admin')->can('create_admin');
+    Route::get('admins/edit/{id}', [AdminController::class, 'edit'])->name('admins.edit')->can('edit_admin')->can('edit_admin');
+    Route::post('admins/update/{id}', [AdminController::class, 'update'])->name('admins.update')->can('update_admin')->can('update_admin');
+    Route::delete('admins/destroy/{id}', [AdminController::class, 'destroy'])->name('admins.destroy')->can('delete_admin')->can('delete_admin');
+
     Route::get('admins/merchantAdmins', [AdminController::class, 'merchantAdmins']);
     Route::get('admins/operatorAdmins', [AdminController::class, 'operatorAdmins']);
 
-    Route::get('merchant-accounts', [MerchantAccountController::class, 'index'])->name('merchant_accounts.index');
-    Route::get('merchant-accounts/create', [MerchantAccountController::class, 'create'])->name('merchant_accounts.create');
-    Route::post('merchant-accounts/store', [MerchantAccountController::class, 'store'])->name('merchant_accounts.store');
-    Route::get('merchant-accounts/edit/{id}', [MerchantAccountController::class, 'edit'])->name('merchant_accounts.edit');
-    Route::put('merchant-accounts/update/{id}', [MerchantAccountController::class,'update'])->name('merchant_accounts.update');
-    Route::delete('merchant-accounts/destroy/{id}', [MerchantAccountController::class, 'destroy'])->name('merchant_accounts.destroy');
+    Route::get('merchant-accounts', [MerchantAccountController::class, 'index'])->name('merchant_accounts.index')->can('view_merchant_account_list');
+    Route::get('merchant-accounts/create', [MerchantAccountController::class, 'create'])->name('merchant_accounts.create')->can('create_merchant_account');
+    Route::post('merchant-accounts/store', [MerchantAccountController::class, 'store'])->name('merchant_accounts.store')->can('create_merchant_account');
+    Route::get('merchant-accounts/edit/{id}', [MerchantAccountController::class, 'edit'])->name('merchant_accounts.edit')->can('edit_merchant_account');
+    Route::put('merchant-accounts/update/{id}', [MerchantAccountController::class,'update'])->name('merchant_accounts.update')->can('edit_merchant_account');
+    Route::delete('merchant-accounts/destroy/{id}', [MerchantAccountController::class, 'destroy'])->name('merchant_accounts.destroy')->can('delete_merchant_account');
+
     Route::put('merchant-accounts/update-merchant', [MerchantAccountController::class, 'updateMerchant'])->name('merchant_accounts.update_merchant');
     Route::patch('merchant-accounts/unsync-merchant', [MerchantAccountController::class, 'unsyncMerchant'])->name('merchant_accounts.unsync_merchant');
 
-    Route::get('users', [UserController::class, 'list'])->name('users.list')->can('view_users_list');
+    Route::get('users', [UserController::class, 'list'])->name('users.list')->can('view_users_list')->can('view_users_list');
     Route::get('users/lookup', [UserController::class, 'lookup'])->name('users.lookup');
     Route::get('users/create', [UserController::class, 'create'])->name('users.create')->can('create_user');
     Route::post('users/store', [UserController::class, 'store'])->name('users.store')->can('create_user');
@@ -379,13 +381,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('ticket_passes/update/{id}', [TicketPassController::class, 'update'])->name('ticket_passes.update');
     Route::delete('ticket_passes/destroy', [TicketPassController::class, 'destroy'])->name('ticket_passes.destroy');
 
-    Route::get('logs', [LogController::class, 'list'])->name('logs.list');
-    Route::get('logs/create', [LogController::class, 'create'])->name('logs.create');
-    Route::post('logs/store', [LogController::class, 'store'])->name('logs.store');
-    Route::get('logs/edit/{id}', [LogController::class, 'edit'])->name('logs.edit');
-    Route::post('logs/update/{id}', [LogController::class, 'update'])->name('logs.update');
-    Route::delete('logs/destroy', [LogController::class, 'destroy'])->name('logs.destroy');
-
     Route::get('announcements', [AnnouncementController::class, 'list'])->name('announcements.list');
     Route::get('announcements/create', [AnnouncementController::class, 'create'])->name('announcements.create')->can('create_announcement');
     Route::post('announcements/store', [AnnouncementController::class, 'store'])->name('announcements.store');
@@ -400,12 +395,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('unavailable_dates/update/{id}', [TourUnavailableDateController::class, 'update'])->name('unavailable_dates.update');
     Route::delete('unavailable_dates/destroy', [TourUnavailableDateController::class, 'destroy'])->name('unavailable_dates.destroy');
 
-    Route::get('travel-taxes', [TravelTaxController::class, 'index'])->name('travel_taxes.list');
-    Route::get('travel-taxes/create', [TravelTaxController::class, 'create'])->name('travel_taxes.create');
-    Route::post('travel-taxes/store', [TravelTaxController::class, 'store'])->name('travel_taxes.store');
-    Route::get('travel-taxes/edit/{id}', [TravelTaxController::class, 'edit'])->name('travel_taxes.edit');
-    Route::put('travel-taxes/update/{id}', [TravelTaxController::class, 'update'])->name('travel_taxes.update');
-    Route::delete('travel-taxes/destroy/{id}', [TravelTaxController::class, 'destroy'])->name('travel_taxes.destroy');
+    Route::get('travel-taxes', [TravelTaxController::class, 'index'])->name('travel_taxes.list')->can('view_travel_taxes_list');
+    Route::get('travel-taxes/create', [TravelTaxController::class, 'create'])->name('travel_taxes.create')->can('create_travel_tax');
+    Route::post('travel-taxes/store', [TravelTaxController::class, 'store'])->name('travel_taxes.store')->can('create_travel_tax');
+    Route::get('travel-taxes/edit/{id}', [TravelTaxController::class, 'edit'])->name('travel_taxes.edit')->can('edit_travel_tax');
+    Route::put('travel-taxes/update/{id}', [TravelTaxController::class, 'update'])->name('travel_taxes.update')->can('edit_travel_tax');
+    Route::delete('travel-taxes/destroy/{id}', [TravelTaxController::class, 'destroy'])->name('travel_taxes.destroy')->can('delete_travel_tax');
     Route::put('travel-taxes/passengers/update', [TravelTaxController::class, 'updatePassenger'])->name('travel_taxes.passengers.update');
     Route::get('travel-taxes/passengers/{passenger_id}', [TravelTaxController::class, 'getPassenger'])->name('travel_taxes.passengers');
 

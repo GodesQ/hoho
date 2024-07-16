@@ -111,6 +111,10 @@
                                         }
                                     })
                             }
+                        },
+                        error: function(response) {
+                            let json_response = response?.responseJSON;
+                            toastr.error(json_response.message, 'Failed');
                         }
                     })
                 }

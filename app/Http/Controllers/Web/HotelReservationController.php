@@ -14,6 +14,7 @@ use App\Models\Merchant;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\AqwireService;
+use App\Services\LoggerService;
 use Carbon\Carbon;
 use ErrorException;
 use Illuminate\Http\Request;
@@ -30,6 +31,11 @@ class HotelReservationController extends Controller
         $this->aqwireService = $aqwireService;
     }
 
+    /**
+     * Retrieves a list of hotel reservations and returns it as a DataTables response.
+     * @param \Illuminate\Http\Request $request
+     * @return mixed
+     */
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -44,7 +50,7 @@ class HotelReservationController extends Controller
 
             return DataTables::of($hotel_reservations)
                 ->addIndexColumn()
-                ->addColumn('reserved_user_id', function ($row) {
+                ->editColumn('reserved_user_id', function ($row) {
                     if($row->reserved_user) {
                         return view('components.user-contact', ['user' => $row->reserved_user]);
                     }
@@ -59,7 +65,7 @@ class HotelReservationController extends Controller
                 ->editColumn('number_of_pax', function ($row) {
                     return $row->number_of_pax . ' Pax';
                 })
-                ->addColumn('status', function ($row) {
+                ->editColumn('status', function ($row) {
                     if ($row->status == 'pending') {
                         return '<div class="badge bg-label-warning">Pending</div>';
                     }
@@ -92,6 +98,11 @@ class HotelReservationController extends Controller
         return view("admin-page.hotel_reservations.list-hotel-reservation");
     }
 
+    /**
+     * Summary of create
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
     public function create(Request $request)
     {   
         $user = Auth::guard('admin')->user();   
@@ -111,7 +122,7 @@ class HotelReservationController extends Controller
 
         $reservation = HotelReservation::create(array_merge($data, [
             'number_of_pax' => $number_of_pax,
-            'approved_date' => $request->status == 'approved' ? date('Y-m-d') : null,
+            'approved_date' => $request->status == 'approved' ? Carbon::now() : null,
         ]));
 
         if($reservation) {
@@ -125,8 +136,8 @@ class HotelReservationController extends Controller
             ];
 
             $hotel_admin = Admin::where('merchant_id', $reservation->room->merchant->id)->first();
-            Mail::to('jamesgarnfil15@gmail.com')->send(new HotelReservationConfirmation($details));
-
+            $receiver = config('app.env') === 'production' ? $hotel_admin->email : config('mail.test_receiver');
+            Mail::to($receiver)->send(new HotelReservationConfirmation($details));
         }
 
         return redirect()->route('admin.hotel_reservations.edit', $reservation->id)->with('success', 'Hotel reservation added successfully.');
@@ -206,7 +217,6 @@ class HotelReservationController extends Controller
                     'expiration_date' => $payment_response['data']['expiresAt'] ?? null,
                 ];
 
-                // This notification will send to the customer
                 Mail::to($reservation->reserved_user->email)->send(new HotelReservationApproved($details));
             }
 
@@ -223,19 +233,29 @@ class HotelReservationController extends Controller
             DB::rollback();
             return back()->with('fail', $e->getMessage());
         }
-
     }
 
     public function destroy(Request $request, $id)
-    {
-        $reservation = HotelReservation::findOrFail($id);
+    {   
+        try {
+            $reservation = HotelReservation::findOrFail($id);
 
-        $reservation->delete();
+            $reservation->delete();
 
-        return response([
-            'status' => TRUE,
-            'message' => 'Hotel Reservation deleted successfully'
-        ]);
+            $deleted_reservation = $reservation;
+            LoggerService::log('delete', HotelReservation::class, ['reservation' => $deleted_reservation]);
+
+            return response([
+                'status' => TRUE,
+                'message' => 'Hotel Reservation deleted successfully'
+            ]);
+
+        } catch (ErrorException $e) {
+            return response([
+                'status' => FALSE,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     private function computeTotalAmount($amount, $additional_charges) {

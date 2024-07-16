@@ -87,7 +87,7 @@
                                     <thead>
                                         <tr>
                                             <th>Month</th>
-                                            <th style="text-align: center;">Transaction Count</th>
+                                            <th style="text-align: center;">Total Count</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -113,9 +113,6 @@
                                         <h2 style="font-weight: bold;"><span id="total-payment-amount">0</span></h2>
                                         <h6 style="line-height: 5px;">Total Transaction</h6>
                                     </div>
-                                    {{-- <div>
-                                    <div style="font-size: 12px;" class="text-success fw-semibold"> +72.80% <i class="bx bx-up-arrow-alt"></i></div>
-                                </div> --}}
                                 </div>
                             </div>
                         </div>

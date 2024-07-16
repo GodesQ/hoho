@@ -8,7 +8,7 @@
         <h4 class="fw-bold">Order Details</h4>
         <div class="d-flex gap-1">
             <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-primary">Edit Order <i class="bx bx-edit-alt"></i></a>
-            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-primary">Back to List <i class="bx bx-undo"></i></a> 
+            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-dark">Back to List <i class="bx bx-undo"></i></a> 
         </div>
     </div>
 

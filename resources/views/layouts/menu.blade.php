@@ -325,7 +325,7 @@
             <li class="menu-item {{ preg_match('/admin\/travel-taxes/', Request::path()) ? 'active' : null }}">
                 <a href="{{ route('admin.travel_taxes.list') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-money"></i>
-                    <div data-i18n="Travel Taxes">Travel Taxes</div>
+                    <div data-i18n="Travel Tax">Travel Tax</div>
                 </a>
             </li>
         @endcan
@@ -340,7 +340,6 @@
                 </a>
             @endcanany
         @endauth
-
 
         <ul class="menu-sub">
             @auth('admin')
@@ -368,7 +367,7 @@
                     <li
                         class="menu-item {{ preg_match('/admin\/reports\/travel-taxes-report/', Request::path()) ? 'active' : null }}">
                         <a href="{{ route('admin.reports.travel_taxes_report') }}" class="menu-link">
-                            <div data-i18n="Travel Taxes Report">Travel Taxes Report</div>
+                            <div data-i18n="Travel Tax Report">Travel Tax Report</div>
                         </a>
                     </li>
                 @endcan

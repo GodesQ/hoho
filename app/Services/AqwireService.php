@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use ErrorException;
 use Exception;
 use Illuminate\Support\Facades\Http;
@@ -16,7 +17,7 @@ class AqwireService
     public function pay($body)
     {
         # Generate URL Endpoint and Auth Token for Payment Gateway
-        if (env('APP_ENVIRONMENT') == 'LIVE') {
+        if (config('app.env') === 'production') {
             $url = 'https://payments.aqwire.io/api/v3/transactions/create';
             $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
         } else {
@@ -94,14 +95,14 @@ class AqwireService
             'redirectUrl' => [
                 'success' => $success . $transaction->id,
                 'cancel' => $cancel . $transaction->id,
-                'callback' => env('AQWIRE_TEST_CALLBACK_URL') . $transaction->id
+                'callback' => env('AQWIRE_TEST_CALLBACK_URL')
             ],
             'note' => 'Payment for Philippines Hop On Hop Off',
+            'expiresAt' => Carbon::now()->addDays(1),
         ];
 
         return $requestModel;
     }
-
 
     public function getHMACSignatureHash($text, $secret_key)
     {

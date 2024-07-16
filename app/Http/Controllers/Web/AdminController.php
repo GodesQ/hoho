@@ -25,7 +25,12 @@ use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
 
 class AdminController extends Controller
-{
+{   
+    /**
+     * View list of admin.
+     * @param \Illuminate\Http\Request $request
+     * @return mixed
+     */
     public function list(Request $request)
     {
         if ($request->ajax()) {
@@ -59,13 +64,25 @@ class AdminController extends Controller
 
         return view('admin-page.admins.list-admin');
     }
-
+    
+    /**
+     * Create a new admin.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function create(Request $request)
     {
         $roles = Role::get();
         return view('admin-page.admins.create-admin', compact('roles'));
     }
 
+    /**
+     * Store a new admin based on the given request.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(StoreRequest $request)
     {
         $data = $request->except('_token', 'password');
@@ -77,10 +94,15 @@ class AdminController extends Controller
         
         LoggerService::log('create', Admin::class, ['added' => $request->all()]);
 
-        if ($admin)
-            return redirect()->route('admin.admins.edit', $admin->id)->withSuccess('Admin created successfully');
+        return redirect()->route('admin.admins.edit', $admin->id)->withSuccess('Admin created successfully');
     }
 
+    /**
+     * Edit the admin based on the given request.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function edit(Request $request)
     {
         $roles = Role::get();
@@ -89,6 +111,12 @@ class AdminController extends Controller
         return view('admin-page.admins.edit-admin', compact('admin', 'roles'));
     }
 
+    /**
+     * Update the admin based on the given request.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function update(UpdateRequest $request)
     {
         $data = $request->except('_token');
@@ -132,6 +160,12 @@ class AdminController extends Controller
         return back()->withSuccess('Admin updated successfully');
     }
 
+    /**
+     * Delete the admin based on the given request.
+     * @param \Illuminate\Http\Request $request
+     * @param mixed $id
+     * @return \Illuminate\Http\Response
+     */
     public function destroy(Request $request, $id)
     {
         $admin = Admin::where('id', $id)->first();
@@ -151,51 +185,51 @@ class AdminController extends Controller
         ]);
     }
 
-    public function merchantAdmins()
-    {
+    // public function merchantAdmins()
+    // {
 
-        // $auth = Auth::user();
-        $results = Admin::whereNotNull('merchant_data_id')->get();
-        foreach ($results as $key => $result) {
+    //     // $auth = Auth::user();
+    //     $results = Admin::whereNotNull('merchant_data_id')->get();
+    //     foreach ($results as $key => $result) {
 
-            switch ($result->role) {
-                case 'merchant_store_admin':
-                    $merchant_data = MerchantStore::where('id', $result->merchant_data_id)->first();
-                    break;
-                case 'merchant_restaurant_admin':
-                    $merchant_data = MerchantRestaurant::where('id', $result->merchant_data_id)->first();
-                    break;
-                case 'merchant_hotel_admin':
-                    $merchant_data = MerchantHotel::where('id', $result->merchant_data_id)->first();
-                    break;
-                case 'tour_operator_admin':
-                    $merchant_data = MerchantTourProvider::where('id', $result->merchant_data_id)->first();
-                    break;
-                default:
-                    $merchant_data = null;
-                    break;
-            }
+    //         switch ($result->role) {
+    //             case 'merchant_store_admin':
+    //                 $merchant_data = MerchantStore::where('id', $result->merchant_data_id)->first();
+    //                 break;
+    //             case 'merchant_restaurant_admin':
+    //                 $merchant_data = MerchantRestaurant::where('id', $result->merchant_data_id)->first();
+    //                 break;
+    //             case 'merchant_hotel_admin':
+    //                 $merchant_data = MerchantHotel::where('id', $result->merchant_data_id)->first();
+    //                 break;
+    //             case 'tour_operator_admin':
+    //                 $merchant_data = MerchantTourProvider::where('id', $result->merchant_data_id)->first();
+    //                 break;
+    //             default:
+    //                 $merchant_data = null;
+    //                 break;
+    //         }
 
-            $result->update([
-                'merchant_id' => $merchant_data->merchant_id ?? null
-            ]);
-        }
+    //         $result->update([
+    //             'merchant_id' => $merchant_data->merchant_id ?? null
+    //         ]);
+    //     }
 
-        echo "Success";
-    }
+    //     echo "Success";
+    // }
 
-    public function operatorAdmins()
-    {
-        $admins = Admin::whereHas('transport')->with('transport')->get();
-        foreach ($admins as $key => $admin) {
-            $admin->update([
-                'transport_id' => $admin->transport->id
-            ]);
-        }
+    // public function operatorAdmins()
+    // {
+    //     $admins = Admin::whereHas('transport')->with('transport')->get();
+    //     foreach ($admins as $key => $admin) {
+    //         $admin->update([
+    //             'transport_id' => $admin->transport->id
+    //         ]);
+    //     }
 
-        echo "Success";
+    //     echo "Success";
 
-    }
+    // }
 
     public function sendMessageWithSemaphore()
     {

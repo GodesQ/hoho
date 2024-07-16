@@ -137,7 +137,7 @@ class TourReservationService
             ];
 
             # Generate URL Endpoint and Auth Token for Payment Gateway
-            if (env('APP_ENVIRONMENT') == 'LIVE') {
+            if (config('app.env') === 'production') {
                 $url_create = 'https://payments.aqwire.io/api/v3/transactions/create';
                 $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
             } else {
@@ -331,7 +331,7 @@ class TourReservationService
             ];
 
             # Generate URL Endpoint and Auth Token for Payment Gateway
-            if (env('APP_ENVIRONMENT') == 'LIVE') {
+            if (config('app.env') === 'production') {
                 $url_create = 'https://payments.aqwire.io/api/v3/transactions/create';
                 $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
             } else {
@@ -490,6 +490,9 @@ class TourReservationService
     {
         return DataTables::of($data)
             ->addIndexColumn()
+            ->editColumn('start_date', function ($row) {
+                return Carbon::parse($row->start_date)->format('M d, Y');
+            })
             ->addColumn('reserved_user', function ($row) {
                 if ($row->user) {
                     return view('components.user-contact', ['user' => $row->user]);
@@ -542,13 +545,12 @@ class TourReservationService
                 ];
     
                 if ($tour?->tour_provider?->contact_email) {
-                    $recipientEmail = env('APP_ENVIRONMENT') == 'LIVE' ? $tour->tour_provider->contact_email : 'james@godesq.com';
+                    $recipientEmail = config('app.env') === 'production' ? $tour->tour_provider->contact_email : config('mail.test_receiver');
                     Mail::to($recipientEmail)->send(new TourProviderBookingNotification($details));
                 }
             }
         }
     }
-
 
     # HELPERS
     private function getHMACSignatureHash($text, $secret_key)
