@@ -44,24 +44,13 @@
                         </div>
                     </div>
                 </div>
-                {{-- <div class="btn-group d-flex mt-3 justify-content-end">
-                    <button class="btn btn-outline-primary">
-                        Print <i class="bx bx-printer"></i>
-                    </button>
-                    <button class="btn btn-outline-primary">
-                        Download as PDF <i class="bx bx-download"></i>
-                    </button>
-                    <button class="btn btn-outline-primary">
-                        Download as CSV <i class="bx bx-download"></i>
-                    </button>
-                </div> --}}
             </div>
         </div>
 
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped table-borderless data-table" style="width: 100%;">
+                    <table class="table table-striped table-bordered-bottom data-table" style="width: 100%;">
                         <thead>
                             <tr>
                                 <th>Id</th>

@@ -18,7 +18,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive-lg text-nowrap">
-                    <table class="table table-striped table-borderless data-table">
+                    <table class="table table-striped table-bordered-bottom data-table">
                         <thead>
                             <tr>
                                 <th>Id</th>
