@@ -11,6 +11,7 @@ use App\Mail\HotelReservationConfirmation;
 use App\Models\Admin;
 use App\Models\HotelReservation;
 use App\Models\Merchant;
+use App\Models\Role;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\AqwireService;
@@ -40,7 +41,7 @@ class HotelReservationController extends Controller
     {
         if ($request->ajax()) {
             $user = Auth::guard('admin')->user();
-            $hotel_reservations = HotelReservation::when(in_array($user->role, ['merchant_hotel_admin', 'merchant_hotel_employee']), function ($query) use($user) {
+            $hotel_reservations = HotelReservation::when(in_array($user->role, [Role::MERCHANT_HOTEL_ADMIN, Role::MERCHANT_HOTEL_EMPLOYEE]), function ($query) use($user) {
                 $query->whereHas('room', function ($q) use ($user) {
                     $q->where('merchant_id', $user->merchant_id);
                 });
@@ -107,7 +108,7 @@ class HotelReservationController extends Controller
     {   
         $user = Auth::guard('admin')->user();   
         $merchant_hotels = Merchant::where('type', 'Hotel')
-                            ->when(in_array($user->role, ['merchant_hotel_admin', 'merchant_hotel_employee']), function ($query) use($user) {
+                            ->when(in_array($user->role, [Role::MERCHANT_HOTEL_ADMIN, Role::MERCHANT_HOTEL_EMPLOYEE]), function ($query) use($user) {
                                 return $query->where('id', $user->merchant_id);
                             })
                             ->get();
@@ -147,7 +148,7 @@ class HotelReservationController extends Controller
     {   
         $user = Auth::guard('admin')->user();   
         $merchant_hotels = Merchant::where('type', 'Hotel')
-                            ->when(in_array($user->role, ['merchant_hotel_admin', 'merchant_hotel_employee']), function ($query) use($user) {
+                            ->when(in_array($user->role, [Role::MERCHANT_HOTEL_ADMIN, Role::MERCHANT_HOTEL_EMPLOYEE]), function ($query) use($user) {
                                 return $query->where('id', $user->merchant_id);
                             })
                             ->get();

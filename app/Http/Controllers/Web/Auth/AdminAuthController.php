@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Auth;
 use App\Http\Controllers\Controller;
 
 use App\Models\Merchant;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -126,16 +127,16 @@ class AdminAuthController extends Controller
         $merchant_data = Merchant::where('id', $admin->merchant_id)->exists();
 
         switch ($admin->role) {
-            case 'merchant_store_admin':
+            case Role::MERCHANT_STORE_ADMIN :
                 $type = 'store';
                 break;
-            case 'merchant_restaurant_admin':
+            case Role::MERCHANT_RESTAURANT_ADMIN :
                 $type = 'restaurant';
                 break;
-            case 'merchant_hotel_admin':
+            case Role::MERCHANT_HOTEL_ADMIN :
                 $type = 'hotel';
                 break;
-            case 'tour_operator_admin':
+            case Role::TOUR_OPERATOR_ADMIN :
                 $type = 'tour_provider';
                 break;
             default:

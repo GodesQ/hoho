@@ -42,6 +42,17 @@ class OrderController extends Controller
                 ->editColumn('total_amount', function ($order) {
                     return '₱ ' . number_format($order->total_amount, 2);
                 })
+                ->editColumn('status', function ($order) {
+                    if($order->status == 'pending') {
+                        return "<div class='badge bg-label-warning'>Pending</div>";
+                    } elseif ($order->status == 'processing') {
+                        return "<div class='badge bg-label-warning'>Processing</div>";
+                    } elseif ($order->status == 'received') {
+                        return "<div class='badge bg-label-success'>Received</div>";
+                    } elseif ($order->status == 'cancelled') {
+                        return "<div class='badge bg-label-danger'>Cancelled</div>";
+                    }
+                })
                 ->addColumn('actions', function ($row) {
                     $output = '<div class="dropdown">';
 
@@ -55,7 +66,7 @@ class OrderController extends Controller
 
                     return $output;
                 })
-                ->rawColumns(['actions'])
+                ->rawColumns(['actions', 'status'])
                 ->make(true);
         }
 

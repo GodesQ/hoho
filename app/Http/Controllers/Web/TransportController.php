@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 use App\Models\Transport;
@@ -38,7 +39,7 @@ class TransportController extends Controller
     }
 
     public function create(Request $request) {
-        $operators = Admin::where('role', 'bus_operator')->get();
+        $operators = Admin::where('role', Role::BUS_OPERATOR)->get();
         $tours = Tour::whereNull('transport_id')->get();
         return view('admin-page.transports.create-transport', compact('operators', 'tours'));
     }
@@ -60,7 +61,7 @@ class TransportController extends Controller
     }
 
     public function edit(Request $request) {
-        $operators = Admin::where('role', 'bus_operator')->get();
+        $operators = Admin::where('role', Role::BUS_OPERATOR)->get();
         $transport = Transport::where('id', $request->id)->firstOrFail();
         $tours = Tour::where('transport_id', $transport->id)->orWhereNull('transport_id')->get();
 

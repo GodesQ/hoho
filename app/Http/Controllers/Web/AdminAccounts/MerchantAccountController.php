@@ -15,10 +15,10 @@ class MerchantAccountController extends Controller
     {
         if ($request->ajax()) {
             $data = Admin::whereIn('role', [
-                'merchant_restaurant_admin',
-                'merchant_hotel_admin',
-                'merchant_store_admin',
-                'tour_operator_admin'
+                Role::MERCHANT_RESTAURANT_ADMIN,
+                Role::MERCHANT_HOTEL_ADMIN,
+                Role::MERCHANT_STORE_ADMIN,
+                Role::TOUR_OPERATOR_ADMIN
             ])->with('merchant');
 
             return DataTables::of($data)

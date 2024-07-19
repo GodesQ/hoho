@@ -1,14 +1,15 @@
 <?php
 use App\Models\AppSetting;
+use App\Models\Role;
 
 if (!function_exists('merchant_roles')) {
 
     function merchant_roles() {
         return [
-            'merchant_restaurant_admin',
-            'merchant_hotel_admin',
-            'merchant_store_admin',
-            'tour_operator_admin'
+            Role::MERCHANT_HOTEL_ADMIN,
+            Role::MERCHANT_RESTAURANT_ADMIN,
+            Role::MERCHANT_STORE_ADMIN,
+            Role::TOUR_OPERATOR_ADMIN
         ];
     }
 }

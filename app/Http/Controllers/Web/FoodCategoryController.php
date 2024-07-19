@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FoodCategory\StoreRequest;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
@@ -39,7 +40,7 @@ class FoodCategoryController extends Controller
     {
         $user = Auth::guard('admin')->user();
         
-        if($user->role == 'merchant_restaurant_admin') {
+        if($user->role == Role::MERCHANT_RESTAURANT_ADMIN) {
             $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->where('is_active', 1)->get();
         } else {
             $merchants = Merchant::where('type', 'Restaurant')->where('is_active', 1)->get();
@@ -64,7 +65,7 @@ class FoodCategoryController extends Controller
     {
         $user = Auth::guard('admin')->user();
         
-        if($user->role == 'merchant_restaurant_admin') {
+        if($user->role == Role::MERCHANT_RESTAURANT_ADMIN) {
             $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->get();
         } else {
             $merchants = Merchant::where('type', 'Restaurant')->where('is_active', 1)->get();

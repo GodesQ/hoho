@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Room\StoreRequest;
 use App\Http\Requests\Room\UpdateRequest;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -53,7 +54,7 @@ class RoomController extends Controller
     public function create(Request $request)
     {   
         $user = Auth::guard('admin')->user();
-        if($user->role == 'merchant_hotel_admin') {
+        if($user->role == Role::MERCHANT_HOTEL_ADMIN) {
             $merchants = Merchant::where('type','Hotel')->where('id', $user->merchant_id)->get();
         } else {
             $merchants = Merchant::where('type', 'Hotel')->get();
@@ -118,7 +119,7 @@ class RoomController extends Controller
     public function edit(Request $request)
     {
         $user = Auth::guard('admin')->user();
-        if($user->role == 'merchant_hotel_admin') {
+        if($user->role == Role::MERCHANT_HOTEL_ADMIN) {
             $merchants = Merchant::where('type','Hotel')->where('id', $user->merchant_id)->get();
         } else {
             $merchants = Merchant::where('type', 'Hotel')->get();

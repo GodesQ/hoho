@@ -8,10 +8,6 @@ use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 
 class FileService {
-    public function __construct() {
-    
-    }
-
     /**
      * Upload the image to the directory path.
      * 

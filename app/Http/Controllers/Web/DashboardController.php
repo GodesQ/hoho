@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Merchant;
+use App\Models\Role;
 use App\Models\Transport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -33,19 +34,19 @@ class DashboardController extends Controller
         if (in_array($user->role, merchant_roles())) {
             $merchantInfo = Merchant::where('id', $user->merchant_id)->first();
 
-            if($user->role == 'merchant_hotel_admin') {
+            if($user->role == Role::MERCHANT_HOTEL_ADMIN) {
                 return $this->hotelDashboard($merchantInfo);
             }
 
-            if($user->role == 'merchant_restaurant_admin') {
+            if($user->role == Role::MERCHANT_RESTAURANT_ADMIN) {
                 return $this->restaurantDashboard($merchantInfo);
             }
 
-            if($user->role == 'merchant_store_admin') {
+            if($user->role == Role::MERCHANT_STORE_ADMIN) {
                 return $this->storeDashboard($merchantInfo);
             }
 
-            if($user->role == 'tour_operator_admin') {
+            if($user->role == Role::TOUR_OPERATOR_ADMIN) {
                 return $this->tourOperatorDashboard($merchantInfo);
             }
 

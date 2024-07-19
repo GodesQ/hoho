@@ -7,6 +7,7 @@ use App\Http\Requests\RestaurantReservation\StoreRequest;
 use App\Http\Requests\RestaurantReservation\UpdateRequest;
 use App\Models\Merchant;
 use App\Models\RestaurantReservation;
+use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,14 +20,14 @@ class RestaurantReservationController extends Controller
             $user = Auth::guard('admin')->user();
             $data = RestaurantReservation::query();
 
-            if($user->role == 'merchant_restaurant_admin') {
+            if($user->role == Role::MERCHANT_RESTAURANT_ADMIN) {
                 $data->where('merchant_id', $user->merchant_id);
             }
             
             return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('reserved_user_id', function ($row) {
-                        return $row->reserved_user->email ?? null;
+                        return $row->reserved_user->email ?? 'No user found';
                     })
                     ->addColumn('merchant_id', function ($row) {
                         return $row->merchant->name ?? null;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v2;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Admin;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,7 @@ class AuthController extends Controller
         if(!$user) {
             $user = Admin::where($username_type, $request->username)->first();
             if ($user) {
-                if($user->role === 'bus_operator') {
+                if($user->role === Role::BUS_OPERATOR) {
                     $user->load('transport');
                 }
             } else {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Role;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,18 +28,18 @@ class IsMerchantCreated
             if(!$user->merchant_id) {
                 $type = '0';
                 switch ($user->role) {
-                    case 'merchant_store_admin':
+                    case Role::MERCHANT_STORE_ADMIN :
                         $type = 'store';
                         break;
-                    case 'merchant_restaurant_admin':
+                    case Role::MERCHANT_RESTAURANT_ADMIN :
                         $type = 'restaurant';
                         break;
         
-                    case 'merchant_hotel_admin':
+                    case Role::MERCHANT_HOTEL_ADMIN :
                         $type = 'hotel';
                         break;
         
-                    case 'tour_operator_admin':
+                    case Role::TOUR_OPERATOR_ADMIN :
                         $type = 'tour_provider';
                         break;  
         

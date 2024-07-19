@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreRequest;
 use App\Http\Requests\Product\UpdateRequest;
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -54,7 +55,7 @@ class ProductController extends Controller
     public function create(Request $request)
     {   
         $user = Auth::guard('admin')->user();
-        if($user->role == 'merchant_store_admin') {
+        if($user->role == Role::MERCHANT_STORE_ADMIN) {
             $merchants = Merchant::where('type','Store')->where('id', $user->merchant_id)->get();
         } else {
             $merchants = Merchant::where('type', 'Hotel')->get();
@@ -120,7 +121,7 @@ class ProductController extends Controller
     public function edit($id)
     {   
         $user = Auth::guard('admin')->user();
-        if($user->role == 'merchant_store_admin') {
+        if($user->role == Role::MERCHANT_STORE_ADMIN) {
             $merchants = Merchant::where('type','Store')->where('id', $user->merchant_id)->get();
         } else {
             $merchants = Merchant::where('type', 'Hotel')->get();
