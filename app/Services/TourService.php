@@ -37,8 +37,9 @@ class TourService
                 ->addColumn('actions', function ($row) {
                     $output = '<div class="dropdown">';
 
-                    $output .= '<a href="/admin/tours/edit/' .$row->id. '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>';
+                    $output .= "<a href='/admin/tours/edit/{$row->id}' class='btn btn-outline-primary btn-sm'><i class='bx bx-edit-alt me-1'></i></a>";
 
+                    // For Main DIY Tour
                     if($row->id != 63) {
                         $output .= '<a href="javascript:void(0);" id="' .$row->id. '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></a>';
                     }
@@ -54,6 +55,24 @@ class TourService
                     } else {
                         return '<div class="badge bg-label-warning">InActive</div>';
                     }
+                })
+                ->filter(function ($query) use ($request) {
+                    $search = $request->search;
+                    $type = $request->type;
+                    $status = $request->status;
+
+                    if($search) {
+                        $query->where('name','LIKE', "%{$search}%");
+                    }
+
+                    if($type) {
+                        $query->where("type", $type);
+                    }
+
+                    if($status) {
+                        $query->where("status", $status);
+                    }
+
                 })
                 ->rawColumns(['actions', 'status', 'tour_image'])
                 ->make(true);
