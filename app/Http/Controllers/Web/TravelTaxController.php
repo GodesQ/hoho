@@ -7,6 +7,7 @@ use App\Http\Requests\TravelTax\PaymentRequest;
 use App\Models\Transaction;
 use App\Models\TravelTaxPassenger;
 use App\Models\TravelTaxPayment;
+use App\Services\LoggerService;
 use App\Services\TravelTaxService;
 use Carbon\Carbon;
 use ErrorException;
@@ -46,10 +47,18 @@ class TravelTaxController extends Controller
                     }
                 })
                 ->addColumn('actions', function ($row) {
-                    return '<div class="dropdown">
-                                <a href="' . route('admin.travel_taxes.edit', $row->id) . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                <button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
-                            </div>';
+                    $output = '';
+
+                    $output .= '<div class="dropdown">';
+                    $output .= '<a href="' . route('admin.travel_taxes.edit', $row->id) . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>';
+                                
+                    if($row->status != 'paid') {
+                        $output .= '<button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>';
+                    }
+
+                    $output .= '</div>';
+
+                    return $output;
                 })
                 ->filter(function ($query) use ($request) {
                     $status_query = $request->query('status');
@@ -123,9 +132,30 @@ class TravelTaxController extends Controller
         
     }
 
-    public function destroy(Request $request)
-    {
+    public function destroy(Request $request, $id)
+    {   
+        try {
+            $travel_tax_payment = TravelTaxPayment::where('id', $id)->with('transaction')->first();
+            
+            $copy = $travel_tax_payment->replicate();
 
+            if($travel_tax_payment->status != 'paid') {
+                $travel_tax_payment->transaction()->delete();
+                LoggerService::log('delete', TravelTaxPayment::class, $copy);
+            }
+
+            return response()->json([
+                'status'=> true,
+                'message'=> 'Travel Tax Payment Successfully Deleted',
+            ]);
+
+
+        } catch (ErrorException $e) {
+            return response()->json([
+                'status' => false,
+                'message'=> $e->getMessage()
+            ], 400);
+        }   
     }
 
     public function getPassenger(Request $request, $passenger_id)
