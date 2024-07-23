@@ -87,7 +87,7 @@
                                         <div class="col-lg-4">
                                             <div class="mb-3">
                                                 <label for="tour_provider" class="form-label">Tour Provider</label>
-                                                <select name="tour_provider_id" id="tour_provider" class="form-select">
+                                                <select name="tour_provider_id" id="tour_provider" class="form-select select2">
                                                     <option value="">--- SELECT TOUR PROVIDER ---</option>
                                                     @foreach ($tour_providers as $tour_provider)
                                                         <option value="{{ $tour_provider->id }}">
