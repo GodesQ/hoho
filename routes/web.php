@@ -139,12 +139,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::get('admins/merchantAdmins', [AdminController::class, 'merchantAdmins']);
     Route::get('admins/operatorAdmins', [AdminController::class, 'operatorAdmins']);
 
-    Route::get('merchant-accounts', [MerchantAccountController::class, 'index'])->name('merchant_accounts.index')->can('view_merchant_account_list');
-    Route::get('merchant-accounts/create', [MerchantAccountController::class, 'create'])->name('merchant_accounts.create')->can('create_merchant_account');
-    Route::post('merchant-accounts/store', [MerchantAccountController::class, 'store'])->name('merchant_accounts.store')->can('create_merchant_account');
-    Route::get('merchant-accounts/edit/{id}', [MerchantAccountController::class, 'edit'])->name('merchant_accounts.edit')->can('edit_merchant_account');
-    Route::put('merchant-accounts/update/{id}', [MerchantAccountController::class,'update'])->name('merchant_accounts.update')->can('edit_merchant_account');
-    Route::delete('merchant-accounts/destroy/{id}', [MerchantAccountController::class, 'destroy'])->name('merchant_accounts.destroy')->can('delete_merchant_account');
+    Route::get('merchant-accounts', [MerchantAccountController::class, 'index'])->name('merchant_accounts.index');
+    Route::get('merchant-accounts/create', [MerchantAccountController::class, 'create'])->name('merchant_accounts.create');
+    Route::post('merchant-accounts/store', [MerchantAccountController::class, 'store'])->name('merchant_accounts.store');
+    Route::get('merchant-accounts/edit/{id}', [MerchantAccountController::class, 'edit'])->name('merchant_accounts.edit');
+    Route::put('merchant-accounts/update/{id}', [MerchantAccountController::class,'update'])->name('merchant_accounts.update');
+    Route::delete('merchant-accounts/destroy/{id}', [MerchantAccountController::class, 'destroy'])->name('merchant_accounts.destroy');
 
     Route::put('merchant-accounts/update-merchant', [MerchantAccountController::class, 'updateMerchant'])->name('merchant_accounts.update_merchant');
     Route::patch('merchant-accounts/unsync-merchant', [MerchantAccountController::class, 'unsyncMerchant'])->name('merchant_accounts.unsync_merchant');
