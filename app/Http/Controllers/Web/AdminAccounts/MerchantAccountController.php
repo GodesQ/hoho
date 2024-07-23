@@ -68,7 +68,7 @@ class MerchantAccountController extends Controller
         $data = $request->except('_token', 'username');
         $merchant_account = Admin::where("id", $id)->with('merchant')->first();
 
-        $merchant_account->update($data);
+        $merchant_account->update(array_merge($data, ['is_approved' => $request->has('is_approved')]));
 
         return back()->withSuccess('Merchant account updated successfully.');
     }
