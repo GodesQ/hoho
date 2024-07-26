@@ -20,7 +20,6 @@ use App\Http\Controllers\Api\v2\TourReservationController;
 use App\Http\Controllers\Api\v2\TransportController;
 use App\Http\Controllers\Api\v2\TravelTaxController;
 use App\Http\Controllers\Api\v2\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
     Route::post('login', [AuthController::class, 'login']);

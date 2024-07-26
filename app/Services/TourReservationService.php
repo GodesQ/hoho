@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Mail\PaymentRequestMail;
 use App\Mail\TourProviderBookingNotification;
+use App\Models\Role;
 use App\Models\Tour;
 use App\Models\TourReservation;
 use App\Models\TourReservationCustomerDetail;
@@ -419,7 +420,7 @@ class TourReservationService
 
         $data = TourReservation::with('user', 'tour')
             // ->whereHas('user')
-            ->when(!in_array($current_user->role, ['super_admin', 'admin']), function ($query) use ($current_user) {
+            ->when(!in_array($current_user->role, [Role::SUPER_ADMIN, Role::ADMIN]), function ($query) use ($current_user) {
                 $query->where('created_by', $current_user->id);
             })
             ->when(!empty($request->get('search')), function ($query) use ($request) {
@@ -516,7 +517,7 @@ class TourReservationService
             })
             ->addColumn('actions', function ($row) {
                 $output = '<div class="dropdown">
-                    <a href="'. route('admin.tour_reservations.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>';
+                    <a href="'. route('admin.tour_reservations.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a> ';
 
                 $output .= $row->status === 'pending' && optional($row->transaction)->payment_status != 'success' ? '<button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>' : '';
 

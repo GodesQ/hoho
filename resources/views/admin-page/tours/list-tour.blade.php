@@ -54,7 +54,6 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th></th>
                                 <th>Tour</th>
                                 <th>Default Price</th>
                                 <th>Status</th>
