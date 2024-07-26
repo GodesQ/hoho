@@ -82,7 +82,7 @@ class MerchantStoreController extends Controller
      */
     public function store(StoreRequest $request) {
         try {
-            $result = $this->merchantStoreService->CreateMerchantStore($request);
+            $result = $this->merchantStoreService->createMerchantStore($request);
 
             $previousUrl = \URL::previous();
             $previousPath = parse_url($previousUrl, PHP_URL_PATH);
@@ -123,13 +123,13 @@ class MerchantStoreController extends Controller
     }
 
     public function update(UpdateRequest $request) {
-        $result = $this->merchantStoreService->UpdateMerchantStore($request);
+        $result = $this->merchantStoreService->updateMerchantStore($request);
 
         if($result['status']) {
-            return back()->with('success', 'Merchant Store Updated Successfully');
+            return back()->with('success', 'The merchant store successfully update.');
         }
 
-        return back()->with('fail', 'Merchant Store Failed to Update');
+        return back()->with('fail', 'The merchant store failed to update.');
     }
 
     public function destroy(Request $request) {

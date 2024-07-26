@@ -25,7 +25,6 @@ class FileService {
      * 
      * @param mixed $path
      * @param mixed $filename
-     * @throws ErrorException
      * @return bool
      */
     public static function remove($path, $filename) {
@@ -35,7 +34,7 @@ class FileService {
             return Storage::disk('public')->delete($old_image_path);
         }
 
-        throw new ErrorException("The image wasn't removed from the directory.");
+        return false;
     }
 
     /**
