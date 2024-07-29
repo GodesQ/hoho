@@ -57,7 +57,7 @@ class MerchantRestaurantController extends Controller
 
     public function store(StoreRequest $request)
     {
-        $result = $this->merchantRestaurantService->CreateMerchantRestaurant($request);
+        $result = $this->merchantRestaurantService->createMerchantRestaurant($request);
 
         if ($result['status']) {
             $previousUrl = URL::previous();
@@ -91,7 +91,7 @@ class MerchantRestaurantController extends Controller
 
     public function update(UpdateRequest $request)
     {
-        $result = $this->merchantRestaurantService->UpdateMerchantRestaurant($request);
+        $result = $this->merchantRestaurantService->updateMerchantRestaurant($request);
 
         if($result['status']) {
             return back()->with('success', 'Merchant Restaurant Updated Successfully');

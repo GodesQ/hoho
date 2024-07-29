@@ -55,7 +55,7 @@ class FileService {
                 if ($request->hasFile($field) && $field != 'images') {
                     $file = $request->file($field);
 
-                    $image_file_name = "{$base_name}_{$field}." . $file->getClientOriginalExtension();
+                    $image_file_name = "{$base_name}_{$field}.{$file->getClientOriginalExtension()}";
 
                     // Remove image from the directory of $path
                     FileService::remove($path, $image_file_name);
