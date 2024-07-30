@@ -495,8 +495,8 @@ class TourReservationService
                 return Carbon::parse($row->start_date)->format('M d, Y');
             })
             ->addColumn('reserved_user', function ($row) {
-                if ($row->user) {
-                    return view('components.user-contact', ['user' => $row->user]);
+                if ($row->customer_details) {
+                    return view('components.user-contact', ['user' => $row->customer_details]);
                 }
 
                 return '-';
