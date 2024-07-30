@@ -22,7 +22,15 @@ class RoomController extends Controller
     {
 
         if ($request->ajax()) {
-            $rooms = Room::with('merchant');
+            $user = Auth::guard("admin")->user();
+            $rooms = Room::query();
+
+            $rooms = $rooms->with('merchant');
+
+            if($user->role === Role::MERCHANT_HOTEL_ADMIN) {
+                $rooms = $rooms->where('merchant_id', $user->merchant_id);
+            }
+            
             return DataTables::of($rooms)
                 ->addIndexColumn()
                 ->addColumn('merchant', function ($row) {
