@@ -62,7 +62,7 @@
                                     <div class="mb-3">
                                         <label for="image" class="form-label">Image <span
                                                 class="text-danger">*</span> <span>(Max File Size: 2MB)</span></label>
-                                        <input type="file" class="form-control" name="image" id="image">
+                                        <input type="file" class="form-control" name="image" id="image" accept=image/*>
                                         <span class="text-danger danger">
                                             @error('image')
                                                 {{ $message }}
