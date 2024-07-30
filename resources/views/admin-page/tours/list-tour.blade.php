@@ -54,6 +54,7 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
+                                <th>Tour Image</th>
                                 <th>Tour</th>
                                 <th>Default Price</th>
                                 <th>Status</th>
@@ -106,18 +107,15 @@
                     },
                     {
                         data: 'status',
-                        name: 'status'
+                        name: 'status',
+                        orderable: false,
                     },
                     {
                         data: 'actions',
-                        name: 'actions'
+                        name: 'actions',
+                        orderable: false,
                     }
                 ],
-
-                columnDefs: [{
-                    targets: [4], // Index of the column you want to disable sorting for
-                    orderable: false
-                }],
                 order: [
                     [0, 'desc'] // Sort by the first column (index 0) in descending order
                 ]

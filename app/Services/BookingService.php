@@ -6,6 +6,7 @@ use App\Enum\TourTypeEnum;
 use App\Enum\TransactionTypeEnum;
 use App\Http\Requests\TourReservation\StoreRequest;
 use App\Models\LayoverTourReservationDetail;
+use App\Models\Referral;
 use App\Models\TourReservationCustomerDetail;
 use App\Models\User;
 use ErrorException;
@@ -68,63 +69,48 @@ class BookingService
 
             $reservation = $this->createReservation($request, $transaction, $totalAmount, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
 
-            // Check if reservation or transaction creation failed
-            if (!$reservation || !$transaction) {
-                if ($reservation) {
-                    $reservation->delete();
-                }
-                if ($transaction) {
-                    $transaction->delete();
-                }
-                return back()->with('fail', 'Failed to Create Reservation');
+            if($request->payment_method === "cash_payment") 
+                return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Reservation Successfully');
+
+            $response = $this->sendPaymentRequest($transaction);
+            
+            if (!$response['status'] || $response['status'] === 'FAIL') {
+                throw new ErrorException('Invalid Transaction.');
             }
 
-            // Handle payment method`
-            if ($request->payment_method == 'cash_payment' || ($request->promo_code && $subAmount == $totalOfDiscount)) {
-                return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Reservation Successfully');
+            $responseData = json_decode($response['result']->getBody(), true);
+
+            // Update transaction after payment
+            $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+
+            // Send payment request mail
+            $this->mailService->sendPaymentRequestMail($transaction, $responseData['paymentUrl'], $responseData['data']['expiresAt']);
+
+            // Send notification to tour provider
+            if (config('app.env') === 'production') {
+                $tour = Tour::where('id', $request->tour_id)->first();
+
+                if ($tour && $tour->tour_provider && optional($tour->tour_provider)->contact_email) {
+
+                    $details = [
+                        'tour_provider_name' => $tour->tour_provider->merchant->name ?? "",
+                        'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
+                        'trip_date' => $request->trip_date,
+                        'tour_name' => $tour->name
+                    ];
+
+                    Mail::to(optional($tour->tour_provider)->contact_email)->send(new TourProviderBookingNotification($details));
+                }
+            }
+
+            // Return response
+            if ($request->is('api/*')) {
+                return response([
+                    'status' => 'paying',
+                    'url' => $responseData['paymentUrl']
+                ]);
             } else {
-                $response = $this->sendPaymentRequest($transaction);
-                
-                if (!$response['status'] || !$response['status'] == 'FAIL') {
-                    $reservation->delete();
-                    $transaction->delete();
-                    return back()->with('fail', 'Invalid Transaction');
-                }
-
-                $responseData = json_decode($response['result']->getBody(), true);
-
-                // Update transaction after payment
-                $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
-
-                // Send payment request mail
-                $this->mailService->sendPaymentRequestMail($transaction, $responseData['paymentUrl'], $responseData['data']['expiresAt']);
-
-                // Send notification to tour provider
-                if (config('app.env') === 'production') {
-                    $tour = Tour::where('id', $request->tour_id)->first();
-
-                    if ($tour && $tour->tour_provider && optional($tour->tour_provider)->contact_email) {
-
-                        $details = [
-                            'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
-                            'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
-                            'trip_date' => $request->trip_date,
-                            'tour_name' => $tour->name
-                        ];
-
-                        Mail::to(optional($tour->tour_provider)->contact_email)->send(new TourProviderBookingNotification($details));
-                    }
-                }
-
-                // Return response
-                if ($request->is('api/*')) {
-                    return response([
-                        'status' => 'paying',
-                        'url' => $responseData['paymentUrl']
-                    ]);
-                } else {
-                    return redirect($responseData['paymentUrl']);
-                }
+                return redirect($responseData['paymentUrl']);
             }
 
         } catch (\Exception $exception) {
@@ -164,7 +150,7 @@ class BookingService
             $totalOfAdditionalCharges = 0;
 
             foreach ($items as $item) {
-                $discounted_amount = intval($item['discounted_amount']) ?? intval($item['amount']);
+                $discounted_amount = array_key_exists('discounted_amount', $item) ? intval($item['discounted_amount']) : intval($item['amount']);
 
                 $subAmount += intval($item['amount']) ?? 0;
                 $totalOfDiscount += intval($item['amount']) - $discounted_amount;
@@ -234,7 +220,9 @@ class BookingService
 
     private function getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount)
     {
-        # NOTE: The amount of each booking was already been set, This function is for additional charges, discounted amount to sum up all of the bookings for this transaction.
+        # NOTE: The amount for each booking has already been set.
+        # This function is for additional charges, which are a discounted amount calculated from all of the bookings for this transaction.
+        
         return ($subAmount - $totalOfDiscount) + $totalOfAdditionalCharges;
     }
 
@@ -310,11 +298,19 @@ class BookingService
             'number_of_pass' => $request->number_of_pass,
             'ticket_pass' => $request->type == 'DIY' ? $request->ticket_pass : null,
             'payment_method' => $request->payment_method,
-            'referral_code' => $request->referral_code,
             'promo_code' => $request->promo_code,
             'created_by' => Auth::guard('admin')->user()->id,
             'created_user_type' => Auth::guard('admin')->user()->role,
         ]);
+
+        $referral = Referral::where('referral_code', $request->referral_code)->first();
+
+        if($referral) {
+            $reservation->update([
+                'referral_merchant_id' => $referral->merchant_id,
+                'referral_code' => $referral->referral_code,
+            ]);
+        }
 
         TourReservationCustomerDetail::create([
             'tour_reservation_id' => $reservation->id,
