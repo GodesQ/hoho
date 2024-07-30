@@ -7,12 +7,14 @@ use App\Http\Requests\Order\StoreRequest;
 use App\Http\Requests\Order\UpdateRequest;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Role;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\AqwireService;
 use Carbon\Carbon;
 use ErrorException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Str;
 
@@ -30,7 +32,16 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $orders = Order::with('product', 'customer');
+            $user = Auth::guard('admin')->user();
+            $orders = Order::query();
+
+            $orders = $orders->with('product', 'customer');
+
+            if($user->role === Role::MERCHANT_STORE_ADMIN) {
+                $orders = $orders->whereHas('product', function($q) use ($user) {
+                    $q->where('merchant_id', $user->merchant_id);
+                });
+            }
 
             return DataTables::of($orders)
                 ->editColumn('customer_id', function ($order) {
@@ -56,7 +67,7 @@ class OrderController extends Controller
                 ->addColumn('actions', function ($row) {
                     $output = '<div class="dropdown">';
 
-                    $output .= '<a title="View Order" href="/admin/orders/show/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-file me-1"></i></a> ';
+                    $output .= '<a title="View Order" href="'. route('admin.orders.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-file me-1"></i></a> ';
 
                     if ($row->status != 'approved') {
                         $output .= '<button title="Delete Order" type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>';
