@@ -205,6 +205,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::delete('attractions/remove_image', [AttractionController::class, 'removeImage'])->name('attractions.remove_image');
     // Route::get('attractions/update_attractions', [AttractionController::class, 'update_attractions']);
 
+    Route::get('tour-reservations/{reservation_id}/reservation-codes', [TourReservationController::class, 'get_tour_reservation_codes'])->name('tour_reservations.reservation_codes');
+
     Route::get('tour-reservations', [TourReservationController::class, 'list'])->name('tour_reservations.list')->can('view_tour_reservations_list')->middleware('merchant_created');
     Route::get('tour-reservations/create', [TourReservationController::class, 'create'])->name('tour_reservations.create')->middleware('merchant_created');
     Route::post('tour-reservations/store', [TourReservationController::class, 'store'])->name('tour_reservations.store');
@@ -213,8 +215,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::delete('tour-reservations/destroy', [TourReservationController::class, 'destroy'])->name('tour_reservations.destroy');
 
     Route::get("tour-reservations/sync-customer-details", [TourReservationController::class, 'syncCustomerDetails']);
-
-    Route::get('tour_reservations/reservation_codes/{reservation_id}', [TourReservationController::class, 'get_tour_reservation_codes'])->name('tour_reservations.reservation_codes');
 
     Route::get('merchants', [MerchantController::class, 'list'])->name('merchants.list');
     Route::get('merchants/create', [MerchantController::class, 'create'])->name('merchants.create');
