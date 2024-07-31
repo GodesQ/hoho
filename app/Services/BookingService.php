@@ -42,15 +42,19 @@ class BookingService
     public function createBookReservation(Request $request)
     {   
         try {
-            $reference_no = $this->generateReferenceNo();
+            DB::beginTransaction();
+
+            $user = User::where('id', $request->reserved_user_id)->first();
+
+            if(!$user) throw new ErrorException("User Not Found.");
+                
             $additional_charges = $this->generateAdditionalCharges();
 
             $subAmount = intval($request->amount) ?? 0;
+            $totalOfDiscount = 0;
 
             if ($request->promo_code) {
-                $totalOfDiscount = (intval($request->amount) - intval($request->discounted_amount));
-            } else {
-                $totalOfDiscount = 0;
+                $totalOfDiscount = intval($request->amount) - intval($request->discounted_amount);
             }
 
             $totalOfAdditionalCharges = $this->getTotalOfAdditionalCharges($request->number_of_pass, $additional_charges);
@@ -72,19 +76,18 @@ class BookingService
             if($request->payment_method === "cash_payment") 
                 return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Reservation Successfully');
 
-            $response = $this->sendPaymentRequest($transaction);
-            
-            if (!$response['status'] || $response['status'] === 'FAIL') {
+            $payment_request_model = $this->aqwireService->createRequestModel($transaction, $user);
+            $payment_response = $this->aqwireService->pay($payment_request_model);
+
+            if (!$payment_response['status'] || $payment_response['status'] === 'FAIL') {
                 throw new ErrorException('Invalid Transaction.');
             }
 
-            $responseData = json_decode($response['result']->getBody(), true);
-
             // Update transaction after payment
-            $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+            $this->updateTransactionAfterPayment($transaction, $payment_response, $additional_charges);
 
             // Send payment request mail
-            $this->mailService->sendPaymentRequestMail($transaction, $responseData['paymentUrl'], $responseData['data']['expiresAt']);
+            $this->mailService->sendPaymentRequestMail($transaction, $payment_response['paymentUrl'], $payment_response['data']['expiresAt']);
 
             // Send notification to tour provider
             if (config('app.env') === 'production') {
@@ -103,17 +106,20 @@ class BookingService
                 }
             }
 
+            DB::commit();
+
             // Return response
             if ($request->is('api/*')) {
                 return response([
                     'status' => 'paying',
-                    'url' => $responseData['paymentUrl']
+                    'url' => $payment_response['paymentUrl']
                 ]);
-            } else {
-                return redirect($responseData['paymentUrl']);
             }
 
+            return redirect($payment_response['paymentUrl']);
+
         } catch (\Exception $exception) {
+            DB::rollBack();
            return back()->with('fail', $exception->getMessage());
         }
     }

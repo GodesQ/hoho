@@ -67,12 +67,12 @@
                     <table class="table table-striped table-bordered-bottom data-table">
                         <thead class="data-table-thead">
                             <tr>
-                                <th class="text-white">ID</th>
-                                <th class="text-white">Trip Date</th>
-                                <th class="text-white">Reserved User</th>
-                                <th class="text-white">Tour</th>
-                                <th class="text-white">Status</th>
-                                <th class="text-white">Actions</th>
+                                <th>ID</th>
+                                <th>Trip Date</th>
+                                <th>Reserved User</th>
+                                <th>Tour</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                     </table>
