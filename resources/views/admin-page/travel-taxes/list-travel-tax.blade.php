@@ -1,14 +1,14 @@
 @extends('layouts.admin.layout')
 
-@section('title', 'Travel Taxes List - Philippines Hop On Hop Off')
+@section('title', 'Travel Tax List - Philippines Hop On Hop Off')
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
         <section class="section-header d-flex justify-content-between align-items-center">
             <div class="title-section">
-                <h4 class="fw-medium mb-2">Travel Taxes</h4>
+                <h4 class="fw-medium mb-2">Travel Tax</h4>
                 <h6 class="fw-medium text-primary"><a href="{{ route('admin.dashboard') }}"
-                        class="text-muted fw-light">Dashboard /</a> Travel Taxes</h6>
+                        class="text-muted fw-light">Dashboard /</a> Travel Tax</h6>
             </div>
             <div class="action-section btn-group">
                 <a href="{{ route('admin.travel_taxes.create') }}" class="btn btn-primary"><i class="bx bx-plus"></i> Add
