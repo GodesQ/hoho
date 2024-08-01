@@ -15,6 +15,7 @@ use App\Http\Controllers\Web\OrderController;
 use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\RestaurantReservationController;
 use App\Http\Controllers\Web\RoomController;
+use App\Http\Controllers\Web\SystemLogController;
 use App\Http\Controllers\Web\TourBadgeController;
 use App\Http\Controllers\Web\TravelTaxController;
 use Illuminate\Support\Facades\Request;
@@ -93,17 +94,21 @@ Route::get('/send_message', [AdminController::class, 'sendMessageWithSemaphore']
 Route::view('user/success_verification_message', 'misc.success_verification_message')->name('user.success_verification_message');
 Route::view('merchant-account-registered-message', 'misc.merchant-registered-message')->name('merchant_account_registered_message');
 
+Route::post('aqwire/transaction/paid', [AqwireController::class, 'webhook_paid']);
+
 Route::get('aqwire/payment/success/{id}', [AqwireController::class, 'success']);
 Route::get('aqwire/payment/travel-tax/success/{id}', [AqwireController::class, 'travelTaxSuccess']);
 Route::get('aqwire/payment/order/success/{id}', [AqwireController::class, 'orderSuccess']);
+Route::get('aqwire/payment/hotel-reservation/success/{id}', [AqwireController::class, 'hotelReservationSuccess']);
 Route::get('aqwire/payment/view_success', [AqwireController::class, 'viewSuccess']);
 
 Route::get('aqwire/payment/cancel/{id}', [AqwireController::class, 'cancel']);
 Route::get('aqwire/payment/travel-tax/cancel/{id}', [AqwireController::class, 'travelTaxCancel']);
 Route::get('aqwire/payment/order/cancel/{id}', [AqwireController::class, 'orderCancel']);
+Route::get('aqwire/payment/hotel-reservation/cancel/{id}', [AqwireController::class, 'hotelReservationCancel']);
 Route::get('aqwire/payment/view_cancel', [AqwireController::class, 'viewCancel']);
 
-Route::post('aqwire/payment/callback/{id}', [AqwireController::class, 'callback']);
+Route::match(['get', 'post'], 'aqwire/payment/callback', [AqwireController::class, 'callback']);
 
 Route::get('user/verify_email', [UserAuthController::class, 'verifyEmail']);
 
@@ -124,12 +129,13 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('profile', [DashboardController::class, 'saveProfile'])->name('profile.post');
     Route::post('change_password', [DashboardController::class, 'changePassword'])->name('change_password.post');
 
-    Route::get('admins', [AdminController::class, 'list'])->name('admins.list')->can('view_admins_list');
-    Route::get('admins/create', [AdminController::class, 'create'])->name('admins.create')->can('create_admin');
-    Route::post('admins/store', [AdminController::class, 'store'])->name('admins.store')->can('create_admin');
-    Route::get('admins/edit/{id}', [AdminController::class, 'edit'])->name('admins.edit')->can('edit_admin');
-    Route::post('admins/update/{id}', [AdminController::class, 'update'])->name('admins.update')->can('update_admin');
-    Route::delete('admins/destroy/{id}', [AdminController::class, 'destroy'])->name('admins.destroy')->can('delete_admin');
+    Route::get('admins', [AdminController::class, 'list'])->name('admins.list')->can('view_admins_list')->can('view_admins_list');
+    Route::get('admins/create', [AdminController::class, 'create'])->name('admins.create')->can('create_admin')->can('create_admin');
+    Route::post('admins/store', [AdminController::class, 'store'])->name('admins.store')->can('create_admin')->can('create_admin');
+    Route::get('admins/edit/{id}', [AdminController::class, 'edit'])->name('admins.edit')->can('edit_admin')->can('edit_admin');
+    Route::post('admins/update/{id}', [AdminController::class, 'update'])->name('admins.update')->can('update_admin')->can('update_admin');
+    Route::delete('admins/destroy/{id}', [AdminController::class, 'destroy'])->name('admins.destroy')->can('delete_admin')->can('delete_admin');
+
     Route::get('admins/merchantAdmins', [AdminController::class, 'merchantAdmins']);
     Route::get('admins/operatorAdmins', [AdminController::class, 'operatorAdmins']);
 
@@ -139,13 +145,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::get('merchant-accounts/edit/{id}', [MerchantAccountController::class, 'edit'])->name('merchant_accounts.edit');
     Route::put('merchant-accounts/update/{id}', [MerchantAccountController::class,'update'])->name('merchant_accounts.update');
     Route::delete('merchant-accounts/destroy/{id}', [MerchantAccountController::class, 'destroy'])->name('merchant_accounts.destroy');
+
     Route::put('merchant-accounts/update-merchant', [MerchantAccountController::class, 'updateMerchant'])->name('merchant_accounts.update_merchant');
     Route::patch('merchant-accounts/unsync-merchant', [MerchantAccountController::class, 'unsyncMerchant'])->name('merchant_accounts.unsync_merchant');
 
-    Route::get('users', [UserController::class, 'list'])->name('users.list')->can('view_users_list');
+    Route::get('users', [UserController::class, 'list'])->name('users.list')->can('view_users_list')->can('view_users_list');
     Route::get('users/lookup', [UserController::class, 'lookup'])->name('users.lookup');
     Route::get('users/create', [UserController::class, 'create'])->name('users.create')->can('create_user');
     Route::post('users/store', [UserController::class, 'store'])->name('users.store')->can('create_user');
+    Route::get('users/show/{id}', [UserController::class, 'show'])->name('users.show');
     Route::get('users/edit/{id}', [UserController::class, 'edit'])->name('users.edit')->can('edit_user');
     Route::post('users/update/{id}', [UserController::class, 'update'])->name('users.update')->can('update_user');
     Route::delete('users/destroy', [UserController::class, 'destroy'])->name('users.destroy')->can('delete_user');
@@ -163,6 +171,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::get('tours', [TourController::class, 'list'])->name('tours.list')->can('view_tours_list')->middleware('merchant_created');
     Route::get('tours/diy', [TourController::class, 'getDiyTours'])->name('tours.diy')->middleware('merchant_created');
     Route::get('tours/guided', [TourController::class, 'getGuidedTours'])->name('tours.guided')->middleware('merchant_created');
+    Route::get('tours/seasonal', [TourController::class, 'getSeasonalTours'])->name('tours.seasonal')->middleware('merchant_created');
+    Route::get('tours/transit', [TourController::class, 'getTransitTours'])->name('tours.transit')->middleware('merchant_created');
     Route::get('tours/create', [TourController::class, 'create'])->name('tours.create')->middleware('merchant_created');
     Route::post('tours/store', [TourController::class, 'store'])->name('tours.store')->middleware('merchant_created');
     Route::get('tours/edit/{id}', [TourController::class, 'edit'])->name('tours.edit')->middleware('merchant_created');
@@ -195,6 +205,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::delete('attractions/remove_image', [AttractionController::class, 'removeImage'])->name('attractions.remove_image');
     // Route::get('attractions/update_attractions', [AttractionController::class, 'update_attractions']);
 
+    Route::get('tour-reservations/{reservation_id}/reservation-codes', [TourReservationController::class, 'get_tour_reservation_codes'])->name('tour_reservations.reservation_codes');
+
     Route::get('tour-reservations', [TourReservationController::class, 'list'])->name('tour_reservations.list')->can('view_tour_reservations_list')->middleware('merchant_created');
     Route::get('tour-reservations/create', [TourReservationController::class, 'create'])->name('tour_reservations.create')->middleware('merchant_created');
     Route::post('tour-reservations/store', [TourReservationController::class, 'store'])->name('tour_reservations.store');
@@ -203,8 +215,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::delete('tour-reservations/destroy', [TourReservationController::class, 'destroy'])->name('tour_reservations.destroy');
 
     Route::get("tour-reservations/sync-customer-details", [TourReservationController::class, 'syncCustomerDetails']);
-
-    Route::get('tour_reservations/reservation_codes/{reservation_id}', [TourReservationController::class, 'get_tour_reservation_codes'])->name('tour_reservations.reservation_codes');
 
     Route::get('merchants', [MerchantController::class, 'list'])->name('merchants.list');
     Route::get('merchants/create', [MerchantController::class, 'create'])->name('merchants.create');
@@ -371,13 +381,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('ticket_passes/update/{id}', [TicketPassController::class, 'update'])->name('ticket_passes.update');
     Route::delete('ticket_passes/destroy', [TicketPassController::class, 'destroy'])->name('ticket_passes.destroy');
 
-    Route::get('logs', [LogController::class, 'list'])->name('logs.list');
-    Route::get('logs/create', [LogController::class, 'create'])->name('logs.create');
-    Route::post('logs/store', [LogController::class, 'store'])->name('logs.store');
-    Route::get('logs/edit/{id}', [LogController::class, 'edit'])->name('logs.edit');
-    Route::post('logs/update/{id}', [LogController::class, 'update'])->name('logs.update');
-    Route::delete('logs/destroy', [LogController::class, 'destroy'])->name('logs.destroy');
-
     Route::get('announcements', [AnnouncementController::class, 'list'])->name('announcements.list');
     Route::get('announcements/create', [AnnouncementController::class, 'create'])->name('announcements.create')->can('create_announcement');
     Route::post('announcements/store', [AnnouncementController::class, 'store'])->name('announcements.store');
@@ -392,12 +395,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('unavailable_dates/update/{id}', [TourUnavailableDateController::class, 'update'])->name('unavailable_dates.update');
     Route::delete('unavailable_dates/destroy', [TourUnavailableDateController::class, 'destroy'])->name('unavailable_dates.destroy');
 
-    Route::get('travel-taxes', [TravelTaxController::class, 'index'])->name('travel_taxes.list');
-    Route::get('travel-taxes/create', [TravelTaxController::class, 'create'])->name('travel_taxes.create');
-    Route::post('travel-taxes/store', [TravelTaxController::class, 'store'])->name('travel_taxes.store');
-    Route::get('travel-taxes/edit/{id}', [TravelTaxController::class, 'edit'])->name('travel_taxes.edit');
-    Route::put('travel-taxes/update/{id}', [TravelTaxController::class, 'update'])->name('travel_taxes.update');
-    Route::delete('travel-taxes/destroy/{id}', [TravelTaxController::class, 'destroy'])->name('travel_taxes.destroy');
+    Route::get('travel-taxes', [TravelTaxController::class, 'index'])->name('travel_taxes.list')->can('view_travel_taxes_list');
+    Route::get('travel-taxes/create', [TravelTaxController::class, 'create'])->name('travel_taxes.create')->can('create_travel_tax');
+    Route::post('travel-taxes/store', [TravelTaxController::class, 'store'])->name('travel_taxes.store')->can('create_travel_tax');
+    Route::get('travel-taxes/edit/{id}', [TravelTaxController::class, 'edit'])->name('travel_taxes.edit')->can('edit_travel_tax');
+    Route::put('travel-taxes/update/{id}', [TravelTaxController::class, 'update'])->name('travel_taxes.update')->can('edit_travel_tax');
+    Route::delete('travel-taxes/destroy/{id}', [TravelTaxController::class, 'destroy'])->name('travel_taxes.destroy')->can('delete_travel_tax');
     Route::put('travel-taxes/passengers/update', [TravelTaxController::class, 'updatePassenger'])->name('travel_taxes.passengers.update');
     Route::get('travel-taxes/passengers/{passenger_id}', [TravelTaxController::class, 'getPassenger'])->name('travel_taxes.passengers');
 
@@ -427,6 +430,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
         Route::get('user-demographics/user-locations', [DataReportController::class, 'getUsersByLocation'])->name('user_demographics.user_locations');
 
         Route::get('travel-taxes-report', [DataReportController::class, 'travel_taxes_report'])->name('travel_taxes_report');
+        Route::get('travel-taxes-report/total-payment-amount', [DataReportController::class, 'getTravelTaxTotalPayment'])->name('travel_taxes_report.total_payment_amount');
+        Route::get('travel-taxes-report/transactions-per-month', [DataReportController::class, 'getTravelTaxTxnCountPerMonth'])->name('travel_taxes_report.trasanctions_count_per_month');
 
         Route::get('sales_report', [DataReportController::class, 'sales_report'])->name('sales_report')->can('view_sales_report');
         Route::get('tour_reservations_report', [DataReportController::class, 'tour_reservations_report'])->name('tour_reservations_report');
@@ -438,5 +443,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
         Route::get('get_overall_sales', [DataReportController::class, 'getSalesData'])->name('get_overall_sales')->can('view_sales_report');
         Route::get('get_transaction_status_data', [DataReportController::class, 'getTransactionStatusData'])->name('get_transaction_status_data')->can('view_sales_report');
 
+
     });
+
+    Route::get('system-logs', [SystemLogController::class, 'index'])->name('system_logs.list');
 });

@@ -58,6 +58,18 @@ class UserController extends Controller
         }
     }
 
+    public function show(Request $request) {
+        $user_id = $request->id;
+        $user = User::find($user_id);
+
+        if($request->ajax()) {
+            return response()->json([
+                'user' => $user,
+            ]);
+        }
+
+    }
+
     public function edit(Request $request)
     {
         $user = User::where('id', $request->id)->first();

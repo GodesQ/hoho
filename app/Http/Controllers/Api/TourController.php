@@ -44,7 +44,6 @@ class TourController extends Controller
 
         return response([
             'status' => TRUE,
-            'message' => 'Tours Found',
             'tours' => $tours
         ]);
     }
@@ -71,7 +70,7 @@ class TourController extends Controller
         ]);
     }
 
-    public function getLayoverTours(Request $request)
+    public function getTransitTours(Request $request)
     {
 
         $arrival_datetime = Carbon::parse($request->arrival_datetime);
@@ -95,7 +94,6 @@ class TourController extends Controller
 
         return response([
             'status' => TRUE,
-            'message' => 'Tours Found',
             'tours' => $tours
         ]);
 

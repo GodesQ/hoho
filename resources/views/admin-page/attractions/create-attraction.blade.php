@@ -20,109 +20,122 @@
                                     <div class="mb-3">
                                         <label for="name" class="form-label">Attraction Name <span
                                                 class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" name="name" required>
+                                        <input type="text" class="form-control" name="name">
+                                        <span class="text-danger">@error('name'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="tour_provider" class="form-label">Tour Provider</label>
-                                        <select name="tour_provider_id" id="tour_provider" class="form-select">
-                                            {{-- <option value="">HoHo Manila</option>
-                                    <option value=""> Owllah Travel & Tours</option> --}}
-                                        </select>
+                                        <select name="tour_provider_id" id="tour_provider" class="form-select"></select>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="featured_image" class="form-label">Featured Image</label>
-                                        <input type="file" class="form-control" name="featured_image"
-                                            id="featured_image">
+                                        <label for="featured-image-field" class="form-label">
+                                            Featured Image <span class="text-danger">*</span> <span class="text-warning">(Max Img Size: 2MB)</span>
+                                        </label>
+                                        <input type="file" class="form-control" name="featured_image" id="featured-image-field">
+                                        <span class="text-danger">@error('featured_image'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="interests" class="form-label">Interests</label>
-                                        <select name="interests[]" id="interests" multiple class="select2 form-select">
+                                        <label for="interests-field" class="form-label">Interests</label>
+                                        <select name="interests[]" id="interests-field" multiple class="select2 form-select">
                                             @foreach ($interests as $interest)
                                                 <option value="{{ $interest->id }}">{{ $interest->name }}</option>
                                             @endforeach
                                         </select>
+                                        <span class="text-danger">@error('interests'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="product_categories" class="form-label">Product Categories</label>
-                                        <select name="product_categories[]" id="product_categories" multiple
+                                        <label for="product-categories-field" class="form-label">Product Categories</label>
+                                        <select name="product_categories[]" id="product-categories-field" multiple
                                             class="select2 form-select">
                                             @foreach ($product_categories as $product_category)
                                                 <option value="{{ $product_category->id }}">{{ $product_category->name }}
                                                 </option>
                                             @endforeach
                                         </select>
+                                        <span class="text-danger">@error('product_categories'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="price" class="form-label">Price</label>
-                                        <input type="text" class="form-control" name="price" id="price">
+                                        <label for="price-field" class="form-label">Price</label>
+                                        <input type="text" class="form-control" name="price" id="price-field">
+                                        <span class="text-danger">@error('price'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="contact_no" class="form-label">Contact Number</label>
-                                        <input type="text" class="form-control" name="contact_no" id="contact_no">
+                                        <label for="contact-no-field" class="form-label">Contact Number</label>
+                                        <input type="text" class="form-control" name="contact_no" id="contact-no-field">
+                                        <span class="text-danger">@error('contact_no'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="youtube_id" class="form-label">Youtube Id</label>
-                                        <input type="text" class="form-control" name="youtube_id" id="youtube_id">
+                                        <label for="youtube-id-field" class="form-label">
+                                            Youtube Id <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control" name="youtube_id" id="youtube-id-field">
+                                        <span class="text-danger">@error('youtube_id'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="address" class="form-label">Address</label>
-                                        <input type="text" class="form-control" name="address" id="address">
+                                        <label for="address-field" class="form-label">Address <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="address" id="address-field">
+                                        <span class="text-danger">@error('address'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <div class="mb-3">
-                                                <label action="latitude" class="form-label">Latitude</label>
-                                                <input type="text" class="form-control" name="latitude" id="latitude">
+                                                <label action="latitude-field" class="form-label">Latitude <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" name="latitude" id="latitude-field">
+                                                <span class="text-danger">@error('latitude'){{ $message }}@enderror</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
-                                                <label action="longitude" class="form-label">longitude</label>
+                                                <label action="longitude-field" class="form-label">longitude <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control" name="longitude"
-                                                    id="longitude">
+                                                    id="longitude-field">
+                                                <span class="text-danger">@error('longitude'){{ $message }}@enderror</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="description" class="form-label">Description</label>
-                                        <textarea name="description" id="description" cols="30" rows="5" class="form-control"></textarea>
+                                        <label for="description-field" class="form-label">Description</label>
+                                        <textarea name="description" id="description-field" cols="30" rows="5" class="form-control"></textarea>
+                                        <span class="text-danger">@error('description'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="operating_hours" class="form-label">Operating Hours</label>
-                                        <textarea name="operating_hours" id="operating_hours" cols="30" rows="5" class="form-control"></textarea>
+                                        <label for="operating-hours-field" class="form-label">Operating Hours</label>
+                                        <textarea name="operating_hours" id="operating-hours-field" cols="30" rows="5" class="form-control"></textarea>
+                                        <span class="text-danger">@error('operating_hours'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="organization_id" class="form-label">Organizations</label>
-                                        <select name="organization_id" id="organization_id" class="select2 form-select">
+                                        <label for="organization-field" class="form-label">Organizations <span class="text-danger">*</span></label>
+                                        <select name="organization_id" id="organization-field" class="select2 form-select">
                                             <option value="">--- SELECT ORGANIZATION ---</option>
                                             @foreach ($organizations as $organization)
                                                 <option value="{{ $organization->id }}">{{ $organization->name }}</option>
                                             @endforeach
                                         </select>
+                                        <span class="text-danger">@error('organization_id'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -132,21 +145,25 @@
                                                 <input class="form-check-input" type="checkbox" id="isCancellable"
                                                     name="is_cancellable" />
                                                 <label class="form-check-label" for="isCancellable">Cancellable</label>
+                                                <span class="text-danger">@error('is_cancellable'){{ $message }}@enderror</span>
                                             </div>
                                             <div class="form-check form-switch mb-2">
                                                 <input class="form-check-input" type="checkbox" id="isRefundable"
                                                     name="is_refundable" />
                                                 <label class="form-check-label" for="isRefundable">Refundable</label>
+                                                <span class="text-danger">@error('is_refundable'){{ $message }}@enderror</span>
                                             </div>
                                             <div class="form-check form-switch mb-2">
                                                 <input class="form-check-input" type="checkbox" id="isFeatured"
                                                     name="is_featured" />
                                                 <label class="form-check-label" for="isFeatured">Featured</label>
+                                                <span class="text-danger">@error('is_featured'){{ $message }}@enderror</span>
                                             </div>
                                             <div class="form-check form-switch mb-2">
                                                 <input class="form-check-input" type="checkbox" id="isActive"
                                                     name="is_active" />
                                                 <label class="form-check-label" for="isActive">Active</label>
+                                                <span class="text-danger">@error('is_active'){{ $message }}@enderror</span>
                                             </div>
                                         </div>
                                     </div>
@@ -156,42 +173,46 @@
                                 <hr>
                                 <div class="col-lg-6">
                                     <div class="my-3">
-                                        <label for="nearest_attraction_ids" class="form-label">Nearest Attractions</label>
-                                        <select name="nearest_attraction_ids[]" id="nearest_attraction_ids" class="select2" multiple>
+                                        <label for="nearest-attraction-field" class="form-label">Nearest Attractions</label>
+                                        <select name="nearest_attraction_ids[]" id="nearest-attraction-field" class="select2" multiple>
                                             @foreach ($attractions as $attraction)
                                                 <option value="{{ $attraction->id }}">{{ $attraction->name }}</option>
                                             @endforeach
                                         </select>
+                                        <span class="text-danger">@error('nearest_attraction_ids'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="my-3">
-                                        <label for="nearest_store_ids" class="form-label">Nearest Stores</label>
-                                        <select name="nearest_store_ids[]" id="nearest_store_ids" class="select2" multiple>
+                                        <label for="nearest-store-field" class="form-label">Nearest Stores</label>
+                                        <select name="nearest_store_ids[]" id="nearest-store-field" class="select2" multiple>
                                             @foreach ($stores as $store)
                                                 <option value="{{ $store->id }}">{{ $store->name }}</option>
                                             @endforeach
                                         </select>
+                                        <span class="text-danger">@error('nearest_store_ids'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="my-3">
-                                        <label for="nearest_restaurant_ids" class="form-label">Nearest Restaurants</label>
-                                        <select name="nearest_restaurant_ids[]" id="nearest_restaurant_ids" class="select2" multiple>
+                                        <label for="nearest-restaurant-field" class="form-label">Nearest Restaurants</label>
+                                        <select name="nearest_restaurant_ids[]" id="nearest-restaurant-field" class="select2" multiple>
                                             @foreach ($restaurants as $restaurant)
                                                 <option value="{{ $restaurant->id }}">{{ $restaurant->name }}</option>
                                             @endforeach
                                         </select>
+                                        <span class="text-danger">@error('nearest_restaurant_ids'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="my-3">
-                                        <label for="nearest_hotel_ids" class="form-label">Nearest Hotels</label>
-                                        <select name="nearest_hotel_ids[]" id="nearest_hotel_ids" class="select2" multiple>
+                                        <label for="nearest-hotel-field" class="form-label">Nearest Hotels</label>
+                                        <select name="nearest_hotel_ids[]" id="nearest-hotel-field" class="select2" multiple>
                                             @foreach ($hotels as $hotel)
                                                 <option value="{{ $hotel->id }}">{{ $hotel->name }}</option>
                                             @endforeach
                                         </select>
+                                        <span class="text-danger">@error('nearest_hotel_ids'){{ $message }}@enderror</span>
                                     </div>
                                 </div>
                             </div>
@@ -232,18 +253,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="table-responsive my-3">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Type</th>
-                                            <th>Name</th>
-                                            <th width="75">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                </table>
                             </div>
                             <hr>
                             <button class="btn btn-primary">Save Attraction</button>

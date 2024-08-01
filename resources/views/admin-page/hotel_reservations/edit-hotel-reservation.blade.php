@@ -41,7 +41,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card mb-3">
                         <div class="card-body">
                             <h4>Room Details</h4>
                             <hr>    
@@ -63,19 +63,48 @@
                             </div>
                         </div>
                     </div>
+                    @if($reservation->transaction)
+                        <div class="card">
+                            <div class="card-body">
+                                <h4>Transaction Details</h4>
+                                <hr>   
+                                <div class="row my-1">
+                                    <div class="col-xl-4">
+                                        <label for="" class="form-label text-primary">Reference Number</label>
+                                        <h6>{{ $reservation->transaction->reference_no }}</h6>
+                                    </div>
+                                    <div class="col-xl-4">
+                                        <label for="" class="form-label text-primary">Total Amount</label>
+                                        <h6>{{ number_format($reservation->transaction->payment_amount, 2) }}</h6>
+                                    </div>
+                                    <div class="col-xl-4">
+                                        <label for="" class="form-label text-primary">Aqwire Total Amount</label>
+                                        <h6>{{ $reservation->transaction->aqwire_totalAmount }}</h6>
+                                    </div>
+                                    <div class="col-xl-12">
+                                        <div class="mb-3">
+                                            <label for="payment_url" class="form-label">Payment URL</label> <br>
+                                            <a href="{{ $reservation->transaction->payment_url }}"
+                                                target="_blank">{{ $reservation->transaction->payment_url ?? 'No Payment URL Found' }}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 <div class="col-xxl-4 col-xl-5 col-lg-6">
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-lg-12">
+                                <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="number-of-pax-field" class="form-label text-primary">Number of Pax <span
+                                        <label for="adult-quantity-field" class="form-label text-primary">Adult Quantity<span
                                                 class="text-danger">*</span></label>
-                                        <input type="number" class="form-control" name="number_of_pax"
-                                            id="number-of-pax-field" value="{{ $reservation->number_of_pax }}">
+                                        <input type="number" class="form-control" name="adult_quantity"
+                                            id="adult-quantity-field" value="{{ $reservation->adult_quantity }}">
                                         <div class="text-danger">
-                                            @error('number_of_pax')
+                                            @error('adult_quantity')
                                                 {{ $message }}
                                             @enderror
                                         </div>
@@ -83,13 +112,26 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="reservation-date-field" class="form-label text-primary">Reservation Date <span
+                                        <label for="children-quantity-field" class="form-label text-primary">Children Quantity<span
                                                 class="text-danger">*</span></label>
-                                        <input type="date" name="reservation_date" id="reservation-date-field"
+                                        <input type="number" class="form-control" name="children_quantity"
+                                            id="children-quantity-field" value="{{ $reservation->children_quantity }}">
+                                        <div class="text-danger">
+                                            @error('children_quantity')
+                                                {{ $message }}
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="checkin-date-field" class="form-label text-primary">Check-In Date <span
+                                                class="text-danger">*</span></label>
+                                        <input type="date" name="checkin_date" id="checkin-date-field"
                                             class="form-control"
-                                            value="{{ $reservation->reservation_date->format('Y-m-d') }}">
+                                            value="{{ $reservation->checkin_date->format('Y-m-d') }}">
                                         <div class="text-danger">
-                                            @error('reservation_date')
+                                            @error('checkin_date')
                                                 {{ $message }}
                                             @enderror
                                         </div>
@@ -97,12 +139,12 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="reservation-time-field" class="form-label text-primary">Reservation Time <span
+                                        <label for="checkout-date-field" class="form-label text-primary">Check-Out Date <span
                                                 class="text-danger">*</span></label>
-                                        <input type="time" name="reservation_time" id="reservation-time-field"
-                                            class="form-control" value="{{ $reservation->reservation_time }}">
+                                        <input type="date" name="checkout_date" id="checkout-date-field"
+                                            class="form-control" value="{{ $reservation->checkout_date->format('Y-m-d') }}">
                                         <div class="text-danger">
-                                            @error('reservation_time')
+                                            @error('checkout_date')
                                                 {{ $message }}
                                             @enderror
                                         </div>
@@ -131,9 +173,24 @@
                                             class="form-control" value="{{ $reservation->approved_date }}">
                                     </div>
                                 </div>
+                                <div class="col-lg-12">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label text-primary">Payment Status</label> <br>
+                                        @if($reservation->payment_status == 'paid')
+                                            <div class="badge bg-label-success">{{ $reservation->payment_status }}</div>
+                                        @else
+                                            <div class="badge bg-label-warning">{{ $reservation->payment_status }}</div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                             <hr>
-                            <button class="btn btn-primary">Save Hotel Reservation</button>
+                            <div class="btn-group">
+                                <button class="btn btn-primary">Save Hotel Reservation</button>
+                                @if($reservation->transaction_id && $reservation->payment_status == 'unpaid')
+                                    <button class="btn btn-outline-primary">Send New Payment Link</button>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -144,6 +201,12 @@
 
 @push('scripts')
     <script>
+        $('#checkin-date-field, #checkout-date-field').flatpickr({
+            enableTime: false,
+            dateFormat: "Y-m-d",
+            minDate: 'today',
+        })
+
         $('.reserved_users').select2({
             placeholder: 'Select users',
             minimumInputLength: 3,

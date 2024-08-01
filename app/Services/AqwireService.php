@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use ErrorException;
 use Exception;
 use Illuminate\Support\Facades\Http;
@@ -16,7 +17,7 @@ class AqwireService
     public function pay($body)
     {
         # Generate URL Endpoint and Auth Token for Payment Gateway
-        if (env('APP_ENVIRONMENT') == 'LIVE') {
+        if (config('app.env') === 'production') {
             $url = 'https://payments.aqwire.io/api/v3/transactions/create';
             $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
         } else {
@@ -33,7 +34,6 @@ class AqwireService
 
         $statusCode = $response->getStatusCode();
 
-
         if ($statusCode == 400) {
             $content = json_decode($response->getBody()->getContents());
             throw new ErrorException($content->message . ' in Aqwire Payment Gateway.');
@@ -48,25 +48,28 @@ class AqwireService
         $customer_email = $customer->email_address ?? $customer->email;
         $customer_mobile_number = "+" . ($customer->mobile_number ?? $customer->countryCode . $customer->contact_no);
 
-        $success = '';
-        $cancel = '';
-
         switch ($transaction->transaction_type) {
             case 'book_tour':
-                $success = env('AQWIRE_TEST_SUCCESS_URL');
-                $cancel = env('AQWIRE_TEST_CANCEL_URL');
+                $success = config('aqwire.success.book_tour');
+                $cancel = config('aqwire.cancel.book_tour');
                 break;
             case 'travel_tax':
-                $success = env('AQWIRE_TEST_TRAVEL_TAX_SUCCESS_URL');
-                $cancel = env('AQWIRE_TEST_TRAVEL_TAX_CANCEL_URL');
+                $success = config('aqwire.success.travel_tax');
+                $cancel = config('aqwire.cancel.travel_tax');
                 break;
             case 'order':
-                    $success = env('AQWIRE_TEST_ORDER_SUCCESS_URL');
-                    $cancel = env('AQWIRE_TEST_ORDER_CANCEL_URL');
+                    $success = config('aqwire.success.order');
+                    $cancel = config('aqwire.cancel.order');
                 break;
+
+            case 'hotel_reservation':
+                    $success = config('aqwire.success.hotel_reservation');
+                    $cancel = config('aqwire.cancel.hotel_reservation');
+                break;
+
             default: 
-                $success = env('AQWIRE_TEST_SUCCESS_URL');
-                $cancel = env('AQWIRE_TEST_CANCEL_URL');
+                $success = config('aqwire.success.book_tour');
+                $cancel = config('aqwire.cancel.book_tour');
                 break;
         }
 
@@ -88,14 +91,14 @@ class AqwireService
             'redirectUrl' => [
                 'success' => $success . $transaction->id,
                 'cancel' => $cancel . $transaction->id,
-                'callback' => env('AQWIRE_TEST_CALLBACK_URL') . $transaction->id
+                'callback' => config('aqwire.callback.url')
             ],
             'note' => 'Payment for Philippines Hop On Hop Off',
+            'expiresAt' => Carbon::now()->addDays(1),
         ];
 
         return $requestModel;
     }
-
 
     public function getHMACSignatureHash($text, $secret_key)
     {

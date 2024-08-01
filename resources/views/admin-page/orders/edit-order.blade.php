@@ -8,7 +8,7 @@
         <h4 class="fw-bold py-3 mb-4">Edit Order</h4>
         <div class="d-flex gap-1">
             <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-primary">View Order Details <i class="bx bx-file"></i></a>
-            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-primary">Back to List <i class="bx bx-undo"></i></a> 
+            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-dark">Back to List <i class="bx bx-undo"></i></a> 
         </div>
     </div>
 
@@ -64,8 +64,7 @@
                         <h4>Product</h4>
                         <div class="row">
                             <div class="col-lg-3">
-                                <img src="{{ asset('assets/img/products/1/' . $order->product->image) }}" class="w-100 rounded product-image" style="object-fit: cover;" alt="">
-                            </div>
+                                <img src="{{ asset('assets/img/products/' . $order->product->id . '/' . $order->product->image) }}" class="w-100 rounded product-image" style="object-fit: cover;" alt="">                            </div>
                             <div class="col-lg-6">
                                 <h5 style="margin-bottom: 10px;" class="product-name-text">{{ $order->product->name }}</h5>
                                 <h6 class="text-primary product-price-text" style="margin-bottom: 10px;">₱ {{ number_format($order->product->price, 2)}}</h6>

@@ -168,6 +168,14 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-lg-6">
+                                <h6>Transaction Number:</h6>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="text-end">{{ $travel_tax->transaction_number }}</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
                                 <h6>Payment Method:</h6>
                             </div>
                             <div class="col-lg-6">

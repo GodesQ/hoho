@@ -11,6 +11,7 @@ class TravelTaxPayment extends Model
     protected $table = 'travel_tax_payments';
     protected $fillable = [
         "transaction_id",
+        "user_id",
         "transaction_number",
         "reference_number",
         "transaction_time",

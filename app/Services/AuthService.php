@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enum\UserRoleEnum;
 use App\Mail\EmailVerification;
 use App\Models\Admin;
+use App\Models\Role;
 use App\Models\User;
 use ErrorException;
 use Illuminate\Support\Facades\Hash;
@@ -125,14 +126,14 @@ class AuthService
 
     private function validateUserRole($user)
     {
-        if ($user instanceof Admin && $user->role !== 'bus_operator') {
+        if ($user instanceof Admin && $user->role !== Role::BUS_OPERATOR) {
             throw new ErrorException("Invalid user role. Please try another account");
         }
     }
 
     private function loadUserRelations($user)
     {
-        if ($user instanceof Admin && $user->role === 'bus_operator') {
+        if ($user instanceof Admin && $user->role === Role::BUS_OPERATOR) {
             $user->load('transport');
         }
     }

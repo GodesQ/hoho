@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TourReservation\StoreRequest;
+use App\Models\Role;
 use App\Models\TourUnavailableDate;
 use ErrorException;
 use Illuminate\Support\Facades\Auth;
@@ -173,7 +174,7 @@ class TourReservationController extends Controller
         $today = date('Y-m-d');
         $user = Auth::user();
 
-        if ($user->role != 'bus_operator') {
+        if ($user->role != Role::BUS_OPERATOR) {
             return response([
                 'status' => FALSE,
                 'message' => 'The current authenticated user is not a bus operator.'
@@ -247,7 +248,7 @@ class TourReservationController extends Controller
         $today = date('Y-m-d');
         $user = Auth::user();
 
-        if ($user->role != 'bus_operator') {
+        if ($user->role != Role::BUS_OPERATOR) {
             return response([
                 'status' => FALSE,
                 'message' => 'The current authenticated user is not a bus operator.'

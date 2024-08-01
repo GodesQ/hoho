@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
+use App\Services\FileService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -52,16 +53,16 @@ class AnnouncementController extends Controller
     {   
         $data = $request->except('announcement_image');
 
+        $featured_file_name = null;
+
         if($request->hasFile('announcement_image')) {
             $file = $request->file('announcement_image');
             $outputString = str_replace(array(":", ";"), " ", $request->name);
 
+            $path_folder = "/announcements/";
             $name = Str::snake(Str::lower($outputString));
             $featured_file_name = $name . '.' . $file->getClientOriginalExtension();
-
-            $file->move(public_path() . '/assets/img/announcements', $featured_file_name);
-        } else {
-            $featured_file_name = null;
+            $upload = FileService::upload($path_folder, $featured_file_name, $file);
         }
         
         $announcement = Announcement::create(

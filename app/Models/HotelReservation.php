@@ -10,7 +10,20 @@ class HotelReservation extends Model
 {
     use HasFactory;
     protected $table = "hotel_reservations";
-    protected $fillable = ["reserved_user_id", "room_id", "number_of_pax", "reservation_date", "reservation_time", "status", "approved_date"];
+    protected $fillable = [
+        "reference_number", 
+        "transaction_id", 
+        "reserved_user_id", 
+        "room_id",
+        "number_of_pax",
+        "checkin_date",
+        "checkout_date",
+        "adult_quantity",
+        "children_quantity",
+        "status", 
+        "payment_status", 
+        "approved_date"
+    ];
     protected $hidden = ['created_at', 'updated_at'];
 
     protected $casts = [
@@ -19,7 +32,7 @@ class HotelReservation extends Model
         'number_of_pax' => 'integer',
     ];
 
-    protected $dates = ['reservation_date', 'approved_date'];
+    protected $dates = ['checkin_date', 'checkout_date', 'approved_date'];
 
     public function reserved_user() : BelongsTo {
         return $this->belongsTo(User::class, 'reserved_user_id');
@@ -27,6 +40,10 @@ class HotelReservation extends Model
 
     public function room() : BelongsTo {
         return $this->belongsTo(Room::class,'room_id');
+    }
+
+    public function transaction() : BelongsTo {
+        return $this->belongsTo(Transaction::class, 'transaction_id');
     }
 
 }

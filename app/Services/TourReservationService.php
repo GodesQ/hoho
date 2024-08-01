@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Mail\PaymentRequestMail;
 use App\Mail\TourProviderBookingNotification;
+use App\Models\Role;
 use App\Models\Tour;
 use App\Models\TourReservation;
 use App\Models\TourReservationCustomerDetail;
@@ -137,7 +138,7 @@ class TourReservationService
             ];
 
             # Generate URL Endpoint and Auth Token for Payment Gateway
-            if (env('APP_ENVIRONMENT') == 'LIVE') {
+            if (config('app.env') === 'production') {
                 $url_create = 'https://payments.aqwire.io/api/v3/transactions/create';
                 $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
             } else {
@@ -331,7 +332,7 @@ class TourReservationService
             ];
 
             # Generate URL Endpoint and Auth Token for Payment Gateway
-            if (env('APP_ENVIRONMENT') == 'LIVE') {
+            if (config('app.env') === 'production') {
                 $url_create = 'https://payments.aqwire.io/api/v3/transactions/create';
                 $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
             } else {
@@ -419,7 +420,7 @@ class TourReservationService
 
         $data = TourReservation::with('user', 'tour')
             // ->whereHas('user')
-            ->when(!in_array($current_user->role, ['super_admin', 'admin']), function ($query) use ($current_user) {
+            ->when(!in_array($current_user->role, [Role::SUPER_ADMIN, Role::ADMIN]), function ($query) use ($current_user) {
                 $query->where('created_by', $current_user->id);
             })
             ->when(!empty($request->get('search')), function ($query) use ($request) {
@@ -490,9 +491,12 @@ class TourReservationService
     {
         return DataTables::of($data)
             ->addIndexColumn()
+            ->editColumn('start_date', function ($row) {
+                return Carbon::parse($row->start_date)->format('M d, Y');
+            })
             ->addColumn('reserved_user', function ($row) {
-                if ($row->user) {
-                    return view('components.user-contact', ['user' => $row->user]);
+                if ($row->customer_details) {
+                    return view('components.user-contact', ['user' => $row->customer_details]);
                 }
 
                 return '-';
@@ -513,7 +517,7 @@ class TourReservationService
             })
             ->addColumn('actions', function ($row) {
                 $output = '<div class="dropdown">
-                    <a href="'. route('admin.tour_reservations.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>';
+                    <a href="'. route('admin.tour_reservations.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a> ';
 
                 $output .= $row->status === 'pending' && optional($row->transaction)->payment_status != 'success' ? '<button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>' : '';
 
@@ -542,13 +546,12 @@ class TourReservationService
                 ];
     
                 if ($tour?->tour_provider?->contact_email) {
-                    $recipientEmail = env('APP_ENVIRONMENT') == 'LIVE' ? $tour->tour_provider->contact_email : 'james@godesq.com';
+                    $recipientEmail = config('app.env') === 'production' ? $tour->tour_provider->contact_email : config('mail.test_receiver');
                     Mail::to($recipientEmail)->send(new TourProviderBookingNotification($details));
                 }
             }
         }
     }
-
 
     # HELPERS
     private function getHMACSignatureHash($text, $secret_key)

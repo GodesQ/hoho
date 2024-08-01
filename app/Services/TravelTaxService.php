@@ -8,6 +8,7 @@ use App\Models\TravelTaxPayment;
 use Carbon\Carbon;
 use App\Enum\TransactionTypeEnum;
 use ErrorException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class TravelTaxService
@@ -22,6 +23,8 @@ class TravelTaxService
     public function createTravelTax($request)
     {
         try {
+            DB::beginTransaction();
+
             $referenceNumber = $this->generateReferenceNo();
 
             $totalAmount = $this->computeTotalAmount($request->amount, $request->processing_fee, $request->discount);
@@ -59,6 +62,8 @@ class TravelTaxService
                 'payment_details' => json_encode($responseData),
             ]);
 
+            DB::commit();
+
             return [
                 'transaction' => $transaction,
                 'travel_tax_payment' => $travel_tax_payment,
@@ -66,9 +71,7 @@ class TravelTaxService
             ];
 
         } catch (ErrorException $e) {
-            $transaction->delete();
-            $travel_tax_payment->delete();
-
+            DB::rollBack();
             throw $e;
         }
     }
@@ -76,6 +79,7 @@ class TravelTaxService
     private function storeTransaction($request, $referenceNumber, $totalAmount)
     {
         $transaction = Transaction::create([
+            'transaction_by_id' => $request->user_id,
             'reference_no' => $referenceNumber,
             'sub_amount' => $request->amount,
             'total_additional_charges' => 0,
@@ -94,6 +98,7 @@ class TravelTaxService
         $transactionNumber = $this->generateTransactionNumber();
 
         $travel_tax_payment = TravelTaxPayment::create([
+            'user_id' => $request->user_id,
             'transaction_id' => $transaction->id,
             'transaction_number' => $transactionNumber,
             'reference_number' => $transaction->reference_no,

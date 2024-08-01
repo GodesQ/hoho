@@ -59,10 +59,15 @@
                         </div>
                         <div class="text-center">
                             <h4 class="mb-2">Account Registration Successful - Awaiting Approval</h4><br>
-                            <p class="mb-4"> 
-                                Thank you for registering with Philippine Hop On Hop Off. Your account has been successfully created, and we appreciate your interest in becoming a part of our platform.
+                            <p class="mb-4">
+                                Thank you for registering with Philippines Hop On Hop Off. Your account has been
+                                successfully created, and we appreciate your interest in becoming a part of our
+                                platform.
                                 <br><br>
-                                Please note that your account is currently under review by our administrators. Once approved, you will receive a confirmation email at the address you provided during registration. This email will contain further instructions on how to access your account and start utilizing our services.
+                                Please note that your account is currently under review by our administrators. Once
+                                approved, you will receive a confirmation email at the address you provided during
+                                registration. This email will contain further instructions on how to access your account
+                                and start utilizing our services.
                             </p>
                             <a href="{{ route('admin.login') }}" class="btn btn-primary">Back to Login</a>
                         </div>

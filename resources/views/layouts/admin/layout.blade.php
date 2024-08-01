@@ -46,12 +46,11 @@
     <link rel="stylesheet" href="{{ URL::asset('assets/vendor/libs/apex-charts/apex-charts.css') }}" />
 
     <link rel="stylesheet" href="{{ URL::asset('assets/css/selects/select2.css') }}">
-    <link rel="stylesheet" href="{{ URL::asset('assets/css/wizard.css') }}">
-    <link rel="stylesheet" href="{{ URL::asset('assets/css/tour-reservation-step-form.css') }}">
 
     <link rel="stylesheet" href="{{ URL::asset('assets/css/palette-callout.css') }}">
     <link rel="stylesheet" href="{{ URL::asset('assets/css/app-transports.css') }}">
 
+    <link rel="stylesheet" href="{{ URL::asset('assets/css/wizard.css') }}">
     <!-- Page CSS -->
 
     <!-- Helpers -->
@@ -217,7 +216,7 @@
     <script src="{{ URL::asset('assets/vendor/js/bootstrap.js') }}"></script>
     <script src="{{ URL::asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
     <script src="{{ URL::asset('assets/js/select/select2.full.min.js') }}"></script>
-    <script src="{{ asset('assets/js/jquery.steps.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/js/jquery.steps.min.js') }}"></script>
     <script src="{{ URL::asset('assets/vendor/js/menu.js') }}"></script>
     <script src="{{ URL::asset('vendor/apexcharts/apexcharts.js') }}"></script>
 

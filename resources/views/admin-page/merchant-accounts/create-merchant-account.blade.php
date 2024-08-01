@@ -20,7 +20,7 @@
                             <hr>
                             <div class="mb-3">
                                 <label for="role" class="form-label">Role</label>
-                                <select name="role" id="role" class="form-select">
+                                <select name="role" id="role" class="form-select select2">
                                     @foreach ($roles as $role)
                                         <option value="{{ $role->slug }}">{{ $role->name }}</option>
                                     @endforeach
@@ -69,14 +69,14 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
-                                    <div class="mb-3">
-                                        <label for="password" class="form-label">Password <span
-                                                class="text-danger">*</span></label>
-                                        <input type="password" class="form-control" name="password" value="">
-                                        <div class="text-danger">
-                                            @error('password')
-                                                {{ $message }}
-                                            @enderror
+                                    <div class="mb-3 form-password-toggle">
+                                        <div class="d-flex justify-content-between">
+                                            <label class="form-label" for="password">Password</label>
+                                        </div>
+                                        <div class="input-group input-group-merge">
+                                            <input type="password" id="password" class="form-control" name="password"
+                                                placeholder="***********" aria-describedby="password" />
+                                            <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                                         </div>
                                     </div>
                                 </div>

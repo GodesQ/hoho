@@ -20,7 +20,6 @@ use App\Http\Controllers\Api\v2\TourReservationController;
 use App\Http\Controllers\Api\v2\TransportController;
 use App\Http\Controllers\Api\v2\TravelTaxController;
 use App\Http\Controllers\Api\v2\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
     Route::post('login', [AuthController::class, 'login']);
@@ -86,9 +85,10 @@ use Illuminate\Support\Facades\Route;
 
         Route::get('/hotel-reservations/{hotel_reservation_id}', [HotelReservationController::class, 'show']);
 
-        Route::get('travel-taxes', [TravelTaxController::class, 'index']);
-        Route::get('travel-taxes/{travel_tax_id}/passengers/{passenger_id}', [TravelTaxController::class, 'travelTaxPassenger']);
-        Route::get('travel-taxes/{travel_tax_id}', [TravelTaxController::class, 'show']);
+        Route::get('travel-tax', [TravelTaxController::class, 'index']);
+        Route::post('travel-tax', [TravelTaxController::class, 'store']);
+        Route::get('travel-tax/{travel_tax_id}/passengers/{passenger_id}', [TravelTaxController::class, 'travelTaxPassenger']);
+        Route::get('travel-tax/{travel_tax_id}', [TravelTaxController::class, 'show']);
 
         Route::get('orders', [OrderController::class, 'index']);
         Route::get('orders/users/{user_id}', [OrderController::class, 'userOrders']);

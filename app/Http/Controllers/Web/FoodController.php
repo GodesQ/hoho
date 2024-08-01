@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Food\StoreRequest;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
@@ -36,9 +37,9 @@ class FoodController extends Controller
                 })
                 ->addColumn('actions', function ($row) {
                     return '<div class="dropdown">
-                                    <a href="/admin/foods/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
-                                    <button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
-                                </div>';
+                                <a href="/admin/foods/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
+                                <button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
+                            </div>';
                 })
                 ->rawColumns(['actions', 'status'])
                 ->make(true);
@@ -50,11 +51,13 @@ class FoodController extends Controller
     public function create()
     {   
         $user = Auth::guard('admin')->user();
-        if($user->role == 'merchant_restaurant_admin') {
-            $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->where('is_active', 1)->get();
-        } else {
-            $merchants = Merchant::where('type', 'Restaurant')->where('is_active', 1)->get();
-        }
+        
+        $merchants = Merchant::where('type', 'Restaurant')
+                ->when($user->role === Role::MERCHANT_RESTAURANT_ADMIN, function($query) use ($user) {
+                    $query->where('id', $user->merchant_id);
+                })
+                ->where('is_active', 1)
+                ->get();
 
         $foodCategories = FoodCategory::with('merchant')->get();
         return view('admin-page.foods.create-food', compact('merchants', 'foodCategories'));
@@ -83,10 +86,10 @@ class FoodController extends Controller
         $food = Food::findOrFail($id);
         $user = Auth::guard('admin')->user();
         
-        if($user->role == 'merchant_restaurant_admin') {
-            $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->where('is_active', 1)->get();
+        if($user->role == Role::MERCHANT_RESTAURANT_ADMIN) {
+            $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->get();
         } else {
-            $merchants = Merchant::where('type', 'Restaurant')->where('is_active', 1)->get();
+            $merchants = Merchant::where('type', 'Restaurant')->get();
         }
 
         $foodCategories = FoodCategory::with('merchant')->get();

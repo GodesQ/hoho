@@ -128,8 +128,9 @@
                                         </div>
                                         <div class="user-progress text-xxl-end">
                                             <small class="text-mute d-block mb-1">
-                                                {{ $recent_hotel_reservation->reservation_date->format('M d, y') }}
-                                                {{ date_format(new \DateTime($recent_hotel_reservation->reservation_time), 'h:i A') }}
+                                                {{ $recent_hotel_reservation->checkin_date->format('M d, y') }}
+                                                -
+                                                {{ date_format(new \DateTime($recent_hotel_reservation->checkout_date), 'M d, y') }}
                                             </small>
                                             <h6 class="mb-0">{{ $recent_hotel_reservation->number_of_pax }} Pax
                                             </h6>

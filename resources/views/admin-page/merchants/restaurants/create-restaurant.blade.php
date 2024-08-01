@@ -235,12 +235,6 @@
                         <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt="" id="previewImage" style="border-radius: 10px;" width="100%">
                     </div>
                 </div>
-                <div class="card mt-2">
-                    <div class="card-body">
-                        <h6>Preview of Brochure</h6>
-                        <iframe id="pdfPreview" width="100%" height="500px" frameborder="0"></iframe>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UpdateProfileRequest;
+use App\Models\Role;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role == 'bus_operator') {
+        if ($user->role == Role::BUS_OPERATOR) {
             $user->load('transport');
         }
 

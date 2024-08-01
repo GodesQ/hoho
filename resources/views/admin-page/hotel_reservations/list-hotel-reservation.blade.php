@@ -17,7 +17,7 @@
 
         <div class="card">
             <div class="table-responsive card-body">
-                <table class="table table-striped table-borderless data-table">
+                <table class="table table-striped table-bordered-bottom data-table">
                     <thead>
                         <tr>
                             <th>Id</th>
@@ -111,6 +111,10 @@
                                         }
                                     })
                             }
+                        },
+                        error: function(response) {
+                            let json_response = response?.responseJSON;
+                            toastr.error(json_response.message, 'Failed');
                         }
                     })
                 }

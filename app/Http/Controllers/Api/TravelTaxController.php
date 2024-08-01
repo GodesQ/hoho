@@ -12,6 +12,8 @@ use App\Models\TravelTaxPayment;
 use App\Services\AqwireService;
 use Carbon\Carbon;
 use ErrorException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TravelTaxController extends Controller
 {   
@@ -38,6 +40,16 @@ class TravelTaxController extends Controller
                 'message' => $e->getMessage(),
             ], 400);
         }
+    }
+
+    public function getUserTravelTaxPayments(Request $request) {
+        $user = Auth::user();
+        $payments = TravelTaxPayment::where('user_id', $user->id)->with('passengers')->latest()->get();
+        
+        return response([
+            'status' => TRUE,
+            'travel_tax_payments' => $payments
+        ]);
     }
 
     private function computeTotalAmount($amount, $processing_fee, $discount)

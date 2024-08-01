@@ -17,31 +17,15 @@
 
     <div class="card">
         <div class="card-body">
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="form-group">
-                        <label for="" class="form-label">Organization</label>
-                        <select name="organization_id" id="organization_id" class="form-select">
-                            <option value="">--- ALL ---</option>
-                            @foreach ($organizations as $organization)
-                                <option value="{{ $organization->id }}">{{ $organization->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
             <div class="table-responsive text-nowrap">
-                <table class="table table-striped table-borderless data-table">
+                <table class="table table-striped table-bordered-bottom data-table text-wrap">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th></th>
-                            <th>Name</th>
+                            <th width="150">Name</th>
                             <th>Location</th>
+                            <th width="120">Payment Options</th>
                             <th>Is Featured</th>
                             <th>Actions</th>
                         </tr>
@@ -89,6 +73,12 @@
                     {
                         data: 'location',
                         name: 'location',
+                        orderable: false,
+                        searchable: false,
+                    },
+                    {
+                        data: 'payment_options',
+                        name: 'payment_options',
                         orderable: false,
                         searchable: false,
                     },

@@ -133,7 +133,7 @@
                                     </div>
                                 </li>
                             @empty
-                                <li class="d-flex mb-4 pb-1">No Hotel Reservations Found</li>
+                                <li class="d-flex mb-4 pb-1">No Orders Found</li>
                             @endforelse
                         </ul>
                     </div>

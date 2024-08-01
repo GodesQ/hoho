@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 use App\Models\Merchant;
@@ -20,21 +21,21 @@ class MerchantController extends Controller
         $organizations = Organization::get();
         switch ($request->type) {
             case 'hotel':
-                if ($admin->role === 'merchant_hotel_admin') {
+                if ($admin->role === Role::MERCHANT_HOTEL_ADMIN) {
                     $admin = Admin::where('id', $admin->id)->with('merchant', 'merchant.hotel_info')->first();
                     return view('admin-page.merchants_forms.merchant_hotel_form', compact('organizations', 'admin'));
                 }
                 abort(404);
 
             case 'store':
-                if ($admin->role === 'merchant_store_admin') {
+                if ($admin->role === Role::MERCHANT_STORE_ADMIN) {
                     $admin = Admin::where('id', $admin->id)->with('merchant', 'merchant.store_info')->first();
                     return view('admin-page.merchants_forms.merchant_store_form', compact('organizations', 'admin'));
                 }
                 abort(404);
 
             case 'restaurant':
-                if ($admin->role === 'merchant_restaurant_admin') {
+                if ($admin->role === Role::MERCHANT_RESTAURANT_ADMIN) {
                     $admin = Admin::where('id', $admin->id)->with('merchant', 'merchant.restaurant_info')->first();
                     // dd($admin);
 
@@ -43,7 +44,7 @@ class MerchantController extends Controller
                 abort(404);
 
             case 'tour_provider':
-                if ($admin->role === 'tour_operator_admin') {
+                if ($admin->role === Role::TOUR_OPERATOR_ADMIN) {
                     $admin = Admin::where('id', $admin->id)->with('merchant', 'merchant.tour_provider_info')->first();
                     return view('admin-page.merchants_forms.merchant_tour_provider_form', compact('organizations', 'admin'));
                 }
@@ -62,16 +63,16 @@ class MerchantController extends Controller
         $adminMerchantIds = Admin::select('merchant_id')->whereNotNull('merchant_id')->get()->toArray();
 
         switch ($role) {
-            case 'merchant_restaurant_admin':
+            case Role::MERCHANT_RESTAURANT_ADMIN :
                 $merchants = Merchant::where('type', 'Restaurant')->whereNotIn('id', $adminMerchantIds)->get();
                 break;
-            case 'merchant_hotel_admin':
+            case Role::MERCHANT_HOTEL_ADMIN :
                 $merchants = Merchant::where('type', 'Hotel')->whereNotIn('id', $adminMerchantIds)->get();
                 break;
-            case 'merchant_store_admin':
+            case Role::MERCHANT_STORE_ADMIN :
                 $merchants = Merchant::where('type', 'Store')->whereNotIn('id', $adminMerchantIds)->get();
                 break;
-            case 'tour_operator_admin':
+            case Role::TOUR_OPERATOR_ADMIN :
                     $merchants = Merchant::where('type', 'Tour Provider')->whereNotIn('id', $adminMerchantIds)->get();
                     break;
             default:

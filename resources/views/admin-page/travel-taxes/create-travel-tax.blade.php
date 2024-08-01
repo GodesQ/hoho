@@ -123,6 +123,11 @@
                 <div class="col-xl-4">
                     <div class="card">
                         <div class="card-body">
+                            <div class="mb-3">
+                                <label for="user-field" class="form-label">Payor <span class="text-danger">*</span></label>
+                                <select name="user_id" id="user-field"></select>
+                            </div>
+                            <hr>
                             <div class="row">
                                 <div class="col-lg-6">
                                     <h6>Sub Amount:</h6>
@@ -173,6 +178,21 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+
+            $('#user-field').select2({
+                width: '100%',
+                placeholder: 'Select user',
+                minimumInputLength: 3,
+                ajax: {
+                    url: `{{ route('admin.users.lookup') }}`,
+                    dataType: 'json',
+                    delay: 350,
+                    processResults: data => ({
+                        results: data
+                    })
+                }
+            });
+
             // Add Passenger button click event
             $("#add-passenger-btn").on("click", function() {
                 // Clone the passenger container

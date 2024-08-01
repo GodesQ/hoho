@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreRequest;
 use App\Http\Requests\Product\UpdateRequest;
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -19,7 +20,12 @@ class ProductController extends Controller
     {
 
         if ($request->ajax()) {
+            $user = Auth::guard('admin')->user();
             $products = Product::query();
+
+            if($user->role === Role::MERCHANT_STORE_ADMIN) {
+                $products = $products->where('merchant_id', $user->merchant_id);
+            }
 
             if($request->search['value'] && $request->ajax()) {
                 $searchValue = $request->search['value'];
@@ -31,11 +37,14 @@ class ProductController extends Controller
                 ->editColumn('product', function ($row) {
                     return view('components.merchant-product', ['product' => $row ]);
                 })
+                ->editColumn('price', function ($row) {
+                    return number_format($row->price, 2);
+                })
                 ->addColumn('status', function ($row) {
                     if($row->is_active) {
-                        return '<span class="badge bg-success">Active</span>';
+                        return '<span class="badge bg-label-success">Active</span>';
                     } else {
-                        return '<span class="badge bg-warning">Inactive</span>';
+                        return '<span class="badge bg-label-warning">Inactive</span>';
                     }
                 })
                 ->addColumn('actions', function ($row) {
@@ -54,7 +63,7 @@ class ProductController extends Controller
     public function create(Request $request)
     {   
         $user = Auth::guard('admin')->user();
-        if($user->role == 'merchant_store_admin') {
+        if($user->role == Role::MERCHANT_STORE_ADMIN) {
             $merchants = Merchant::where('type','Store')->where('id', $user->merchant_id)->get();
         } else {
             $merchants = Merchant::where('type', 'Hotel')->get();
@@ -120,7 +129,7 @@ class ProductController extends Controller
     public function edit($id)
     {   
         $user = Auth::guard('admin')->user();
-        if($user->role == 'merchant_store_admin') {
+        if($user->role == Role::MERCHANT_STORE_ADMIN) {
             $merchants = Merchant::where('type','Store')->where('id', $user->merchant_id)->get();
         } else {
             $merchants = Merchant::where('type', 'Hotel')->get();

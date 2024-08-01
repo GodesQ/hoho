@@ -57,12 +57,15 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
-                                    <div class="mb-3">
-                                        <label class="form-label" for="password">Password <span
-                                                class="text-danger">*</span></label>
-                                        <input type="password" class="form-control" id="password" name="password"
-                                            placeholder="Type the password" />
-                                        <div class="danger text-danger">@error('password'){{ $message }}@enderror</div>
+                                    <div class="mb-3 form-password-toggle">
+                                        <div class="d-flex justify-content-between">
+                                            <label class="form-label" for="password">Password</label>
+                                        </div>
+                                        <div class="input-group input-group-merge">
+                                            <input type="password" id="password" class="form-control" name="password"
+                                                placeholder="***********" aria-describedby="password" />
+                                            <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

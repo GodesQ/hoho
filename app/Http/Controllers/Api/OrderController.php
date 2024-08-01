@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enum\TransactionTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\StoreRequest;
 use App\Models\Order;
@@ -73,6 +74,8 @@ class OrderController extends Controller
     public function bulk_store(Request $request)
     {
         try {
+            DB::beginTransaction();
+
             $items = json_decode($request->items);
             $orders = [];
 
@@ -98,7 +101,7 @@ class OrderController extends Controller
                     'sub_amount' => $transaction_amount,
                     'total_additional_charges' => 0,
                     'total_discount' => 0,
-                    'transaction_type' => 'order',
+                    'transaction_type' => TransactionTypeEnum::ORDER,
                     'payment_amount' => $transaction_amount,
                     'additional_charges' => null,
                     'payment_status' => 'pending',
@@ -142,6 +145,8 @@ class OrderController extends Controller
                         'additional_charges' => null,
                     ]);
 
+                    DB::commit();
+
                     return response([
                         'status' => 'paying',
                         'message' => 'Order successfully submitted. Please wait for approval of merchant.',
@@ -150,6 +155,7 @@ class OrderController extends Controller
                 }
 
             } else {
+                DB::rollBack();
                 throw new ErrorException("The items are not in a valid JSON format.");
             }
 

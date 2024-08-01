@@ -6,6 +6,7 @@ use App\Enum\TourTypeEnum;
 use App\Enum\TransactionTypeEnum;
 use App\Http\Requests\TourReservation\StoreRequest;
 use App\Models\LayoverTourReservationDetail;
+use App\Models\Referral;
 use App\Models\TourReservationCustomerDetail;
 use App\Models\User;
 use ErrorException;
@@ -41,15 +42,19 @@ class BookingService
     public function createBookReservation(Request $request)
     {   
         try {
-            $reference_no = $this->generateReferenceNo();
+            DB::beginTransaction();
+
+            $user = User::where('id', $request->reserved_user_id)->first();
+
+            if(!$user) throw new ErrorException("User Not Found.");
+                
             $additional_charges = $this->generateAdditionalCharges();
 
             $subAmount = intval($request->amount) ?? 0;
+            $totalOfDiscount = 0;
 
             if ($request->promo_code) {
-                $totalOfDiscount = (intval($request->amount) - intval($request->discounted_amount));
-            } else {
-                $totalOfDiscount = 0;
+                $totalOfDiscount = intval($request->amount) - intval($request->discounted_amount);
             }
 
             $totalOfAdditionalCharges = $this->getTotalOfAdditionalCharges($request->number_of_pass, $additional_charges);
@@ -68,66 +73,53 @@ class BookingService
 
             $reservation = $this->createReservation($request, $transaction, $totalAmount, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
 
-            // Check if reservation or transaction creation failed
-            if (!$reservation || !$transaction) {
-                if ($reservation) {
-                    $reservation->delete();
-                }
-                if ($transaction) {
-                    $transaction->delete();
-                }
-                return back()->with('fail', 'Failed to Create Reservation');
-            }
-
-            // Handle payment method`
-            if ($request->payment_method == 'cash_payment' || ($request->promo_code && $subAmount == $totalOfDiscount)) {
+            if($request->payment_method === "cash_payment") 
                 return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Reservation Successfully');
-            } else {
-                $response = $this->sendPaymentRequest($transaction);
 
-                if (!$response['status'] || !$response['status'] == 'FAIL') {
-                    $reservation->delete();
-                    $transaction->delete();
-                    return back()->with('fail', 'Invalid Transaction');
-                }
+            $payment_request_model = $this->aqwireService->createRequestModel($transaction, $user);
+            $payment_response = $this->aqwireService->pay($payment_request_model);
 
-                $responseData = json_decode($response['result']->getBody(), true);
+            if (!$payment_response['status'] || $payment_response['status'] === 'FAIL') {
+                throw new ErrorException('Invalid Transaction.');
+            }
 
-                // Update transaction after payment
-                $this->updateTransactionAfterPayment($transaction, $responseData, $additional_charges);
+            // Update transaction after payment
+            $this->updateTransactionAfterPayment($transaction, $payment_response, $additional_charges);
 
-                // Send payment request mail
-                $this->mailService->sendPaymentRequestMail($transaction, $responseData['paymentUrl'], $responseData['data']['expiresAt']);
+            // Send payment request mail
+            $this->mailService->sendPaymentRequestMail($transaction, $payment_response['paymentUrl'], $payment_response['data']['expiresAt']);
 
-                // Send notification to tour provider
-                if (env('APP_ENVIRONMENT') == 'LIVE') {
-                    $tour = Tour::where('id', $request->tour_id)->first();
+            // Send notification to tour provider
+            if (config('app.env') === 'production') {
+                $tour = Tour::where('id', $request->tour_id)->first();
 
-                    if ($tour && $tour->tour_provider && optional($tour->tour_provider)->contact_email) {
+                if ($tour && $tour->tour_provider && optional($tour->tour_provider)->contact_email) {
 
-                        $details = [
-                            'tour_provider_name' => optional(optional($tour->tour_provider)->merchant)->name,
-                            'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
-                            'trip_date' => $request->trip_date,
-                            'tour_name' => $tour->name
-                        ];
+                    $details = [
+                        'tour_provider_name' => $tour->tour_provider->merchant->name ?? "",
+                        'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
+                        'trip_date' => $request->trip_date,
+                        'tour_name' => $tour->name
+                    ];
 
-                        Mail::to(optional($tour->tour_provider)->contact_email)->send(new TourProviderBookingNotification($details));
-                    }
-                }
-
-                // Return response
-                if ($request->is('api/*')) {
-                    return response([
-                        'status' => 'paying',
-                        'url' => $responseData['paymentUrl']
-                    ]);
-                } else {
-                    return redirect($responseData['paymentUrl']);
+                    Mail::to(optional($tour->tour_provider)->contact_email)->send(new TourProviderBookingNotification($details));
                 }
             }
+
+            DB::commit();
+
+            // Return response
+            if ($request->is('api/*')) {
+                return response([
+                    'status' => 'paying',
+                    'url' => $payment_response['paymentUrl']
+                ]);
+            }
+
+            return redirect($payment_response['paymentUrl']);
 
         } catch (\Exception $exception) {
+            DB::rollBack();
            return back()->with('fail', $exception->getMessage());
         }
     }
@@ -135,6 +127,8 @@ class BookingService
     public function createMultipleBooking(Request $request)
     {
         try {
+            DB::beginTransaction();
+
             $user = User::where('id', $request->reserved_user_id)->first();
 
             if (!$user->firstname || !$user->lastname || !$user->contact_no)
@@ -162,7 +156,7 @@ class BookingService
             $totalOfAdditionalCharges = 0;
 
             foreach ($items as $item) {
-                $discounted_amount = intval($item['discounted_amount']) ?? intval($item['amount']);
+                $discounted_amount = array_key_exists('discounted_amount', $item) ? intval($item['discounted_amount']) : intval($item['amount']);
 
                 $subAmount += intval($item['amount']) ?? 0;
                 $totalOfDiscount += intval($item['amount']) - $discounted_amount;
@@ -191,14 +185,15 @@ class BookingService
 
             $this->mailService->sendPaymentRequestMail($transaction, $payment_response['paymentUrl'], $payment_response['data']['expiresAt']);
 
+            DB::commit();
+
             return [
                 'transaction' => $transaction,
                 'payment_url' => $payment_response['paymentUrl']
             ];
 
         } catch (ErrorException $e) {
-            if (isset($transaction))
-                $transaction->delete();
+            DB::rollBack();
             throw $e;
         }
     }
@@ -231,7 +226,9 @@ class BookingService
 
     private function getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount)
     {
-        # NOTE: The amount of each booking was already been set, This function is for additional charges, discounted amount to sum up all of the bookings for this transaction.
+        # NOTE: The amount for each booking has already been set.
+        # This function is for additional charges, which are a discounted amount calculated from all of the bookings for this transaction.
+        
         return ($subAmount - $totalOfDiscount) + $totalOfAdditionalCharges;
     }
 
@@ -307,11 +304,19 @@ class BookingService
             'number_of_pass' => $request->number_of_pass,
             'ticket_pass' => $request->type == 'DIY' ? $request->ticket_pass : null,
             'payment_method' => $request->payment_method,
-            'referral_code' => $request->referral_code,
             'promo_code' => $request->promo_code,
             'created_by' => Auth::guard('admin')->user()->id,
             'created_user_type' => Auth::guard('admin')->user()->role,
         ]);
+
+        $referral = Referral::where('referral_code', $request->referral_code)->first();
+
+        if($referral) {
+            $reservation->update([
+                'referral_merchant_id' => $referral->merchant_id,
+                'referral_code' => $referral->referral_code,
+            ]);
+        }
 
         TourReservationCustomerDetail::create([
             'tour_reservation_id' => $reservation->id,
@@ -408,7 +413,7 @@ class BookingService
             ];
 
             if ($tour?->tour_provider?->contact_email) {
-                $recipientEmail = env('APP_ENVIRONMENT') === 'LIVE' ? $tour->tour_provider->contact_email : 'james@godesq.com';
+                $recipientEmail = config('app.env') === 'production' ? $tour->tour_provider->contact_email : config('mail.test_receiver');
                 Mail::to($recipientEmail)->cc('philippinehoho@tourism.gov.ph')->send(new TourProviderBookingNotification($details));
             }
 
@@ -420,7 +425,7 @@ class BookingService
         try {
             $requestModel = $this->setRequestModel($transaction);
 
-            if (env('APP_ENVIRONMENT') == 'LIVE') {
+            if (config('app.env') === 'production') {
                 $url_create = 'https://payments.aqwire.io/api/v3/transactions/create';
                 $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
             } else {

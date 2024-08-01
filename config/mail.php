@@ -115,4 +115,15 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | TEST MAIL RECEIVER
+    |--------------------------------------------------------------------------
+    |
+    | This email used for sending an email notification in the application.
+    |
+    */
+
+    'test_receiver' => env('TEST_MAIL_RECEIVER', 'jamesgarnfil4@gmail.com'),
+
 ];

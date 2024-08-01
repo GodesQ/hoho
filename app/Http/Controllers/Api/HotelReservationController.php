@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\HotelReservation\StoreRequest;
+use App\Mail\HotelReservationConfirmation;
+use App\Models\Admin;
 use App\Models\HotelReservation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class HotelReservationController extends Controller
 {   
@@ -15,7 +18,23 @@ class HotelReservationController extends Controller
 
     public function store(StoreRequest $request) {
         $data = $request->validated();
-        $hotelReservation = HotelReservation::create(array_merge($data, ['status' => 'pending']));
+        $reservation = HotelReservation::create(array_merge($data, ['status' => 'pending']));
+
+        if($reservation) {
+            $details = [
+                'hotel_name' => $reservation->room->merchant->name,
+                'room_name' => $reservation->room->room_name,
+                'reserved_customer' => ($reservation->reserved_user->lastname) . ', ' . ($reservation->reserved_user->firstname),
+                'checkin_date' => $reservation->checkin_date,
+                'checkout_date' => $reservation->checkout_date,
+                'reservation_link' => route('admin.login') . '?redirectTo=' . route('admin.hotel_reservations.edit', $reservation->id),
+            ];
+
+            $hotel_admin = Admin::where('merchant_id', $reservation->room->merchant->id)->first();
+            
+            Mail::to('jamesgarnfil15@gmail.com')->send(new HotelReservationConfirmation($details));
+
+        }
 
         return response([
             'status' => TRUE,

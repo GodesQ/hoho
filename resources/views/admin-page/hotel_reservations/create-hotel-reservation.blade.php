@@ -65,13 +65,33 @@
                             </div>
                         </div>
                         <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label for="" class="form-label">Adult Quantity</label>
+                                    <input type="number" class="form-control" name="adult_quantity" id="adult-quantity-field">
+                                    <div class="text-danger">
+                                        @error('adult_quantity')
+                                            {{ $message }}
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="" class="form-label">Children Quantity</label>
+                                    <input type="number" class="form-control" name="children_quantity" id="children-quantity-field">
+                                    @error('children_quantity')
+                                            {{ $message }}
+                                        @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="number-of-pax-field" class="form-label">Number of Pax <span
+                                <label for="checkin-date-field" class="form-label">Check-In Date <span
                                         class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="number_of_pax" id="number-of-pax-field"
-                                    value="{{ old('number_of_pax') }}">
+                                <input type="date" name="checkin_date" id="checkin-date-field"
+                                    class="form-control" value="{{ old('checkin_date') }}">
                                 <div class="text-danger">
-                                    @error('number_of_pax')
+                                    @error('checkin_date')
                                         {{ $message }}
                                     @enderror
                                 </div>
@@ -79,25 +99,12 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="reservation-date-field" class="form-label">Reservation Date <span
+                                <label for="checkout-date-field" class="form-label">Check-Out Date <span
                                         class="text-danger">*</span></label>
-                                <input type="date" name="reservation_date" id="reservation-date-field"
-                                    class="form-control" value="{{ old('reservation_date') }}">
+                                <input type="date" name="checkout_date" id="checkout-date-field"
+                                    class="form-control" value="{{ old('checkout_date') }}">
                                 <div class="text-danger">
-                                    @error('reservation_date')
-                                        {{ $message }}
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label for="reservation-time-field" class="form-label">Reservation Time <span
-                                        class="text-danger">*</span></label>
-                                <input type="time" name="reservation_time" id="reservation-time-field"
-                                    class="form-control" value="{{ old('reservation_time') }}">
-                                <div class="text-danger">
-                                    @error('reservation_time')
+                                    @error('checkout_date')
                                         {{ $message }}
                                     @enderror
                                 </div>
@@ -134,6 +141,13 @@
 
 @push('scripts')
     <script>
+
+        $('#checkin-date-field, #checkout-date-field').flatpickr({
+            enableTime: false,
+            dateFormat: "Y-m-d",
+            minDate: 'today',
+        })
+
         $('.reserved_users').select2({
             placeholder: 'Select users',
             minimumInputLength: 3,

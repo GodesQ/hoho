@@ -22,11 +22,12 @@
 
         <div class="card">
             <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-2">
+
+                <div class="row mb-4">
+                    <div class="col-lg-3">
                         <div class="form-group">
                             <label for="" class="form-label">Status</label>
-                            <select name="" id="status" class="form-select">
+                            <select name="" id="status" class="select2 form-select">
                                 <option value="">All</option>
                                 <option value="pending">Pending</option>
                                 <option value="approved">Approved</option>
@@ -36,9 +37,9 @@
                         </div>
                     </div>
                     <div class="col-lg-3">
-                        <label for="" class="form-label">Trip Date</label>
+                        <label for="trip-date-field" class="form-label">Trip Date</label>
                         <div class="input-group">
-                            <input type="date" name="" id="trip_date" class="form-control">
+                            <input type="date" name="" id="trip-date-field" class="form-control" placeholder="Select Trip Date">
                             <button class="btn btn-primary" type="button" id="button-clear"
                                 onclick="onClearTripDate()">Clear <i class="bx bx-x"></i></button>
                         </div>
@@ -46,23 +47,25 @@
                     <div class="col-lg-3">
                         <div class="form-group">
                             <label for="" class="form-label">Type</label>
-                            <select name="type" id="type" class="form-select">
+                            <select name="type" id="type" class="select2 form-select">
                                 <option value="">All</option>
                                 <option value="Guided Tour">Guided Tour</option>
                                 <option value="DIY Tour">DIY Tour</option>
+                                <option value="Seasonal Tour">Seasonal Tour</option>
                             </select>
                         </div>
                     </div>
-
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <label for="search-field" class="form-label">Search</label>
+                            <input type="search" class="form-control" id="search-field">
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="card">
-            <div class="card-body">
                 <div class="table-responsive text-nowrap">
-                    <table class="table table-striped table-borderless data-table">
-                        <thead>
+                    <table class="table table-striped table-bordered-bottom data-table">
+                        <thead class="data-table-thead">
                             <tr>
                                 <th>ID</th>
                                 <th>Trip Date</th>
@@ -86,6 +89,7 @@
         function loadTable() {
             table = $('.data-table').DataTable({
                 lengthChange: false,
+                searching: false,
                 processing: true,
                 pageLength: 25,
                 responsive: true,
@@ -96,7 +100,7 @@
                         d.status = $('#status').val(),
                             d.search = $('input[type="search"]').val(),
                             d.type = $('#type').val(),
-                            d.trip_date = $('#trip_date').val()
+                            d.trip_date = $('#trip-date-field').val()
                     }
                 },
                 columns: [{
@@ -149,18 +153,23 @@
             }
         });
 
-        $('#trip_date').change(function() {
+        $('#trip-date-field').change(function() {
             if (table) {
                 table.draw();
             }
         });
 
         function onClearTripDate() {
-            $('#trip_date').val('');
+            $('#trip-date-field').val('');
             if (table) {
                 table.draw();
             }
         }
+
+        $('#trip-date-field').flatpickr({
+            enableTime: false,
+            dateFormat: "Y-m-d",
+        })
 
         loadTable();
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MerchantStore\StoreRequest;
 use App\Http\Requests\MerchantStore\UpdateRequest;
+use ErrorException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -17,6 +18,7 @@ use App\Models\Interest;
 
 use App\Services\MerchantStoreService;
 
+use InvalidArgumentException;
 use Yajra\DataTables\DataTables;
 use DB;
 
@@ -79,10 +81,9 @@ class MerchantStoreController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreRequest $request) {
-        $result = $this->merchantStoreService->CreateMerchantStore($request);
+        try {
+            $result = $this->merchantStoreService->createMerchantStore($request);
 
-        // Checks if the 'status' key in the $result array is truthy.
-        if ($result['status']) {
             $previousUrl = \URL::previous();
             $previousPath = parse_url($previousUrl, PHP_URL_PATH);
 
@@ -99,9 +100,12 @@ class MerchantStoreController extends Controller
             }
 
             return redirect()->route('admin.merchants.stores.edit', $result['merchant_store']->id)->withSuccess('Merchant Store created successfully');
+    
+        } catch (ErrorException $e) {
+            return back()->with('fail', $e->getMessage());
+        } catch (InvalidArgumentException $e) {
+            return back()->with('fail', $e->getMessage());
         }
-
-        return back()->with('fail', 'Merchant Store Failed to Create');
     }
 
     /**
@@ -119,13 +123,13 @@ class MerchantStoreController extends Controller
     }
 
     public function update(UpdateRequest $request) {
-        $result = $this->merchantStoreService->UpdateMerchantStore($request);
+        $result = $this->merchantStoreService->updateMerchantStore($request);
 
         if($result['status']) {
-            return back()->with('success', 'Merchant Store Updated Successfully');
+            return back()->with('success', 'The merchant store successfully update.');
         }
 
-        return back()->with('fail', 'Merchant Store Failed to Update');
+        return back()->with('fail', 'The merchant store failed to update.');
     }
 
     public function destroy(Request $request) {
@@ -133,7 +137,7 @@ class MerchantStoreController extends Controller
 
         $old_upload_image = public_path('assets/img/stores/') . $store->merchant->id . '/' . $store->merchant->featured_image;
         if($old_upload_image) {
-            $remove_image = @unlink($old_upload_image);
+            @unlink($old_upload_image);
         }
 
         // Remove all files from the directory
@@ -145,22 +149,16 @@ class MerchantStoreController extends Controller
             }
         }
 
-        // Now try to remove the directory
         if (is_dir($directory)) {
             @rmdir($directory);
         }
 
-        $delete_merchant = $store->merchant->delete();
-
-        if($delete_merchant) {
-            $delete_store = $store->delete();
-            if($delete_store) {
-                return response([
-                    'status' => true,
-                    'message' => 'Store Deleted Successfully'
-                ]);
-            }
-        }
+        $store->merchant->delete();
+        
+        return response([
+            'status' => true,
+            'message' => 'Store Deleted Successfully'
+        ]);
     }
 
     public function removeImage(Request $request) {

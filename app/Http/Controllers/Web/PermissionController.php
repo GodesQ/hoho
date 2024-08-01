@@ -51,7 +51,7 @@ class PermissionController extends Controller
     public function store(Request $request) {
         $permission = Permission::create([
             'permission_name' => $request->permission_name,
-            'roles' => $request->has('roles') ? json_encode($request->roles) : json_encode(['super_admin'])
+            'roles' => $request->has('roles') ? json_encode($request->roles) : json_encode([Role::SUPER_ADMIN])
         ]);
 
         if($permission) return redirect()->route('admin.permissions.list')->withSuccess('Permission created successfully');
@@ -69,7 +69,7 @@ class PermissionController extends Controller
 
         $update = $permission->update([
             'permission_name' => $request->permission_name,
-            'roles' => $request->has('roles') ? json_encode($request->roles) : json_encode(['super_admin'])
+            'roles' => $request->has('roles') ? json_encode($request->roles) : json_encode([Role::SUPER_ADMIN])
         ]);
 
         if($update) return back()->withSuccess('Permission updated successfully');

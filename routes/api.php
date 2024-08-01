@@ -51,24 +51,22 @@ use App\Http\Controllers\Api\TourBadgeController;
     Route::post('sso/register', [SSOController::class, 'register']);
     Route::post('sso/login', [SSOController::class, 'login']);
 
-    Route::get('promocodes', [PromoCodeController::class, 'getPromoCodes']);
-    Route::get('promocodes/verify/{code}', [PromoCodeController::class, 'checkValidPromoCode']);
-
     Route::post('user/post_forgot_password', [ForgotPasswordController::class, 'post_forgot_password']);
 
     Route::post('user/change_password', [UserController::class, 'changePassword']);
-
-    Route::get('announcements/important_announcements', [AnnouncementController::class, 'getImportantAnnouncements']);
-    Route::get('announcements', [AnnouncementController::class, 'getAnnouncements']);
 
     Route::get('featured_merchants', [MerchantController::class, 'getFeaturedMerchants']);
 
     Route::get('app-settings/maintenance-mode', [AppSettingController::class, 'checkMaintenanceMode']);
 
-    Route::get('tours/layover', [TourController::class, 'getLayoverTours']);
-
     Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('logout', [AuthController::class, 'logout']);
+
+        Route::get('announcements/important_announcements', [AnnouncementController::class, 'getImportantAnnouncements']);
+        Route::get('announcements', [AnnouncementController::class, 'getAnnouncements']);
+
+        Route::get('promocodes', [PromoCodeController::class, 'getPromoCodes']);
+        Route::get('promocodes/verify/{code}', [PromoCodeController::class, 'checkValidPromoCode']);
 
         Route::get('user', [UserController::class, 'getUser']);
         Route::post('user/profile', [UserController::class, 'updateProfile']);
@@ -91,6 +89,7 @@ use App\Http\Controllers\Api\TourBadgeController;
 
         Route::get('tours/guided', [TourController::class, 'getGuidedTours']);
         Route::get('tours/diy', [TourController::class, 'getDIYTours']);
+        Route::get('tours/transit', [TourController::class, 'getTransitTours']);
         Route::get('tours/seasonal', [TourController::class, 'getSeasonalTours']);
 
         Route::get('transports', [TransportController::class, 'getTransports']);
@@ -111,6 +110,7 @@ use App\Http\Controllers\Api\TourBadgeController;
         Route::get('interests', [InterestController::class, 'getInterests']);
 
         Route::post('reservation-codes/verify', [TourReservationController::class, 'scanReservationCode']);
+        // For older version of scan ticket pass qr code
         Route::get('reservation_codes/verify/{reservation_id}/{code}', [TourReservationController::class, 'verifyReservationCode']);
 
         Route::get('verify_referral_code/{referral_code}', [ReferralController::class, 'verifyReferralCode']);
@@ -145,5 +145,6 @@ use App\Http\Controllers\Api\TourBadgeController;
         Route::get('tour-feedbacks/tours/{tour_id}', [TourFeedBackController::class, 'getFeedBacksByTour']);
 
         Route::post('travel-tax', [TravelTaxController::class, 'store']);
+        Route::get('travel-tax/users/{user_id}', [TravelTaxController::class, 'getUserTravelTaxPayments']);
     });
 // });

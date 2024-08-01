@@ -26,9 +26,10 @@ class StoreRequest extends FormRequest
         return [
             'reserved_user_id' => 'required|exists:users,id',
             'room_id' => 'required|exists:rooms,id',
-            'number_of_pax' => 'required|numeric',
-            'reservation_date' => 'required|date',
-            'reservation_time' => 'required',
+            'adult_quantity' => 'required|numeric',
+            'children_quantity' => 'required|numeric',
+            'checkin_date' => 'required|date',
+            'checkout_date' => 'required|date|after:checkin_date',
             'status' => 'nullable|in:pending,declined,approved'
         ];
     }

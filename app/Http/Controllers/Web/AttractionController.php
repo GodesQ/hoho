@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Attraction\StoreRequest;
 use App\Services\AttractionService;
+use ErrorException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -44,9 +46,13 @@ class AttractionController extends Controller
         return view('admin-page.attractions.create-attraction', compact('organizations', 'interests', 'product_categories', 'attractions', 'hotels', 'stores', 'restaurants'));
     }
 
-    public function store(Request $request) {
-        $attraction = $this->attractionService->createAttraction($request);
-        if($attraction) return redirect()->route('admin.attractions.edit', $attraction->id)->withSuccess('Attraction created successfully');
+    public function store(StoreRequest $request) {
+        try {
+            $attraction = $this->attractionService->createAttraction($request);
+            return redirect()->route('admin.attractions.edit', $attraction->id)->withSuccess('Attraction created successfully');
+        } catch (ErrorException $e) {
+            return back()->with('fail', $e->getMessage());
+        }
     }
 
     public function edit(Request $request) {

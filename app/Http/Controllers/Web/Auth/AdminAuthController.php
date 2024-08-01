@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Auth;
 use App\Http\Controllers\Controller;
 
 use App\Models\Merchant;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -24,15 +25,28 @@ use App\Http\Requests\AdminAuth\RegisterRequest;
 
 class AdminAuthController extends Controller
 {
+    /**
+     * Login page of admins.
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function login(Request $request)
     {   
         if(Auth::guard('admin')->check()) {
+            if($request->query('redirectTo')) {
+                return redirect($request->query('redirectTo'));
+            }
             return redirect()->route('admin.dashboard');
         }
 
         return view('admin-page.auth.login');
     }
-
+    
+    /**
+     * Save and validate login request.
+     * @param \App\Http\Requests\AdminAuth\LoginRequest $request
+     * @return mixed
+     */
     public function saveLogin(LoginRequest $request)
     {
         $credentials = $request->validated();
@@ -52,15 +66,24 @@ class AdminAuthController extends Controller
             return redirect()->route('admin.dashboard')->withSuccess('Login Successfully');
         }
         
-        // Return back to login if failed
         return back()->with('fail', 'Invalid Credentials');
     }
 
+    /**
+     * Register page of merchants.
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
     public function register(Request $request)
     {
         return view('admin-page.auth.register');
     }
 
+    /**
+     * Validate and save the register request of merchants. The admin will receive notification after the successful registration.
+     * @param \App\Http\Requests\AdminAuth\RegisterRequest $request
+     * @return mixed|\Illuminate\Http\RedirectResponse
+     */
     public function saveRegister(RegisterRequest $request)
     {
         $data = $request->validated();
@@ -68,45 +91,52 @@ class AdminAuthController extends Controller
         $admin_user = Admin::create(array_merge($data, [
             'is_merchant' => TRUE
         ]));
-
-        if ($admin_user) {
             
-            $details = [
-                'email' => $admin_user->email,
-                'registered_date' => date('F d, Y')
-            ];
+        $details = [
+            'email' => $admin_user->email,
+            'registered_date' => date('F d, Y')
+        ];
 
-            $receiver = env('APP_ENVIRONMENT') == 'LIVE' ? env('MAIL_ADMIN_RECEIVER') : 'james@godesq.com';
+        $receiver = config('app.env') === 'production' ? env('MAIL_ADMIN_RECEIVER') : config('mail.test_receiver');
 
-            Mail::to($receiver)->send(new NewRegisteredMerchantNotification($details));
+        Mail::to($receiver)->send(new NewRegisteredMerchantNotification($details));
 
-            // Login to create a session
-            return redirect()->route('merchant_account_registered_message');
-        }
+        // Login to create a session
+        return redirect()->route('merchant_account_registered_message');
     }
 
+    /**
+     * Logout the current authenticated user.
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\RedirectResponse
+     */ 
     public function logout(Request $request)
     {
         Auth::guard('admin')->logout();
         return redirect()->route('admin.login');
     }
 
+    /**
+     * Check the merchant role, then redirect if the merchant doesn't have any merchant information in the database.
+     * @param mixed $admin
+     * @return mixed
+     */
     private function checkMerchantRole($admin)
     {
 
         $merchant_data = Merchant::where('id', $admin->merchant_id)->exists();
 
         switch ($admin->role) {
-            case 'merchant_store_admin':
+            case Role::MERCHANT_STORE_ADMIN :
                 $type = 'store';
                 break;
-            case 'merchant_restaurant_admin':
+            case Role::MERCHANT_RESTAURANT_ADMIN :
                 $type = 'restaurant';
                 break;
-            case 'merchant_hotel_admin':
+            case Role::MERCHANT_HOTEL_ADMIN :
                 $type = 'hotel';
                 break;
-            case 'tour_operator_admin':
+            case Role::TOUR_OPERATOR_ADMIN :
                 $type = 'tour_provider';
                 break;
             default:
