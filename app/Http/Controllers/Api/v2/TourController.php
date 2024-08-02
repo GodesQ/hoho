@@ -15,7 +15,7 @@ class TourController extends Controller
                     $type = $request->query('type') == 'diy' ? 'DIY Tour' : 'Guided Tour';
                     $query->where('type', $type);
                 })
-                ->whereIn('type', ['Guided Tour', 'DIY Tour'])
+                ->whereIn('type', ['Guided Tour', 'DIY Tour', 'Seasonal Tour'])
                 ->get();
         return TourResource::collection($tours);
     }
