@@ -26,7 +26,7 @@ class FoodCategoryController extends Controller
                 })
                 ->addColumn('actions', function ($row) {
                     return '<div class="dropdown">
-                                    <a href="/admin/food-categories/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
+                                    <a href="'. route('admin.food_categories.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
                                     <button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
                                 </div>';
                 })
@@ -41,7 +41,7 @@ class FoodCategoryController extends Controller
         $user = Auth::guard('admin')->user();
         
         if($user->role == Role::MERCHANT_RESTAURANT_ADMIN) {
-            $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->where('is_active', 1)->get();
+            $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->get();
         } else {
             $merchants = Merchant::where('type', 'Restaurant')->where('is_active', 1)->get();
         }
