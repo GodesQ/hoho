@@ -66,8 +66,14 @@ class RestaurantReservationController extends Controller
     }
 
     public function create(Request $request) {
-        $merchants = Merchant::where('type', 'Restaurant')->get();
-        // dd($merchants);
+        $user = Auth::guard('admin')->user();
+
+        if($user->role == Role::MERCHANT_RESTAURANT_ADMIN) {
+            $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->get();
+        } else {
+            $merchants = Merchant::where('type', 'Restaurant')->get();
+        }
+
         return view('admin-page.restaurant_reservations.create-restaurant-reservation', compact('merchants'));
     }
 
@@ -82,8 +88,15 @@ class RestaurantReservationController extends Controller
     }
 
     public function edit(Request $request, $id) {
+        $user = Auth::guard('admin')->user();
         $reservation = RestaurantReservation::findOrFail($id);
-        $merchants = Merchant::where('type', 'Restaurant')->get();
+
+        if($user->role == Role::MERCHANT_RESTAURANT_ADMIN) {
+            $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->get();
+        } else {
+            $merchants = Merchant::where('type', 'Restaurant')->get();
+        }
+        
         return view('admin-page.restaurant_reservations.edit-restaurant-reservation', compact('reservation', 'merchants'));
     }
 

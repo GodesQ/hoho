@@ -66,7 +66,7 @@
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="name" class="form-label">Tour Type</label>
-                                                <select name="type" id="type" class="form-select">
+                                                <select name="type" id="type" class="form-select select2">
                                                     <option value="">---- SELECT TOUR TYPE ----</option>
                                                     <option {{ old('type') == 'City Tour' ? 'selected' : null }} value="City Tour">City Tour</option>
                                                     <option {{ old('type') == 'Guided Tour' ? 'selected' : null }} value="Guided Tour">Guided Tour</option>
@@ -126,14 +126,14 @@
                                                 <label for="bypass_days" class="form-label">Number of ByPass
                                                     Days</label>
                                                 <input type="number" name="bypass_days" id="bypass_days"
-                                                    class="form-control">
+                                                    class="form-control" min="1">
                                             </div>
                                         </div>
                                         <div class="col-lg-2">
                                             <div class="mb-3">
                                                 <label for="minimum_pax" class="form-label">Minimum Pax</label>
                                                 <input type="number" name="minimum_pax" id="minimum_pax"
-                                                    class="form-control">
+                                                    class="form-control" min="1">
                                             </div>
                                         </div>
                                         <div class="col-lg-3">
@@ -156,7 +156,7 @@
                                                         <label for="under_age_limit" class="form-label">Under Age
                                                             Limit</label>
                                                         <input type="number" class="form-control" name="under_age_limit"
-                                                            id="under_age_limit">
+                                                            id="under_age_limit" min="1">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6">
@@ -164,7 +164,7 @@
                                                         <label for="over_age_limit" class="form-label">Over Age
                                                             Limit</label>
                                                         <input type="number" class="form-control" name="over_age_limit"
-                                                            id="over_age_limit">
+                                                            id="over_age_limit" min="1">
                                                     </div>
                                                 </div>
                                             </div>
@@ -180,7 +180,7 @@
                                                 <div class="col-lg-6">
                                                     <label for="capacity" class="form-label">Maximum Capacity</label>
                                                     <input type="number" class="form-control" name="capacity"
-                                                        id="capacity">
+                                                        id="capacity" min="1">
                                                 </div>
                                             </div>
                                         </div>
@@ -198,7 +198,7 @@
                                                 <div class="col-lg-3">
                                                     <div class="mb-3">
                                                         <label for="bracket_price_one" class="form-label">Bracket
-                                                            Price (Min of 4) <span class="text-danger">*</span></label>
+                                                            Price (Min of 4)</label>
                                                         <input type="text" class="form-control"
                                                             name="bracket_price_one" id="bracket_price_one" value="0">
                                                         <div class="text-danger">@error('bracket_price_one'){{ $message }}@enderror</div>
@@ -207,7 +207,7 @@
                                                 <div class="col-lg-3">
                                                     <div class="mb-3">
                                                         <label for="bracket_price_two" class="form-label">Bracket
-                                                            Price (Min of 10) <span class="text-danger">*</span></label>
+                                                            Price (Min of 10)</label>
                                                         <input type="text" class="form-control"
                                                             name="bracket_price_two" id="bracket_price_two" value="0">
                                                         <div class="text-danger">@error('bracket_price_two'){{ $message }}@enderror</div>
@@ -216,7 +216,7 @@
                                                 <div class="col-lg-3">
                                                     <div class="mb-3">
                                                         <label for="bracket_price_three" class="form-label">Bracket
-                                                            Price (Min of 25) <span class="text-danger">*</span></label>
+                                                            Price (Min of 25)</label>
                                                         <input type="text" class="form-control"
                                                             name="bracket_price_three" id="bracket_price_three" value="0">
                                                         <div class="text-danger">@error('bracket_price_three'){{ $message }}@enderror</div>
@@ -247,7 +247,7 @@
                                             <div class="mb-3">
                                                 <label for="operating_hours" class="form-label">Operating
                                                     Hours</label>
-                                                <textarea name="operating_hours" id="operating_hours" cols="30" rows="5" class="form-control"></textarea>
+                                                <textarea name="operating_hours" id="operating-hours-field" cols="30" rows="5" class="form-control"></textarea>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -322,7 +322,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 @endsection
 
@@ -365,6 +364,8 @@
             const timeslot = button.closest('.timeslot');
             timeslotContainer.removeChild(timeslot);
         }
+
+        const operating_hours_field = document.querySelector('#operating-hours-field'); 
     </script>
 
     <script>

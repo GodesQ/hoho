@@ -86,7 +86,7 @@ class AqwireService
             'project' => [
                 'name' => 'Philippines Hop On Hop Off',
                 'unitNumber' => '00000',
-                'category' => 'payment for hoho'
+                'category' => $transaction->transaction_type
             ],
             'redirectUrl' => [
                 'success' => $success . $transaction->id,

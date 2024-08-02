@@ -37,7 +37,7 @@ class FoodController extends Controller
                 })
                 ->addColumn('actions', function ($row) {
                     return '<div class="dropdown">
-                                <a href="/admin/foods/edit/' . $row->id . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
+                                <a href="' . route('admin.foods.edit', $row->id) . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>
                                 <button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
                             </div>';
                 })
@@ -56,7 +56,6 @@ class FoodController extends Controller
                 ->when($user->role === Role::MERCHANT_RESTAURANT_ADMIN, function($query) use ($user) {
                     $query->where('id', $user->merchant_id);
                 })
-                ->where('is_active', 1)
                 ->get();
 
         $foodCategories = FoodCategory::with('merchant')->get();
