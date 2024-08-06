@@ -7,7 +7,9 @@ use App\Mail\EmailVerification;
 use App\Models\Admin;
 use App\Models\Role;
 use App\Models\User;
+use Carbon\Carbon;
 use ErrorException;
+use Exception;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Request;
@@ -26,14 +28,16 @@ class AuthService
 
             $user = $this->authenticateUser($request, $fieldType);
 
-            if(!$user) throw new ErrorException('Invalid Credentials.');
+            if (!$user)
+                throw new Exception('Invalid Credentials.');
 
-            if(!Hash::check($request->password, $user->password)) {
+            if (!Hash::check($request->password, $user->password)) {
                 $isOldUser = $user && $user->is_old_user;
 
-                if($isOldUser) throw new ErrorException('Your account requires a password reset. Please update your password to continue.');
+                if ($isOldUser)
+                    throw new Exception('Your account requires a password reset. Please update your password to continue.');
 
-                throw new ErrorException('Invalid Credentials.');
+                throw new Exception('Invalid Credentials.');
             }
 
             $this->validateUserVerifiedEmail($user);
@@ -45,7 +49,7 @@ class AuthService
                 'token' => $token,
             ];
 
-        } catch (ErrorException $e) {
+        } catch (Exception $e) {
             throw $e;
         }
     }
@@ -55,45 +59,38 @@ class AuthService
         try {
             $data = $request->validated();
             $account_uid = $this->generateRandomUuid();
-    
+
             $contact_no_format = $this->checkContactNumberJSON($request->contact_no);
-    
+
             $user = User::create(array_merge($data, [
                 'account_uid' => $account_uid,
                 'country_of_residence' => $request->country_of_residence,
-                'contact_no' =>  preg_replace('/[^0-9]/', '', $contact_no_format['contactNumber']),
+                'contact_no' => preg_replace('/[^0-9]/', '', $contact_no_format['contactNumber']),
                 'countryCode' => preg_replace("/[^0-9]/", "", $contact_no_format['countryCode']),
                 'isoCode' => $contact_no_format['isoCode'],
                 'is_first_time_philippines' => $request->has('is_first_time_philippines'),
                 'is_international_tourist' => $request->has('is_international_tourist'),
                 'role' => UserRoleEnum::GUEST
             ]));
-    
+
+            if ($request->has('birthdate')) {
+                $birthdate = $request->birthdate;
+                $age = Carbon::parse($birthdate)->age;
+
+                $user->update([
+                    'age' => $age,
+                ]);
+            }
+
             // SEND EMAIL FOR VERIFICATION
             $details = ['email' => $request->email, 'username' => $request->username];
             Mail::to($request->email)->send(new EmailVerification($details));
 
             return $user;
-    
-            // if($user) {
-            //     return response([
-            //         'status' => TRUE,
-            //         'message' => 'User registered successfully'
-            //     ]);
-            // }
-        } catch (ErrorException $e) {
+
+        } catch (Exception $e) {
             throw $e;
         }
-    }
-
-    public function changePassword()
-    {
-
-    }
-
-    public function logout()
-    {
-
     }
 
     private function authenticateUser($request, $fieldType)
@@ -145,7 +142,8 @@ class AuthService
         }
     }
 
-    private function generateRandomUuid() {
+    private function generateRandomUuid()
+    {
         $data = random_bytes(16);
         $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // Version 4 (random)
         $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // Variant (RFC 4122)
@@ -154,9 +152,10 @@ class AuthService
         return $uuid;
     }
 
-    private function checkContactNumberJSON($requestContactNo) {
+    private function checkContactNumberJSON($requestContactNo)
+    {
         if (is_string($requestContactNo) && is_array(json_decode($requestContactNo, true)) && (json_last_error() == JSON_ERROR_NONE)) {
-            $data = json_decode($requestContactNo, true);
+            $data = json_decode($requestContactNo, true); // Set the 2nd paramater to true to convert in associative array
             $countryCode = $data['countryCode'];
             $isoCode = $data['isoCode'] ?? null;
             $contactNumber = $data['number'];
