@@ -18,7 +18,7 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <h4>Guest Details</h4>
-                            <hr>    
+                            <hr>
                             <div class="row my-1">
                                 <div class="col-xl-6">
                                     <label for="email" class="form-label text-primary">Email</label>
@@ -26,7 +26,8 @@
                                 </div>
                                 <div class="col-xl-6">
                                     <label for="email" class="form-label text-primary">Contact Number</label>
-                                    <h6>+{{ $reservation->reserved_user->countryCode ?? '' }} {{ $reservation->reserved_user->contact_no ?? '' }}</h6>
+                                    <h6>+{{ $reservation->reserved_user->countryCode ?? '' }}
+                                        {{ $reservation->reserved_user->contact_no ?? '' }}</h6>
                                 </div>
                             </div>
                             <div class="row my-1">
@@ -44,7 +45,7 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <h4>Room Details</h4>
-                            <hr>    
+                            <hr>
                             <div class="row my-1">
                                 <div class="col-xl-6">
                                     <label for="room_name" class="form-label text-primary">Room Name</label>
@@ -52,7 +53,7 @@
                                 </div>
                                 <div class="col-xl-6">
                                     <label for="room_price" class="form-label text-primary">Room Price</label>
-                                    <h6>₱ {{ number_format(($reservation->room->price ?? 0), 2) }}</h6>
+                                    <h6>₱ {{ number_format($reservation->room->price ?? 0, 2) }}</h6>
                                 </div>
                             </div>
                             <div class="row my-1">
@@ -63,11 +64,11 @@
                             </div>
                         </div>
                     </div>
-                    @if($reservation->transaction)
+                    @if ($reservation->transaction)
                         <div class="card">
                             <div class="card-body">
                                 <h4>Transaction Details</h4>
-                                <hr>   
+                                <hr>
                                 <div class="row my-1">
                                     <div class="col-xl-4">
                                         <label for="" class="form-label text-primary">Reference Number</label>
@@ -99,11 +100,12 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="adult-quantity-field" class="form-label text-primary">Adult Quantity<span
-                                                class="text-danger">*</span></label>
+                                        <label for="adult-quantity-field" class="form-label text-primary">Adult
+                                            Quantity<span class="text-danger">*</span></label>
                                         <input type="number" class="form-control" name="adult_quantity"
-                                            id="adult-quantity-field" value="{{ $reservation->adult_quantity }}">
-                                        <div class="text-danger">
+                                            id="adult-quantity-field" value="{{ $reservation->adult_quantity }}"
+                                            {{ $reservation->status === 'approved' ? 'readonly' : null }}>
+                                        <div class="text-danger danger">
                                             @error('adult_quantity')
                                                 {{ $message }}
                                             @enderror
@@ -112,10 +114,11 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="children-quantity-field" class="form-label text-primary">Children Quantity<span
-                                                class="text-danger">*</span></label>
+                                        <label for="children-quantity-field" class="form-label text-primary">Children
+                                            Quantity<span class="text-danger">*</span></label>
                                         <input type="number" class="form-control" name="children_quantity"
-                                            id="children-quantity-field" value="{{ $reservation->children_quantity }}">
+                                            id="children-quantity-field" value="{{ $reservation->children_quantity }}"
+                                            {{ $reservation->status === 'approved' ? 'readonly' : null }}>
                                         <div class="text-danger">
                                             @error('children_quantity')
                                                 {{ $message }}
@@ -128,8 +131,8 @@
                                         <label for="checkin-date-field" class="form-label text-primary">Check-In Date <span
                                                 class="text-danger">*</span></label>
                                         <input type="date" name="checkin_date" id="checkin-date-field"
-                                            class="form-control"
-                                            value="{{ $reservation->checkin_date->format('Y-m-d') }}">
+                                            class="form-control" value="{{ $reservation->checkin_date->format('Y-m-d') }}"
+                                            {{ $reservation->status === 'approved' ? 'readonly' : null }}>
                                         <div class="text-danger">
                                             @error('checkin_date')
                                                 {{ $message }}
@@ -139,10 +142,12 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="checkout-date-field" class="form-label text-primary">Check-Out Date <span
-                                                class="text-danger">*</span></label>
+                                        <label for="checkout-date-field" class="form-label text-primary">Check-Out Date
+                                            <span class="text-danger">*</span></label>
                                         <input type="date" name="checkout_date" id="checkout-date-field"
-                                            class="form-control" value="{{ $reservation->checkout_date->format('Y-m-d') }}">
+                                            class="form-control"
+                                            value="{{ $reservation->checkout_date->format('Y-m-d') }}"
+                                            {{ $reservation->status === 'approved' ? 'readonly' : null }}>
                                         <div class="text-danger">
                                             @error('checkout_date')
                                                 {{ $message }}
@@ -153,7 +158,7 @@
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <label for="status-field" class="form-label text-primary">Status</label>
-                                        <select name="status" id="status-field" class="form-select select2">
+                                        <select name="status" id="status-field" class="form-select select2" {{ $reservation->payment_status === 'paid' ? "readonly" : null }}>
                                             <option value="pending"
                                                 {{ $reservation->status == 'pending' ? 'selected' : null }}>Pending
                                             </option>
@@ -168,7 +173,8 @@
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="mb-3">
-                                        <label for="approved-date-field" class="form-label text-primary">Approved Date</label>
+                                        <label for="approved-date-field" class="form-label text-primary">Approved
+                                            Date</label>
                                         <input type="text" name="approved_date" id="approved-date-field" disabled
                                             class="form-control" value="{{ $reservation->approved_date }}">
                                     </div>
@@ -176,7 +182,7 @@
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <label for="" class="form-label text-primary">Payment Status</label> <br>
-                                        @if($reservation->payment_status == 'paid')
+                                        @if ($reservation->payment_status == 'paid')
                                             <div class="badge bg-label-success">{{ $reservation->payment_status }}</div>
                                         @else
                                             <div class="badge bg-label-warning">{{ $reservation->payment_status }}</div>
@@ -187,7 +193,7 @@
                             <hr>
                             <div class="btn-group">
                                 <button class="btn btn-primary">Save Hotel Reservation</button>
-                                @if($reservation->transaction_id && $reservation->payment_status == 'unpaid')
+                                @if ($reservation->transaction_id && $reservation->payment_status == 'unpaid')
                                     <button class="btn btn-outline-primary">Send New Payment Link</button>
                                 @endif
                             </div>
@@ -205,6 +211,7 @@
             enableTime: false,
             dateFormat: "Y-m-d",
             minDate: 'today',
+            clickOpens: $('#status-field').val() === "approved" ? false : true,
         })
 
         $('.reserved_users').select2({
