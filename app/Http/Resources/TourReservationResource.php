@@ -34,7 +34,6 @@ class TourReservationResource extends JsonResource
             "referral_code"=> $this->referral_code,
             "promo_code"=> $this->promo_code,
             "discount_amount"=> $this->discount_amount,
-            // "passengers"=> $this->when($this->passenger_ids, $this->passengers),
             "tour" => TourResource::make($this->tour),
             "feedback" => $this->feedback,
         ];

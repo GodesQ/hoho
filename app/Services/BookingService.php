@@ -5,11 +5,13 @@ namespace App\Services;
 use App\Enum\TourTypeEnum;
 use App\Enum\TransactionTypeEnum;
 use App\Http\Requests\TourReservation\StoreRequest;
+use App\Http\Resources\TourReservationResource;
 use App\Models\LayoverTourReservationDetail;
 use App\Models\Referral;
 use App\Models\TourReservationCustomerDetail;
 use App\Models\User;
 use ErrorException;
+use Exception;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -118,7 +120,7 @@ class BookingService
 
             return redirect($payment_response['paymentUrl']);
 
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             DB::rollBack();
            return back()->with('fail', $exception->getMessage());
         }
@@ -132,24 +134,25 @@ class BookingService
             $user = User::where('id', $request->reserved_user_id)->first();
 
             if (!$user->firstname || !$user->lastname || !$user->contact_no)
-                throw new ErrorException("The first name, last name and contact number must be filled in correctly in your profile to continue.");
+                throw new Exception("The first name, last name and contact number must be filled in correctly in your profile to continue.");
 
-            $phone_number = "+" . $user->countryCode . $user->contact_no;
+            $phone_number = "+{$user->countryCode}{$user->contact_no}";
 
             if (!preg_match('/^\+\d{10,12}$/', $phone_number)) {
-                throw new ErrorException("The contact number must be a valid E.164 format.");
+                throw new Exception("The contact number must be a valid E.164 format.");
             }
 
             $additional_charges = $this->generateAdditionalCharges();
 
+            // The items will be the list of tour reservations made by the customers/tourists.
             $items = $request->items;
 
             if (is_string($items) && is_array(json_decode($items, true))) {
-                $items = json_decode($items, true);
+                $items = json_decode($items, true); // Set the 2nd parameter to true to get the associative array result.
             }
 
             if (!is_array($items))
-                throw new ErrorException("Invalid type of items.");
+                throw new Exception("Invalid type of items.");
 
             $subAmount = 0;
             $totalOfDiscount = 0;
@@ -167,32 +170,41 @@ class BookingService
 
             $transaction = $this->storeTransaction($request, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
 
+            // Setup tour reservations with empty array for returning it on controller
+            $tour_reservations = [];
+
             foreach ($items as $item) {
                 $reservation = $this->storeReservation($request, $transaction, $item);
 
                 if ($item['type'] === TourTypeEnum::LAYOVER_TOUR) {
                     $this->storeLayoverTourDetails($reservation, $item);
                 }
+
+                // Remove the append attributes in reservation model
+                $reservation->setAppends([]);
+
+                // Add new reservation to $tour_reservations variable
+                array_push($tour_reservations, $reservation->load('tour'));
             }
-
-            $payment_request_model = $this->aqwireService->createRequestModel($transaction, $user);
-
-            $payment_response = $this->aqwireService->pay($payment_request_model);
-
-            $this->updateTransactionAfterPayment($transaction, $payment_response, $additional_charges);
 
             $this->sendMultipleBookingNotification($items, $transaction);
 
-            $this->mailService->sendPaymentRequestMail($transaction, $payment_response['paymentUrl'], $payment_response['data']['expiresAt']);
+            // $payment_request_model = $this->aqwireService->createRequestModel($transaction, $user);
+
+            // $payment_response = $this->aqwireService->pay($payment_request_model);
+
+            // $this->updateTransactionAfterPayment($transaction, $payment_response, $additional_charges);
+
+            // $this->mailService->sendPaymentRequestMail($transaction, $payment_response['paymentUrl'], $payment_response['data']['expiresAt']);
 
             DB::commit();
 
             return [
                 'transaction' => $transaction,
-                'payment_url' => $payment_response['paymentUrl']
+                'tour_reservations' => $tour_reservations,
             ];
 
-        } catch (ErrorException $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
