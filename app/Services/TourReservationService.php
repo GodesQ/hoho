@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Mail\PaymentRequestMail;
 use App\Mail\TourProviderBookingNotification;
+use App\Models\ReservationUserCode;
 use App\Models\Role;
 use App\Models\Tour;
 use App\Models\TourReservation;
@@ -13,7 +14,9 @@ use App\Models\User;
 use Carbon\Carbon;
 use DB;
 use Exception;
-use GuzzleHttp\Exception\RequestException;
+use App\Mail\BookingConfirmationMail;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -24,7 +27,14 @@ use Illuminate\Support\Str;
 
 
 class TourReservationService
-{
+{   
+    protected $aqwireService;
+    protected $mailService;
+    public function __construct(AqwireService $aqwireService, MailService $mailService) {
+        $this->aqwireService = $aqwireService;
+        $this->mailService = $mailService;
+    }
+
     public function storeRegisteredUserReservation(Request $request)
     {
         try {
@@ -414,7 +424,58 @@ class TourReservationService
 
     }
 
-    public function RetrieveAllTourReservationsList($request)
+    public function handlePaymentForApprovedReservation($reservation) {
+        $payment_request_model = $this->aqwireService->createRequestModel($reservation->transaction, $reservation->user);
+
+        $payment_response = $this->aqwireService->pay($payment_request_model);
+
+        $this->updateTransactionAfterPayment($reservation->transaction, $payment_response);
+
+        $this->mailService->sendPaymentRequestMail($reservation->transaction, $payment_response['paymentUrl'], $payment_response['data']['expiresAt']);
+    }
+
+    public function generateAndSendReservationCode($number_of_pax, $reservation) {
+        try {
+            $reservations_codes = $this->generateReservationCode($number_of_pax, $reservation);
+
+            if($reservation->customer_details) {
+                $what = $reservation->type == 'DIY' ? (
+                                $reservation->ticket_pass . " x " . $reservation->number_of_pass . " pax " . "(Valid for 24 hours from first tap)"
+                            )
+                            : (
+                                "1 Guided Tour " . '"' . $reservation->tour->name . '"' . ' x ' . $reservation->number_of_pass . ' pax'
+                            );
+
+                $trip_date = Carbon::parse($reservation->start_date);
+                $when = $trip_date->format('l, F j, Y');
+
+                $details = [
+                    'name' => $reservation->customer_details->firstname . ' ' . $reservation->customer_details->lastname,
+                    'what' => $what,
+                    'when' => $when,
+                    'where' => 'Robinson’s Manila',
+                    'type' => $reservation->type,
+                    'tour_name' => optional($reservation->tour)->name
+                ];
+
+                $pdf = null;
+                
+                if($reservation->type == 'DIY Tour' || $reservation->type == 'DIY') {
+                    $qrCodes = [];
+                    foreach ($reservations_codes as $code) {
+                        $qrCodes[] = base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate($code));
+                    }
+                    $pdf = PDF::loadView('pdf.qrcodes', ['qrCodes' => $qrCodes]);
+                }
+
+                Mail::to(optional($reservation->customer_details)->email)->send(new BookingConfirmationMail($details, $pdf));
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function retrieveAllTourReservationsList($request)
     {
         $current_user = Auth::guard('admin')->user();
 
@@ -452,7 +513,7 @@ class TourReservationService
         return $this->_generateDataTable($data, $request);
     }
 
-    public function RetrieveTourProviderReservationsList(Request $request)
+    public function retrieveTourProviderReservationsList(Request $request)
     {
         $admin = Auth::guard('admin')->user();
 
@@ -551,6 +612,46 @@ class TourReservationService
                 }
             }
         }
+    }
+
+    private function generateReservationCode($number_of_pass, $reservation) {
+        // Generate the random letter part
+        // Assuming you have str_random function available
+        $random_letters = strtoupper(Str::random(5));
+        $reservation_codes = [];
+
+        for ($i = 1; $i <= $number_of_pass; $i++) {
+            // Generate the pass number with leading zeros (e.g., -001)
+            $pass_number = str_pad($i, 3, '0', STR_PAD_LEFT);
+
+            // Concatenate the parts to create the code
+            $code = "GRP{$random_letters}{$reservation->id}-{$pass_number}";
+
+            $reservation_codes_exist = ReservationUserCode::where('reservation_id', $reservation->id)->count();
+
+            if($reservation_codes_exist < $number_of_pass) {
+                $create_code = ReservationUserCode::create([
+                    'reservation_id' => $reservation->id,
+                    'code' => $code
+                ]);
+
+                array_push($reservation_codes, $create_code->code);
+            }
+        }
+
+        return $reservation_codes;
+    }
+
+    private function updateTransactionAfterPayment($transaction, $payment_response)
+    {
+        $update_transaction = $transaction->update([
+            'aqwire_transactionId' => $payment_response['data']['transactionId'],
+            'payment_url' => $payment_response['paymentUrl'],
+            'payment_status' => Str::lower($payment_response['data']['status']),
+            'payment_details' => json_encode($payment_response),
+        ]);
+
+        return $update_transaction;
     }
 
     # HELPERS

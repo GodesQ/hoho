@@ -207,12 +207,25 @@
                                                     {{ isset($details) ? number_format($details['reservation']->total_additional_charges, 2) : '0.00' }}
                                                 </td>
                                             </tr>
+                                            <?php
+                                                $aqwire_percentage = 0.02;
+                                                $aqwire_convenience_fee = $details['reservation']->amount * $aqwire_percentage;
+                                                $total_amount = $details['reservation']->amount + $aqwire_convenience_fee;
+                                            ?>
+                                            <tr>
+                                                <td width="50%" style="font-weight: 800;">
+                                                    Aqwire Convenience Fee: (Payment Provider)
+                                                </td>
+                                                <td align="right">₱
+                                                    {{ number_format($aqwire_convenience_fee, 2) }}
+                                                </td>
+                                            </tr>
                                             <tr>
                                                 <td width="50%" style="font-weight: 800;">
                                                     Total Amount:
                                                 </td>
                                                 <td align="right">₱
-                                                    {{ isset($details) ? number_format($details['reservation']->amount, 2) : '0.00' }}
+                                                    {{ isset($details) ? number_format($total_amount, 2) : '0.00' }}
                                                 </td>
                                             </tr>
                                         </table>

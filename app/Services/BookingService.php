@@ -189,14 +189,6 @@ class BookingService
 
             $this->sendMultipleBookingNotification($items, $transaction);
 
-            // $payment_request_model = $this->aqwireService->createRequestModel($transaction, $user);
-
-            // $payment_response = $this->aqwireService->pay($payment_request_model);
-
-            // $this->updateTransactionAfterPayment($transaction, $payment_response, $additional_charges);
-
-            // $this->mailService->sendPaymentRequestMail($transaction, $payment_response['paymentUrl'], $payment_response['data']['expiresAt']);
-
             DB::commit();
 
             return [
@@ -350,7 +342,7 @@ class BookingService
         $trip_end_date = $request->type == 'Guided' ? $trip_start_date->addDays(1) : $this->getDateOfDIYPass($request->ticket_pass, $trip_start_date);
 
         $reservation = TourReservation::create([
-            'tour_id' => $item['tour_id'],
+            'tour_id' => $item['type'] == 'DIY' ? 63 : $item['tour_id'], // Set the tour id to 63 when the tour type is DIY (For Main DIY: Tour)
             'type' => $item['type'],
             'total_additional_charges' => $transaction->total_additional_charges,
             'discount' => $transaction->total_discount,
@@ -364,7 +356,7 @@ class BookingService
             'end_date' => $trip_end_date,
             'status' => 'pending',
             'number_of_pass' => $item['number_of_pass'],
-            'ticket_pass' => $item['type'] == 'DIY' ? $item['ticket_pass'] : null,
+            'ticket_pass' => $item['type'] == 'DIY' ? ($item['ticket_pass'] ?? '1 Day Pass') : null,
             'promo_code' => $request->promo_code,
             'requirement_file_path' => null,
             'discount_amount' => $transaction->sub_amount - $transaction->discount,
@@ -426,7 +418,8 @@ class BookingService
 
             if ($tour?->tour_provider?->contact_email) {
                 $recipientEmail = config('app.env') === 'production' ? $tour->tour_provider->contact_email : config('mail.test_receiver');
-                Mail::to($recipientEmail)->cc('philippinehoho@tourism.gov.ph')->send(new TourProviderBookingNotification($details));
+                $ccRecipientEmail = config('app.env') === 'production' ? 'philippinehoho@tourism.gov.ph' : config('mail.test_receiver');
+                Mail::to($recipientEmail)->cc($ccRecipientEmail)->send(new TourProviderBookingNotification($details));
             }
 
         }
@@ -477,7 +470,7 @@ class BookingService
                 'result' => $errorMessage
             ];
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             dd($e);
             return [
                 'status' => FALSE,
