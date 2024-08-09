@@ -94,7 +94,7 @@ class TourReservationController extends Controller
     public function storeTourReservation(StoreRequest $request)
     {
         try {
-            $booking = $this->bookingService->createMultipleBooking($request);
+            $booking = $this->bookingService->processMultipleBookingReservation($request);
 
             return response([
                 'status' => 'success',

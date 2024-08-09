@@ -30,9 +30,12 @@ class TourReservationService
 {   
     protected $aqwireService;
     protected $mailService;
-    public function __construct(AqwireService $aqwireService, MailService $mailService) {
+    protected $bookingService;
+
+    public function __construct(AqwireService $aqwireService, MailService $mailService, BookingService $bookingService) {
         $this->aqwireService = $aqwireService;
         $this->mailService = $mailService;
+        $this->bookingService = $bookingService;
     }
 
     public function storeRegisteredUserReservation(Request $request)
@@ -424,6 +427,35 @@ class TourReservationService
 
     }
 
+    public function update(Request $request) {
+        try {
+            DB::beginTransaction();
+
+            $reservation = TourReservation::where('id', $request->id)->with('user', 'customer_details', 'transaction')->first();
+
+            $trip_date = Carbon::parse($request->trip_date); 
+
+            $reservation->update([
+                'start_date' => $trip_date->format('Y-m-d'),
+                'end_date' => $request->type === 'Guided' ? $trip_date->addDays(1) : $this->bookingService->getDateOfDIYPass($request->ticket_pass, $trip_date),
+                'status' => $request->status
+            ]);
+
+            // If the status is approved, process the payment of tour reservation and send the payment request to user. 
+            if($request->status === 'approved') {
+                $this->handlePaymentForApprovedReservation($reservation);
+            }
+
+            DB::commit();
+
+            return $reservation;
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
     public function handlePaymentForApprovedReservation($reservation) {
         $payment_request_model = $this->aqwireService->createRequestModel($reservation->transaction, $reservation->user);
 
@@ -576,6 +608,17 @@ class TourReservationService
                     return '<div class="badge bg-label-warning">Cancelled</div>';
                 }
             })
+            ->addColumn('transaction_status', function ($row) {
+                if ($row->transaction->payment_status == 'success') {
+                    return '<div class="badge bg-label-success">Paid</div>';
+                } else if ($row->transaction->payment_status == 'pending') {
+                    return '<div class="badge bg-label-warning">Unpaid</div>';
+                } else if ($row->transaction->payment_status == 'cancelled') {
+                    return '<div class="badge bg-label-warning">Cancelled</div>';
+                } else if ($row->transaction->payment_status == 'inc') {
+                    return '<div class="badge bg-label-warning">Incompleted</div>';
+                }
+            })
             ->addColumn('actions', function ($row) {
                 $output = '<div class="dropdown">
                     <a href="'. route('admin.tour_reservations.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a> ';
@@ -585,7 +628,7 @@ class TourReservationService
                 $output .= '</div>';
                 return $output;
             })
-            ->rawColumns(['actions', 'status'])
+            ->rawColumns(['actions', 'status', 'transaction_status'])
             ->make(true);
     }
 

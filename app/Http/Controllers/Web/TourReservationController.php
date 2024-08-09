@@ -53,54 +53,31 @@ class TourReservationController extends Controller
         $tours = Tour::get();
         $ticket_passes = TicketPass::get();
         
-        return view('admin-page.tour_reservations.test-create-tour-reservation', compact('diy_tours', 'guided_tours', 'tours', 'ticket_passes'));
+        return view('admin-page.tour_reservations.create-tour-reservation', compact('diy_tours', 'guided_tours', 'tours', 'ticket_passes'));
     }
 
     public function store(Request $request) {
-        $user = User::where('id', $request->reserved_user_id)->first();
-
-        if(!$user->firstname || !$user->lastname) {
-            return back()->with('fail', 'Please complete your name before continue to checkout');
+        try {
+            $reservation = $this->bookingService->processBookingReservation($request);
+            return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Tour Successfully');
+        } catch (Exception $e) {
+            return redirect()->back()->with('fail', $e->getMessage());
         }
-
-        if(!$user->contact_no) {
-            return back()->with('fail', 'Please provide a contact number to continue');
-        }
-
-        return $this->bookingService->createBookReservation($request);
     }
 
     public function edit(Request $request) {
         $reservation = TourReservation::where('id', $request->id)->with('user', 'tour', 'transaction', 'reservation_codes', 'customer_details')->firstOrFail();
         $ticket_passes = TicketPass::get();
+
         return view('admin-page.tour_reservations.edit-tour-reservation', compact('reservation', 'ticket_passes'));
     }
 
     public function update(Request $request) {
         try {
-            DB::beginTransaction();
-
-            $reservation = TourReservation::where('id', $request->id)->with('user', 'customer_details', 'transaction')->first();
-
-            $trip_date = Carbon::parse($request->trip_date); 
-
-            $reservation->update([
-                'start_date' => $trip_date->format('Y-m-d'),
-                'end_date' => $request->type == 'Guided' ? $trip_date->addDays(1) : $this->bookingService->getDateOfDIYPass($request->ticket_pass, $trip_date),
-                'status' => $request->status
-            ]);
-
-            // If the status is approved, process the payment of tour reservation and send the payment request to user. 
-            if($request->status === 'approved') {
-                $this->tourReservationService->handlePaymentForApprovedReservation($reservation);
-            }
-
-            DB::commit();
-
-            return back()->withSuccess('Reservation updated successfully.');
-        } catch (Exception $e) {
-            DB::rollBack();
-            return back()->with('fail', $e->getMessage());
+            $this->tourReservationService->update($request);
+            return back()->withSuccess('Reservation updated successfully.');   
+        } catch (Exception $exception) {
+            return back()->with('fail', $exception->getMessage());
         }
     }
 
