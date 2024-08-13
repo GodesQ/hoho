@@ -54,7 +54,7 @@ class HotelReservationController extends Controller
     }
 
     public function show(Request $request, $id) {
-        $hotelReservation = HotelReservation::where('id', $id)->with('age', 'room')->first();
+        $hotelReservation = HotelReservation::where('id', $id)->with('children_age', 'room')->first();
         
         if(!$hotelReservation) {
             return response([
@@ -86,7 +86,7 @@ class HotelReservationController extends Controller
     }
 
     public function getUserHotelReservations(Request $request, $user_id) {
-        $hotelReservations = HotelReservation::where('reserved_user_id', $user_id)->with('age','room')->get();
+        $hotelReservations = HotelReservation::where('reserved_user_id', $user_id)->with('children_age','room')->get();
         
         return response([
             'status' => TRUE,
