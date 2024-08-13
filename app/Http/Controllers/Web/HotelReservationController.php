@@ -15,7 +15,6 @@ use ErrorException;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class HotelReservationController extends Controller
 {   
@@ -108,6 +107,12 @@ class HotelReservationController extends Controller
         return view('admin-page.hotel_reservations.edit-hotel-reservation', compact('reservation', 'merchant_hotels'));
     }
 
+    /**
+     * Update hotel reservation
+     * @param \App\Http\Requests\HotelReservation\UpdateRequest $request
+     * @param mixed $id
+     * @return mixed
+     */
     public function update(UpdateRequest $request, $id)
     {   
         try {
@@ -122,15 +127,22 @@ class HotelReservationController extends Controller
         }
     }
 
+    /**
+     * Delete hotel reservation
+     * @param \Illuminate\Http\Request $request
+     * @param mixed $id
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
     public function destroy(Request $request, $id)
     {   
         try {
             $reservation = HotelReservation::findOrFail($id);
 
+            $reservation_data = $reservation->toArray();
+
             $reservation->delete();
 
-            $deleted_reservation = $reservation;
-            LoggerService::log('delete', HotelReservation::class, ['reservation' => $deleted_reservation]);
+            LoggerService::log('delete', HotelReservation::class, ['reservation' => $reservation_data]);
 
             return response([
                 'status' => TRUE,

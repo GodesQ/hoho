@@ -73,7 +73,7 @@ class HotelReservationService {
                 
                 $total_days = $checkin_date->diffInDays($checkout_date);
 
-                $additional_charges = getConvenienceFee();
+                $additional_charges = 99;
 
                 $total_amount_of_all_days = $reservation->room->price * $total_days; // The price is multiplied by the number of stayed days.
                 $total_amount = $this->computeTotalAmount($total_amount_of_all_days, $additional_charges);
@@ -158,15 +158,15 @@ class HotelReservationService {
                     return $row->number_of_pax . ' Pax';
                 })
                 ->editColumn('status', function ($row) {
-                    if ($row->status == 'pending') {
+                    if ($row->status === 'pending') {
                         return '<div class="badge bg-label-warning">Pending</div>';
                     }
 
-                    if ($row->status == 'approved') {
+                    if ($row->status === 'approved') {
                         return '<div class="badge bg-label-success">Approved</div>';
                     }
 
-                    if ($row->status == 'declined') {
+                    if ($row->status === 'declined') {
                         return '<div class="badge bg-label-danger">Declined</div>';
                     }
                 })
@@ -176,7 +176,9 @@ class HotelReservationService {
                     $output .= '<a href="'. route('admin.hotel_reservations.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a> ';
 
                     if($row->status != 'approved') {
-                        $output .= '<button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>';
+                        $output .= '<button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm">
+                                            <i class="bx bx-trash me-1"></i>
+                                    </button>';
                     }
                     
                     $output .= '</div>';
