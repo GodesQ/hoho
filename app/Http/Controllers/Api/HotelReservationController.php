@@ -8,6 +8,7 @@ use App\Mail\HotelReservationConfirmation;
 use App\Models\Admin;
 use App\Models\HotelReservation;
 use App\Models\HotelReservationChildren;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -54,20 +55,28 @@ class HotelReservationController extends Controller
     }
 
     public function show(Request $request, $id) {
-        $hotelReservation = HotelReservation::where('id', $id)->with('children_age', 'room')->first();
+        try {
+            $hotelReservation = HotelReservation::where('id', $id)->with('children_age', 'room')->first();
         
-        if(!$hotelReservation) {
-            return response([
-                'status' => FALSE,
-                'message' => 'No Reservation Found.',
-            ], 404);
-        }
+            if(!$hotelReservation) {
+                return response([
+                    'status' => FALSE,
+                    'message' => 'No Reservation Found.',
+                ], 404);
+            }
 
-        return response([
-            'status' => TRUE,
-            'mesage' => 'Reservation Found.',
-            'hotel_reservation' => $hotelReservation
-        ]);
+            return response([
+                'status' => TRUE,
+                'mesage' => 'Reservation Found.',
+                'hotel_reservation' => $hotelReservation
+            ]);
+        } catch (Exception $e) {
+            $exception_code = $e->getCode() == 0 ? 500 : $e->getCode();
+            return response()->json([
+                'status' => FALSE,
+                'message' => $e->getMessage(),
+            ], $exception_code);
+        }
     }
 
     public function getMerchantHotelReservations(Request $request, $merchant_id) {
