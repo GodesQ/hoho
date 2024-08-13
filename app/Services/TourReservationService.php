@@ -257,11 +257,6 @@ class TourReservationService
             }
 
             foreach ($items as $key => $item) {
-                /*  (For Each Item)
-                    - Sub Amount
-                    - Total of Discount (total amount - discounted amount) 
-                    - Total of Additional Charges (number of pax * additional charges)
-                */
                 $subAmount += intval($item['amount']) ?? 0;
                 $totalOfDiscount += (intval($item['amount'] ?? 0) - (intval($item['discounted_amount'] ?? 0) ?? intval($item['amount'])));
                 $totalOfAdditionalCharges += $this->getTotalOfAdditionalCharges(($item['number_of_pax'] ?? 0), $additionalCharges);
@@ -519,10 +514,10 @@ class TourReservationService
             ->when(!empty($request->get('search')), function ($query) use ($request) {
                 $searchQuery = $request->get('search');
                 $query->whereHas('user', function ($userQuery) use ($searchQuery) {
-                    $userQuery->where('email', 'LIKE', '%' . $searchQuery . '%')
-                        ->orWhere('firstname', 'LIKE', '%' . $searchQuery . '%')
-                        ->orWhere('lastname', 'LIKE', '%' . $searchQuery . '%')
-                        ->orWhere(DB::raw("concat(firstname, ' ', lastname)"), 'LIKE', '%' . $searchQuery . '%');
+                    $userQuery->where('email', 'LIKE', "%{$searchQuery}%")
+                        ->orWhere('firstname', 'LIKE', "%{$searchQuery}%")
+                        ->orWhere('lastname', 'LIKE', "%{$searchQuery}%")
+                        ->orWhere(DB::raw("concat(firstname, ' ', lastname)"), 'LIKE', "%{$searchQuery}%");
                 })->orWhereHas('tour', function ($tourQuery) use ($searchQuery) {
                     $tourQuery->where('name', 'LIKE', $searchQuery . '%');
                 });
@@ -556,10 +551,10 @@ class TourReservationService
             ->when(!empty($request->get('search')), function ($query) use ($request) {
                 $searchQuery = $request->get('search');
                 $query->whereHas('user', function ($userQuery) use ($searchQuery) {
-                    $userQuery->where('email', 'LIKE', '%' . $searchQuery . '%')
-                        ->orWhere('firstname', 'LIKE', '%' . $searchQuery . '%')
-                        ->orWhere('lastname', 'LIKE', '%' . $searchQuery . '%')
-                        ->orWhere(DB::raw("concat(firstname, ' ', lastname)"), 'LIKE', '%' . $searchQuery . '%');
+                    $userQuery->where('email', 'LIKE', "%{$searchQuery}%")
+                        ->orWhere('firstname', 'LIKE', "%{$searchQuery}%")
+                        ->orWhere('lastname', 'LIKE', "%{$searchQuery}%")
+                        ->orWhere(DB::raw("concat(firstname, ' ', lastname)"), 'LIKE', "%{$searchQuery}%");
                 });
             })
             ->when(!empty($request->get('status')), function ($query) use ($request) {

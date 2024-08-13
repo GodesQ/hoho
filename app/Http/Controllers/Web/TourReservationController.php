@@ -82,28 +82,35 @@ class TourReservationController extends Controller
     }
 
     public function destroy(Request $request) {
-        $tour_reservation = TourReservation::with('transaction')->find($request->id);
+        try {
+            DB::beginTransaction();
+
+            $tour_reservation = TourReservation::with('transaction')->find($request->id);
     
-        if(!$tour_reservation) {
+            if(!$tour_reservation) throw new Exception('Tour Reservation Not Found.', 404);
+        
+            $reservation_transaction_id = $tour_reservation->order_transaction_id;
+            $reservations_by_transaction_count = TourReservation::where('order_transaction_id', $reservation_transaction_id)->count();
+        
+            // if($reservations_by_transaction_count <= 1 && $tour_reservation->transaction) {
+            //     $tour_reservation->transaction->delete();
+            // }
+        
+            $tour_reservation->delete();
+
+            DB::commit();
+        
             return response([
-                'status' => false,
-                'message' => 'Reservation Not Found'
+                'status'=> true,
+                'message' => 'Reservation Deleted Successfully'
             ]);
+        } catch (Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => $exception->getMessage(),
+            ], $exception->getCode() ?? 400);
         }
-    
-        $reservationTransactionId = $tour_reservation->order_transaction_id;
-        $reservations_by_transaction = TourReservation::where('order_transaction_id', $reservationTransactionId)->get();
-    
-        if($reservations_by_transaction->count() <= 1 && $tour_reservation->transaction) {
-            $tour_reservation->transaction->delete();
-        }
-    
-        $tour_reservation->delete();
-    
-        return response([
-            'status'=> true,
-            'message' => 'Reservation Deleted Successfully'
-        ]);
     }
 
     public function get_tour_reservation_codes(Request $request) {
