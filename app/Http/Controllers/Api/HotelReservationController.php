@@ -10,6 +10,7 @@ use App\Models\HotelReservation;
 use App\Models\HotelReservationChildren;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class HotelReservationController extends Controller
@@ -19,39 +20,58 @@ class HotelReservationController extends Controller
     }
 
     public function store(StoreRequest $request) {
-        $data = $request->validated();
+        try {
+            DB::beginTransaction();
 
-        $reservation = HotelReservation::create(array_merge($data, ['status' => 'pending']));
+            $data = $request->validated();
 
-        if($request->has('children_age') && is_array($request->children_age) && $reservation->children_quantity > 0) {
-            for ($i=0; $i < $reservation->children_quantity; $i++) { 
-                HotelReservationChildren::create([
-                    'reservation_id' => $reservation->id,
-                    'age' => $request->children_age[$i], 
-                ]);
+            $reservation = HotelReservation::create(array_merge($data, ['status' => 'pending']));
+
+            if($reservation->children_quantity > 0) {
+                if($reservation->children_quantity > count($request->children_age) || $reservation->children_quantity < count($request->children_age)) 
+                    throw new Exception("Invalid count of children age.", 400);
             }
+
+            if($request->has('children_age') && is_array($request->children_age) && $reservation->children_quantity > 0) {
+                for ($i=0; $i < $reservation->children_quantity; $i++) { 
+                    HotelReservationChildren::create([
+                        'reservation_id' => $reservation->id,
+                        'age' => $request->children_age[$i], 
+                    ]);
+                }
+            }
+
+            if($reservation) {
+                $details = [
+                    'hotel_name' => $reservation->room->merchant->name,
+                    'room_name' => $reservation->room->room_name,
+                    'reserved_customer' => ($reservation->reserved_user->lastname) . ', ' . ($reservation->reserved_user->firstname),
+                    'checkin_date' => $reservation->checkin_date,
+                    'checkout_date' => $reservation->checkout_date,
+                    'reservation_link' => route('admin.login') . '?redirectTo=' . route('admin.hotel_reservations.edit', $reservation->id),
+                ];
+
+                $hotel_admin = Admin::where('merchant_id', $reservation->room->merchant->id)->first();
+
+                $receiver = config('app.env') === "production" ? $hotel_admin->email : config('mail.test_receiver');
+                Mail::to($receiver)->send(new HotelReservationConfirmation($details));
+            }
+
+            DB::commit();
+
+            return response([
+                'status' => TRUE,
+                'message'=> 'Submission successful! Your request for availability is now under review. Please await the next notification.',
+            ], 201);
+
+        } catch (Exception $exception) {
+            DB::rollBack();
+            $exception_code = $exception->getCode() == 0 ? 500 : $exception->getCode();
+            return response()->json([
+                'status' => FALSE,
+                'message' => $exception->getMessage(),
+            ], $exception_code);
         }
-
-        if($reservation) {
-            $details = [
-                'hotel_name' => $reservation->room->merchant->name,
-                'room_name' => $reservation->room->room_name,
-                'reserved_customer' => ($reservation->reserved_user->lastname) . ', ' . ($reservation->reserved_user->firstname),
-                'checkin_date' => $reservation->checkin_date,
-                'checkout_date' => $reservation->checkout_date,
-                'reservation_link' => route('admin.login') . '?redirectTo=' . route('admin.hotel_reservations.edit', $reservation->id),
-            ];
-
-            $hotel_admin = Admin::where('merchant_id', $reservation->room->merchant->id)->first();
-
-            $receiver = config('app.env') === "production" ? $hotel_admin->email : config('mail.test_receiver');
-            Mail::to($receiver)->send(new HotelReservationConfirmation($details));
-        }
-
-        return response([
-            'status' => TRUE,
-            'message'=> 'Submission successful! Your request for availability is now under review. Please await the next notification.',
-        ], 201);
     }
 
     public function show(Request $request, $id) {

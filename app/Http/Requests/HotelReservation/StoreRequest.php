@@ -30,7 +30,7 @@ class StoreRequest extends FormRequest
             'children_quantity' => 'required|numeric',
             'checkin_date' => 'required|date',
             'checkout_date' => 'required|date|after:checkin_date',
-            'children_age' => 'required_if:children_quantity,>,0|array',
+            'children_age' => 'required_if:children_quantity,>,1|array',
             'status' => 'nullable|in:pending,declined,approved'
         ];
     }
