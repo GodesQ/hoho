@@ -7,7 +7,10 @@ use App\Mail\HotelReservationReceipt;
 use App\Models\HotelReservation;
 use App\Models\Order;
 use App\Models\TravelTaxPayment;
+use App\Services\TourReservationService;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\InvoiceMail;
@@ -18,150 +21,205 @@ use App\Models\TourReservation;
 use Carbon\Carbon;
 
 class AqwireController extends Controller
-{
+{   
+    private $tourReservationService;
+    public function __construct(TourReservationService $tourReservationService) {
+        $this->tourReservationService = $tourReservationService;
+    }
+
     public function success(Request $request)
-    {
-        $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
+    {   try {
+            DB::beginTransaction();
 
-        $update_transaction = $transaction->update([
-            'aqwire_referenceId' => $request->referenceId,
-            'aqwire_paymentMethodCode' => $request->paymentMethodCode,
-            'aqwire_totalAmount' => $request->totalAmount,
-            'payment_status' => Str::lower('success'),
-            'payment_date' => Carbon::now()
-        ]);
+            $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
 
-        $reservations = TourReservation::where('order_transaction_id', $transaction->id)->with('tour', 'user', 'customer_details')->get();
-
-        foreach ($reservations as $key => $reservation) {
-            $reservation->update([
-                'payment_method' => $request->paymentMethodCode
+            $transaction->update([
+                'aqwire_referenceId' => $request->referenceId,
+                'aqwire_paymentMethodCode' => $request->paymentMethodCode,
+                'aqwire_totalAmount' => $request->totalAmount,
+                'payment_status' => Str::lower('success'),
+                'payment_date' => Carbon::now()
             ]);
 
-            $details = [
-                'tour' => $reservation->tour,
-                'reservation' => $reservation,
-                'transaction' => $transaction
-            ];
+            $reservations = TourReservation::where('order_transaction_id', $transaction->id)->with('tour', 'user', 'customer_details')->get();
 
-            Mail::to(optional($reservation->customer_details)->email)->send(new InvoiceMail($details));
-        }
+            foreach ($reservations as $reservation) {
+                $reservation->update([
+                    'payment_method' => $request->paymentMethodCode
+                ]);
 
-        if ($update_transaction) {
+                $details = [
+                    'tour' => $reservation->tour,
+                    'reservation' => $reservation,
+                    'transaction' => $transaction
+                ];
+
+                Mail::to(optional($reservation->customer_details)->email)->send(new InvoiceMail($details));
+
+                $this->tourReservationService->generateAndSendReservationCode($reservation->number_of_pass, $reservation);
+            }
+
+            DB::commit();
+
             return redirect('aqwire/payment/view_success');
+        } catch (Exception $e) {
+            DB::rollBack();
+            abort(500);
         }
     }
 
     public function travelTaxSuccess(Request $request)
-    {
-        $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
+    {   
+        try {
+            DB::beginTransaction();
 
-        $transaction->update([
-            'aqwire_referenceId' => $request->referenceId,
-            'aqwire_paymentMethodCode' => $request->paymentMethodCode,
-            'aqwire_totalAmount' => $request->totalAmount,
-            'payment_status' => Str::lower('success'),
-            'payment_date' => Carbon::now()
-        ]);
+            $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
 
-        $travel_tax_payment = TravelTaxPayment::where('transaction_id', $transaction->id)->first();
+            $transaction->update([
+                'aqwire_referenceId' => $request->referenceId,
+                'aqwire_paymentMethodCode' => $request->paymentMethodCode,
+                'aqwire_totalAmount' => $request->totalAmount,
+                'payment_status' => Str::lower('success'),
+                'payment_date' => Carbon::now()
+            ]);
 
-        $travel_tax_payment->update([
-            'payment_method' => $request->paymentMethodCode,
-            'status' => 'paid',
-        ]);
+            $travel_tax_payment = TravelTaxPayment::where('transaction_id', $transaction->id)->first();
 
-        return redirect('aqwire/payment/view_success');
+            $travel_tax_payment->update([
+                'payment_method' => $request->paymentMethodCode,
+                'status' => 'paid',
+            ]);
+
+            DB::commit();
+
+            return redirect('aqwire/payment/view_success');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            abort(500);
+        }
     }
 
     public function orderSuccess(Request $request)
-    {
-        $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
+    {   
+        try {
+            DB::beginTransaction();
 
-        $transaction->update([
-            'aqwire_referenceId' => $request->referenceId,
-            'aqwire_paymentMethodCode' => $request->paymentMethodCode,
-            'aqwire_totalAmount' => $request->totalAmount,
-            'payment_status' => Str::lower('success'),
-            'payment_date' => Carbon::now()
-        ]);
+            $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
 
-        $travel_tax_payment = Order::where('transaction_id', $transaction->id)->first();
+            $transaction->update([
+                'aqwire_referenceId' => $request->referenceId,
+                'aqwire_paymentMethodCode' => $request->paymentMethodCode,
+                'aqwire_totalAmount' => $request->totalAmount,
+                'payment_status' => Str::lower('success'),
+                'payment_date' => Carbon::now()
+            ]);
 
-        $travel_tax_payment->update([
-            'payment_method' => $request->paymentMethodCode,
-            'status' => 'paid',
-        ]);
+            $travel_tax_payment = Order::where('transaction_id', $transaction->id)->first();
 
-        return redirect('aqwire/payment/view_success');
+            $travel_tax_payment->update([
+                'payment_method' => $request->paymentMethodCode,
+                'status' => 'paid',
+            ]);
+
+            DB::commit();
+
+            return redirect('aqwire/payment/view_success');
+        } catch (Exception $e) {
+            DB::rollBack();
+            abort(500);
+        }
     }
 
     public function hotelReservationSuccess(Request $request)
-    {
-        $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
-        $hotel_reservation = HotelReservation::where('transaction_id', $transaction->id)->with('reserved_user', 'room.merchant', 'transaction')->firstOrFail();
+    {   
+        try {
+            DB::beginTransaction();
 
-        $transaction->update([
-            'aqwire_referenceId' => $request->referenceId,
-            'aqwire_paymentMethodCode' => $request->paymentMethodCode,
-            'aqwire_totalAmount' => $request->totalAmount,
-            'payment_status' => Str::lower('success'),
-            'payment_date' => Carbon::now()
-        ]);
+            $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
+            $hotel_reservation = HotelReservation::where('transaction_id', $transaction->id)->with('reserved_user', 'room.merchant', 'transaction')->firstOrFail();
 
-        $hotel_reservation->update([
-            'payment_status' => 'paid',
-        ]);
+            $transaction->update([
+                'aqwire_referenceId' => $request->referenceId,
+                'aqwire_paymentMethodCode' => $request->paymentMethodCode,
+                'aqwire_totalAmount' => $request->totalAmount,
+                'payment_status' => Str::lower('success'),
+                'payment_date' => Carbon::now()
+            ]);
 
-        $details = [
-            'reservation' => $hotel_reservation,
-        ];
+            $hotel_reservation->update([
+                'payment_status' => 'paid',
+            ]);
 
-        Mail::to($hotel_reservation->reserved_user->email)->send(new HotelReservationReceipt($details));
+            $details = [
+                'reservation' => $hotel_reservation,
+            ];
 
-        return redirect('aqwire/payment/view_success');
+            Mail::to($hotel_reservation->reserved_user->email)->send(new HotelReservationReceipt($details));
+
+            DB::commit();
+
+            return redirect('aqwire/payment/view_success');
+        } catch (Exception $e) {
+            DB::rollBack();
+            abort(500);
+        }
     }
 
     public function hotelReservationCancel(Request $request)
-    {
-        $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
-        $hotel_reservation = HotelReservation::where('transaction_id', $transaction->id)->firstOrFail();
+    {   
+        try {
+            DB::beginTransaction();
 
-        $transaction->update([
-            'aqwire_referenceId' => $request->referenceId,
-            'aqwire_paymentMethodCode' => $request->paymentMethodCode,
-            'aqwire_totalAmount' => $request->totalAmount,
-            'payment_status' => Str::lower('success'),
-            'payment_date' => Carbon::now()
-        ]);
+            $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
+            $hotel_reservation = HotelReservation::where('transaction_id', $transaction->id)->firstOrFail();
 
-        $hotel_reservation->update([
-            'payment_status' => 'unpaid',
-        ]);
+            $transaction->update([
+                'aqwire_referenceId' => $request->referenceId,
+                'aqwire_paymentMethodCode' => $request->paymentMethodCode,
+                'aqwire_totalAmount' => $request->totalAmount,
+                'payment_status' => Str::lower('success'),
+                'payment_date' => Carbon::now()
+            ]);
 
-        return redirect('aqwire/payment/view_cancel');
+            $hotel_reservation->update([
+                'payment_status' => 'unpaid',
+            ]);
+
+            DB::commit();
+
+            return redirect('aqwire/payment/view_cancel');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            abort(500);
+        }
     }
 
     public function orderCancel(Request $request)
-    {
-        $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
+    {   
+        try {
+            $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
 
-        $transaction->update([
-            'aqwire_referenceId' => $request->referenceId,
-            'aqwire_paymentMethodCode' => $request->paymentMethodCode,
-            'aqwire_totalAmount' => $request->totalAmount,
-            'payment_status' => Str::lower('cancelled'),
-            'payment_date' => Carbon::now()
-        ]);
+            $transaction->update([
+                'aqwire_referenceId' => $request->referenceId,
+                'aqwire_paymentMethodCode' => $request->paymentMethodCode,
+                'aqwire_totalAmount' => $request->totalAmount,
+                'payment_status' => Str::lower('cancelled'),
+                'payment_date' => Carbon::now()
+            ]);
 
-        $travel_tax_payment = TravelTaxPayment::where('transaction_id', $transaction->id)->first();
+            $travel_tax_payment = TravelTaxPayment::where('transaction_id', $transaction->id)->first();
 
-        $travel_tax_payment->update([
-            'payment_method' => $request->paymentMethodCode,
-            'status' => 'unpaid',
-        ]);
+            $travel_tax_payment->update([
+                'payment_method' => $request->paymentMethodCode,
+                'status' => 'unpaid',
+            ]);
 
-        return redirect('aqwire/payment/view_cancel');
+            return redirect('aqwire/payment/view_cancel');
+        } catch (Exception $e) {
+            DB::rollBack();
+            abort(500);
+        }
     }
 
     public function viewSuccess(Request $request)
@@ -170,27 +228,35 @@ class AqwireController extends Controller
     }
 
     public function cancel(Request $request)
-    {
-        $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
-        $reservation = TourReservation::where('order_transaction_id', $transaction->id)->firstOrFail();
+    {   
+        try {
+            DB::beginTransaction();
 
-        $update_transaction = $transaction->update([
-            'aqwire_referenceId' => $request->referenceId,
-            'aqwire_totalAmount' => $request->totalAmount,
-            'payment_status' => Str::lower('cancelled')
-        ]);
+            $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
+            $reservation = TourReservation::where('order_transaction_id', $transaction->id)->firstOrFail();
 
-        $reservation = $reservation->update([
-            'status' => Str::lower('failed')
-        ]);
+            $transaction->update([
+                'aqwire_referenceId' => $request->referenceId,
+                'aqwire_totalAmount' => $request->totalAmount,
+                'payment_status' => Str::lower('cancelled')
+            ]);
 
-        if ($update_transaction) {
+            $reservation = $reservation->update([
+                'status' => Str::lower('failed')
+            ]);
+
+            DB::commit();
+
             return redirect('aqwire/payment/view_cancel');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            abort(500);
         }
     }
 
     public function travelTaxCancel(Request $request)
-    {
+    {   
         $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
 
         $transaction->update([

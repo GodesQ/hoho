@@ -50,7 +50,7 @@
             <div class="action-section btn-group">
                 <a href="{{ route('admin.tour_reservations.list') }}" class="btn btn-dark btn-sm"><i class="bx bx-undo"></i>
                     Back to List</a>
-                <button class="btn btn-danger btn-sm"><i class="bx bx-trash"></i> Delete</button>
+                {{-- <button class="btn btn-danger btn-sm"><i class="bx bx-trash"></i> Delete</button> --}}
             </div>
         </section>
 

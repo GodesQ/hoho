@@ -25,8 +25,10 @@ if(!function_exists('maintenanceMode')) {
 }
 
 if(!function_exists('getConvenienceFee')) {
-    
     function getConvenienceFee() {
-        return 99;
+        return [
+            'amount' => 0.05,
+            'type' => 'percentage'
+        ];
     }
 }

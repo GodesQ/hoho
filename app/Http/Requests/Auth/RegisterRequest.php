@@ -37,7 +37,7 @@ class RegisterRequest extends FormRequest
             'contact_no' => 'required',
             'password' => 'required|min:8',
             'confirm_password' => 'required|same:password',
-            'birthdate' => 'nullable',
+            'birthdate' => 'nullable|date',
         ];
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\SSORegisterRequest;
 use App\Services\AuthService;
 use ErrorException;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -36,7 +37,7 @@ class AuthController extends Controller
                 'token' => $auth['token'],
             ], 200);
 
-        } catch(ErrorException $e) {
+        } catch(Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage(),
@@ -58,7 +59,7 @@ class AuthController extends Controller
                 'message' => 'Registration successful. Please verify your email now.'
             ]);
 
-        } catch (ErrorException $e) {
+        } catch (Exception $e) {
            return response()->json([
             'status' => false,
             'message' => $e->getMessage()

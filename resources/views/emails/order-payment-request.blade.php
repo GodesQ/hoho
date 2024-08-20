@@ -96,49 +96,9 @@
                     <tr>
                         <td bgcolor="#ffffff" align="center" valign="top"
                             style="padding: 20px 20px 0px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Google Sans', Helvetica, Arial, sans-serif; font-size: 3px; font-weight: 400; letter-spacing: 4px; line-height: 48px;">
-                            <div style="width: 100%; padding: 50px 0; marin-right: auto; margin-left: auto; background: linear-gradient(160deg, rgba(67,7,9,1) 6%, rgba(161,30,3,1) 95%); border-radius: 10px;">
-                                <img src="{{ URL::asset('assets/img/hoho_text_horizontal_white.png') }}" width="155" style="display: block; border: 0px;" />
-                                <div style="font-size: 20px !important; color: #fff;">Thank You for Purchase!</div>
-                            </div>
-                            <div style="margin-top: 10px;">
-                                <div style="font-size: 20px !important; color: #000; font-weight: 600; text-align: left !important; line-height: 25px;">{{ $details['tour']->name }}</div>
-                                <div style="font-size: 10px !important; color: #929292; text-align: left !important; line-height: 20px;">
-                                    {{ date_format(new \DateTime($details['reservation']->start_date), 'F d, Y') }} until {{ date_format(new \DateTime($details['reservation']->end_date), 'F d, Y') }}
-                                </div>
-                            </div>
-                            <div style="margin-top: 20px;">
-                                <table cellpadding="10" align="left">
-                                    <tr>
-                                        <td>
-                                            <img src="{{ URL::asset('assets/img/tours/' . $details['tour']->id . '/' . $details['tour']->featured_image) }}?date={{ $details['tour']->updated_at }}" width="125" height="125" style="display: block; border: 0px; object-fit: cover;" />
-                                        </td>
-                                        <td>
-                                            <div style="font-size: 15px !important; color: #929292; text-align: center !important; line-height: 25px;">
-                                                No. of Pass
-                                            </div>
-                                            <div style="font-size: 15px !important; color: #000000; text-align: center !important; line-height: 20px;">
-                                                {{ $details['reservation']->number_of_pass ?? null }}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style="font-size: 15px !important; color: #929292; text-align: center !important; line-height: 25px;">
-                                                Type
-                                            </div>
-                                            <div style="font-size: 15px !important; color: #000000; text-align: center !important; line-height: 20px;">
-                                                {{ $details['reservation']->type ?? null }}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style="font-size: 15px !important; color: #929292; text-align: center !important; line-height: 25px;">
-                                                Status
-                                            </div>
-                                            <div style="font-size: 15px !important; color: #000000; text-align: center !important; line-height: 20px;">
-                                                Paid
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
+                            <img src="https://philippines-hoho.ph/wp-content/uploads/2023/09/philippines_hoho_footer-768x769.jpg"
+                                width="125" height="120" style="display: block; border: 0px;" />
+                            <h1 style="font-size: 30px; font-weight: 800; margin-bottom: 0;">ORDER <br> PAYMENT REQUEST</h1>
                         </td>
                     </tr>
                 </table>
@@ -157,67 +117,55 @@
                         <td bgcolor="#ffffff" align="center">
                             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td bgcolor="#ffffff" align="center" style="padding: 10px 0;">
-                                        <table border="0" cellspacing="5" cellpadding="10" width="90%"
-                                            style="font-size: 13.5px; font-family: 'Google Sans', Helvetica, Arial, sans-serif;">
+                                    <td bgcolor="#ffffff" align="center" style="padding: 10px 40px 40px 40px;">
+                                        <table border="0" cellspacing="10" cellpadding="5" width="85%"
+                                            style="font-size: 13.5px; font-family: 'Google Sans', Helvetica, Arial, sans-serif; border-bottom: 1px solid #252525;">
                                             <tr>
                                                 <td width="50%" style="font-weight: 800;">
-                                                    Payment Method
+                                                    Product Name:
                                                 </td>
-                                                <td align="right">{{ $details['transaction']->aqwire_paymentMethodCode ?? 'Cash' }}</td>
+                                                <td align="right">{{ $details['product_name'] ?? null }}</td>
                                             </tr>
                                             <tr>
                                                 <td width="50%" style="font-weight: 800;">
-                                                    Promo Code:
+                                                    Quantity:
                                                 </td>
-                                                
+                                                <td align="right">{{ $details['quantity'] ?? null }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td width="50%" style="font-weight: 800;">
+                                                    Transaction By:
+                                                </td>
+                                                <td align="right">{{ $details['customer'] ?? null }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td width="50%" style="font-weight: 800;">
+                                                    Expiration Date:
+                                                </td>
+                                                <?php
+                                                    $utcTimestamp = $details['payment_expiration'] ?? null;
+                                                    $utcDateTime = new DateTime($utcTimestamp, new DateTimeZone('UTC'));
+                                                    $manilaTimeZone = new DateTimeZone('Asia/Manila');
+                                                    
+                                                    $utcDateTime->setTimezone($manilaTimeZone);
+                                                    $manilaTimestamp = $utcDateTime->format('Y-m-d h:i A');
+                                                ?>
                                                 <td align="right">
-                                                    {{ $details['reservation']->promo_code ?? 'No Promo Code Found' }}
+                                                    {{ $manilaTimestamp ?? null }}
                                                 </td>
                                             </tr>
-                                            @if($details['reservation']->type == 'DIY')
-                                                <tr>
-                                                    <td width="50%" style="font-weight: 800;">
-                                                        Ticket Pass:
-                                                    </td>
-                                                    <td align="right">{{ $details['reservation']->ticket_pass ?? null }}</td>
-                                                </tr>
-                                            @endif
+                                            <tr>
+                                                <td width="50%" style="font-weight: 800;">
+                                                    Reference Number:
+                                                </td>
+                                                <td align="right">{{ $details['reference_no'] ?? null }}</td>
+                                            </tr>
                                             <tr>
                                                 <td width="50%" style="font-weight: 800;">
                                                     Sub Amount:
                                                 </td>
                                                 <td align="right">₱
-                                                    {{ isset($details) ? number_format($details['reservation']->sub_amount, 2) : '0.00' }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td width="50%" style="font-weight: 800;">
-                                                    Discount:
-                                                </td>
-                                                <td align="right">₱
-                                                    {{ isset($details) ? number_format($details['reservation']->discount, 2) : '0.00' }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td width="50%" style="font-weight: 800;">
-                                                    Additional Charges:
-                                                </td>
-                                                <td align="right">₱
-                                                    {{ isset($details) ? number_format($details['reservation']->total_additional_charges, 2) : '0.00' }}
-                                                </td>
-                                            </tr>
-                                            <?php
-                                                $aqwire_percentage = 0.02;
-                                                $aqwire_convenience_fee = $details['reservation']->amount * $aqwire_percentage;
-                                                $total_amount = $details['reservation']->amount + $aqwire_convenience_fee;
-                                            ?>
-                                            <tr>
-                                                <td width="50%" style="font-weight: 800;">
-                                                    Aqwire Convenience Fee: (Payment Provider)
-                                                </td>
-                                                <td align="right">₱
-                                                    {{ number_format($aqwire_convenience_fee, 2) }}
+                                                    {{ isset($details) ? number_format($details['sub_amount'], 2) : '0.00' }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -225,7 +173,25 @@
                                                     Total Amount:
                                                 </td>
                                                 <td align="right">₱
-                                                    {{ isset($details) ? number_format($total_amount, 2) : '0.00' }}
+                                                    {{ isset($details) ? number_format($details['total_amount'], 2) : '0.00' }}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td bgcolor="#ffffff" align="center"
+                                                    style="padding: 20px 20px 20px 20px;">
+                                                    <table border="0" cellspacing="0" cellpadding="0">
+                                                        <tr>
+                                                            <td align="center" style="border-radius: 3px;"
+                                                                bgcolor="#6f0d00">
+                                                                <a href="{{ $details['payment_url'] ?? '#' }}"
+                                                                    style="cursor: pointer; padding: 0.6rem 1rem 0.6rem 1rem; background-color: #6f0d00; color: white; text-decoration: none; border-radius: 5px; cursor: pointer; font-family: 'Google Sans', Helvetica, Arial, sans-serif; font-size: 16px;">
+                                                                    Pay Now
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
                                                 </td>
                                             </tr>
                                         </table>

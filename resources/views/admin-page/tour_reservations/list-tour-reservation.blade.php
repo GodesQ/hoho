@@ -72,6 +72,7 @@
                                 <th>Reserved User</th>
                                 <th>Tour</th>
                                 <th>Status</th>
+                                <th>Transaction Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -125,6 +126,12 @@
                     {
                         data: 'status',
                         name: 'status',
+                        orderable: false,
+                        searchable: false,
+                    },
+                    {
+                        data: 'transaction_status',
+                        name: 'transaction_status',
                         orderable: false,
                         searchable: false,
                     },

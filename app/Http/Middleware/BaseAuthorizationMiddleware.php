@@ -29,7 +29,6 @@ class BaseAuthorizationMiddleware
                 $user = Auth::guard('sanctum')->user();
                 Auth::loginUsingId($user->id);
             }
-
             // If the user is authenticated, proceed with the request
             if ($user) {
                 return $next($request);
@@ -40,17 +39,6 @@ class BaseAuthorizationMiddleware
             $consumer = ApiConsumer::where('api_code', $apiCode)->where('api_key', $apiKey)->first();
 
             if ($consumer) {
-                // ConsumerApiLog::create([
-                //     'consumer_id' => $consumer->id,
-                //     'request_timestamp' => Carbon::now(),
-                //     'http_method' => $request->method(),
-                //     'request_path' => $request->path(),
-                //     'request_headers' => json_encode($request->header()),
-                //     'request_body' => json_encode($request->all()),
-                //     'ip_address' => $request->ip(),
-                //     'user_agent' => $request->header('User-Agent'),
-                // ]);
-
                 return $next($request);
             }
         }

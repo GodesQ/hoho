@@ -8,67 +8,50 @@ use App\Http\Requests\RestaurantReservation\UpdateRequest;
 use App\Models\Merchant;
 use App\Models\RestaurantReservation;
 use App\Models\Role;
+use App\Services\RestaurantReservationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class RestaurantReservationController extends Controller
-{
+{   
+    private $restaurantReservationService;
+
+    public function __construct(RestaurantReservationService $restaurantReservationService) {
+        $this->restaurantReservationService = $restaurantReservationService;
+    }
+
+    /**
+     * Retrieves a list of restaurant reservations and returns it as a DataTables response.
+     * @param \Illuminate\Http\Request $request
+     * @return mixed
+     */
     public function index(Request $request) {
         if($request->ajax()) {
             $user = Auth::guard('admin')->user();
-            $data = RestaurantReservation::query();
 
-            if($user->role == Role::MERCHANT_RESTAURANT_ADMIN) {
-                $data->where('merchant_id', $user->merchant_id);
+            $restuarant_reservations = RestaurantReservation::query();
+
+            if($user->role === Role::MERCHANT_RESTAURANT_ADMIN || $user->role === Role::MERCHANT_RESTAURANT_EMPLOYEE) {
+                $restuarant_reservations = $restuarant_reservations->where('merchant_id', $user->merchant_id);
             }
             
-            return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('reserved_user_id', function ($row) {
-                        return $row->reserved_user->email ?? 'No user found';
-                    })
-                    ->addColumn('merchant_id', function ($row) {
-                        return $row->merchant->name ?? null;
-                    })
-                    ->addColumn('status', function ($row) {
-                        if ($row->status == 'pending') {
-                            return '<div class="badge bg-label-warning">Pending</div>';
-                        }
-    
-                        if ($row->status == 'approved') {
-                            return '<div class="badge bg-label-success">Approved</div>';
-                        }
-    
-                        if ($row->status == 'declined') {
-                            return '<div class="badge bg-label-danger">Declined</div>';
-                        }
-                    })
-                    ->addColumn('actions', function ($row) {
-                        $output = '<div class="dropdown">';
-                            
-                        $output .= '<a href="'. route('admin.restaurant_reservations.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a>';
-    
-                        if($row->status != 'approved') {
-                            $output .= '<button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>';
-                        }
-                        
-                        $output .= '</div>';
-    
-                        return $output;
-                    })
-                    ->rawColumns(['status','actions'])
-                    ->make(true);
+            return $this->restaurantReservationService->generateDataTable($request, $restuarant_reservations);
         }
 
         return view('admin-page.restaurant_reservations.list-restaurant-reservation');
     }
 
+    /**
+     * Create restaurant reservation
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
     public function create(Request $request) {
         $user = Auth::guard('admin')->user();
 
-        if($user->role == Role::MERCHANT_RESTAURANT_ADMIN) {
+        if($user->role == Role::MERCHANT_RESTAURANT_ADMIN || $user->role === Role::MERCHANT_RESTAURANT_EMPLOYEE) {
             $merchants = Merchant::where('id', $user->merchant_id)->where('type', 'Restaurant')->get();
         } else {
             $merchants = Merchant::where('type', 'Restaurant')->get();
@@ -77,16 +60,25 @@ class RestaurantReservationController extends Controller
         return view('admin-page.restaurant_reservations.create-restaurant-reservation', compact('merchants'));
     }
 
+    /**
+     * Store restaurant reservation
+     * @param \App\Http\Requests\RestaurantReservation\StoreRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(StoreRequest $request) {
         $data = $request->validated();
 
-        $reservation = RestaurantReservation::create(array_merge($data, [
-            'approved_date' => $request->status == 'approved' ? Carbon::now() : null,
-        ]));
+        $reservation = $this->restaurantReservationService->create($request, $data);
 
         return redirect()->route('admin.restaurant_reservations.edit', $reservation->id)->with('success','Restaurant reservation added successfully.');
     }
 
+    /**
+     * Edit restaurant reservation
+     * @param \Illuminate\Http\Request $request
+     * @param mixed $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
     public function edit(Request $request, $id) {
         $user = Auth::guard('admin')->user();
         $reservation = RestaurantReservation::findOrFail($id);
@@ -100,17 +92,26 @@ class RestaurantReservationController extends Controller
         return view('admin-page.restaurant_reservations.edit-restaurant-reservation', compact('reservation', 'merchants'));
     }
 
+    /**
+     * Update restaurant reservation
+     * @param \App\Http\Requests\RestaurantReservation\UpdateRequest $request
+     * @param mixed $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(UpdateRequest $request, $id) {
-        $reservation = RestaurantReservation::findOrFail($id);
         $data = $request->validated();
 
-        $reservation->update(array_merge($data, [
-            'approved_date' => $request->status == 'approved' ? Carbon::now() : null,
-        ]));
+        $this->restaurantReservationService->update($request, $id, $data);
 
         return back()->with('success','Restaurant reservation updated successfully.');
     }
 
+    /**
+     * Delete restaurant reservation
+     * @param \Illuminate\Http\Request $request
+     * @param mixed $id
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
     public function destroy(Request $request, $id) {
         $reservation = RestaurantReservation::findOrFail($id);
 

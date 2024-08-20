@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\TourReservationCustomerDetail;
-use App\Models\Transaction;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -20,11 +20,6 @@ use App\Models\Tour;
 use App\Models\ReservationUserCode;
 use App\Models\TicketPass;
 
-use App\Mail\BookingConfirmationMail;
-use Barryvdh\DomPDF\Facade\Pdf as PDF;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
-
-use Yajra\DataTables\DataTables;
 use DB;
 
 class TourReservationController extends Controller
@@ -43,10 +38,10 @@ class TourReservationController extends Controller
             $admin = Auth::guard('admin')->user();
             
             if(in_array($admin->role, ['tour_operator_admin', 'tour_operator_employee'])) {
-                return $this->tourReservationService->RetrieveTourProviderReservationsList($request);
+                return $this->tourReservationService->retrieveTourProviderReservationsList($request);
             } 
             
-            return $this->tourReservationService->RetrieveAllTourReservationsList($request);
+            return $this->tourReservationService->retrieveAllTourReservationsList($request);
         }
 
         return view('admin-page.tour_reservations.list-tour-reservation');
@@ -58,105 +53,64 @@ class TourReservationController extends Controller
         $tours = Tour::get();
         $ticket_passes = TicketPass::get();
         
-        return view('admin-page.tour_reservations.test-create-tour-reservation', compact('diy_tours', 'guided_tours', 'tours', 'ticket_passes'));
+        return view('admin-page.tour_reservations.create-tour-reservation', compact('diy_tours', 'guided_tours', 'tours', 'ticket_passes'));
     }
 
     public function store(Request $request) {
-        $user = User::where('id', $request->reserved_user_id)->first();
-
-        if(!$user->firstname || !$user->lastname) {
-            return back()->with('fail', 'Please complete your name before continue to checkout');
+        try {
+            $reservation = $this->bookingService->processBookingReservation($request);
+            return redirect()->route('admin.tour_reservations.edit', $reservation->id)->withSuccess('Book Tour Successfully');
+        } catch (Exception $e) {
+            return redirect()->back()->with('fail', $e->getMessage());
         }
-
-        if(!$user->contact_no) {
-            return back()->with('fail', 'Please provide a contact number to continue');
-        }
-
-        return $this->bookingService->createBookReservation($request);
     }
 
     public function edit(Request $request) {
         $reservation = TourReservation::where('id', $request->id)->with('user', 'tour', 'transaction', 'reservation_codes', 'customer_details')->firstOrFail();
         $ticket_passes = TicketPass::get();
+
         return view('admin-page.tour_reservations.edit-tour-reservation', compact('reservation', 'ticket_passes'));
     }
 
     public function update(Request $request) {
-        $reservation = TourReservation::where('id', $request->id)->with('user', 'customer_details')->first();
-
-        $trip_date = Carbon::parse($request->trip_date);
-
-        $update_reservation = $reservation->update([
-            'start_date' => $trip_date->format('Y-m-d'),
-            'end_date' => $request->type == 'Guided' ? $trip_date->addDays(1) : $this->bookingService->getDateOfDIYPass($request->ticket_pass, $trip_date),
-            'status' => $request->status
-        ]);
-
-        if($request->status == 'approved') {
-            $number_of_pass = $reservation->number_of_pass;
-            $reservations_codes = $this->generateReservationCode($number_of_pass, $reservation);
-
-            if($reservation->customer_details) {
-                $what = $reservation->type == 'DIY' ? (
-                                $reservation->ticket_pass . " x " . $reservation->number_of_pass . " pax " . "(Valid for 24 hours from first tap)"
-                            )
-                            : (
-                                "1 Guided Tour " . '"' . $reservation->tour->name . '"' . ' x ' . $reservation->number_of_pass . ' pax'
-                            );
-
-                $trip_date = new \DateTime($reservation->start_date);
-                $when = $trip_date->format('l, F j, Y');
-
-                $details = [
-                    'name' => $reservation->customer_details->firstname . ' ' . $reservation->customer_details->lastname,
-                    'what' => $what,
-                    'when' => $when,
-                    'where' => 'Robinson’s Manila',
-                    'type' => $reservation->type,
-                    'tour_name' => optional($reservation->tour)->name
-                ];
-
-                $pdf = null;
-                
-                if($reservation->type == 'DIY Tour' || $reservation->type == 'DIY') {
-                    $qrCodes = [];
-                    foreach ($reservations_codes as $key => $code) {
-                        $qrCodes[] = base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate($code));
-                    }
-                    $pdf = PDF::loadView('pdf.qrcodes', ['qrCodes' => $qrCodes]);
-                }
-
-                Mail::to(optional($reservation->customer_details)->email)->send(new BookingConfirmationMail($details, $pdf));
-            }
-
+        try {
+            $this->tourReservationService->update($request);
+            return back()->withSuccess('Reservation updated successfully.');   
+        } catch (Exception $exception) {
+            return back()->with('fail', $exception->getMessage());
         }
-
-        if($update_reservation) return back()->withSuccess('Reservation updated successfully');
     }
 
     public function destroy(Request $request) {
-        $tour_reservation = TourReservation::with('transaction')->find($request->id);
+        try {
+            DB::beginTransaction();
+
+            $tour_reservation = TourReservation::with('transaction')->find($request->id);
     
-        if(!$tour_reservation) {
+            if(!$tour_reservation) throw new Exception('Tour Reservation Not Found.', 404);
+        
+            $reservation_transaction_id = $tour_reservation->order_transaction_id;
+            $reservations_by_transaction_count = TourReservation::where('order_transaction_id', $reservation_transaction_id)->count();
+        
+            // if($reservations_by_transaction_count <= 1 && $tour_reservation->transaction) {
+            //     $tour_reservation->transaction->delete();
+            // }
+        
+            $tour_reservation->delete();
+
+            DB::commit();
+        
             return response([
-                'status' => false,
-                'message' => 'Reservation Not Found'
+                'status'=> true,
+                'message' => 'Reservation Deleted Successfully'
             ]);
+        } catch (Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => $exception->getMessage(),
+            ], $exception->getCode() ?? 400);
         }
-    
-        $reservationTransactionId = $tour_reservation->order_transaction_id;
-        $reservations_by_transaction = TourReservation::where('order_transaction_id', $reservationTransactionId)->get();
-    
-        if($reservations_by_transaction->count() <= 1 && $tour_reservation->transaction) {
-            $tour_reservation->transaction->delete();
-        }
-    
-        $tour_reservation->delete();
-    
-        return response([
-            'status'=> true,
-            'message' => 'Reservation Deleted Successfully'
-        ]);
     }
 
     public function get_tour_reservation_codes(Request $request) {
@@ -182,33 +136,5 @@ class TourReservationController extends Controller
         }
 
         echo "Success";
-    }
-
-    private function generateReservationCode($number_of_pass, $reservation) {
-        // Generate the random letter part
-        // Assuming you have str_random function available
-        $random_letters = strtoupper(Str::random(5));
-        $reservation_codes = [];
-
-        for ($i = 1; $i <= $number_of_pass; $i++) {
-            // Generate the pass number with leading zeros (e.g., -001)
-            $pass_number = str_pad($i, 3, '0', STR_PAD_LEFT);
-
-            // Concatenate the parts to create the code
-            $code = "GRP{$random_letters}{$reservation->id}-{$pass_number}";
-
-            $reservation_codes_exist = ReservationUserCode::where('reservation_id', $reservation->id)->count();
-
-            if($reservation_codes_exist < $number_of_pass) {
-                $create_code = ReservationUserCode::create([
-                    'reservation_id' => $reservation->id,
-                    'code' => $code
-                ]);
-
-                array_push($reservation_codes, $create_code->code);
-            }
-        }
-
-        return $reservation_codes;
     }
 }

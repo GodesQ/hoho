@@ -107,9 +107,7 @@
             createMapAndMarker(busIcon);
 
             // Fetch directions and simulate movement
-            if ('{{ env('APP_ENVIRONMENT') }}' === 'TEST') {
-                // getLocalDirections();
-            }
+            // getLocalDirections();
         }
 
         $('#get-route-btn').click(function(e) {

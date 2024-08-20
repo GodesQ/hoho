@@ -7,6 +7,7 @@ use App\Http\Requests\TourReservation\StoreRequest;
 use App\Models\Role;
 use App\Models\TourUnavailableDate;
 use ErrorException;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -93,18 +94,15 @@ class TourReservationController extends Controller
     public function storeTourReservation(StoreRequest $request)
     {
         try {
-            $booking = $this->bookingService->createMultipleBooking($request);
+            $booking = $this->bookingService->processMultipleBookingReservation($request);
 
-            if ($request->is('api/*')) {
-                return response([
-                    'status' => 'paying',
-                    'url' => $booking['payment_url']
-                ], 201);
-            } 
+            return response([
+                'status' => 'success',
+                'total_reservations' => count($booking['tour_reservations']),
+                'reservations' => $booking['tour_reservations']
+            ], 201);
             
-            return redirect($booking['payment_url']);
-
-        } catch (ErrorException $e) {
+        } catch (Exception $e) {
             return response()->json([
                 "status" => 'failed',
                 "message" => $e->getMessage(),
