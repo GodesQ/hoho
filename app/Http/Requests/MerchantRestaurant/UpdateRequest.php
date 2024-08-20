@@ -36,7 +36,7 @@ class UpdateRequest extends FormRequest
             "description" => "nullable",
             "interests" => "nullable|array",
             "payment_options" => "nullable",
-            "contact_number" => "nullable|numeric|max:12",
+            "contact_number" => "nullable",
             "contact_email" => "nullable|email",
             "business_hours" => "nullable",
             "tags" => "nullable",
