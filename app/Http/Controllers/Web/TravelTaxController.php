@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TravelTax\PaymentRequest;
+use App\Models\Role;
 use App\Models\Transaction;
 use App\Models\TravelTaxPassenger;
 use App\Models\TravelTaxPayment;
@@ -12,6 +13,7 @@ use App\Services\TravelTaxService;
 use Carbon\Carbon;
 use ErrorException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Yajra\DataTables\DataTables;
 
@@ -21,13 +23,19 @@ class TravelTaxController extends Controller
 
     public function __construct(TravelTaxService $travelTaxService)
     {
-        $this->travelTaxService = $travelTaxService;
+        $this->travelTaxService = $travelTaxService; 
     }
-
+ 
     public function index(Request $request)
     {
         if ($request->ajax()) {
             $data = TravelTaxPayment::query();
+            $admin = Auth::guard("admin")->user();
+            
+            if(in_array($admin->role, [Role::MERCHANT_HOTEL_ADMIN, Role::MERCHANT_RESTAURANT_ADMIN, Role::MERCHANT_STORE_ADMIN, Role::TOUR_OPERATOR_ADMIN])) {
+                $data->where("created_by", $admin->id);
+            }
+
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn("total_passengers", function ($row) {
@@ -38,7 +46,7 @@ class TravelTaxController extends Controller
                 })
                 ->editColumn('total_amount', function ($row) {
                     return '₱ ' . number_format($row->total_amount, 2);
-                })
+                })                                                                                                                                                                                                                                                                                          
                 ->editColumn('status', function ($row) {
                     if ($row->status == 'paid') {
                         return '<div class="badge bg-label-success">Paid</div>';

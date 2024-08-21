@@ -142,7 +142,7 @@ class BookingService
             
             // Store a transaction in database
             $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_discount, $additional_charges['total']);
-
+            
             $tour_reservations = [];
 
             foreach ($items as $item) {
@@ -151,7 +151,7 @@ class BookingService
 
                 // Check if the tour type is transit, and if it is, then store transit tour details
                 if ($item['type'] === TourTypeEnum::TRANSIT_TOUR) {
-                    $this->storeLayoverTourDetails($reservation, $item);
+                    $this->storeTransitTourDetails($reservation, $item);
                 }
 
                 // Remove the append attributes in reservation model
@@ -236,7 +236,6 @@ class BookingService
                 'number_of_pass' => $number_of_pax,
                 'ticket_pass' => $tour_type === 'DIY' || $tour_type === 'DIY Tour' ? ($ticket_pass ?? '1 Day Pass') : null,
                 'promo_code' => $request->promo_code,
-                'requirement_file_path' => null,
                 'discount_amount' => $transaction->sub_amount - $transaction->discount,
                 'created_by' => $request->reserved_user_id,
                 'created_user_type' => Auth::guard('admin')->user() ? Auth::guard('admin')->user()->role : 'guest'
@@ -280,7 +279,7 @@ class BookingService
         }
     }
 
-    private function storeLayoverTourDetails($reservation, $item)
+    private function storeTransitTourDetails($reservation, $item)
     {
         $layover_user_details = LayoverTourReservationDetail::create([
             'reservation_id' => $reservation->id,

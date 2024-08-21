@@ -8,6 +8,7 @@ use App\Models\TravelTaxPayment;
 use Carbon\Carbon;
 use App\Enum\TransactionTypeEnum;
 use ErrorException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -96,6 +97,7 @@ class TravelTaxService
 
     private function storeTravelTaxPayment($request, $transaction, $totalAmount) {
         $transactionNumber = $this->generateTransactionNumber();
+        $user = Auth::guard('admin')->user();
 
         $travel_tax_payment = TravelTaxPayment::create([
             'user_id' => $request->user_id,
@@ -111,6 +113,8 @@ class TravelTaxService
             'payment_method' => $request->payment_method ?? null,
             'payment_time' => Carbon::now(),
             'status' => 'unpaid',
+            'created_by' => $user ? $user->id : $request->user_id,
+            'created_by_role' => $user ? $user->role : 'guest',
         ]);
 
         return $travel_tax_payment;

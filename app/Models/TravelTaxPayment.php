@@ -23,6 +23,8 @@ class TravelTaxPayment extends Model
         "payment_method",
         "payment_time",
         "status",
+        "created_by",
+        "created_by_role"
     ];
 
     public function passengers() {

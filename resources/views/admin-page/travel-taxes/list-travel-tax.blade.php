@@ -155,5 +155,40 @@
                 table.draw();
             },
         })
+
+        $(document).on("click", ".remove-btn", function(e) {
+            let id = $(this).attr("id");
+            Swal.fire({
+                title: 'Remove Travel Tax',
+                text: "Do you really want to delete this remove travel tax?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#6f0d00',
+                cancelButtonColor: '#ff3e1d',
+                confirmButtonText: 'Yes, remove it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/admin/travel-taxes/destroy/${id}`,
+                        method: "DELETE",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            id: id
+                        },
+                        success: function(response) {
+                            if (response.status) {
+                                Swal.fire('Removed!', response.message, 'success').then(
+                                    result => {
+                                        if (result.isConfirmed) {
+                                            toastr.success(response.message, 'Success');
+                                            location.reload();
+                                        }
+                                    })
+                            }
+                        }
+                    })
+                }
+            })
+        });
     </script>
 @endpush

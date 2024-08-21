@@ -393,7 +393,6 @@
                 }
             });
 
-            populateNumberOfPax();
         })
     </script>
 @endpush
