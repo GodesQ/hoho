@@ -60,11 +60,11 @@
                 <div class="card">
                     <div class="row row-bordered g-0">
                         <div class="col-md-6">
-                            <h5 class="card-header m-0 me-2 pb-3">Total Bookings</h5>
+                            <h5 class="card-header m-0 me-2 pb-3">Total {{ auth()->user()->role() == "travel_tax_admin" ? "Payments" : "Bookings"}}</h5>
                             <div id="totalBookingsPerTypeChart" class="px-2"></div>
                         </div>
                         <div class="col-md-6">
-                            <h5 class="card-header m-0 me-2 pb-3">Top Selling Tours </h5>
+                            <h5 class="card-header m-0 me-2 pb-3">Top {{ auth()->user()->role() == "travel_tax_admin" ? "Payments Class" : "Selling Tours"}} </h5>
                             <div class="card-body mt-3">
                                 <ul class="p-0 m-0" id="topSellingToursList">
                                     @forelse ($topSellingTours as $topSellingTour)
@@ -89,7 +89,7 @@
                                             </div>
                                         </li>
                                     @empty
-                                        <h6 class="text-center">No Tour Reservations Found</h6>
+                                        <h6 class="text-center">No Payments Found</h6>
                                     @endforelse
                                 </ul>
                             </div>

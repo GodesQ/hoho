@@ -58,6 +58,9 @@ class DashboardController extends Controller
     
         $recentTransactions = Transaction::select('reference_no', 'id', 'transaction_by_id', 'payment_status', 'aqwire_totalAmount', 'aqwire_paymentMethodCode', 'payment_amount')
             ->where('payment_status', 'success')
+            ->when(auth()->user()->role === 'travel_tax_admin', function ($query) {
+                return $query->where('type', 'travel_tax');
+            })
             ->with('user')
             ->latest()
             ->limit(6)

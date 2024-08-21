@@ -42,7 +42,7 @@ class TravelTaxController extends Controller
                     return $row->passengers->count();
                 })
                 ->addColumn('transaction_at', function ($row) {
-                    return Carbon::parse($row->transaction_time)->format('F d, Y h:i A');
+                    return Carbon::parse($row->transaction_time)->format('M d, Y h:i A');
                 })
                 ->editColumn('total_amount', function ($row) {
                     return '₱ ' . number_format($row->total_amount, 2);
