@@ -218,9 +218,61 @@
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="" class="form-label">Number of Pax</label>
-                                                        <select name="number_of_pass" id="number-of-pax-field"
+                                                        <select name="number_of_pass" id="number-of-pax-field" class="form-select" required>
+                                                            <option value="1">1 pax</option>
+                                                            <option value="2">2 pax</option>
+                                                            <option value="3">3 pax</option>
+                                                            <option value="4">4 pax</option>
+                                                            <option value="5">5 pax</option>
+                                                            <option value="6">6 pax</option>
+                                                            <option value="7">7 pax</option>
+                                                            <option value="8">8 pax</option>
+                                                            <option value="9">9 pax</option>
+                                                            <option value="10">10 pax</option>
+                                                            <option value="11">11 pax</option>
+                                                            <option value="12">12 pax</option>
+                                                            <option value="13">13 pax</option>
+                                                            <option value="14">14 pax</option>
+                                                            <option value="15">15 pax</option>
+                                                            <option value="16">16 pax</option>
+                                                            <option value="17">17 pax</option>
+                                                            <option value="18">18 pax</option>
+                                                            <option value="19">19 pax</option>
+                                                            <option value="20">20 pax</option>
+                                                            <option value="21">21 pax</option>
+                                                            <option value="22">22 pax</option>
+                                                            <option value="23">23 pax</option>
+                                                            <option value="24">24 pax</option>
+                                                            <option value="25">25 pax</option>
+                                                            <option value="26">26 pax</option>
+                                                            <option value="27">27 pax</option>
+                                                            <option value="28">28 pax</option>
+                                                            <option value="29">29 pax</option>
+                                                            <option value="30">30 pax</option>
+                                                            <option value="31">31 pax</option>
+                                                            <option value="32">32 pax</option>
+                                                            <option value="33">33 pax</option>
+                                                            <option value="34">34 pax</option>
+                                                            <option value="35">35 pax</option>
+                                                            <option value="36">36 pax</option>
+                                                            <option value="37">37 pax</option>
+                                                            <option value="38">38 pax</option>
+                                                            <option value="39">39 pax</option>
+                                                            <option value="40">40 pax</option>
+                                                            <option value="41">41 pax</option>
+                                                            <option value="42">42 pax</option>
+                                                            <option value="43">43 pax</option>
+                                                            <option value="44">44 pax</option>
+                                                            <option value="45">45 pax</option>
+                                                            <option value="46">46 pax</option>
+                                                            <option value="47">47 pax</option>
+                                                            <option value="48">48 pax</option>
+                                                            <option value="49">49 pax</option>
+                                                            <option value="50">50 pax</option>
+                                                          </select>
+                                                        {{-- <select name="number_of_pass" id="number-of-pax-field"
                                                             class="form-select" required>
-                                                        </select>
+                                                        </select> --}}
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6">
