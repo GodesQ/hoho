@@ -30,7 +30,6 @@ class DashboardController extends Controller
     use DashboardTrait;
     public function dashboard(Request $request) {
         $user = Auth::guard('admin')->user();
-    
         if (in_array($user->role, merchant_roles())) {
             $merchantInfo = Merchant::where('id', $user->merchant_id)->first();
 
@@ -55,16 +54,18 @@ class DashboardController extends Controller
     
             return view('admin-page.dashboard.merchant-dashboard', compact('merchantInfo', 'type', 'recentTourReservations'));
         }
+
+        if($user->role == Role::TRAVEL_TAX_ADMIN) {
+            return $this->travelTaxDashboard();
+        }
     
         $recentTransactions = Transaction::select('reference_no', 'id', 'type', 'transaction_by_id', 'payment_status', 'aqwire_totalAmount', 'aqwire_paymentMethodCode', 'payment_amount')
             ->where('payment_status', 'success')
-            ->when(auth()->user()->role === 'travel_tax_admin', function ($query) {
-                return $query->where('type', 'travel_tax');
-            })
             ->with('user')
             ->latest()
             ->limit(6)
             ->get();
+        // dd($recentTransactions);
         
         $currentMonth = now()->format('Y-m');
 

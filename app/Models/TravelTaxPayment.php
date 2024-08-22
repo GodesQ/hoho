@@ -31,6 +31,10 @@ class TravelTaxPayment extends Model
         return $this->hasMany(TravelTaxPassenger::class, 'payment_id');
     }
 
+    public function payor() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function transaction() {
         return $this->belongsTo(Transaction::class, 'transaction_id');
     }

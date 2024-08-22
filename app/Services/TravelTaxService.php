@@ -67,7 +67,7 @@ class TravelTaxService
 
             return [
                 'transaction' => $transaction,
-                'travel_tax_payment' => $travel_tax_payment,
+                'travel_tax_payment' => $travel_tax_payment, 
                 'url' => $responseData['paymentUrl'],
             ];
 
@@ -83,7 +83,8 @@ class TravelTaxService
             'transaction_by_id' => $request->user_id,
             'reference_no' => $referenceNumber,
             'sub_amount' => $request->amount,
-            'total_additional_charges' => 0,
+            'additional_charges' => json_encode(getConvenienceFee()),
+            'total_additional_charges' => $request->processing_fee,
             'total_discount' => $request->discount,
             'transaction_type' => TransactionTypeEnum::TRAVEL_TAX,
             'payment_amount' => $totalAmount,
