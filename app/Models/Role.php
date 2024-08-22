@@ -20,6 +20,7 @@ class Role extends Model
     const MERCHANT_STORE_EMPLOYEE = "merchant_store_employee";
     const TOUR_OPERATOR_ADMIN = "tour_operator_admin";
     const TOUR_OPERATOR_EMPLOYEE = "tour_operator_employee";
+    const TRAVEL_TAX_ADMIN = "travel_tax_admin";
 
     protected $table = 'roles';
     protected $fillable = ['name', 'slug'];
