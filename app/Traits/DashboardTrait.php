@@ -95,11 +95,15 @@ trait DashboardTrait {
                                         })
                                         ->groupBy(['class'])
                                         ->get();
+
+        $recent_passengers = TravelTaxPassenger::where('passenger_type', 'primary')
+                                ->limit(5)
+                                ->get();
         
         $totalProfit = TravelTaxPayment::where('status', 'paid')
                                     ->where(DB::raw('DATE_FORMAT(payment_time, "%Y-%m")'), $currentMonth)
                                     ->sum('total_amount');
 
-        return view('admin-page.dashboard.travel-tax-dashboard', compact('recent_payments', 'total_payments_per_class', 'totalProfit'));
+        return view('admin-page.dashboard.travel-tax-dashboard', compact('recent_payments', 'total_payments_per_class', 'totalProfit', 'recent_passengers'));
     }
 }

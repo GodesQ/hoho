@@ -74,6 +74,20 @@
             --bs-table-accent-bg: #fffafa !important;
         }
     </style>
+
+    <style>
+        .contact-messenger-con {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .contact-messenger-con img {
+            width: 40px;
+            pointer-events: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -243,6 +257,12 @@
                 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script> --}}
             </div>
         </div>
+    </div>
+
+    <div class="contact-messenger-con">
+        <a href="https://m.me/philippineshoponhopoff" target="_blank">
+            <img src="{{ URL::asset('assets/img/logo/messenger.png') }}" alt="">
+        </a>
     </div>
 
     <script src="{{ URL::asset('assets/vendor/libs/jquery/jquery.js') }}"></script>

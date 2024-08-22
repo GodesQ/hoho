@@ -70,11 +70,47 @@
                 <br>
                 <div class="card">
                     <div class="row row-bordered g-0">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
+                            <div class="card-body">
+                                <h5>Recent Passengers</h5>
+                                @forelse ($recent_passengers as $passenger)
+                                    <li class="d-flex mb-4 pb-1">
+                                        <div class="avatar flex-shrink-0 me-3">
+                                            @if ($passenger->payment->status == 'paid')
+                                                <img src="{{ URL::asset('assets/img/icons/unicons/transaction-success.png') }}"
+                                                    alt="User" class="rounded" />
+                                            @else
+                                                <img src="{{ URL::asset('assets/img/icons/unicons/transaction-warning.png') }}"
+                                                    alt="User" class="rounded" />
+                                            @endif
+                                        </div>
+                                        <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                            <div class="me-2">
+                                                <small
+                                                    class="text-muted d-block mb-1">{{ $passenger->ticket_number }}</small>
+                                                <h6 class="mb-0">
+                                                    <a href="{{ route('admin.travel_taxes.edit', $passenger->id) }}">
+                                                        {{ $passenger->firstname }} {{ $passenger->lastname }}
+                                                    </a>
+                                                </h6>
+                                            </div>
+                                            <div class="user-progress d-flex align-items-center gap-1">
+                                                <h6 class="mb-0" style="font-size: 12px;">₱
+                                                    {{ number_format($passenger->payment->total_amount, 2) }}</h6>
+                                                {{-- <span class="text-muted">USD</span> --}}
+                                            </div>
+                                        </div>
+                                    </li>
+                                @empty
+                                    
+                                @endforelse
+                            </div>
+                        </div>
+                        <div class="col-md-4">
                             <h5 class="card-header m-0 me-2 pb-3">Total Payments Chart</h5>
                             <div id="total_payment_per_class_chart" class="px-2"></div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <h5 class="card-header m-0 me-2 pb-3">Total Payments Per Class</h5>
                             <div class="card-body mt-3">
                                 <ul class="p-0 m-0" id="topSellingToursList">
@@ -85,9 +121,9 @@
                                                         class="bx bx-wallet"></i></span>
                                             </div>
                                             <div
-                                                class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                class="gap-2">
                                                 <div class="me-2">
-                                                    <h6 class="mb-0 text-uppercase">
+                                                    <h6 class="mb-0 text-uppercase" style="font-size: 13px;">
                                                         {{ $payment_class->class }}
                                                     </h6>
                                                     <small
