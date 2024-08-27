@@ -129,12 +129,15 @@ class DashboardController extends Controller
     }
 
     public function changePassword(ChangeUserPasswordRequest $request) {
-        $user = Auth::user();
+        $user = Auth::guard('admin')->user();
 
-        if(!Hash::check($request->old_password, $user->password)) return back()->with('fail', 'Your old password is incorrect. Please Try Again.');
+        if(!Hash::check($request->old_password, $user->password)) 
+            return back()->with('fail', 'Your old password is incorrect. Please Try Again.');
+
+        $new_password = Hash::make($request->new_password);
 
         $update_user = $user->update([
-            'password' => Hash::make($request->new_password),
+            'password' => $new_password,
         ]);
 
         if($update_user) {

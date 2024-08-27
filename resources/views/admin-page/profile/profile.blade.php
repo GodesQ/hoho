@@ -93,23 +93,35 @@
                     @csrf
                     <div class="row">
                         <div class="col-lg-4">
-                            <div class="mb-3">
+                            <div class="mb-3 form-password-toggle">
                                 <label for="old_password" class="form-label">Old Password</label>
-                                <input type="password" name="old_password" class="form-control">
+                                <div class="input-group input-group-merge">
+                                    <input type="password" id="old_password" class="form-control" name="old_password"
+                                        placeholder="***********" aria-describedby="password" />
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                </div>
                                 <span class="text-danger danger">@error('old_password'){{ $message }}@enderror</span>
                             </div>
                         </div>
                         <div class="col-lg-4">
-                            <div class="mb-3">
+                            <div class="mb-3 form-password-toggle">
                                 <label for="new_password" class="form-label">New Password</label>
-                                <input type="password" name="new_password" class="form-control">
+                                <div class="input-group input-group-merge">
+                                    <input type="password" id="new_password" class="form-control" name="new_password"
+                                        placeholder="***********" aria-describedby="password" />
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                </div>
                                 <span class="text-danger danger">@error('new_password'){{ $message }}@enderror</span>
                             </div>
                         </div>
                         <div class="col-lg-4">
-                            <div class="mb-3">
+                            <div class="mb-3 form-password-toggle">
                                 <label for="confirm_password" class="form-label">Password Confirmation</label>
-                                <input type="password" name="confirm_password" class="form-control">
+                                <div class="input-group input-group-merge">
+                                    <input type="password" id="confirm_password" class="form-control" name="confirm_password"
+                                        placeholder="***********" aria-describedby="password" />
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                </div>
                                 <span class="text-danger danger">@error('confirm_password'){{ $message }}@enderror</span>
                             </div>
                         </div>

@@ -47,18 +47,6 @@ class Admin extends Authenticatable
 
     protected $hidden = ['password'];
 
-    protected function password(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($value) => Hash::make($value)
-        );
-    }
-
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = bcrypt($value);
-    }
-
     public function transport()
     {
         return $this->belongsTo(Transport::class, 'transport_id')->select('id', 'capacity', 'available_seats', 'operator_id', 'tour_assigned_id', 'hub_id', 'tour_assignment_ids', 'latitude', 'longitude', 'name', 'current_location', 'next_location', 'previous_location')->with('assigned_tour');
