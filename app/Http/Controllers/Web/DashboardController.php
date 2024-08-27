@@ -30,7 +30,6 @@ class DashboardController extends Controller
     use DashboardTrait;
     public function dashboard(Request $request) {
         $user = Auth::guard('admin')->user();
-    
         if (in_array($user->role, merchant_roles())) {
             $merchantInfo = Merchant::where('id', $user->merchant_id)->first();
 
@@ -55,13 +54,18 @@ class DashboardController extends Controller
     
             return view('admin-page.dashboard.merchant-dashboard', compact('merchantInfo', 'type', 'recentTourReservations'));
         }
+
+        if($user->role == Role::TRAVEL_TAX_ADMIN) {
+            return $this->travelTaxDashboard();
+        }
     
-        $recentTransactions = Transaction::select('reference_no', 'id', 'transaction_by_id', 'payment_status', 'aqwire_totalAmount', 'aqwire_paymentMethodCode', 'payment_amount')
+        $recentTransactions = Transaction::select('reference_no', 'id', 'type', 'transaction_by_id', 'payment_status', 'aqwire_totalAmount', 'aqwire_paymentMethodCode', 'payment_amount')
             ->where('payment_status', 'success')
             ->with('user')
             ->latest()
             ->limit(6)
             ->get();
+        // dd($recentTransactions);
         
         $currentMonth = now()->format('Y-m');
 
@@ -125,12 +129,15 @@ class DashboardController extends Controller
     }
 
     public function changePassword(ChangeUserPasswordRequest $request) {
-        $user = Auth::user();
+        $user = Auth::guard('admin')->user();
 
-        if(!Hash::check($request->old_password, $user->password)) return back()->with('fail', 'Your old password is incorrect. Please Try Again.');
+        if(!Hash::check($request->old_password, $user->password)) 
+            return back()->with('fail', 'Your old password is incorrect. Please Try Again.');
+
+        $new_password = Hash::make($request->new_password);
 
         $update_user = $user->update([
-            'password' => Hash::make($request->new_password),
+            'password' => $new_password,
         ]);
 
         if($update_user) {

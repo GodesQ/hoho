@@ -34,9 +34,9 @@
                                             class="bx bx-plus"></i></button>
                                 </div>
                                 <div class="passenger-container row border p-2 px-1 my-2 rounded">
-                                    <input type="hidden" name="passengers[0][amount]" value="1600" class="amount-field">
+                                    <input type="hidden" name="passengers[0][amount]" value="1620" class="amount-field">
                                     <div class="col-lg-12 px-1 py-2 d-flex justify-content-between">
-                                        <h5>Amount: <span class="text-primary amount-text">1600.00</span></h5>
+                                        <h5>Amount: <span class="text-primary amount-text">1620.00</span></h5>
                                         <button class="btn btn-sm btn-secondary" type="button">Remove <i
                                                 class="bx bx-x"></i></button>
                                     </div>
@@ -74,13 +74,13 @@
                                         <label class="form-label">Class</label>
                                         <div class="form-check ">
                                             <input name="passengers[0][class]" class="form-check-input class-field-radio"
-                                                type="radio" value="first class" id="firstClassOption" checked />
-                                            <label class="form-check-label" for="firstClassOption"> First Class </label>
+                                                type="radio" value="first class" id="firstClassOption1" />
+                                            <label class="form-check-label" for="firstClassOption1"> First Class </label>
                                         </div>
                                         <div class="form-check ">
                                             <input name="passengers[0][class]" class="form-check-input class-field-radio"
-                                                type="radio" value="business class" id="businessClassOption" />
-                                            <label class="form-check-label" for="businessClassOption"> Business Class
+                                                type="radio" value="business class" id="businessClassOption1" checked />
+                                            <label class="form-check-label" for="businessClassOption1"> Economy/Business Class
                                             </label>
                                         </div>
                                     </div>
@@ -124,8 +124,9 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="mb-3">
-                                <label for="user-field" class="form-label">Payor <span class="text-danger">*</span></label>
-                                <select name="user_id" id="user-field"></select>
+                                <label for="user-field" class="form-label">Payor <span
+                                        class="text-danger">*</span></label>
+                                <select name="user_id" id="user-field" required></select>
                             </div>
                             <hr>
                             <div class="row">
@@ -142,9 +143,17 @@
                                     <h6>Processing Fee:</h6>
                                 </div>
                                 <div class="col-lg-6">
-                                    <div class="text-end">₱ 100.00</div>
+                                    <div class="text-end">5 %</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h6>Total Processing Fee:</h6>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="text-end" id="total-processing-fee-text">₱ 0.00</div>
                                     <input type="hidden" name="processing_fee" id="processing-fee-field"
-                                        value="100">
+                                        value="">
                                 </div>
                             </div>
                             <div class="row">
@@ -199,11 +208,22 @@
                 var clone = $(".passenger-container").first().clone();
 
                 // Increment name attributes of input fields within the cloned container
-                var newIndex = $(".passenger-container").length;
+                var newIndex = $(".passenger-container").length + 1;
                 clone.find("input, select").each(function() {
                     var currentName = $(this).attr("name");
                     var newName = currentName.replace(/\[\d+\]/, "[" + newIndex + "]");
                     $(this).attr("name", newName);
+                });
+
+
+                // Update the id and for attributes for the radio buttons and labels
+                clone.find("input[type=radio]").each(function() {
+                    var currentId = $(this).attr("id");
+                    var newId = currentId.replace(/\d+$/,newIndex); // Increment the number at the end of the id
+                    $(this).attr("id", newId);
+
+                    // Update the corresponding label's for attribute
+                    $(this).next("label").attr("for", newId);
                 });
 
                 // Clear input fields within the cloned container
@@ -213,6 +233,11 @@
 
                 // Append the cloned container after the last one
                 $("#passengers-list-repeater").append(clone);
+
+                clone.find('.class-field-radio').on('change', function(e) {
+                    let value = e.target.value;
+                    changeClass(value, e.target);
+                });
 
                 fetchCountries();
                 computeSubAndTotalAmount();
@@ -231,18 +256,22 @@
 
         $('.class-field-radio').change(function(e) {
             let value = e.target.value;
-            let amountField = $(this).closest('.passenger-container').find('.amount-field');
-            let amountText = $(this).closest('.passenger-container').find('.amount-text');
+            changeClass(value, e.target);
+        });
 
-            if (value === 'business class') {
-                amountField.val(1700);
-                amountText.text('1700.00');
+        function changeClass(classValue, element) {
+            let amountField = $(element).closest('.passenger-container').find('.amount-field');
+            let amountText = $(element).closest('.passenger-container').find('.amount-text');
+
+            if (classValue === 'business class') {
+                amountField.val(1620);
+                amountText.text('1620.00');
             } else {
-                amountField.val(1600);
-                amountText.text('1600.00');
+                amountField.val(2700);
+                amountText.text('2700.00');
             }
             computeSubAndTotalAmount();
-        });
+        }
 
         function computeSubAndTotalAmount() {
             let amountFields = document.querySelectorAll('.amount-field');
@@ -252,13 +281,28 @@
                 subAmount += parseInt(element.value);
             });
 
-            let totalAmount = subAmount + 100;
+            let totalAmount = subAmount;
+
 
             $('#sub-amount-text').text(parseInt(subAmount).toFixed(2));
             $('#sub-amount-field').val(parseInt(subAmount));
 
             $('#total-amount-text').text(parseInt(totalAmount).toFixed(2));
             $('#total-amount-field').val(parseInt(subAmount));
+
+            computeProcessingFee(totalAmount);
+        }
+
+        function computeProcessingFee(totalAmount) {
+            let total_processing_fee = totalAmount * 0.05;
+            totalAmount = totalAmount + total_processing_fee;
+
+            $("#total-processing-fee-text").text('₱ ' + parseInt(total_processing_fee).toFixed(2));
+            $("#processing-fee-field").val(parseInt(total_processing_fee));
+
+            $('#total-amount-text').text('₱ ' + parseInt(totalAmount).toFixed(2));
+            $('#total-amount-field').val(parseInt(totalAmount));
+
         }
 
         function fetchCountries() {

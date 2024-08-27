@@ -105,11 +105,11 @@
                             </div>
                             <div class="card-body py-1">
                                 <div class="d-flex justify-content-between align-items-center my-2 h-100">
-                                    <div style="width: 20%">
+                                    <div style="width: 30%">
                                         <img src="{{ URL::asset('assets/img/icons/unicons/chart-success.png') }}"
                                             alt="User" class="rounded" />
                                     </div>
-                                    <div style="width: 80%">
+                                    <div style="width: 70%">
                                         <h2 style="font-weight: bold;"><span id="total-payment-amount">0</span></h2>
                                         <h6 style="line-height: 5px;">Total Transaction</h6>
                                     </div>

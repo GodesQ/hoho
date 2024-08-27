@@ -33,6 +33,7 @@ class TravelTaxReportService
     public static function getTravelTaxTotalPayment()
     {
         $total_amount = TravelTaxPayment::whereMonth('created_at', Carbon::now()->format('m'))
+            ->where('status', 'paid')
             ->sum('total_amount');
 
         return $total_amount;

@@ -168,6 +168,14 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-lg-6">
+                                <h6>Payment Link:</h6>
+                            </div>
+                            <div class="col-lg-6 text-end">
+                                <a href="{{ $travel_tax->transaction->payment_url }}" target="_blank" rel="noopener noreferrer">Payment Link</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
                                 <h6>Transaction Number:</h6>
                             </div>
                             <div class="col-lg-6">
@@ -196,7 +204,7 @@
                                 <h6>Processing Fee:</h6>
                             </div>
                             <div class="col-lg-6">
-                                <div class="text-end">₱ 100.00</div>
+                                <div class="text-end">₱ {{ number_format($travel_tax->processing_fee, 2) }}</div>
                             </div>
                         </div>
                         <div class="row">

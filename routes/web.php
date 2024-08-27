@@ -430,6 +430,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
         Route::get('user-demographics/user-locations', [DataReportController::class, 'getUsersByLocation'])->name('user_demographics.user_locations');
 
         Route::get('travel-taxes-report', [DataReportController::class, 'travel_taxes_report'])->name('travel_taxes_report');
+        Route::get('travel-taxes-report/total-payment-per-class', [DataReportController::class, 'getTravelTaxTotalPaymentsPerClass'])->name('travel_taxes_report.total_payment_per_class');
         Route::get('travel-taxes-report/total-payment-amount', [DataReportController::class, 'getTravelTaxTotalPayment'])->name('travel_taxes_report.total_payment_amount');
         Route::get('travel-taxes-report/transactions-per-month', [DataReportController::class, 'getTravelTaxTxnCountPerMonth'])->name('travel_taxes_report.trasanctions_count_per_month');
 

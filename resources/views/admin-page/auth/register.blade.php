@@ -39,6 +39,20 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ URL::asset('assets/js/config.js') }}"></script>
+
+    <style>
+        .contact-messenger-con {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .contact-messenger-con img {
+            width: 40px;
+            pointer-events: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -161,6 +175,11 @@
     </div>
 
     <!-- / Content -->
+    <div class="contact-messenger-con">
+        <a href="https://m.me/philippineshoponhopoff" target="_blank">
+            <img src="{{ URL::asset('assets/img/logo/messenger.png') }}" alt="">
+        </a>
+    </div>
 
     <script src="{{ URL::asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
     <script src="{{ URL::asset('assets/vendor/libs/popper/popper.js') }}"></script>

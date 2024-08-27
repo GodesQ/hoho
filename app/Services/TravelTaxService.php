@@ -8,6 +8,7 @@ use App\Models\TravelTaxPayment;
 use Carbon\Carbon;
 use App\Enum\TransactionTypeEnum;
 use ErrorException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -66,7 +67,7 @@ class TravelTaxService
 
             return [
                 'transaction' => $transaction,
-                'travel_tax_payment' => $travel_tax_payment,
+                'travel_tax_payment' => $travel_tax_payment, 
                 'url' => $responseData['paymentUrl'],
             ];
 
@@ -82,7 +83,8 @@ class TravelTaxService
             'transaction_by_id' => $request->user_id,
             'reference_no' => $referenceNumber,
             'sub_amount' => $request->amount,
-            'total_additional_charges' => 0,
+            'additional_charges' => json_encode(getConvenienceFee()),
+            'total_additional_charges' => $request->processing_fee,
             'total_discount' => $request->discount,
             'transaction_type' => TransactionTypeEnum::TRAVEL_TAX,
             'payment_amount' => $totalAmount,
@@ -96,6 +98,7 @@ class TravelTaxService
 
     private function storeTravelTaxPayment($request, $transaction, $totalAmount) {
         $transactionNumber = $this->generateTransactionNumber();
+        $user = Auth::guard('admin')->user();
 
         $travel_tax_payment = TravelTaxPayment::create([
             'user_id' => $request->user_id,
@@ -111,6 +114,8 @@ class TravelTaxService
             'payment_method' => $request->payment_method ?? null,
             'payment_time' => Carbon::now(),
             'status' => 'unpaid',
+            'created_by' => $user ? $user->id : $request->user_id,
+            'created_by_role' => $user ? $user->role : 'guest',
         ]);
 
         return $travel_tax_payment;

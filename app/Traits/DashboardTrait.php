@@ -9,7 +9,10 @@ use App\Models\RestaurantReservation;
 use App\Models\Room;
 use App\Models\Tour;
 use App\Models\TourReservation;
+use App\Models\TravelTaxPassenger;
+use App\Models\TravelTaxPayment;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 trait DashboardTrait {
     public function adminDashboard() {
@@ -75,6 +78,32 @@ trait DashboardTrait {
                                             ->get();
 
         return view('admin-page.dashboard.merchants.tour-provider-dashboard', compact('recent_tour_reservations','type','merchantInfo', 'tours_count'));
+    }
 
+    public function travelTaxDashboard() {
+        $recent_payments = TravelTaxPayment::latest()
+                            ->limit(6)
+                            ->with('payor')
+                            ->get();
+
+        $currentMonth = now()->format('Y-m');
+
+        $total_payments_per_class = TravelTaxPassenger::select("class", DB::raw('max(payment_id) as payment_id'), DB::raw('sum(amount) as total_amount'))
+                                        ->with('payment')
+                                        ->whereHas('payment', function ($row) {
+                                            $row->where('status', 'paid');
+                                        })
+                                        ->groupBy(['class'])
+                                        ->get();
+
+        $recent_passengers = TravelTaxPassenger::where('passenger_type', 'primary')
+                                ->limit(5)
+                                ->get();
+        
+        $totalProfit = TravelTaxPayment::where('status', 'paid')
+                                    ->where(DB::raw('DATE_FORMAT(payment_time, "%Y-%m")'), $currentMonth)
+                                    ->sum('total_amount');
+
+        return view('admin-page.dashboard.travel-tax-dashboard', compact('recent_payments', 'total_payments_per_class', 'totalProfit', 'recent_passengers'));
     }
 }

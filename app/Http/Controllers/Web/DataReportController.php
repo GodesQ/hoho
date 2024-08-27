@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Report\TourReservationReportRequest;
+use App\Models\TravelTaxPassenger;
 use App\Models\TravelTaxPayment;
 use App\Services\TravelTaxReportService;
 use Carbon\Carbon;
@@ -37,6 +38,25 @@ class DataReportController extends Controller
 
     public function getTravelTaxCustomersPerMonth(Request $request) {
         
+    }
+
+    public function getTravelTaxTotalPaymentsPerClass(Request $request) {
+        $totalEconomyClass = TravelTaxPassenger::where('class', 'business class')
+                                ->whereHas('payment', function ($query) {
+                                    return $query->where('status', 'paid');    
+                                })
+                                ->count();
+        $totalFirstClass = TravelTaxPassenger::where('class', 'first class')
+                            ->whereHas('payment', function ($query) {
+                                return $query->where('status', 'paid');    
+                            })
+                            ->count();
+
+        return response([
+            'status' => TRUE,
+            'total_economy_class' => $totalEconomyClass,
+            'total_first_class' => $totalFirstClass
+        ]);
     }
     
     public function getTravelTaxTxnCountPerMonth(Request $request) {

@@ -25,4 +25,8 @@ class TravelTaxPassenger extends Model
         "passenger_type",
         "amount",
     ];
+
+    public function payment() {
+        return $this->belongsTo(TravelTaxPayment::class, "payment_id");
+    }
 }
