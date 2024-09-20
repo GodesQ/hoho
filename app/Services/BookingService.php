@@ -94,7 +94,7 @@ class BookingService
     }
 
     /**
-     * Process and create multiple tour reservations.
+     * Process and apply multiple tour reservations.
      * @param \Illuminate\Http\Request $request
      * @throws \Exception
      * @return array [$transaction, $tour_reservation]
@@ -215,7 +215,7 @@ class BookingService
             // Set reservation details
             $tour_id = empty($item) ? $request->tour_id : $item['tour_id'];
             $tour_type =  empty($item) ? $request->type : $item['type'];
-            $number_of_pax = empty($item) ? $request->number_of_pass : $item['number_of_pass'] ;
+            $number_of_pax = empty($item) ? $request->number_of_pass : $item['number_of_pass'];
             $ticket_pass = empty($item) ? $request->ticket_pass : $item['ticket_pass'];
 
             // Store tour reservation in database
@@ -231,6 +231,9 @@ class BookingService
                 'reference_code' => $transaction->reference_no,
                 'order_transaction_id' => $transaction->id,
                 'start_date' => $trip_start_date,
+                'has_insurance' => $request->has_insurance,
+                'type_of_plan' => $request->type_of_plan,
+                'insurance_id' => rand(1000000, 100000000),
                 'end_date' => $trip_end_date,
                 'status' => 'pending',
                 'number_of_pass' => $number_of_pax,

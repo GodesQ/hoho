@@ -7,6 +7,7 @@ use App\Mail\HotelReservationReceipt;
 use App\Models\HotelReservation;
 use App\Models\Order;
 use App\Models\TravelTaxPayment;
+use App\Services\SenangdaliService;
 use App\Services\TourReservationService;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,14 +22,18 @@ use App\Models\TourReservation;
 use Carbon\Carbon;
 
 class AqwireController extends Controller
-{   
+{
     private $tourReservationService;
-    public function __construct(TourReservationService $tourReservationService) {
+    private $senangdaliService;
+    public function __construct(TourReservationService $tourReservationService, SenangdaliService $senangdaliService)
+    {
         $this->tourReservationService = $tourReservationService;
+        $this->senangdaliService = $senangdaliService;
     }
 
     public function success(Request $request)
-    {   try {
+    {
+        try {
             DB::beginTransaction();
 
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
@@ -44,7 +49,7 @@ class AqwireController extends Controller
             $reservations = TourReservation::where('order_transaction_id', $transaction->id)->with('tour', 'user', 'customer_details')->get();
 
             foreach ($reservations as $reservation) {
-                $reservation->update([
+                $reservation->update(values: [
                     'payment_method' => $request->paymentMethodCode
                 ]);
 
@@ -55,12 +60,15 @@ class AqwireController extends Controller
                 ];
 
                 Mail::to(optional($reservation->customer_details)->email)->send(new InvoiceMail($details));
-
                 $this->tourReservationService->generateAndSendReservationCode($reservation->number_of_pass, $reservation);
+
+                if ($reservation->has_insurance) {
+                    $senangdali_insurance_request = $this->senangdaliService->__map_request_model($transaction->user, $reservation);
+                    $this->senangdaliService->purchasing($senangdali_insurance_request);
+                }
             }
 
             DB::commit();
-
             return redirect('aqwire/payment/view_success');
         } catch (Exception $e) {
             DB::rollBack();
@@ -69,7 +77,7 @@ class AqwireController extends Controller
     }
 
     public function travelTaxSuccess(Request $request)
-    {   
+    {
         try {
             DB::beginTransaction();
 
@@ -101,7 +109,7 @@ class AqwireController extends Controller
     }
 
     public function orderSuccess(Request $request)
-    {   
+    {
         try {
             DB::beginTransaction();
 
@@ -132,7 +140,7 @@ class AqwireController extends Controller
     }
 
     public function hotelReservationSuccess(Request $request)
-    {   
+    {
         try {
             DB::beginTransaction();
 
@@ -167,7 +175,7 @@ class AqwireController extends Controller
     }
 
     public function hotelReservationCancel(Request $request)
-    {   
+    {
         try {
             DB::beginTransaction();
 
@@ -196,7 +204,7 @@ class AqwireController extends Controller
     }
 
     public function orderCancel(Request $request)
-    {   
+    {
         try {
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
 
@@ -228,7 +236,7 @@ class AqwireController extends Controller
     }
 
     public function cancel(Request $request)
-    {   
+    {
         try {
             DB::beginTransaction();
 
@@ -256,7 +264,7 @@ class AqwireController extends Controller
     }
 
     public function travelTaxCancel(Request $request)
-    {   
+    {
         $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
 
         $transaction->update([
