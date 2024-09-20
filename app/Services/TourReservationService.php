@@ -496,6 +496,8 @@ class TourReservationService
                 }
 
                 Mail::to(optional($reservation->customer_details)->email)->send(new BookingConfirmationMail($details, $pdf));
+
+                return $reservations_codes;
             }
         } catch (Exception $e) {
             throw $e;
