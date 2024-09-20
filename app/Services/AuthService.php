@@ -57,12 +57,14 @@ class AuthService
     public function register($request)
     {
         try {
-            $data = $request->validated();
+            $data = $request->except(['confirm_password']);
             $account_uid = $this->generateRandomUuid();
+
+            $data['password'] = Hash::make($request->password);
 
             $contact_no_format = $this->checkContactNumberJSON($request->contact_no);
 
-            $user = User::create(array_merge($data, [
+            $user = User::updateOrCreate(array_merge($data, [
                 'account_uid' => $account_uid,
                 'country_of_residence' => $request->country_of_residence,
                 'contact_no' => preg_replace('/[^0-9]/', '', $contact_no_format['contactNumber']),
@@ -71,15 +73,18 @@ class AuthService
                 'is_first_time_philippines' => $request->has('is_first_time_philippines'),
                 'is_international_tourist' => $request->has('is_international_tourist'),
                 'role' => UserRoleEnum::GUEST
-            ]));
+            ]), []);
 
             if ($request->has('birthdate')) {
                 $birthdate = $request->birthdate;
-                $age = Carbon::parse($birthdate)->age;
 
-                $user->update([
-                    'age' => $age,
-                ]);
+                if (Carbon::hasFormat($birthdate, 'Y-m-d') && strtotime($birthdate)) {
+                    $age = Carbon::parse($birthdate)->age;
+
+                    $user->update([
+                        'age' => $age,
+                    ]);
+                }
             }
 
             // SEND EMAIL FOR VERIFICATION
