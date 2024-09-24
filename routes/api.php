@@ -58,6 +58,7 @@ use App\Http\Controllers\Api\TourBadgeController;
     Route::get('featured_merchants', [MerchantController::class, 'getFeaturedMerchants']);
 
     Route::get('app-settings/maintenance-mode', [AppSettingController::class, 'checkMaintenanceMode']);
+    Route::get('promocodes/verify/{code}', action: [PromoCodeController::class, 'checkValidPromoCode']);
 
     Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('logout', [AuthController::class, 'logout']);
@@ -66,7 +67,6 @@ use App\Http\Controllers\Api\TourBadgeController;
         Route::get('announcements', [AnnouncementController::class, 'getAnnouncements']);
 
         Route::get('promocodes', [PromoCodeController::class, 'getPromoCodes']);
-        Route::get('promocodes/verify/{code}', [PromoCodeController::class, 'checkValidPromoCode']);
 
         Route::get('user', [UserController::class, 'getUser']);
         Route::post('user/profile', [UserController::class, 'updateProfile']);
