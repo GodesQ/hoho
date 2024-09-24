@@ -203,7 +203,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('attractions/update/{id}', [AttractionController::class, 'update'])->name('attractions.update');
     Route::delete('attractions/destroy', [AttractionController::class, 'destroy'])->name('attractions.destroy');
     Route::delete('attractions/remove_image', [AttractionController::class, 'removeImage'])->name('attractions.remove_image');
-    // Route::get('attractions/update_attractions', [AttractionController::class, 'update_attractions']);
+
+    Route::get('attractions/featured/organizations/{organization_id}', [AttractionController::class,'featured_attractions'])->name('attractions.featured');    Route::get('attractions/featured/organizations/{organization_id}', [AttractionController::class,'featured_attractions'])->name('attractions.featured');
+    Route::post('attractions/featured', [AttractionController::class,'saveFeaturedAttractions'])->name('attractions.featured.post');
 
     Route::get('tour-reservations/{reservation_id}/reservation-codes', [TourReservationController::class, 'get_tour_reservation_codes'])->name('tour_reservations.reservation_codes');
 
@@ -373,6 +375,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::get('promo_codes/edit/{id}', [PromoCodeController::class, 'edit'])->name('promo_codes.edit');
     Route::post('promo_codes/update/{id}', [PromoCodeController::class, 'update'])->name('promo_codes.update');
     Route::delete('promo_codes/destroy', [PromoCodeController::class, 'destroy'])->name('promo_codes.destroy');
+    Route::post('promocodes/verify/{promo_code}', [PromoCodeController::class,'verify'])->name('promocodes.verify');
 
     Route::get('ticket_passes', [TicketPassController::class, 'list'])->name('ticket_passes.list');
     Route::get('ticket_passes/create', [TicketPassController::class, 'create'])->name('ticket_passes.create');
