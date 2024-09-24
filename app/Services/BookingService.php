@@ -71,10 +71,6 @@ class BookingService
 
             $total_amount = $this->getTotalAmountOfBooking($sub_amount, $additional_charges['total'], $total_of_discount);
 
-            if ($sub_amount == $total_of_discount) {
-                $total_amount -= $additional_charges['total'];
-            }
-
             // Store transaction in database
             $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_of_discount, $additional_charges['total']);
 
