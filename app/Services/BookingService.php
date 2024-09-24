@@ -64,7 +64,13 @@ class BookingService
             $sub_amount = intval($request->amount) ?? 0;
             $total_of_discount = 0;
 
-            if ($request->promo_code) $total_of_discount = intval($request->amount) - intval($request->discounted_amount);
+            if ($request->promo_code != null || $request->promo_code != "") {
+                $total_of_discount = intval($request->amount) - intval($request->discounted_amount);
+            }
+            
+            if($request->promo_code === "COMPLIHOHO") {
+                $total_of_discount = $request->amount;
+            }
 
             // Get additional charges
             $additional_charges = $this->processAdditionalCharges($sub_amount);
