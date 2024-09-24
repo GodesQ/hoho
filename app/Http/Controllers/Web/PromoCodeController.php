@@ -88,4 +88,21 @@ class PromoCodeController extends Controller
         }
     }
 
+    public function verify(Request $request) {
+        $promocode = PromoCode::select('id', 'name', 'code', 'description', 'is_need_requirement', 'type', 'is_need_approval', 'discount_type', 'discount_amount')
+                    ->where('code', $request->promo_code)->first();
+
+        if($promocode) {
+            return response([
+                'is_promocode_exist' => TRUE,
+                'promocode' => $promocode
+            ]);
+        }
+
+        return response([
+            'is_promocode_exist' => FALSE,
+            'promocode' => null
+        ], 400);
+    }
+
 }
