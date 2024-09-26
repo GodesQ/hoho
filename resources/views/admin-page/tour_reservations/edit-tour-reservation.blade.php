@@ -40,6 +40,19 @@
             width: 256px;
             height: auto;
         }
+
+        @media print {
+            body {
+                visibility: hidden;
+            }
+
+            .section-to-print {
+                visibility: visible;
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
     </style>
     <div class="container-xxl flex-grow-1 container-p-y">
         <section class="section-header d-flex justify-content-between align-items-center">
@@ -276,7 +289,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="tab-pane fade" id="ticket-pass" role="tabpanel">
+                <div class="tab-pane fade section-to-print" id="ticket-pass" role="tabpanel">
                     <div class="card">
                         <div class="card-body">
                             <div class="reservation-codes d-flex flex-wrap gap-2"></div>
