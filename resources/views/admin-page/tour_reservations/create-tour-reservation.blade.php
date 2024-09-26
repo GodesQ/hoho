@@ -46,6 +46,7 @@
         #edit-promocode-btn {
             display: none;
         }
+
         #edit-promocode-btn.active {
             display: block;
         }
@@ -82,7 +83,8 @@
                             </div>
                             <div class="card-content collapse show">
                                 <div class="card-body">
-                                    <form action="{{ route('admin.tour_reservations.store') }}" method="POST" class="number-tab-steps wizard-circle" id="book-tour-form">
+                                    <form action="{{ route('admin.tour_reservations.store') }}" method="POST"
+                                        class="number-tab-steps wizard-circle" id="book-tour-form">
                                         @csrf
                                         <!-- Step 1 -->
                                         <h6>Tour Type</h6>
@@ -218,7 +220,8 @@
                                                 <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="" class="form-label">Number of Pax</label>
-                                                        <select name="number_of_pass" id="number-of-pax-field" class="form-select" required>
+                                                        <select name="number_of_pass" id="number-of-pax-field"
+                                                            class="form-select" required>
                                                             <option value="1">1 pax</option>
                                                             <option value="2">2 pax</option>
                                                             <option value="3">3 pax</option>
@@ -269,7 +272,7 @@
                                                             <option value="48">48 pax</option>
                                                             <option value="49">49 pax</option>
                                                             <option value="50">50 pax</option>
-                                                          </select>
+                                                        </select>
                                                         {{-- <select name="number_of_pass" id="number-of-pax-field"
                                                             class="form-select" required>
                                                         </select> --}}
@@ -297,12 +300,14 @@
                                                         <div class="card-body">
                                                             <div class="row">
                                                                 <div class="col-xl-6">
-                                                                    <label for="" class="form-label text-primary">First
+                                                                    <label for=""
+                                                                        class="form-label text-primary">First
                                                                         Name</label>
                                                                     <h6 id="firstname-text"></h6>
                                                                 </div>
                                                                 <div class="col-xl-6">
-                                                                    <label for="" class="form-label text-primary">Last
+                                                                    <label for=""
+                                                                        class="form-label text-primary">Last
                                                                         Name</label>
                                                                     <h6 id="lastname-text"></h6>
                                                                 </div>
@@ -312,12 +317,14 @@
                                                                     <h6 id="email-text"></h6>
                                                                 </div>
                                                                 <div class="col-xl-6">
-                                                                    <label for="" class="form-label text-primary">Contact
+                                                                    <label for=""
+                                                                        class="form-label text-primary">Contact
                                                                         Number</label>
                                                                     <h6 id="contact-text"></h6>
                                                                 </div>
                                                                 <div class="col-xl-6">
-                                                                    <label for="" class="form-label text-primary">Number
+                                                                    <label for=""
+                                                                        class="form-label text-primary">Number
                                                                         of Pax</label>
                                                                     <h6 id="pax-text"></h6>
                                                                 </div>
@@ -342,17 +349,22 @@
                                                         <div class="card-body">
                                                             <div class="d-flex justify-content-between align-items-center">
                                                                 <h6 style="font-weight: 600;">Promo Code</h6>
-                                                                <a href="javascript:void(0);" id="edit-promocode-btn"><i class="bx bx-edit"></i> Change promo code?</a>
+                                                                <a href="javascript:void(0);" id="edit-promocode-btn"><i
+                                                                        class="bx bx-edit"></i> Change promo code?</a>
                                                             </div>
                                                             <div class="input-group">
-                                                                <input type="text" class="form-control" placeholder="Apply Promo Code"
-                                                                    name="promo_code" id="promocode-field" />
-                                                                <button class="btn btn-primary" type="button" id="apply-promocode-btn">Apply</button>
+                                                                <input type="text" class="form-control"
+                                                                    placeholder="Apply Promo Code" name="promo_code"
+                                                                    id="promocode-field" />
+                                                                <button class="btn btn-primary" type="button"
+                                                                    id="apply-promocode-btn">Apply</button>
                                                             </div>
-                                                            <h6 class="mt-3" style="font-weight: 600;">Referral Code</h6>
+                                                            <h6 class="mt-3" style="font-weight: 600;">Referral Code
+                                                            </h6>
                                                             <div class="input-group">
-                                                                <input type="text" class="form-control" placeholder="Apply Referral Code"
-                                                                    name="referral_code" id="referral_code" />
+                                                                <input type="text" class="form-control"
+                                                                    placeholder="Apply Referral Code" name="referral_code"
+                                                                    id="referral_code" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -363,7 +375,8 @@
                                                         <div class="card-body">
                                                             <div class="row">
                                                                 <div class="col-xl-6">
-                                                                    <div class="text-primary text-uppercase form-label">Convenience
+                                                                    <div class="text-primary text-uppercase form-label">
+                                                                        Convenience
                                                                         Fee</div>
                                                                 </div>
                                                                 <div class="col-xl-6">
@@ -372,7 +385,8 @@
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-xl-6">
-                                                                    <div class="text-primary text-uppercase form-label">Sub Amount
+                                                                    <div class="text-primary text-uppercase form-label">Sub
+                                                                        Amount
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-xl-6">
@@ -381,7 +395,8 @@
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-xl-6">
-                                                                    <div class="text-primary text-uppercase form-label">Total
+                                                                    <div class="text-primary text-uppercase form-label">
+                                                                        Total
                                                                         Convenience Fee </div>
                                                                 </div>
                                                                 <div class="col-xl-6">
@@ -390,7 +405,8 @@
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-xl-6">
-                                                                    <div class="text-primary text-uppercase form-label">Total Of
+                                                                    <div class="text-primary text-uppercase form-label">
+                                                                        Total Of
                                                                         Discount </div>
                                                                 </div>
                                                                 <div class="col-xl-6">
@@ -400,12 +416,19 @@
                                                             <hr>
                                                             <div class="row">
                                                                 <div class="col-xl-6">
-                                                                    <div class="text-primary text-uppercase form-label">Total
+                                                                    <div class="text-primary text-uppercase form-label">
+                                                                        Total
                                                                         Amount</div>
                                                                 </div>
                                                                 <div class="col-xl-6">
                                                                     <h6 id="total-amount-text">₱ 0.00</h6>
                                                                 </div>
+                                                            </div>
+                                                            <div class="form-group mb-3">
+                                                                <input type="checkbox" name="payment_method"
+                                                                    id="payment-method-field" value="cash">
+                                                                <label class="font-bold form-label"
+                                                                    for="payment-method-field">Cash</label>
                                                             </div>
                                                         </div>
                                                     </div>

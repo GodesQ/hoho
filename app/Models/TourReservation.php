@@ -10,7 +10,7 @@ class TourReservation extends Model
 {
     use HasFactory, SoftDeletes;
     protected $table = 'tour_reservations';
-    
+
     protected $fillable = [
         'tour_id',
         'type',
@@ -33,11 +33,13 @@ class TourReservation extends Model
         'promo_code',
         'requirement_file_path',
         'discount_amount',
+        'has_insurance',
+        'type_of_plan',
         'created_by',
         'created_user_type',
         'updated_by'
     ];
-    
+
     protected $hidden = ['created_at', 'updated_at'];
 
     protected $casts = [
@@ -54,39 +56,48 @@ class TourReservation extends Model
 
     protected $appends = ['passengers'];
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class, 'reserved_user_id');
     }
 
-    public function customer_details() {
+    public function customer_details()
+    {
         return $this->hasOne(TourReservationCustomerDetail::class, 'tour_reservation_id');
     }
 
-    public function transaction() {
+    public function transaction()
+    {
         return $this->belongsTo(Transaction::class, 'order_transaction_id');
     }
 
-    public function tour() {
+    public function tour()
+    {
         return $this->hasOne(Tour::class, 'id', 'tour_id')->select('id', 'name', 'featured_image', 'capacity', 'type', 'price', 'bracket_price_one', 'bracket_price_two', 'bracket_price_three');
     }
 
-    public function reservation_codes() {
+    public function reservation_codes()
+    {
         return $this->hasMany(ReservationUserCode::class, 'reservation_id')->select('id', 'reservation_id', 'code', 'scan_count', 'start_datetime', 'end_datetime', 'status');
     }
 
-    public function referral() {
+    public function referral()
+    {
         return $this->hasOne(Referral::class, 'referral_code', 'referral_code');
     }
 
-    public function feedbacks() {
+    public function feedbacks()
+    {
         return $this->hasMany(TourFeedback::class, 'reservation_id');
     }
 
-    public function feedback() {
+    public function feedback()
+    {
         return $this->hasOne(TourFeedback::class, 'reservation_id');
     }
 
-    public function getPassengersAttribute() {
+    public function getPassengersAttribute()
+    {
         $passenger_ids = $this->passenger_ids ? json_decode($this->passenger_ids, true) : null; // Passing true as the second argument to get an associative array
 
         if (is_array($passenger_ids) && !empty($passenger_ids)) {
