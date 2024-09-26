@@ -440,7 +440,8 @@ class TourReservationService
 
             // If the status is approved, process the payment of tour reservation and send the payment request to user. 
             if ($request->status === 'approved') {
-                $this->handlePaymentForApprovedReservation($reservation);
+                $this->generateAndSendReservationCode($reservation->number_of_pass, $reservation);
+                // $this->handlePaymentForApprovedReservation($reservation);
             }
 
             DB::commit();
@@ -494,7 +495,8 @@ class TourReservationService
                 if ($reservation->type == 'DIY Tour' || $reservation->type == 'DIY') {
                     $qrCodes = [];
                     foreach ($reservations_codes as $code) {
-                        $qrCodes[] = base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate($code));
+                        $value = $code . "&" . $reservation->id;
+                        $qrCodes[] = base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate($value));
                     }
                     $pdf = PDF::loadView('pdf.qrcodes', ['qrCodes' => $qrCodes]);
                 }
