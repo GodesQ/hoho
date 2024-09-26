@@ -21,6 +21,7 @@
         .ticket_pass_text_container.active {
             display: flex !important;
         }
+
         .nav-item {
             margin-right: 10px;
         }
@@ -34,6 +35,7 @@
             color: #fff !important;
             border-radius: 5px !important;
         }
+
         .qrcode-div {
             width: 256px;
             height: auto;
@@ -58,14 +60,14 @@
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item">
                     <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
-                        data-bs-target="#tour-reservation-information" aria-controls="tour-reservation-information" aria-selected="true">
+                        data-bs-target="#tour-reservation-information" aria-controls="tour-reservation-information"
+                        aria-selected="true">
                         Information
                     </button>
                 </li>
                 <li class="nav-item">
                     <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
-                        data-bs-target="#ticket-pass" aria-controls="ticket-pass"
-                        aria-selected="false">
+                        data-bs-target="#ticket-pass" aria-controls="ticket-pass" aria-selected="false">
                         Ticket Pass
                     </button>
                 </li>
@@ -83,18 +85,21 @@
                                         <h5 class="card-title fw-semibold">Customer</h5>
                                         <ul class="d-flex justify-content-start align-items-center gap-5 list-unstyled">
                                             <li>
-                                                <div class="fw-semibold text-primary form-label"><i class="bx bx-user"></i> Name
+                                                <div class="fw-semibold text-primary form-label"><i class="bx bx-user"></i>
+                                                    Name
                                                 </div>
                                                 {{ $reservation->customer_details->firstname ?? '' }}
                                                 {{ $reservation->customer_details->lastname ?? '' }}
                                             </li>
                                             <li>
-                                                <div class="fw-semibold text-primary form-label"><i class="bx bx-phone"></i> Phone
+                                                <div class="fw-semibold text-primary form-label"><i class="bx bx-phone"></i>
+                                                    Phone
                                                 </div>
                                                 {{ $reservation->customer_details->contact_no ?? '' }}
                                             </li>
                                             <li>
-                                                <div class="fw-semibold text-primary form-label"><i class="bx bx-envelope"></i>
+                                                <div class="fw-semibold text-primary form-label"><i
+                                                        class="bx bx-envelope"></i>
                                                     Email </div>
                                                 {{ $reservation->customer_details->email ?? '' }}
                                             </li>
@@ -146,8 +151,8 @@
                                             </div>
                                             <div class="col-lg-6 mb-4">
                                                 <div class="fw-semibold text-primary form-label">Trip Date </div>
-                                                <input type="date" name="trip_date" id="trip_date" value="{{ $reservation->start_date }}"
-                                                    class="form-control">
+                                                <input type="date" name="trip_date" id="trip_date"
+                                                    value="{{ $reservation->start_date }}" class="form-control">
                                             </div>
                                             <div class="col-lg-6 mb-4">
                                                 <div class="fw-semibold text-primary form-label">Reservation Status </div>
@@ -172,7 +177,7 @@
                                             </ul>
                                         </div>
                                     </div>
-        
+
                                 </div>
                             </div>
                             <div class="col-xl-4">
@@ -232,7 +237,8 @@
                                                 <h6 class="text-primary">Total Amount</h6>
                                             </div>
                                             <div class="col-xl-6">
-                                                <h6 id="total_amount_text">₱ {{ number_format($reservation->amount, 2) }}</h6>
+                                                <h6 id="total_amount_text">₱ {{ number_format($reservation->amount, 2) }}
+                                                </h6>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -277,41 +283,42 @@
                         </div>
                     </div>
                 </div>
-        </div>
-    @endsection
+            </div>
+        @endsection
 
-    @push('scripts')
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-        <script>
-            $("#trip_date").flatpickr({
-                enableTime: false,
-                dateFormat: "Y-m-d",
-            });
+        @push('scripts')
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+            <script>
+                $("#trip_date").flatpickr({
+                    enableTime: false,
+                    dateFormat: "Y-m-d",
+                });
 
-            $(document).ready(function() {
-                let reservation_id = document.querySelector('#reservation-id-field').value;
-                let reservation_codes_div = document.querySelector('.reservation-codes');
-                $.ajax({
-                    method: "GET",
-                    url: `/admin/tour-reservations/${reservation_id}/reservation-codes`,
-                    success: function (response) {
-                        let reservation_codes = response.reservation_codes;
-                        reservation_codes.forEach(reservation_code => {
-                            let qrCodeDiv = document.createElement('div');
-                            qrCodeDiv.classList.add('qrcode-div');
-                            generateQRCode(qrCodeDiv, reservation_code.code);
-                            let text_code = document.createElement('h6');
-                            text_code.innerHTML = reservation_code.code;
-                            text_code.classList.add('my-3', "text-center", "text-primary");
-                            qrCodeDiv.appendChild(text_code);
-                            reservation_codes_div.appendChild(qrCodeDiv);
-                        });
-                    }
+                $(document).ready(function() {
+                    let reservation_id = document.querySelector('#reservation-id-field').value;
+                    let reservation_codes_div = document.querySelector('.reservation-codes');
+                    $.ajax({
+                        method: "GET",
+                        url: `/admin/tour-reservations/${reservation_id}/reservation-codes`,
+                        success: function(response) {
+                            let reservation_codes = response.reservation_codes;
+                            reservation_codes.forEach(reservation_code => {
+                                let qrCodeDiv = document.createElement('div');
+                                qrCodeDiv.classList.add('qrcode-div', 'mx-3');
+                                let codeResult = reservation_code.code + "&" + reservation_id;
+                                generateQRCode(qrCodeDiv, codeResult);
+                                let text_code = document.createElement('h6');
+                                text_code.innerHTML = reservation_code.code;
+                                text_code.classList.add('my-3', "text-center", "text-primary");
+                                qrCodeDiv.appendChild(text_code);
+                                reservation_codes_div.appendChild(qrCodeDiv);
+                            });
+                        }
+                    })
                 })
-            })
 
-            const generateQRCode = (qrCodeDiv, qrContent) => {
-            return new QRCode(qrCodeDiv, {
+                const generateQRCode = (qrCodeDiv, qrContent) => {
+                    return new QRCode(qrCodeDiv, {
                         text: qrContent,
                         width: 256,
                         height: 256,
@@ -319,6 +326,6 @@
                         colorLight: "#ffffff",
                         correctLevel: QRCode.CorrectLevel.H,
                     });
-        }
-        </script>
-    @endpush
+                }
+            </script>
+        @endpush
