@@ -27,12 +27,13 @@ use Illuminate\Support\Str;
 
 
 class TourReservationService
-{   
+{
     protected $aqwireService;
     protected $mailService;
     protected $bookingService;
 
-    public function __construct(AqwireService $aqwireService, MailService $mailService, BookingService $bookingService) {
+    public function __construct(AqwireService $aqwireService, MailService $mailService, BookingService $bookingService)
+    {
         $this->aqwireService = $aqwireService;
         $this->mailService = $mailService;
         $this->bookingService = $bookingService;
@@ -43,7 +44,7 @@ class TourReservationService
         try {
             $user = User::findOrFail($request->reserved_user_id);
 
-            if(!$user->firstname || !$user->lastname || !$user->contact_no) {
+            if (!$user->firstname || !$user->lastname || !$user->contact_no) {
                 throw new Exception("The first name, last name and contact number must be filled in completely in your profile to continue.");
             }
 
@@ -59,11 +60,11 @@ class TourReservationService
                 $items = json_decode($request->items, true);
             }
 
-            if(!is_array($items)) {
+            if (!is_array($items)) {
                 throw new Exception("Items is not a valid JSON type.");
             }
 
-            if(count($items) === 0) {
+            if (count($items) === 0) {
                 throw new Exception("Items is empty. Please populate to continue.");
             }
 
@@ -236,7 +237,7 @@ class TourReservationService
     {
         try {
 
-            if(!$request->firstname || !$request->lastname || !$request->contact_no) {
+            if (!$request->firstname || !$request->lastname || !$request->contact_no) {
                 throw new Exception("The first name, last name and contact number must be filled in completely in your profile to continue.");
             }
 
@@ -252,7 +253,7 @@ class TourReservationService
                 $items = json_decode($request->items, true);
             }
 
-            if(!is_array($items)) {
+            if (!is_array($items)) {
                 throw new Exception("Items is not a valid JSON type.");
             }
 
@@ -422,13 +423,14 @@ class TourReservationService
 
     }
 
-    public function update(Request $request) {
+    public function update(Request $request)
+    {
         try {
             DB::beginTransaction();
 
             $reservation = TourReservation::where('id', $request->id)->with('user', 'customer_details', 'transaction')->first();
 
-            $trip_date = Carbon::parse($request->trip_date); 
+            $trip_date = Carbon::parse($request->trip_date);
 
             $reservation->update([
                 'start_date' => $trip_date->format('Y-m-d'),
@@ -437,7 +439,7 @@ class TourReservationService
             ]);
 
             // If the status is approved, process the payment of tour reservation and send the payment request to user. 
-            if($request->status === 'approved') {
+            if ($request->status === 'approved') {
                 $this->handlePaymentForApprovedReservation($reservation);
             }
 
@@ -451,7 +453,8 @@ class TourReservationService
         }
     }
 
-    public function handlePaymentForApprovedReservation($reservation) {
+    private function handlePaymentForApprovedReservation($reservation)
+    {
         $payment_request_model = $this->aqwireService->createRequestModel($reservation->transaction, $reservation->user);
 
         $payment_response = $this->aqwireService->pay($payment_request_model);
@@ -461,17 +464,18 @@ class TourReservationService
         $this->mailService->sendPaymentRequestMail($reservation->transaction, $payment_response['paymentUrl'], $payment_response['data']['expiresAt']);
     }
 
-    public function generateAndSendReservationCode($number_of_pax, $reservation) {
+    public function generateAndSendReservationCode($number_of_pax, $reservation)
+    {
         try {
             $reservations_codes = $this->generateReservationCode($number_of_pax, $reservation);
 
-            if($reservation->customer_details) {
+            if ($reservation->customer_details) {
                 $what = $reservation->type == 'DIY' ? (
-                                $reservation->ticket_pass . " x " . $reservation->number_of_pass . " pax " . "(Valid for 24 hours from first tap)"
-                            )
-                            : (
-                                "1 Guided Tour " . '"' . $reservation->tour->name . '"' . ' x ' . $reservation->number_of_pass . ' pax'
-                            );
+                    $reservation->ticket_pass . " x " . $reservation->number_of_pass . " pax " . "(Valid for 24 hours from first tap)"
+                )
+                    : (
+                        "1 Guided Tour " . '"' . $reservation->tour->name . '"' . ' x ' . $reservation->number_of_pass . ' pax'
+                    );
 
                 $trip_date = Carbon::parse($reservation->start_date);
                 $when = $trip_date->format('l, F j, Y');
@@ -486,8 +490,8 @@ class TourReservationService
                 ];
 
                 $pdf = null;
-                
-                if($reservation->type == 'DIY Tour' || $reservation->type == 'DIY') {
+
+                if ($reservation->type == 'DIY Tour' || $reservation->type == 'DIY') {
                     $qrCodes = [];
                     foreach ($reservations_codes as $code) {
                         $qrCodes[] = base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate($code));
@@ -618,7 +622,7 @@ class TourReservationService
             })
             ->addColumn('actions', function ($row) {
                 $output = '<div class="dropdown">
-                    <a href="'. route('admin.tour_reservations.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a> ';
+                    <a href="' . route('admin.tour_reservations.edit', $row->id) . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a> ';
 
                 $output .= $row->status === 'pending' && optional($row->transaction)->payment_status != 'success' ? '<button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>' : '';
 
@@ -634,18 +638,18 @@ class TourReservationService
         foreach ($items as $key => $item) {
             $tour = Tour::where('id', $item['tour_id'])->first();
 
-            if(!$tour) {
-                throw new Exception("No Tour Found in Item " . ($key + 1));   
+            if (!$tour) {
+                throw new Exception("No Tour Found in Item " . ($key + 1));
             }
 
-            if($tour->tour_provider) {
+            if ($tour->tour_provider) {
                 $details = [
                     'tour_provider_name' => $tour->tour_provider->merchant->name,
                     'reserved_passenger' => $request->firstname . ' ' . $request->lastname,
                     'trip_date' => $item['trip_date'],
                     'tour_name' => $tour->name
                 ];
-    
+
                 if ($tour?->tour_provider?->contact_email) {
                     $recipientEmail = config('app.env') === 'production' ? $tour->tour_provider->contact_email : config('mail.test_receiver');
                     Mail::to($recipientEmail)->send(new TourProviderBookingNotification($details));
@@ -654,7 +658,8 @@ class TourReservationService
         }
     }
 
-    private function generateReservationCode($number_of_pass, $reservation) {
+    private function generateReservationCode($number_of_pass, $reservation)
+    {
         // Generate the random letter part
         // Assuming you have str_random function available
         $random_letters = strtoupper(Str::random(5));
@@ -669,7 +674,7 @@ class TourReservationService
 
             $reservation_codes_exist = ReservationUserCode::where('reservation_id', $reservation->id)->count();
 
-            if($reservation_codes_exist < $number_of_pass) {
+            if ($reservation_codes_exist < $number_of_pass) {
                 $create_code = ReservationUserCode::create([
                     'reservation_id' => $reservation->id,
                     'code' => $code

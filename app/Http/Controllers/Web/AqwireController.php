@@ -49,7 +49,7 @@ class AqwireController extends Controller
             $reservations = TourReservation::where('order_transaction_id', $transaction->id)->with('tour', 'user', 'customer_details')->get();
 
             foreach ($reservations as $reservation) {
-                $reservation->update(values: [
+                $reservation->update([
                     'payment_method' => $request->paymentMethodCode
                 ]);
 
@@ -69,6 +69,7 @@ class AqwireController extends Controller
             }
 
             DB::commit();
+
             return redirect('aqwire/payment/view_success');
         } catch (Exception $e) {
             DB::rollBack();

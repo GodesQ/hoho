@@ -48,32 +48,37 @@ class BookingService
      * @return TourReservation|\Illuminate\Database\Eloquent\Model
      */
     public function processBookingReservation(Request $request)
-    {   
+    {
         try {
             DB::beginTransaction();
 
             $user = User::where('id', $request->reserved_user_id)->first();
 
-            if(!$user) throw new Exception("User Not Found.");
+            if (!$user)
+                throw new Exception("User Not Found.");
 
-            if(!$user->firstname || !$user->lastname) throw new Exception("Please complete your name before continue to checkout", 422);
+            if (!$user->firstname || !$user->lastname)
+                throw new Exception("Please complete your name before continue to checkout", 422);
 
             $phone_number = "+{$user->countryCode}{$user->contact_no}";
-            if (!preg_match('/^\+\d{10,12}$/', $phone_number))  throw new Exception("The contact number must be a valid E.164 format.", 422);
-                
+            if (!preg_match('/^\+\d{10,12}$/', $phone_number))
+                throw new Exception("The contact number must be a valid E.164 format.", 422);
+
             $sub_amount = intval($request->amount) ?? 0;
             $total_of_discount = 0;
 
-            if ($request->promo_code) $total_of_discount = intval($request->amount) - intval($request->discounted_amount);
+            if ($request->promo_code != null || $request->promo_code != "") {
+                $total_of_discount = intval($request->amount) - intval($request->discounted_amount);
+            }
+
+            if ($request->promo_code === "COMPLIHOHO") {
+                $total_of_discount = $request->amount;
+            }
 
             // Get additional charges
             $additional_charges = $this->processAdditionalCharges($sub_amount);
 
             $total_amount = $this->getTotalAmountOfBooking($sub_amount, $additional_charges['total'], $total_of_discount);
-
-            if ($sub_amount == $total_of_discount) {
-                $total_amount -= $additional_charges['total'];
-            }
 
             // Store transaction in database
             $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_of_discount, $additional_charges['total']);
@@ -139,10 +144,10 @@ class BookingService
 
             // Compute the total amount of booking 
             $total_amount = $this->getTotalAmountOfBooking($sub_amount, $additional_charges['total'], $total_discount);
-            
+
             // Store a transaction in database
             $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_discount, $additional_charges['total']);
-            
+
             $tour_reservations = [];
 
             foreach ($items as $item) {
@@ -201,7 +206,7 @@ class BookingService
     }
 
     private function storeReservation($request, $transaction, $item = [])
-    {   
+    {
         try {
             DB::beginTransaction();
 
@@ -214,7 +219,7 @@ class BookingService
 
             // Set reservation details
             $tour_id = empty($item) ? $request->tour_id : $item['tour_id'];
-            $tour_type =  empty($item) ? $request->type : $item['type'];
+            $tour_type = empty($item) ? $request->type : $item['type'];
             $number_of_pax = empty($item) ? $request->number_of_pass : $item['number_of_pass'];
             $ticket_pass = empty($item) ? $request->ticket_pass : $item['ticket_pass'];
 
@@ -257,7 +262,7 @@ class BookingService
 
             // Check if the referral code is valid and existing in the referral list
             $referral = Referral::where('referral_code', $request->referral_code)->first();
-            if($referral) {
+            if ($referral) {
                 $reservation->update([
                     'referral_merchant_id' => $referral->merchant_id,
                     'referral_code' => $referral->referral_code,
@@ -298,7 +303,7 @@ class BookingService
     }
 
     private function notifyTourProviderOfBooking($reservation, $transaction)
-    {   
+    {
         $tour = Tour::where('id', $reservation->tour_id)->first();
 
         $details = [
@@ -317,7 +322,8 @@ class BookingService
 
     # HELPERS
 
-    public function processAdditionalCharges(float|int $sub_amount, array $additional = []) {
+    public function processAdditionalCharges(float|int $sub_amount, array $additional = [])
+    {
         $additional_charges = [];
 
         $convenience_fee = getConvenienceFee();
@@ -360,7 +366,7 @@ class BookingService
     {
         # NOTE: The amount for each booking has already been set.
         # This function is for additional charges, which the discounted amount calculated from all of the bookings for this transaction.
-        
+
         return ($subAmount - $totalOfDiscount) + $totalOfAdditionalCharges;
     }
 

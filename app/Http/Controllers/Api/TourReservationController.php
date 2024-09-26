@@ -101,7 +101,7 @@ class TourReservationController extends Controller
                 'total_reservations' => count($booking['tour_reservations']),
                 'reservations' => $booking['tour_reservations']
             ], 201);
-            
+
         } catch (Exception $e) {
             return response()->json([
                 "status" => 'failed',
@@ -253,16 +253,18 @@ class TourReservationController extends Controller
             ], 400);
         }
 
-        $tour_reservation = TourReservation::where('id', $request->reservation_id)->with('tour.transport')->first();
-        if (!$tour_reservation) {
-            return response([
-                'status' => FALSE,
-                'message' => 'Failed! No Tour Reservation Found',
-                'tour_reservation' => $tour_reservation
-            ], 404);
-        }
+        // $tour_reservation = TourReservation::where('id', $request->reservation_id)->with('tour.transport')->first();
+        // if (!$tour_reservation) {
+        //     return response([
+        //         'status' => FALSE,
+        //         'message' => 'Failed! No Tour Reservation Found',
+        //         'tour_reservation' => $tour_reservation
+        //     ], 404);
+        // }
 
-        $qrcode = $tour_reservation->reservation_codes()->where('code', $request->code)->first();
+        $qrcode = ReservationUserCode::where('code', $request->code)->first();
+
+        // $qrcode = $tour_reservation->reservation_codes()->where('code', $request->code)->first();
 
         if (!$qrcode) {
             return response([
