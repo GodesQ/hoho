@@ -440,8 +440,11 @@ class TourReservationService
 
             // If the status is approved, process the payment of tour reservation and send the payment request to user. 
             if ($request->status === 'approved') {
-                $this->generateAndSendReservationCode($reservation->number_of_pass, $reservation);
-                // $this->handlePaymentForApprovedReservation($reservation);
+                if ($reservation->transaction->aqwire_paymentMethodCode === 'cash') {
+                    $this->generateAndSendReservationCode($reservation->number_of_pass, $reservation);
+                } else {
+                    $this->handlePaymentForApprovedReservation($reservation);
+                }
             }
 
             DB::commit();
