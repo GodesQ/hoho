@@ -4,25 +4,16 @@ namespace App\Services;
 
 use App\Enum\TourTypeEnum;
 use App\Enum\TransactionTypeEnum;
-use App\Http\Requests\TourReservation\StoreRequest;
-use App\Http\Resources\TourReservationResource;
 use App\Models\LayoverTourReservationDetail;
 use App\Models\Referral;
 use App\Models\TourReservationCustomerDetail;
 use App\Models\User;
-use ErrorException;
 use Exception;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TourProviderBookingNotification;
-use App\Mail\PaymentRequestMail;
-
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use App\Models\Transaction;
 use App\Models\TourReservation;
@@ -55,7 +46,7 @@ class BookingService
             $user = User::where('id', $request->reserved_user_id)->first();
 
             if (!$user)
-                throw new Exception("User Not Found.");
+                throw new Exception("User Not Found.", 404);
 
             if (!$user->firstname || !$user->lastname)
                 throw new Exception("Please complete your name before continue to checkout", 422);
