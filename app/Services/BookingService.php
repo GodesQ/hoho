@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enum\TourTypeEnum;
 use App\Enum\TransactionTypeEnum;
 use App\Models\LayoverTourReservationDetail;
+use App\Models\PromoCode;
 use App\Models\Referral;
 use App\Models\TourReservationCustomerDetail;
 use App\Models\User;
@@ -57,6 +58,16 @@ class BookingService
 
             $sub_amount = intval($request->amount) ?? 0;
             $total_of_discount = 0;
+
+            $promocode = PromoCode::where('code', $request->promo_code)->first();
+
+            // if ($promocode) {
+            //     if ($promocode->discount_type === "percentage") {
+            //         $percentage_value = $promocode->discount_amount / 100;
+            //         $discount = 
+            //         $total_of_discount = intval($request->amount) - intval($request->discounted_amount);
+            //     }
+            // }
 
             if ($request->promo_code != null || $request->promo_code != "") {
                 $total_of_discount = intval($request->amount) - intval($request->discounted_amount);

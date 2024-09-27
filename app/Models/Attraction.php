@@ -30,6 +30,7 @@ class Attraction extends Model
         'is_cancellable',
         'is_refundable',
         'is_featured',
+        'featured_arrangement_number',
         'status',
         'nearest_attraction_ids',
         'nearest_hotel_ids',

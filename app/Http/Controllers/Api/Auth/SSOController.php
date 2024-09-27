@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\SSOLoginRequest;
 use App\Http\Requests\Auth\SSORegisterRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class SSOController extends Controller
@@ -40,12 +40,13 @@ class SSOController extends Controller
         $user = User::where($fieldType, $request->username)->first();
 
         // If the username and email was not found in user table
-        if(!$user) return response([
-            'status' => FALSE,
-            'message' => 'It seems that this email/username is not registered in our system. Please register first to continue.'
-        ]);
+        if (!$user)
+            return response([
+                'status' => FALSE,
+                'message' => 'It seems that this email/username is not registered in our system. Please register first to continue.'
+            ]);
 
-        if(!Hash::check($request->password, $user->password)) {
+        if (!Hash::check($request->password, $user->password)) {
             return response([
                 'status' => FALSE,
                 'message' => 'Your password is incorrect. Please check and try again.'

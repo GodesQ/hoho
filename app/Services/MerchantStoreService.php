@@ -177,7 +177,6 @@ class MerchantStoreService
             ];
         } catch (ErrorException $e) {
             DB::rollBack();
-
             throw $e;
         }
     }

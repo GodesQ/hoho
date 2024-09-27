@@ -194,6 +194,3 @@ class AttractionService
                 ->make(true);
     }
 }
-
-
-?>
