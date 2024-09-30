@@ -44,7 +44,7 @@ class TourReservationService
         try {
             $user = User::findOrFail($request->reserved_user_id);
 
-            if (!$user->firstname || !$user->lastname || !$user->contact_no) {
+            if (! $user->firstname || ! $user->lastname || ! $user->contact_no) {
                 throw new Exception("The first name, last name and contact number must be filled in completely in your profile to continue.");
             }
 
@@ -60,7 +60,7 @@ class TourReservationService
                 $items = json_decode($request->items, true);
             }
 
-            if (!is_array($items)) {
+            if (! is_array($items)) {
                 throw new Exception("Items is not a valid JSON type.");
             }
 
@@ -237,7 +237,7 @@ class TourReservationService
     {
         try {
 
-            if (!$request->firstname || !$request->lastname || !$request->contact_no) {
+            if (! $request->firstname || ! $request->lastname || ! $request->contact_no) {
                 throw new Exception("The first name, last name and contact number must be filled in completely in your profile to continue.");
             }
 
@@ -253,7 +253,7 @@ class TourReservationService
                 $items = json_decode($request->items, true);
             }
 
-            if (!is_array($items)) {
+            if (! is_array($items)) {
                 throw new Exception("Items is not a valid JSON type.");
             }
 
@@ -519,10 +519,10 @@ class TourReservationService
 
         $data = TourReservation::with('user', 'tour')
             // ->whereHas('user')
-            ->when(!in_array($current_user->role, [Role::SUPER_ADMIN, Role::ADMIN]), function ($query) use ($current_user) {
+            ->when(! in_array($current_user->role, [Role::SUPER_ADMIN, Role::ADMIN]), function ($query) use ($current_user) {
                 $query->where('created_by', $current_user->id);
             })
-            ->when(!empty($request->get('search')), function ($query) use ($request) {
+            ->when(! empty($request->get('search')), function ($query) use ($request) {
                 $searchQuery = $request->get('search');
                 $query->whereHas('user', function ($userQuery) use ($searchQuery) {
                     $userQuery->where('email', 'LIKE', "%{$searchQuery}%")
@@ -533,17 +533,17 @@ class TourReservationService
                     $tourQuery->where('name', 'LIKE', $searchQuery . '%');
                 });
             })
-            ->when(!empty($request->get('status')), function ($query) use ($request) {
+            ->when(! empty($request->get('status')), function ($query) use ($request) {
                 $statusQuery = $request->get('status');
                 $query->where('status', $statusQuery);
             })
-            ->when(!empty($request->get('type')), function ($query) use ($request) {
+            ->when(! empty($request->get('type')), function ($query) use ($request) {
                 $typeQuery = $request->get('type');
                 $query->whereHas('tour', function ($tourQuery) use ($typeQuery) {
                     $tourQuery->where('type', $typeQuery);
                 });
             })
-            ->when(!empty($request->get('trip_date')), function ($query) use ($request) {
+            ->when(! empty($request->get('trip_date')), function ($query) use ($request) {
                 $tripDateQuery = $request->get('trip_date');
                 $query->where('start_date', $tripDateQuery);
             });
@@ -559,7 +559,7 @@ class TourReservationService
             ->whereHas('tour', function ($query) use ($admin) {
                 return $query->where('tour_provider_id', $admin->merchant->tour_provider_info->id);
             })
-            ->when(!empty($request->get('search')), function ($query) use ($request) {
+            ->when(! empty($request->get('search')), function ($query) use ($request) {
                 $searchQuery = $request->get('search');
                 $query->whereHas('user', function ($userQuery) use ($searchQuery) {
                     $userQuery->where('email', 'LIKE', "%{$searchQuery}%")
@@ -568,17 +568,17 @@ class TourReservationService
                         ->orWhere(DB::raw("concat(firstname, ' ', lastname)"), 'LIKE', "%{$searchQuery}%");
                 });
             })
-            ->when(!empty($request->get('status')), function ($query) use ($request) {
+            ->when(! empty($request->get('status')), function ($query) use ($request) {
                 $statusQuery = $request->get('status');
                 $query->where('status', $statusQuery);
             })
-            ->when(!empty($request->get('type')), function ($query) use ($request) {
+            ->when(! empty($request->get('type')), function ($query) use ($request) {
                 $typeQuery = $request->get('type');
                 $query->whereHas('tour', function ($tourQuery) use ($typeQuery) {
                     $tourQuery->where('type', $typeQuery);
                 });
             })
-            ->when(!empty($request->get('trip_date')), function ($query) use ($request) {
+            ->when(! empty($request->get('trip_date')), function ($query) use ($request) {
                 $tripDateQuery = $request->get('trip_date');
                 $query->where('start_date', $tripDateQuery);
             });
@@ -643,7 +643,7 @@ class TourReservationService
         foreach ($items as $key => $item) {
             $tour = Tour::where('id', $item['tour_id'])->first();
 
-            if (!$tour) {
+            if (! $tour) {
                 throw new Exception("No Tour Found in Item " . ($key + 1));
             }
 
@@ -692,7 +692,7 @@ class TourReservationService
         return $reservation_codes;
     }
 
-    private function updateTransactionAfterPayment($transaction, $payment_response)
+    public function updateTransactionAfterPayment($transaction, $payment_response)
     {
         $update_transaction = $transaction->update([
             'aqwire_transactionId' => $payment_response['data']['transactionId'],

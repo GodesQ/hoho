@@ -35,6 +35,7 @@ class TourReservation extends Model
         'discount_amount',
         'has_insurance',
         'type_of_plan',
+        'total_insurance_amount',
         'created_by',
         'created_user_type',
         'updated_by'
@@ -100,12 +101,12 @@ class TourReservation extends Model
     {
         $passenger_ids = $this->passenger_ids ? json_decode($this->passenger_ids, true) : null; // Passing true as the second argument to get an associative array
 
-        if (is_array($passenger_ids) && !empty($passenger_ids)) {
+        if (is_array($passenger_ids) && ! empty($passenger_ids)) {
             $data = User::select('id', 'email', 'username', 'firstname', 'lastname')->whereIn('id', $passenger_ids)
                 ->get()
                 ->toArray();
 
-            if (!empty($data)) {
+            if (! empty($data)) {
                 return $data;
             }
         }

@@ -162,6 +162,10 @@
                                                 <div class="fw-semibold text-primary form-label">Created At </div>
                                                 {{ Carbon::parse($reservation->created_at)->format('F d, Y') }}
                                             </div>
+                                            <div class="col-lg-4 mb-4">
+
+                                            </div>
+                                            <hr>
                                             <div class="col-lg-6 mb-4">
                                                 <div class="fw-semibold text-primary form-label">Trip Date </div>
                                                 <input type="date" name="trip_date" id="trip_date"

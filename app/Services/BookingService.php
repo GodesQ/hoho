@@ -37,7 +37,7 @@ class BookingService
      * Process and create single tour reservation.
      * @param \Illuminate\Http\Request $request
      * @throws \Exception
-     * @return TourReservation|\Illuminate\Database\Eloquent\Model
+     * @return array
      */
     public function processBookingReservation(Request $request)
     {
@@ -46,28 +46,20 @@ class BookingService
 
             $user = User::where('id', $request->reserved_user_id)->first();
 
-            if (!$user)
+            if (! $user)
                 throw new Exception("User Not Found.", 404);
 
-            if (!$user->firstname || !$user->lastname)
+            if (! $user->firstname || ! $user->lastname)
                 throw new Exception("Please complete your name before continue to checkout", 422);
 
             $phone_number = "+{$user->countryCode}{$user->contact_no}";
-            if (!preg_match('/^\+\d{10,12}$/', $phone_number))
+            if (! preg_match('/^\+\d{10,12}$/', $phone_number))
                 throw new Exception("The contact number must be a valid E.164 format.", 422);
 
             $sub_amount = intval($request->amount) ?? 0;
             $total_of_discount = 0;
 
             $promocode = PromoCode::where('code', $request->promo_code)->first();
-
-            // if ($promocode) {
-            //     if ($promocode->discount_type === "percentage") {
-            //         $percentage_value = $promocode->discount_amount / 100;
-            //         $discount = 
-            //         $total_of_discount = intval($request->amount) - intval($request->discounted_amount);
-            //     }
-            // }
 
             if ($request->promo_code != null || $request->promo_code != "") {
                 $total_of_discount = intval($request->amount) - intval($request->discounted_amount);
@@ -88,12 +80,36 @@ class BookingService
             // Store tour reservation and the guest details
             $reservation = $this->storeReservation($request, $transaction);
 
+            $status = "success";
+            $payment_response = null;
+
+            // Check if the tour type is DIY and the payment method is not cash.
+            if ($request->payment_method != "cash" && ($request->type == "DIY" || $request->type == "DIY Tour")) {
+                $request_payment_model = $this->aqwireService->createRequestModel($transaction, $user);
+                $payment_response = $this->aqwireService->pay($request_payment_model);
+
+                $transaction->update([
+                    'aqwire_transactionId' => $payment_response['data']['transactionId'],
+                    'payment_url' => $payment_response['paymentUrl'],
+                    'payment_status' => Str::lower($payment_response['data']['status']),
+                    'payment_details' => json_encode($payment_response),
+                ]);
+
+                $status = "paying";
+            }
+
             // Notify the tour provider based on the reservation of the guest
             $this->notifyTourProviderOfBooking($reservation, $transaction);
 
             DB::commit();
 
-            return $reservation;
+            return [
+                "status" => $status,
+                "reservation" => $reservation,
+                "payment_response" => $payment_response,
+            ];
+
+            // return $reservation;
         } catch (Exception $exception) {
             DB::rollBack();
             throw $exception;
@@ -113,12 +129,12 @@ class BookingService
 
             $user = User::where('id', $request->reserved_user_id)->first();
 
-            if (!$user->firstname || !$user->lastname || !$user->contact_no)
+            if (! $user->firstname || ! $user->lastname || ! $user->contact_no)
                 throw new Exception("The first name, last name and contact number must be filled in correctly in your profile to continue.");
 
             $phone_number = "+{$user->countryCode}{$user->contact_no}";
 
-            if (!preg_match('/^\+\d{10,12}$/', $phone_number)) {
+            if (! preg_match('/^\+\d{10,12}$/', $phone_number)) {
                 throw new Exception("The contact number must be a valid E.164 format.");
             }
 
@@ -129,16 +145,18 @@ class BookingService
                 $items = json_decode($items, true); // Set the 2nd parameter to true to get the associative array result.
             }
 
-            if (!is_array($items))
+            if (! is_array($items))
                 throw new Exception("Invalid type of items.");
 
             $sub_amount = 0;
             $total_discount = 0;
+            $total_insurance_amount = 0;
 
             foreach ($items as $item) {
                 $discounted_amount = array_key_exists('discounted_amount', $item) ? intval($item['discounted_amount']) : intval($item['amount']);
                 $sub_amount += intval($item['amount']) ?? 0;
                 $total_discount += intval($item['amount']) - $discounted_amount;
+                $total_insurance_amount += intval($item['total_insurance_amount']) ?? 0;
             }
 
             // Get additional charges
@@ -146,6 +164,9 @@ class BookingService
 
             // Compute the total amount of booking 
             $total_amount = $this->getTotalAmountOfBooking($sub_amount, $additional_charges['total'], $total_discount);
+
+            // Add the insurance amount in total amoi
+            $total_amount += $total_insurance_amount;
 
             // Store a transaction in database
             $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_discount, $additional_charges['total']);
@@ -197,9 +218,9 @@ class BookingService
             'transaction_type' => TransactionTypeEnum::BOOK_TOUR,
             'payment_amount' => $totalAmount,
             'additional_charges' => json_encode($additional_charges),
-            'payment_status' => 'pending',
+            'payment_status' => $request->payment_method == "cash" ? 'success' : 'pending',
             'resolution_status' => 'pending',
-            'aqwire_paymentMethodCode' => $request->payment_method ?? null,
+            'aqwire_paymentMethodCode' => $request->payment_method == "cash" ? "cash" : null,
             'order_date' => Carbon::now(),
             'transaction_date' => Carbon::now(),
         ]);
@@ -225,6 +246,11 @@ class BookingService
             $number_of_pax = empty($item) ? $request->number_of_pass : $item['number_of_pass'];
             $ticket_pass = empty($item) ? $request->ticket_pass : $item['ticket_pass'];
 
+            // Insurance
+            $has_insurance = isset($item['has_insurance']) ? $item['has_insurance'] : false;
+            $type_of_plan = isset($item['type_of_plan']) ? $item['type_of_plan'] : null;
+            $total_insurance_amount = isset($item['total_insurance_amount']) ? $item['total_insurance_amount'] : 0.00;
+
             // Store tour reservation in database
             $reservation = TourReservation::create([
                 'tour_id' => $tour_type === 'DIY' || $tour_type === 'DIY Tour' ? 63 : $tour_id, // Set the tour id to 63 when the tour type is DIY (For Main DIY: Tour)
@@ -238,8 +264,9 @@ class BookingService
                 'reference_code' => $transaction->reference_no,
                 'order_transaction_id' => $transaction->id,
                 'start_date' => $trip_start_date,
-                'has_insurance' => $request->has_insurance,
-                'type_of_plan' => $request->type_of_plan,
+                'has_insurance' => $has_insurance,
+                'type_of_plan' => $type_of_plan,
+                'total_insurance_amount' => $total_insurance_amount,
                 'insurance_id' => rand(1000000, 100000000),
                 'end_date' => $trip_end_date,
                 'status' => 'pending',

@@ -60,6 +60,7 @@ class AqwireController extends Controller
                 ];
 
                 Mail::to(optional($reservation->customer_details)->email)->send(new InvoiceMail($details));
+
                 $this->tourReservationService->generateAndSendReservationCode($reservation->number_of_pass, $reservation);
 
                 if ($reservation->has_insurance) {

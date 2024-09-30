@@ -34,19 +34,29 @@ class SSOController extends Controller
         ]);
     }
 
-    public function login(SSOLoginRequest $request)
+    public function login(SSORegisterRequest $request)
     {
-        $fieldType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-        $user = User::where($fieldType, $request->username)->first();
+        $user = User::where("email", $request->email)->first();
 
-        // If the username and email was not found in user table
-        if (!$user)
-            return response([
-                'status' => FALSE,
-                'message' => 'It seems that this email/username is not registered in our system. Please register first to continue.'
-            ]);
+        $data = $request->validated();
+        $account_id = $this->generateRandomUuid();
 
-        if (!Hash::check($request->password, $user->password)) {
+        $fullContactNumber = $request->contact_number;
+        $countryCode = substr($fullContactNumber, 0, 3);
+        $contactNumber = substr($fullContactNumber, 3);
+
+        if (! $user) {
+            $user = User::create(array_merge($data, [
+                'password' => Hash::make($request->password),
+                'account_id' => $account_id,
+                'countryCode' => preg_replace('/[^0-9]/', '', $countryCode),
+                'contact_no' => preg_replace('/[^0-9]/', '', $contactNumber),
+                'login_with' => 'egov',
+                'role' => 'guest'
+            ]));
+        }
+
+        if (! Hash::check($request->password, $user->password)) {
             return response([
                 'status' => FALSE,
                 'message' => 'Your password is incorrect. Please check and try again.'
