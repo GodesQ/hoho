@@ -35,6 +35,7 @@ class TourReservation extends Model
         'discount_amount',
         'has_insurance',
         'type_of_plan',
+        'insurance_id',
         'total_insurance_amount',
         'created_by',
         'created_user_type',

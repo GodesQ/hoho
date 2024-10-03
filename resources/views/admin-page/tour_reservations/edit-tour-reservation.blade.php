@@ -163,7 +163,14 @@
                                                 {{ Carbon::parse($reservation->created_at)->format('F d, Y') }}
                                             </div>
                                             <div class="col-lg-4 mb-4">
-
+                                                <div class="fw-semibold text-primary form-label">Insurance ID </div>
+                                                <div class="badge bg-label-primary">
+                                                    {{ $reservation->insurance_id ?? 'No Insurance ID Found' }}</div>
+                                            </div>
+                                            <div class="col-lg-4 mb-4">
+                                                <div class="fw-semibold text-primary form-label">Type of Plan </div>
+                                                <div class="badge bg-label-primary">
+                                                    {{ $reservation->type_of_plan ?? 'No Type of Plan Found' }}</div>
                                             </div>
                                             <hr>
                                             <div class="col-lg-6 mb-4">
