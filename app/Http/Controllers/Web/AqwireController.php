@@ -12,6 +12,7 @@ use App\Services\TourReservationService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\InvoiceMail;
@@ -29,6 +30,45 @@ class AqwireController extends Controller
     {
         $this->tourReservationService = $tourReservationService;
         $this->senangdaliService = $senangdaliService;
+    }
+
+    public function handlePostWebhookPaid(Request $request)
+    {
+        // Check if the request method is POST
+        if ($request->isMethod('post')) {
+            // Retrieve the signature from the query string
+            $signature = $request->query('sign');
+
+            // Get the JSON payload
+            $json = $request->getContent();
+
+            // Get the secret key from the environment
+            // $merchantSecretKey = env('AQWIRE_MERCHANT_SECURITY_KEY');
+            $merchantSecretKey = "sk_test_vV6i66irj2vhca4iXpqZc6THFiJz3N6Y";
+
+            // Compute the signature
+            $rawSignature = hash_hmac('sha256', $json, $merchantSecretKey, true);
+            $computedSignature = strtr(base64_encode($rawSignature), '+/', '-_');
+
+            // Validate the signature
+            if ($signature !== $computedSignature) {
+                return response()->json([
+                    'message' => 'Unauthorized API call'
+                ], 401);
+            }
+
+            // Return the signature and verification for debugging purposes
+            return response()->json([
+                'sign' => $signature,
+                'verify' => $computedSignature,
+                'message' => 'Data posted'
+            ], 200);
+        }
+
+        // If the request method is not POST, return an error
+        return response()->json([
+            'message' => 'Invalid request method'
+        ], 401);
     }
 
     public function success(Request $request)
@@ -344,5 +384,92 @@ class AqwireController extends Controller
             )
         ));
         http_response_code(200);
+    }
+
+    public function checkAuthorizationCode(Request $request)
+    {
+        // $keyBytes = utf8_encode($key);
+        // $textBytes = utf8_encode($text);
+
+        // $hashBytes = hash_hmac('sha256', $textBytes, $keyBytes, true);
+
+        // $base64Hash = base64_encode($hashBytes);
+        // $base64Hash = str_replace(['+', '/'], ['-', '_'], $base64Hash);
+
+        // return $base64Hash;
+
+        $key = config('services.aqwire.secret_key');
+        $message = config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id');
+
+        $hex = hash_hmac('sha256', $message, $key);
+        $bin = hex2bin($hex);
+
+        return base64_encode($bin);
+    }
+
+    public function checkTransactions(Request $request)
+    {
+        $today = Carbon::today();
+        $transactions = Transaction::where('payment_status', 'inc')
+            ->whereDate('created_at', $today)
+            ->get();
+
+        if (config('app.env') === 'production') {
+            $url = 'https://payments.aqwire.io/api/v3/transactions/check';
+            $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
+        } else {
+            $url = 'https://payments-sandbox.aqwire.io/api/v3/transactions/check';
+            $authToken = $this->getHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
+        }
+
+        foreach ($transactions as $transaction) {
+            $txnId = $transaction->aqwire_transactionId;
+
+            // Send HTTP request to AQWIRE API to check the transaction status
+            $response = Http::withHeaders([
+                'accept' => 'application/json',
+                'content-type' => 'application/json',
+                'Qw-Merchant-Id' => config('services.aqwire.merchant_code'),
+                'Authorization' => 'Bearer ' . $authToken,
+            ])->get("{$url}/{$txnId}");
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                // Assuming the API response contains a 'status' field
+                $transaction->payment_status = Str::lower($data['status']); // Update the status
+                $transaction->aqwire_paymentMethodCode = $data['data']['paymentMethod'];
+                $transaction->aqwire_totalAmount = $data['data']['total']['amount'];
+                $transaction->aqwire_referenceId = $data['data']['referenceId'];
+                $transaction->payment_date = $data['data']['paidAt'];
+                $transaction->save();
+            }
+        }
+
+        return "Ok";
+    }
+
+    public function getHMACSignatureHash($text, $secret_key)
+    {
+        $key = $secret_key;
+        $message = $text;
+
+        $hex = hash_hmac('sha256', $message, $key);
+        $bin = hex2bin($hex);
+
+        return base64_encode($bin);
+    }
+
+    public function getLiveHMACSignatureHash($text, $key)
+    {
+        $keyBytes = utf8_encode($key);
+        $textBytes = utf8_encode($text);
+
+        $hashBytes = hash_hmac('sha256', $textBytes, $keyBytes, true);
+
+        $base64Hash = base64_encode($hashBytes);
+        $base64Hash = str_replace(['+', '/'], ['-', '_'], $base64Hash);
+
+        return $base64Hash;
     }
 }

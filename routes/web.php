@@ -94,7 +94,7 @@ Route::get('/send_message', [AdminController::class, 'sendMessageWithSemaphore']
 Route::view('user/success_verification_message', 'misc.success_verification_message')->name('user.success_verification_message');
 Route::view('merchant-account-registered-message', 'misc.merchant-registered-message')->name('merchant_account_registered_message');
 
-Route::post('aqwire/transaction/paid', [AqwireController::class, 'webhook_paid']);
+Route::post('aqwire/transaction/paid', [AqwireController::class, 'handlePostWebhookPaid']);
 
 Route::get('aqwire/payment/success/{id}', [AqwireController::class, 'success']);
 Route::get('aqwire/payment/travel-tax/success/{id}', [AqwireController::class, 'travelTaxSuccess']);
@@ -121,6 +121,11 @@ Route::view('user/reset_password_success', 'misc.success-reset-password-message'
 Route::get('merchant_form/{type}', [MerchantController::class, 'merchant_form'])->name('merchant_form')->middleware('auth:admin');
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admin']], function () {
+
+    /*Aqwire Testing */
+    Route::get('aqwire/check-authorization-code', [AqwireController::class, 'checkAuthorizationCode']);
+    Route::get('aqwire/check-transactions', [AqwireController::class, 'checkTransactions']);
+
     Route::put('maintenance-mode', [AppSettingController::class, 'update'])->name('maintenance-mode.update');
 
     Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
@@ -143,7 +148,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::get('merchant-accounts/create', [MerchantAccountController::class, 'create'])->name('merchant_accounts.create');
     Route::post('merchant-accounts/store', [MerchantAccountController::class, 'store'])->name('merchant_accounts.store');
     Route::get('merchant-accounts/edit/{id}', [MerchantAccountController::class, 'edit'])->name('merchant_accounts.edit');
-    Route::put('merchant-accounts/update/{id}', [MerchantAccountController::class,'update'])->name('merchant_accounts.update');
+    Route::put('merchant-accounts/update/{id}', [MerchantAccountController::class, 'update'])->name('merchant_accounts.update');
     Route::delete('merchant-accounts/destroy/{id}', [MerchantAccountController::class, 'destroy'])->name('merchant_accounts.destroy');
 
     Route::put('merchant-accounts/update-merchant', [MerchantAccountController::class, 'updateMerchant'])->name('merchant_accounts.update_merchant');
@@ -204,8 +209,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::delete('attractions/destroy', [AttractionController::class, 'destroy'])->name('attractions.destroy');
     Route::delete('attractions/remove_image', [AttractionController::class, 'removeImage'])->name('attractions.remove_image');
 
-    Route::get('attractions/featured/organizations/{organization_id}', [AttractionController::class,'featured_attractions'])->name('attractions.featured');    Route::get('attractions/featured/organizations/{organization_id}', [AttractionController::class,'featured_attractions'])->name('attractions.featured');
-    Route::post('attractions/featured', [AttractionController::class,'saveFeaturedAttractions'])->name('attractions.featured.post');
+    Route::get('attractions/featured/organizations/{organization_id}', [AttractionController::class, 'featured_attractions'])->name('attractions.featured');
+    Route::get('attractions/featured/organizations/{organization_id}', [AttractionController::class, 'featured_attractions'])->name('attractions.featured');
+    Route::post('attractions/featured', [AttractionController::class, 'saveFeaturedAttractions'])->name('attractions.featured.post');
 
     Route::get('tour-reservations/{reservation_id}/reservation-codes', [TourReservationController::class, 'get_tour_reservation_codes'])->name('tour_reservations.reservation_codes');
 
@@ -375,7 +381,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::get('promo_codes/edit/{id}', [PromoCodeController::class, 'edit'])->name('promo_codes.edit');
     Route::post('promo_codes/update/{id}', [PromoCodeController::class, 'update'])->name('promo_codes.update');
     Route::delete('promo_codes/destroy', [PromoCodeController::class, 'destroy'])->name('promo_codes.destroy');
-    Route::post('promocodes/verify/{promo_code}', [PromoCodeController::class,'verify'])->name('promocodes.verify');
+    Route::post('promocodes/verify/{promo_code}', [PromoCodeController::class, 'verify'])->name('promocodes.verify');
 
     Route::get('ticket_passes', [TicketPassController::class, 'list'])->name('ticket_passes.list');
     Route::get('ticket_passes/create', [TicketPassController::class, 'create'])->name('ticket_passes.create');

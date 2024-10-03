@@ -46,11 +46,16 @@
                 visibility: hidden;
             }
 
+            #print-btn {
+                visibility: hidden;
+            }
+
             .section-to-print {
                 visibility: visible;
                 position: absolute;
                 left: 0;
                 top: 0;
+                box-shadow: none;
             }
         }
     </style>
@@ -300,8 +305,9 @@
                         </div>
                     </form>
                 </div>
-                <div class="tab-pane fade section-to-print" id="ticket-pass" role="tabpanel">
-                    <div class="card">
+                <div class="tab-pane fade " id="ticket-pass" role="tabpanel">
+                    <button class="btn btn-primary mb-3" id="print-btn">Print <i class="bx bx-printer"></i></button>
+                    <div class="card section-to-print">
                         <div class="card-body">
                             <div class="reservation-codes d-flex flex-wrap gap-2"></div>
                         </div>
@@ -313,6 +319,10 @@
         @push('scripts')
             <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
             <script>
+                $('#print-btn').click(function(e) {
+                    window.print()
+                })
+
                 $("#trip_date").flatpickr({
                     enableTime: false,
                     dateFormat: "Y-m-d",

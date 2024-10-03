@@ -267,7 +267,7 @@ class BookingService
                 'has_insurance' => $has_insurance,
                 'type_of_plan' => $type_of_plan,
                 'total_insurance_amount' => $total_insurance_amount,
-                'insurance_id' => rand(1000000, 100000000),
+                'insurance_id' => $has_insurance ? rand(1000000, 100000000) : null,
                 'end_date' => $trip_end_date,
                 'status' => 'pending',
                 'number_of_pass' => $number_of_pax,
