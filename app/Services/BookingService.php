@@ -192,6 +192,9 @@ class BookingService
                 $this->notifyTourProviderOfBooking($reservation, $transaction);
             }
 
+            // $request_model = $this->aqwireService->createRequestModel($transaction, $user);
+            // $payment_response = $this->aqwireService->pay($request_model);
+
             DB::commit();
 
             return [

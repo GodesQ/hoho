@@ -30,8 +30,9 @@ class Kernel extends ConsoleKernel
         //     DB::table('test_table')->delete();
         // })->everyMinute();
 
-        $schedule->command('check-aqwire-transaction')->everyTwoMinutes();
-
+        $schedule->command('check-aqwire-transaction')
+            ->everyTwoMinutes()
+            ->runInBackground();
     }
 
     /**

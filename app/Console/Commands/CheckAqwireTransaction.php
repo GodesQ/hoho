@@ -3,16 +3,20 @@
 namespace App\Console\Commands;
 
 use App\Enum\TransactionTypeEnum;
+use App\Mail\BookingConfirmationMail;
 use App\Mail\HotelReservationReceipt;
 use App\Mail\InvoiceMail;
 use App\Models\HotelReservation;
 use App\Models\Order;
+use App\Models\ReservationUserCode;
 use App\Models\TourReservation;
 use App\Models\Transaction;
 use App\Models\TravelTaxPayment;
 use App\Services\SenangdaliService;
-use App\Services\TourReservationService;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -23,11 +27,11 @@ class CheckAqwireTransaction extends Command
     private $tourReservationService;
     private $senangdaliService;
 
-    public function __construct(TourReservationService $tourReservationService, SenangdaliService $senangdaliService)
-    {
-        $this->tourReservationService = $tourReservationService;
-        $this->senangdaliService = $senangdaliService;
-    }
+    // public function __construct(TourReservationService $tourReservationService, SenangdaliService $senangdaliService)
+    // {
+    //     $this->tourReservationService = $tourReservationService;
+    //     $this->senangdaliService = $senangdaliService;
+    // }
 
     /**
      * The name and signature of the console command.
@@ -124,11 +128,12 @@ class CheckAqwireTransaction extends Command
 
             Mail::to(optional($reservation->customer_details)->email)->send(new InvoiceMail($details));
 
-            $this->tourReservationService->generateAndSendReservationCode($reservation->number_of_pass, $reservation);
+            $this->generateAndSendReservationCode($reservation->number_of_pass, $reservation);
 
             if ($reservation->has_insurance) {
-                $senangdali_insurance_request = $this->senangdaliService->__map_request_model($transaction->user, $reservation);
-                $this->senangdaliService->purchasing($senangdali_insurance_request);
+                $senangdaliService = new SenangdaliService();
+                $senangdali_insurance_request = $senangdaliService->__map_request_model($transaction->user, $reservation);
+                $senangdaliService->purchasing($senangdali_insurance_request);
             }
         }
     }
@@ -187,5 +192,79 @@ class CheckAqwireTransaction extends Command
         $base64Hash = str_replace(['+', '/'], ['-', '_'], $base64Hash);
 
         return $base64Hash;
+    }
+
+    public function generateAndSendReservationCode($number_of_pax, $reservation)
+    {
+        try {
+            $reservations_codes = $this->generateReservationCode($number_of_pax, $reservation);
+
+            if ($reservation->customer_details) {
+                $what = $reservation->type == 'DIY' ? (
+                    $reservation->ticket_pass . " x " . $reservation->number_of_pass . " pax " . "(Valid for 24 hours from first tap)"
+                )
+                    : (
+                        "1 Guided Tour " . '"' . $reservation->tour->name . '"' . ' x ' . $reservation->number_of_pass . ' pax'
+                    );
+
+                $trip_date = Carbon::parse($reservation->start_date);
+                $when = $trip_date->format('l, F j, Y');
+
+                $details = [
+                    'name' => $reservation->customer_details->firstname . ' ' . $reservation->customer_details->lastname,
+                    'what' => $what,
+                    'when' => $when,
+                    'where' => 'Robinson’s Manila',
+                    'type' => $reservation->type,
+                    'tour_name' => optional($reservation->tour)->name
+                ];
+
+                $pdf = null;
+
+                if ($reservation->type == 'DIY Tour' || $reservation->type == 'DIY') {
+                    $qrCodes = [];
+                    foreach ($reservations_codes as $code) {
+                        $value = $code . "&" . $reservation->id;
+                        $qrCodes[] = base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate($value));
+                    }
+                    $pdf = PDF::loadView('pdf.qrcodes', ['qrCodes' => $qrCodes]);
+                }
+
+                Mail::to(optional($reservation->customer_details)->email)->send(new BookingConfirmationMail($details, $pdf));
+
+                return $reservations_codes;
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    private function generateReservationCode($number_of_pass, $reservation)
+    {
+        // Generate the random letter part
+        // Assuming you have str_random function available
+        $random_letters = strtoupper(Str::random(5));
+        $reservation_codes = [];
+
+        for ($i = 1; $i <= $number_of_pass; $i++) {
+            // Generate the pass number with leading zeros (e.g., -001)
+            $pass_number = str_pad($i, 3, '0', STR_PAD_LEFT);
+
+            // Concatenate the parts to create the code
+            $code = "GRP{$random_letters}{$reservation->id}-{$pass_number}";
+
+            $reservation_codes_exist = ReservationUserCode::where('reservation_id', $reservation->id)->count();
+
+            if ($reservation_codes_exist < $number_of_pass) {
+                $create_code = ReservationUserCode::create([
+                    'reservation_id' => $reservation->id,
+                    'code' => $code
+                ]);
+
+                array_push($reservation_codes, $create_code->code);
+            }
+        }
+
+        return $reservation_codes;
     }
 }
