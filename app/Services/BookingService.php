@@ -250,9 +250,9 @@ class BookingService
             $ticket_pass = empty($item) ? $request->ticket_pass : $item['ticket_pass'];
 
             // Insurance
-            $has_insurance = isset($item['has_insurance']) ? $item['has_insurance'] : false;
-            $type_of_plan = isset($item['type_of_plan']) ? $item['type_of_plan'] : null;
-            $total_insurance_amount = isset($item['total_insurance_amount']) ? $item['total_insurance_amount'] : 0.00;
+            $has_insurance = $item['has_insurance'] ?? $request->has_insurance ?? false;
+            $type_of_plan = $item['type_of_plan'] ?? $request->type_of_plan ?? null;
+            $total_insurance_amount = $item['total_insurance_amount'] ?? $request->total_insurance_amount ?? 0.00;
 
             // Store tour reservation in database
             $reservation = TourReservation::create([

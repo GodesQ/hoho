@@ -175,7 +175,8 @@
                                             <div class="col-lg-4 mb-4">
                                                 <div class="fw-semibold text-primary form-label">Type of Plan </div>
                                                 <div class="badge bg-label-primary">
-                                                    {{ $reservation->type_of_plan ?? 'No Type of Plan Found' }}</div>
+                                                    {{ 'Option' . ' ' . $reservation->type_of_plan ?? 'No Type of Plan Found' }}
+                                                </div>
                                             </div>
                                             <hr>
                                             <div class="col-lg-6 mb-4">
@@ -260,6 +261,18 @@
                                                 </h6>
                                             </div>
                                         </div>
+                                        @if ($reservation->has_insurance)
+                                            <div class="row">
+                                                <div class="col-xl-6">
+                                                    <h6 class="text-primary">Total of Insurance</h6>
+                                                </div>
+                                                <div class="col-xl-6">
+                                                    <h6 id="sub_amount_text">₱
+                                                        {{ number_format($reservation->total_insurance_amount, 2) }}
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                        @endif
                                         <hr>
                                         <div class="row">
                                             <div class="col-xl-6">

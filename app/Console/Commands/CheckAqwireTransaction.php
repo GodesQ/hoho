@@ -83,9 +83,9 @@ class CheckAqwireTransaction extends Command
                 // Assuming the API response contains a 'status' field
                 $transaction->payment_status = Str::lower($data['status']); // Update the status
                 $transaction->aqwire_paymentMethodCode = $data['data']['paymentMethod'];
-                $transaction->aqwire_totalAmount = $data['data']['total']['amount'];
+                $transaction->aqwire_totalAmount = $data['data']['bill']['total']['amount'];
                 $transaction->aqwire_referenceId = $data['data']['referenceId'];
-                $transaction->payment_date = $data['data']['paidAt'];
+                $transaction->payment_date = Carbon::parse($data['data']['paidAt'])->format('Y-m-d');
                 $transaction->save();
 
                 if ($transaction->transaction_type == TransactionTypeEnum::BOOK_TOUR) {

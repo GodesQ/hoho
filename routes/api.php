@@ -45,106 +45,107 @@ use App\Http\Controllers\Api\TourBadgeController;
 // });
 
 // Route::middleware(["maintenance_mode"])->group(function () {
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [AuthController::class, 'register']);
 
-    Route::post('sso/register', [SSOController::class, 'register']);
-    Route::post('sso/login', [SSOController::class, 'login']);
+Route::post('sso/register', [SSOController::class, 'register']);
+Route::post('sso/login', [SSOController::class, 'login']);
 
-    Route::post('user/post_forgot_password', [ForgotPasswordController::class, 'post_forgot_password']);
+Route::post('user/post_forgot_password', [ForgotPasswordController::class, 'post_forgot_password']);
 
-    Route::post('user/change_password', [UserController::class, 'changePassword']);
+Route::post('user/change_password', [UserController::class, 'changePassword']);
 
-    Route::get('featured_merchants', [MerchantController::class, 'getFeaturedMerchants']);
+Route::get('featured_merchants', [MerchantController::class, 'getFeaturedMerchants']);
 
-    Route::get('app-settings/maintenance-mode', [AppSettingController::class, 'checkMaintenanceMode']);
-    Route::get('promocodes/verify/{code}', action: [PromoCodeController::class, 'checkValidPromoCode']);
+Route::get('app-settings/maintenance-mode', [AppSettingController::class, 'checkMaintenanceMode']);
+Route::get('promocodes/verify/{code}', action: [PromoCodeController::class, 'checkValidPromoCode']);
 
-    Route::group(['middleware' => ['auth:sanctum']], function () {
-        Route::post('logout', [AuthController::class, 'logout']);
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('logout', [AuthController::class, 'logout']);
 
-        Route::get('announcements/important_announcements', [AnnouncementController::class, 'getImportantAnnouncements']);
-        Route::get('announcements', [AnnouncementController::class, 'getAnnouncements']);
+    Route::get('announcements/important_announcements', [AnnouncementController::class, 'getImportantAnnouncements']);
+    Route::get('announcements', [AnnouncementController::class, 'getAnnouncements']);
 
-        Route::get('promocodes', [PromoCodeController::class, 'getPromoCodes']);
+    Route::get('promocodes', [PromoCodeController::class, 'getPromoCodes']);
 
-        Route::get('user', [UserController::class, 'getUser']);
-        Route::post('user/profile', [UserController::class, 'updateProfile']);
-        Route::post('user/update_interest', [UserController::class, 'updateInterest']);
-        Route::delete('user/delete', [UserController::class, 'destroyAccount']);
+    Route::get('user', [UserController::class, 'getUser']);
+    Route::post('user/profile', [UserController::class, 'updateProfile']);
+    Route::post('user/update_interest', [UserController::class, 'updateInterest']);
+    Route::delete('user/delete', [UserController::class, 'destroyAccount']);
 
-        Route::get('user/reservations', [TourReservationController::class, 'getUserReservations']);
-        Route::get('user/future_reservations_dates', [TourReservationController::class, 'getAllUserFutureDateReservations']);
+    Route::get('user/reservations', [TourReservationController::class, 'getUserReservations']);
+    Route::get('user/future_reservations_dates', [TourReservationController::class, 'getAllUserFutureDateReservations']);
 
-        Route::get('ticket_pass', [TourReservationController::class, 'getDIYTicketPassReservations']);
-        Route::get('ticket_pass_reservation/{id}', [TourReservationController::class, 'getDIYTicketPassReservation']);
-        Route::get('today_reservation', [TourReservationController::class, 'getUserTodayReservation']);
-        Route::post('reservation/store', [TourReservationController::class, 'storeTourReservation']);
+    Route::get('ticket_pass', [TourReservationController::class, 'getDIYTicketPassReservations']);
+    Route::get('ticket_pass_reservation/{id}', [TourReservationController::class, 'getDIYTicketPassReservation']);
+    Route::get('today_reservation', [TourReservationController::class, 'getUserTodayReservation']);
+    Route::post('reservation/store/single', [TourReservationController::class, 'storeTourReservation']);
+    Route::post('reservation/store', [TourReservationController::class, 'storeMultipleTourReservation']);
 
-        Route::get('organizations', [OrganizationController::class, 'getOrganizations']);
-        Route::get('organization/{id}', [OrganizationController::class, 'getOrganization']);
+    Route::get('organizations', [OrganizationController::class, 'getOrganizations']);
+    Route::get('organization/{id}', [OrganizationController::class, 'getOrganization']);
 
-        Route::get('attraction/{id}', [AttractionController::class, 'getAttraction']);
-        Route::get('merchant/{id}', [MerchantController::class, 'getMerchant']);
+    Route::get('attraction/{id}', [AttractionController::class, 'getAttraction']);
+    Route::get('merchant/{id}', [MerchantController::class, 'getMerchant']);
 
-        Route::get('tours/guided', [TourController::class, 'getGuidedTours']);
-        Route::get('tours/diy', [TourController::class, 'getDIYTours']);
-        Route::get('tours/transit', [TourController::class, 'getTransitTours']);
-        Route::get('tours/seasonal', [TourController::class, 'getSeasonalTours']);
+    Route::get('tours/guided', [TourController::class, 'getGuidedTours']);
+    Route::get('tours/diy', [TourController::class, 'getDIYTours']);
+    Route::get('tours/transit', [TourController::class, 'getTransitTours']);
+    Route::get('tours/seasonal', [TourController::class, 'getSeasonalTours']);
 
-        Route::get('transports', [TransportController::class, 'getTransports']);
-        Route::get('transport/{id}', [TransportController::class, 'getTransport']);
-        Route::post('transport/update_location/{id}', [TransportController::class, 'updateLocation']);
-        Route::post('transport/update_next_location/{id}', [TransportController::class, 'updateNextLocation']);
-        Route::post('transport/update_current_location/{id}', [TransportController::class, 'updateCurrentLocation']);
-        Route::post('transport/update_tracking/{id}', [TransportController::class, 'updateTracking']);
+    Route::get('transports', [TransportController::class, 'getTransports']);
+    Route::get('transport/{id}', [TransportController::class, 'getTransport']);
+    Route::post('transport/update_location/{id}', [TransportController::class, 'updateLocation']);
+    Route::post('transport/update_next_location/{id}', [TransportController::class, 'updateNextLocation']);
+    Route::post('transport/update_current_location/{id}', [TransportController::class, 'updateCurrentLocation']);
+    Route::post('transport/update_tracking/{id}', [TransportController::class, 'updateTracking']);
 
-        Route::get('carts/user', [CartController::class, 'getUserCarts']);
-        Route::get('carts/user/my_cart/{id}', [CartController::class, 'getUserCart']);
-        Route::post('cart/store', [CartController::class, 'storeCart']);
-        Route::delete('cart/destroy/{id}', [CartController::class, 'removeCart']);
-        Route::delete('cart/destroy_all/user', [CartController::class, 'removeAllUserCart']);
+    Route::get('carts/user', [CartController::class, 'getUserCarts']);
+    Route::get('carts/user/my_cart/{id}', [CartController::class, 'getUserCart']);
+    Route::post('cart/store', [CartController::class, 'storeCart']);
+    Route::delete('cart/destroy/{id}', [CartController::class, 'removeCart']);
+    Route::delete('cart/destroy_all/user', [CartController::class, 'removeAllUserCart']);
 
-        Route::get('ticket_passes', [TicketPassController::class, 'getTicketPasses']);
+    Route::get('ticket_passes', [TicketPassController::class, 'getTicketPasses']);
 
-        Route::get('interests', [InterestController::class, 'getInterests']);
+    Route::get('interests', [InterestController::class, 'getInterests']);
 
-        Route::post('reservation-codes/verify', [TourReservationController::class, 'scanReservationCode']);
-        // For older version of scan ticket pass qr code
-        Route::get('reservation_codes/verify/{reservation_id}/{code}', [TourReservationController::class, 'verifyReservationCode']);
+    Route::post('reservation-codes/verify', [TourReservationController::class, 'scanReservationCode']);
+    // For older version of scan ticket pass qr code
+    Route::get('reservation_codes/verify/{reservation_id}/{code}', [TourReservationController::class, 'verifyReservationCode']);
 
-        Route::get('verify_referral_code/{referral_code}', [ReferralController::class, 'verifyReferralCode']);
+    Route::get('verify_referral_code/{referral_code}', [ReferralController::class, 'verifyReferralCode']);
 
-        Route::get('tour_badges', [TourBadgeController::class, 'getAllTourBadges']);
-        Route::get('tour_badges/user_badges', [TourBadgeController::class, 'getUserTourBadges']);
-        Route::post('tour_badge/check', [TourBadgeController::class, 'checkBadge']);
+    Route::get('tour_badges', [TourBadgeController::class, 'getAllTourBadges']);
+    Route::get('tour_badges/user_badges', [TourBadgeController::class, 'getUserTourBadges']);
+    Route::post('tour_badge/check', [TourBadgeController::class, 'checkBadge']);
 
-        Route::get('rooms/merchants/{merchant_id}', [RoomController::class, 'getMerchantRooms']);
+    Route::get('rooms/merchants/{merchant_id}', [RoomController::class, 'getMerchantRooms']);
 
-        Route::post('restaurant-reservations', [RestaurantReservationController::class, 'store']);
-        Route::get('restaurant-reservations/merchants/{merchant_id}', [RestaurantReservationController::class, 'getMerchantRestaurantReservations']);
-        Route::get('restaurant-reservations/users/{user_id}', [RestaurantReservationController::class, 'getUserRestaurantReservations']);
-        Route::get('restaurant-reservations/{id}', [RestaurantReservationController::class, 'show']);
+    Route::post('restaurant-reservations', [RestaurantReservationController::class, 'store']);
+    Route::get('restaurant-reservations/merchants/{merchant_id}', [RestaurantReservationController::class, 'getMerchantRestaurantReservations']);
+    Route::get('restaurant-reservations/users/{user_id}', [RestaurantReservationController::class, 'getUserRestaurantReservations']);
+    Route::get('restaurant-reservations/{id}', [RestaurantReservationController::class, 'show']);
 
-        Route::post('hotel-reservations', [HotelReservationController::class, 'store']);
-        Route::get('hotel-reservations/users/{user_id}', [HotelReservationController::class, 'getUserHotelReservations']);
-        Route::get('hotel-reservations/{id}', [HotelReservationController::class, 'show']);
+    Route::post('hotel-reservations', [HotelReservationController::class, 'store']);
+    Route::get('hotel-reservations/users/{user_id}', [HotelReservationController::class, 'getUserHotelReservations']);
+    Route::get('hotel-reservations/{id}', [HotelReservationController::class, 'show']);
 
-        Route::get('products/merchants/{merchant_id}', [ProductController::class, 'getMerchantProducts']);
-        Route::get('products/{id}', [ProductController::class, 'getProduct']);
+    Route::get('products/merchants/{merchant_id}', [ProductController::class, 'getMerchantProducts']);
+    Route::get('products/{id}', [ProductController::class, 'getProduct']);
 
-        Route::post('orders', [OrderController::class, 'store']);
-        Route::post('orders/bulk', [OrderController::class, 'bulk_store']);
-        Route::get('orders/users/{user_id}', [OrderController::class, 'getUserOrders']);
-        Route::get('orders/{order_id}', [OrderController::class, 'show']);
+    Route::post('orders', [OrderController::class, 'store']);
+    Route::post('orders/bulk', [OrderController::class, 'bulk_store']);
+    Route::get('orders/users/{user_id}', [OrderController::class, 'getUserOrders']);
+    Route::get('orders/{order_id}', [OrderController::class, 'show']);
 
-        Route::get('tour-feedbacks', [TourFeedBackController::class, 'index']);
-        Route::post('tour-feedbacks', [TourFeedBackController::class, 'store']);
-        Route::get('tour-feedbacks/{id}', [TourFeedBackController::class, 'show']);
-        Route::put('tour-feedbacks/{id}', [TourFeedBackController::class, 'update']);
-        Route::get('tour-feedbacks/tours/{tour_id}', [TourFeedBackController::class, 'getFeedBacksByTour']);
+    Route::get('tour-feedbacks', [TourFeedBackController::class, 'index']);
+    Route::post('tour-feedbacks', [TourFeedBackController::class, 'store']);
+    Route::get('tour-feedbacks/{id}', [TourFeedBackController::class, 'show']);
+    Route::put('tour-feedbacks/{id}', [TourFeedBackController::class, 'update']);
+    Route::get('tour-feedbacks/tours/{tour_id}', [TourFeedBackController::class, 'getFeedBacksByTour']);
 
-        Route::post('travel-tax', [TravelTaxController::class, 'store']);
-        Route::get('travel-tax/users/{user_id}', [TravelTaxController::class, 'getUserTravelTaxPayments']);
-    });
+    Route::post('travel-tax', [TravelTaxController::class, 'store']);
+    Route::get('travel-tax/users/{user_id}', [TravelTaxController::class, 'getUserTravelTaxPayments']);
+});
 // });

@@ -31,8 +31,7 @@ class Kernel extends ConsoleKernel
         // })->everyMinute();
 
         $schedule->command('check-aqwire-transaction')
-            ->everyTwoMinutes()
-            ->runInBackground();
+            ->everyMinute();
     }
 
     /**
