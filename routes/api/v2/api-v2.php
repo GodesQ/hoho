@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\v2\TicketPassController;
 use App\Http\Controllers\Api\v2\TourBadgeController;
 use App\Http\Controllers\Api\v2\TourController;
 use App\Http\Controllers\Api\v2\TourReservationController;
+use App\Http\Controllers\Api\v2\TransactionController;
 use App\Http\Controllers\Api\v2\TransportController;
 use App\Http\Controllers\Api\v2\TravelTaxController;
 use App\Http\Controllers\Api\v2\UserController;
@@ -93,4 +94,6 @@ use Illuminate\Support\Facades\Route;
         Route::get('orders', [OrderController::class, 'index']);
         Route::get('orders/users/{user_id}', [OrderController::class, 'userOrders']);
         Route::get('orders/{order_id}', [OrderController::class, 'show']);
+
+        Route::get('transactions/{id}', [TransactionController::class, 'getTransaction']);
     });

@@ -90,7 +90,41 @@ class TourReservationController extends Controller
         ]);
     }
 
-    public function storeTourReservation(StoreRequest $request)
+    public function storeTourReservation(Request $request)
+    {
+        try {
+            // dd($request->all());
+            $result = $this->bookingService->processBookingReservation($request);
+
+            if (! isset($result['status']))
+                throw new Exception("An error occurred while processing the request. The result status could not be found.", 400);
+
+            if ($result['status'] === "success") {
+                return response()->json([
+                    "status" => $result['status'],
+                    "message" => "Tour Reservation has been proccessed. Please wait for approval.",
+                ]);
+            }
+
+            if ($result['status'] === "paying") {
+                return response()->json([
+                    "status" => $result['status'],
+                    "message" => "Tour Reservation has been proccessed. Please wait for approval.",
+                    "payment_link" => $result['payment_response']['paymentUrl'],
+                ]);
+            }
+
+        } catch (Exception $exception) {
+            $exception_code = $exception->getCode() == 0 ? 500 : $exception->getCode();
+
+            return response()->json([
+                'status' => 'failed',
+                'message' => $exception->getMessage(),
+            ], $exception_code);
+        }
+    }
+
+    public function storeMultipleTourReservation(StoreRequest $request)
     {
         try {
             $booking = $this->bookingService->processMultipleBookingReservation($request);
@@ -126,7 +160,7 @@ class TourReservationController extends Controller
     {
         $reservation_code = ReservationUserCode::where('id', $request->id)->first();
 
-        if (!$reservation_code) {
+        if (! $reservation_code) {
             return response([
                 'status' => FALSE,
                 'message' => 'Reservation Not Found',
@@ -166,79 +200,80 @@ class TourReservationController extends Controller
         ]);
     }
 
-    public function verifyReservationCode(Request $request)
-    {
-        $today = date('Y-m-d');
-        $user = Auth::user();
+    // public function verifyReservationCode(Request $request)
+    // {
+    //     $today = date('Y-m-d');
+    //     $user = Auth::user();
 
-        if ($user->role != Role::BUS_OPERATOR) {
-            return response([
-                'status' => FALSE,
-                'message' => 'The current authenticated user is not a bus operator.'
-            ]);
-        }
+    //     if ($user->role != Role::BUS_OPERATOR) {
+    //         return response([
+    //             'status' => FALSE,
+    //             'message' => 'The current authenticated user is not a bus operator.'
+    //         ]);
+    //     }
 
-        $tour_reservation = TourReservation::where('id', $request->reservation_id)->with('tour.transport')->first();
-        if (!$tour_reservation) {
-            return response([
-                'status' => FALSE,
-                'message' => 'Failed! No Tour Reservation Found',
-                'tour_reservation' => $tour_reservation
-            ]);
-        }
+    //     $tour_reservation = TourReservation::where('id', $request->reservation_id)->with('tour.transport')->first();
+    //     if (!$tour_reservation) {
+    //         return response([
+    //             'status' => FALSE,
+    //             'message' => 'Failed! No Tour Reservation Found',
+    //             'tour_reservation' => $tour_reservation
+    //         ]);
+    //     }
 
-        $qrcode = $tour_reservation->reservation_codes()->where('code', $request->code)->first();
+    //     $qrcode = $tour_reservation->reservation_codes()->where('code', $request->code)->first();
 
-        if (!$qrcode) {
-            return response([
-                'status' => FALSE,
-                'message' => 'Failed! Invalid QR Code',
-            ]);
-        }
+    //     if (!$qrcode) {
+    //         return response([
+    //             'status' => FALSE,
+    //             'message' => 'Failed! Invalid QR Code',
+    //         ]);
+    //     }
 
-        // return response($this->getDatesInRange($tour_reservation->start_date, $tour_reservation->end_date));
+    //     // return response($this->getDatesInRange($tour_reservation->start_date, $tour_reservation->end_date));
 
-        if ($qrcode->start_datetime) {
-            $startDatetime = \DateTime::createFromFormat('Y-m-d H:i:s', $qrcode->start_datetime);
+    //     if ($qrcode->start_datetime) {
+    //         $startDatetime = \DateTime::createFromFormat('Y-m-d H:i:s', $qrcode->start_datetime);
 
-            if ($startDatetime && $startDatetime->format('Y-m-d') != $today) {
-                return response([
-                    'status' => FALSE,
-                    'message' => 'Failed! You already use this QR Code in other date.',
-                ]);
-            }
-        }
+    //         if ($startDatetime && $startDatetime->format('Y-m-d') != $today) {
+    //             return response([
+    //                 'status' => FALSE,
+    //                 'message' => 'Failed! You already use this QR Code in other date.',
+    //             ]);
+    //         }
+    //     }
 
-        if ($qrcode->status == 'hop_on') {
-            $status = 'hop_off';
-            $user->transport()->update([
-                'available_seats' => $user->transport->available_seats + 1,
-            ]);
-        } else {
-            $status = 'hop_on';
-            $user->transport()->update([
-                'available_seats' => $user->transport->available_seats - 1,
-            ]);
-        }
+    //     if ($qrcode->status == 'hop_on') {
+    //         $status = 'hop_off';
+    //         $user->transport()->update([
+    //             'available_seats' => $user->transport->available_seats + 1,
+    //         ]);
+    //     } else {
+    //         $status = 'hop_on';
+    //         $user->transport()->update([
+    //             'available_seats' => $user->transport->available_seats - 1,
+    //         ]);
+    //     }
 
-        $qrcode->update([
-            'scan_count' => $qrcode->scan_count + 1,
-            'start_datetime' => $qrcode->start_datetime ? $qrcode->start_datetime : Carbon::now(),
-            'end_datetime' => $qrcode->end_datetime ? $qrcode->end_datetime : Carbon::now()->addDay(),
-            'status' => $status
-        ]);
+    //     $qrcode->update([
+    //         'scan_count' => $qrcode->scan_count + 1,
+    //         'start_datetime' => $qrcode->start_datetime ? $qrcode->start_datetime : Carbon::now(),
+    //         'end_datetime' => $qrcode->end_datetime ? $qrcode->end_datetime : Carbon::now()->addDay(),
+    //         'status' => $status
+    //     ]);
 
-        ReservationCodeScanLog::create([
-            'reservation_code_id' => $qrcode->id,
-            'scan_datetime' => Carbon::now(),
-            'scan_type' => $status
-        ]);
+    //     ReservationCodeScanLog::create([
+    //         'reservation_code_id' => $qrcode->id,
+    //         'scan_datetime' => Carbon::now(),
+    //         'scan_type' => $status
+    //     ]);
 
-        return response([
-            'status' => TRUE,
-            'message' => $status == 'hop_on' ? 'Success! You can now ride the HOHO bus.' : 'Thank you for riding with us! Have a great day!',
-        ]);
-    }
+    //     return response([
+    //         'status' => TRUE,
+    //         'message' => $status == 'hop_on' ? 'Success! You can now ride the HOHO bus.' : 'Thank you for riding with us! Have a great day!',
+    //     ]);
+    // }
+
 
     public function scanReservationCode(Request $request)
     {
@@ -265,7 +300,7 @@ class TourReservationController extends Controller
 
         // $qrcode = $tour_reservation->reservation_codes()->where('code', $request->code)->first();
 
-        if (!$qrcode) {
+        if (! $qrcode) {
             return response([
                 'status' => FALSE,
                 'message' => 'Failed! Invalid QR Code',

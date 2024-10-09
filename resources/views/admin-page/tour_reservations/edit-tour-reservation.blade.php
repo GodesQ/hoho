@@ -46,11 +46,16 @@
                 visibility: hidden;
             }
 
+            #print-btn {
+                visibility: hidden;
+            }
+
             .section-to-print {
                 visibility: visible;
                 position: absolute;
                 left: 0;
                 top: 0;
+                box-shadow: none;
             }
         }
     </style>
@@ -162,6 +167,18 @@
                                                 <div class="fw-semibold text-primary form-label">Created At </div>
                                                 {{ Carbon::parse($reservation->created_at)->format('F d, Y') }}
                                             </div>
+                                            <div class="col-lg-4 mb-4">
+                                                <div class="fw-semibold text-primary form-label">Insurance ID </div>
+                                                <div class="badge bg-label-primary">
+                                                    {{ $reservation->insurance_id ?? 'No Insurance ID Found' }}</div>
+                                            </div>
+                                            <div class="col-lg-4 mb-4">
+                                                <div class="fw-semibold text-primary form-label">Type of Plan </div>
+                                                <div class="badge bg-label-primary">
+                                                    {{ 'Option' . ' ' . $reservation->type_of_plan ?? 'No Type of Plan Found' }}
+                                                </div>
+                                            </div>
+                                            <hr>
                                             <div class="col-lg-6 mb-4">
                                                 <div class="fw-semibold text-primary form-label">Trip Date </div>
                                                 <input type="date" name="trip_date" id="trip_date"
@@ -244,6 +261,18 @@
                                                 </h6>
                                             </div>
                                         </div>
+                                        @if ($reservation->has_insurance)
+                                            <div class="row">
+                                                <div class="col-xl-6">
+                                                    <h6 class="text-primary">Total of Insurance</h6>
+                                                </div>
+                                                <div class="col-xl-6">
+                                                    <h6 id="sub_amount_text">₱
+                                                        {{ number_format($reservation->total_insurance_amount, 2) }}
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                        @endif
                                         <hr>
                                         <div class="row">
                                             <div class="col-xl-6">
@@ -289,8 +318,9 @@
                         </div>
                     </form>
                 </div>
-                <div class="tab-pane fade section-to-print" id="ticket-pass" role="tabpanel">
-                    <div class="card">
+                <div class="tab-pane fade " id="ticket-pass" role="tabpanel">
+                    <button class="btn btn-primary mb-3" id="print-btn">Print <i class="bx bx-printer"></i></button>
+                    <div class="card section-to-print">
                         <div class="card-body">
                             <div class="reservation-codes d-flex flex-wrap gap-2"></div>
                         </div>
@@ -302,6 +332,10 @@
         @push('scripts')
             <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
             <script>
+                $('#print-btn').click(function(e) {
+                    window.print()
+                })
+
                 $("#trip_date").flatpickr({
                     enableTime: false,
                     dateFormat: "Y-m-d",

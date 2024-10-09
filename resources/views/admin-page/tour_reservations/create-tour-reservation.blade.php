@@ -339,6 +339,36 @@
                                                                         class="form-label text-primary">Tour</label>
                                                                     <h6 id="tour-name-text"></h6>
                                                                 </div>
+                                                                <div class="col-lg-6">
+                                                                    <label for="payment_method"
+                                                                        class="form-label text-primary">Payment
+                                                                        Method</label>
+                                                                    <div class="form-check">
+                                                                        <input name="payment_method"
+                                                                            class="form-check-input" type="radio"
+                                                                            value="cash" id="cash-payment-method" />
+                                                                        <label class="form-check-label"
+                                                                            for="cash-payment-method"> Cash
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check">
+                                                                        <input name="payment_method"
+                                                                            class="form-check-input" type="radio"
+                                                                            value="aqwire" id="aqwire-payment-method"
+                                                                            checked />
+                                                                        <label class="form-check-label"
+                                                                            for="aqwire-payment-method"> Aqwire </label>
+                                                                    </div>
+                                                                </div>
+                                                                {{-- <div class="col-xl-6">
+                                                                    
+                                                                    <div class="form-group mb-3">
+                                                                        <input type="checkbox" name="payment_method"
+                                                                            id="payment-method-field" value="cash">
+                                                                        <label class="font-bold form-label"
+                                                                            for="payment-method-field">Cash</label>
+                                                                    </div>
+                                                                </div> --}}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -423,12 +453,6 @@
                                                                 <div class="col-xl-6">
                                                                     <h6 id="total-amount-text">₱ 0.00</h6>
                                                                 </div>
-                                                            </div>
-                                                            <div class="form-group mb-3">
-                                                                <input type="checkbox" name="payment_method"
-                                                                    id="payment-method-field" value="cash">
-                                                                <label class="font-bold form-label"
-                                                                    for="payment-method-field">Cash</label>
                                                             </div>
                                                         </div>
                                                     </div>
