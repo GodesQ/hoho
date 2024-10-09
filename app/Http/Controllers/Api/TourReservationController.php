@@ -103,6 +103,7 @@ class TourReservationController extends Controller
                 return response()->json([
                     "status" => $result['status'],
                     "message" => "Tour Reservation has been proccessed. Please wait for approval.",
+                    "reservation" => $result["reservation"],
                 ]);
             }
 
@@ -110,6 +111,7 @@ class TourReservationController extends Controller
                 return response()->json([
                     "status" => $result['status'],
                     "message" => "Tour Reservation has been proccessed.",
+                    "reservation" => $result["reservation"],
                     "payment_link" => $result['payment_response']['paymentUrl'],
                 ]);
             }
@@ -136,6 +138,7 @@ class TourReservationController extends Controller
                 return response()->json([
                     "status" => $result['status'],
                     "message" => "Tour Reservation has been proccessed. Please wait for approval.",
+                    "tour_reservations" => $result["tour_reservations"],
                 ]);
             }
 
@@ -144,6 +147,7 @@ class TourReservationController extends Controller
                     "status" => $result['status'],
                     "message" => "Tour Reservation has been proccessed.",
                     "payment_link" => $result['payment_response']['paymentUrl'],
+                    "tour_reservations" => $result["tour_reservations"],
                 ]);
             }
 
