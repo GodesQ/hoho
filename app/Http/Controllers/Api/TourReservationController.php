@@ -127,13 +127,25 @@ class TourReservationController extends Controller
     public function storeMultipleTourReservation(StoreRequest $request)
     {
         try {
-            $booking = $this->bookingService->processMultipleBookingReservation($request);
+            $result = $this->bookingService->processMultipleBookingReservation($request);
 
-            return response([
-                'status' => 'success',
-                'total_reservations' => count($booking['tour_reservations']),
-                'reservations' => $booking['tour_reservations']
-            ], 201);
+            if (! isset($result['status']))
+                throw new Exception("An error occurred while processing the request. The result status could not be found.", 400);
+
+            if ($result['status'] === "success") {
+                return response()->json([
+                    "status" => $result['status'],
+                    "message" => "Tour Reservation has been proccessed. Please wait for approval.",
+                ]);
+            }
+
+            if ($result['status'] === "paying") {
+                return response()->json([
+                    "status" => $result['status'],
+                    "message" => "Tour Reservation has been proccessed. Please wait for approval.",
+                    "payment_link" => $result['payment_response']['paymentUrl'],
+                ]);
+            }
 
         } catch (Exception $e) {
             return response()->json([

@@ -192,14 +192,22 @@ class BookingService
                 $this->notifyTourProviderOfBooking($reservation, $transaction);
             }
 
-            // $request_model = $this->aqwireService->createRequestModel($transaction, $user);
-            // $payment_response = $this->aqwireService->pay($request_model);
+            $status = "success";
+            $payment_response = null;
+
+            if ($items[0]['type'] == TourTypeEnum::DIY_TOUR) {
+                $request_model = $this->aqwireService->createRequestModel($transaction, $user);
+                $payment_response = $this->aqwireService->pay($request_model);
+                $status = "paying";
+            }
 
             DB::commit();
 
             return [
+                'status' => $status,
                 'transaction' => $transaction,
                 'tour_reservations' => $tour_reservations,
+                'payment_response' => $payment_response,
             ];
 
         } catch (Exception $e) {
