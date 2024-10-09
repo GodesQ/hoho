@@ -109,7 +109,7 @@ class TourReservationController extends Controller
             if ($result['status'] === "paying") {
                 return response()->json([
                     "status" => $result['status'],
-                    "message" => "Tour Reservation has been proccessed. Please wait for approval.",
+                    "message" => "Tour Reservation has been proccessed.",
                     "payment_link" => $result['payment_response']['paymentUrl'],
                 ]);
             }
@@ -142,7 +142,7 @@ class TourReservationController extends Controller
             if ($result['status'] === "paying") {
                 return response()->json([
                     "status" => $result['status'],
-                    "message" => "Tour Reservation has been proccessed. Please wait for approval.",
+                    "message" => "Tour Reservation has been proccessed.",
                     "payment_link" => $result['payment_response']['paymentUrl'],
                 ]);
             }
