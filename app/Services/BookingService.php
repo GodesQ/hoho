@@ -8,6 +8,7 @@ use App\Models\LayoverTourReservationDetail;
 use App\Models\PromoCode;
 use App\Models\Referral;
 use App\Models\TourReservationCustomerDetail;
+use App\Models\TourReservationInsurance;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -39,7 +40,7 @@ class BookingService
      * @throws \Exception
      * @return array
      */
-    public function processBookingReservation(Request $request)
+    public function processBookingReservation($request)
     {
         try {
             DB::beginTransaction();
@@ -280,9 +281,6 @@ class BookingService
                 'order_transaction_id' => $transaction->id,
                 'start_date' => $trip_start_date,
                 'has_insurance' => $has_insurance,
-                'type_of_plan' => $type_of_plan,
-                'total_insurance_amount' => $total_insurance_amount,
-                'insurance_id' => $has_insurance ? rand(1000000, 100000000) : null,
                 'end_date' => $trip_end_date,
                 'status' => 'pending',
                 'number_of_pass' => $number_of_pax,
@@ -292,6 +290,17 @@ class BookingService
                 'created_by' => $request->reserved_user_id,
                 'created_user_type' => Auth::guard('admin')->user() ? Auth::guard('admin')->user()->role : 'guest'
             ]);
+
+            // Add the Reservation Insurance
+            if ($has_insurance) {
+                TourReservationInsurance::create([
+                    'insurance_id' => $has_insurance ? rand(1000000, 100000000) : null,
+                    'reservation_id' => $reservation->id,
+                    'type_of_plan' => $type_of_plan,
+                    'total_insurance_amount' => $total_insurance_amount,
+                    'number_of_pax' => $reservation->number_of_pass,
+                ]);
+            }
 
             // Check if the request has a file of requirements and if it's valid
             if ($request->hasFile('requirement') && $request->file('requirement')->isValid()) {

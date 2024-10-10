@@ -34,9 +34,6 @@ class TourReservation extends Model
         'requirement_file_path',
         'discount_amount',
         'has_insurance',
-        'type_of_plan',
-        'insurance_id',
-        'total_insurance_amount',
         'created_by',
         'created_user_type',
         'updated_by'
@@ -96,6 +93,11 @@ class TourReservation extends Model
     public function feedback()
     {
         return $this->hasOne(TourFeedback::class, 'reservation_id');
+    }
+
+    public function reservation_insurance()
+    {
+        return $this->hasOne(TourReservationInsurance::class, 'reservation_id');
     }
 
     public function getPassengersAttribute()

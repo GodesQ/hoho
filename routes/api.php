@@ -76,9 +76,16 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('user/reservations', [TourReservationController::class, 'getUserReservations']);
     Route::get('user/future_reservations_dates', [TourReservationController::class, 'getAllUserFutureDateReservations']);
 
-    Route::get('ticket_pass', [TourReservationController::class, 'getDIYTicketPassReservations']);
-    Route::get('ticket_pass_reservation/{id}', [TourReservationController::class, 'getDIYTicketPassReservation']);
-    Route::get('today_reservation', [TourReservationController::class, 'getUserTodayReservation']);
+
+    Route::get('reservation/ticket-passes', [TourReservationController::class, 'getDIYTicketPassReservations']); // New Version
+    Route::get('ticket_pass', [TourReservationController::class, 'getDIYTicketPassReservations']); // Older Version
+
+    Route::get('reservation/ticket-passes/{id}', [TourReservationController::class, 'getDIYTicketPassReservation']); // New Version
+    Route::get('ticket_pass_reservation/{id}', [TourReservationController::class, 'getDIYTicketPassReservation']); // Older Version
+
+    Route::get('reservation/today', [TourReservationController::class, 'getUserTodayReservation']); // New Version
+    Route::get('today_reservation', [TourReservationController::class, 'getUserTodayReservation']); // Older Version
+
     Route::post('reservation/store/single', [TourReservationController::class, 'storeTourReservation']);
     Route::post('reservation/store', [TourReservationController::class, 'storeMultipleTourReservation']);
 
@@ -88,17 +95,26 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('attraction/{id}', [AttractionController::class, 'getAttraction']);
     Route::get('merchant/{id}', [MerchantController::class, 'getMerchant']);
 
-    Route::get('tours/guided', [TourController::class, 'getGuidedTours']);
-    Route::get('tours/diy', [TourController::class, 'getDIYTours']);
-    Route::get('tours/transit', [TourController::class, 'getTransitTours']);
-    Route::get('tours/seasonal', [TourController::class, 'getSeasonalTours']);
+    Route::group(['prefix' => 'tours'], function () {
+        Route::get('guided', [TourController::class, 'getGuidedTours']);
+        Route::get('diy', [TourController::class, 'getDIYTours']);
+        Route::get('transit', [TourController::class, 'getTransitTours']);
+        Route::get('seasonal', [TourController::class, 'getSeasonalTours']);
+    });
 
     Route::get('transports', [TransportController::class, 'getTransports']);
-    Route::get('transport/{id}', [TransportController::class, 'getTransport']);
-    Route::post('transport/update_location/{id}', [TransportController::class, 'updateLocation']);
-    Route::post('transport/update_next_location/{id}', [TransportController::class, 'updateNextLocation']);
-    Route::post('transport/update_current_location/{id}', [TransportController::class, 'updateCurrentLocation']);
-    Route::post('transport/update_tracking/{id}', [TransportController::class, 'updateTracking']);
+
+    Route::get('transports/{id}', [TransportController::class, 'getTransport']); // New Version
+    Route::get('transport/{id}', [TransportController::class, 'getTransport']); // Older Version
+
+    Route::post('transports/update/location/{id}', [TransportController::class, 'updateLocation']); // New Version
+    Route::post('transport/update_location/{id}', [TransportController::class, 'updateLocation']); // Older Version
+
+    Route::post('transports/update/next-location/{id}', [TransportController::class, 'updateNextLocation']); // New Version
+    Route::post('transport/update_next_location/{id}', [TransportController::class, 'updateNextLocation']); // Older Version
+
+    Route::post('transports/update/current-location/{id}', [TransportController::class, 'updateCurrentLocation']); // New Version
+    Route::post('transport/update_current_location/{id}', [TransportController::class, 'updateCurrentLocation']); // Older Version
 
     Route::get('carts/user', [CartController::class, 'getUserCarts']);
     Route::get('carts/user/my_cart/{id}', [CartController::class, 'getUserCart']);
@@ -110,9 +126,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('interests', [InterestController::class, 'getInterests']);
 
-    Route::post('reservation-codes/verify', [TourReservationController::class, 'scanReservationCode']);
-    // For older version of scan ticket pass qr code
-    Route::get('reservation_codes/verify/{reservation_id}/{code}', [TourReservationController::class, 'verifyReservationCode']);
+    Route::post('reservation-codes/verify', [TourReservationController::class, 'scanReservationCode']); // New Version
+    Route::get('reservation_codes/verify/{reservation_id}/{code}', [TourReservationController::class, 'verifyReservationCode']); // Older Version
 
     Route::get('verify_referral_code/{referral_code}', [ReferralController::class, 'verifyReferralCode']);
 

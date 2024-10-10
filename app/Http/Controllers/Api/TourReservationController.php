@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TourReservation\SingleBookingRequest;
 use App\Http\Requests\TourReservation\StoreRequest;
 use App\Models\Role;
 use App\Models\TourUnavailableDate;
@@ -90,7 +91,7 @@ class TourReservationController extends Controller
         ]);
     }
 
-    public function storeTourReservation(Request $request)
+    public function storeTourReservation(SingleBookingRequest $request)
     {
         try {
             // dd($request->all());
@@ -103,7 +104,7 @@ class TourReservationController extends Controller
                 return response()->json([
                     "status" => $result['status'],
                     "message" => "Tour Reservation has been proccessed. Please wait for approval.",
-                    "reservation" => $result["reservation"]->load('tour'),
+                    "reservation" => $result["reservation"]->load('tour', 'reservation_insurance'),
                 ]);
             }
 
