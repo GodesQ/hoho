@@ -79,13 +79,13 @@ class TourController extends Controller
         // Calculate the difference in hours
         $total_hours = $arrival_datetime->diffInHours($departure_datetime);
 
-        // Minimum of 5 hours
-        if($total_hours <= 5) {
+        // Minimum of 8 hours
+        if ($total_hours <= 8) {
             return response([
                 'status' => FALSE,
-                'message' => 'Layover Tours is not available for your specified time',
+                'message' => 'Transit Tours are not available at your requested time.',
             ], 400);
-        } 
+        }
 
         $tours = Tour::where('type', 'Layover Tour')->where('status', 1)->get();
         foreach ($tours as $tour) {
@@ -99,7 +99,8 @@ class TourController extends Controller
 
     }
 
-    public function getSeasonalTours(Request $request) {
+    public function getSeasonalTours(Request $request)
+    {
         $tours = Tour::where('type', 'Seasonal Tour')->get();
 
         foreach ($tours as $tour) {
@@ -107,7 +108,7 @@ class TourController extends Controller
         }
 
         return response([
-            'status'=> TRUE,
+            'status' => TRUE,
             'tours' => $tours,
         ]);
     }
