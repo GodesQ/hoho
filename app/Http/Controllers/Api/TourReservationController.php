@@ -103,7 +103,7 @@ class TourReservationController extends Controller
                 return response()->json([
                     "status" => $result['status'],
                     "message" => "Tour Reservation has been proccessed. Please wait for approval.",
-                    "reservation" => $result["reservation"],
+                    "reservation" => $result["reservation"]->load('tour'),
                 ]);
             }
 
