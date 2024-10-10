@@ -50,7 +50,7 @@ class BookingService
                 throw new Exception("User Not Found.", 404);
 
             if (! $user->firstname || ! $user->lastname)
-                throw new Exception("Please complete your name before continue to checkout", 422);
+                throw new Exception("Please complete your name before proceeding to checkout.", 422);
 
             $phone_number = "+{$user->countryCode}{$user->contact_no}";
             if (! preg_match('/^\+\d{10,12}$/', $phone_number))
@@ -73,6 +73,10 @@ class BookingService
             $additional_charges = $this->processAdditionalCharges($sub_amount);
 
             $total_amount = $this->getTotalAmountOfBooking($sub_amount, $additional_charges['total'], $total_of_discount);
+
+            if ($request->has_insurance) {
+                $total_amount += $request->total_insurance_amount;
+            }
 
             // Store transaction in database
             $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_of_discount, $additional_charges['total']);
@@ -218,7 +222,7 @@ class BookingService
 
     private function storeTransaction($request, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
     {
-        $reference_no = $this->generateReferenceNo();
+        $reference_no = generateBookingReferenceNumber();
 
         $transaction = Transaction::create([
             'reference_no' => $reference_no,
@@ -408,11 +412,6 @@ class BookingService
         # This function is for additional charges, which the discounted amount calculated from all of the bookings for this transaction.
 
         return ($subAmount - $totalOfDiscount) + $totalOfAdditionalCharges;
-    }
-
-    private function generateReferenceNo()
-    {
-        return date('Ym') . '-' . 'OT' . rand(100000, 10000000);
     }
 
     public function getDateOfDIYPass($ticket_pass, $trip_date)
