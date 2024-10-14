@@ -103,8 +103,10 @@ class BookingService
                 $status = "paying";
             }
 
-            // Notify the tour provider based on the reservation of the guest
-            $this->notifyTourProviderOfBooking($reservation, $transaction);
+            if (! in_array($user->email, getDevelopersEmail())) {
+                // Notify the tour provider based on the reservation of the guest
+                $this->notifyTourProviderOfBooking($reservation, $transaction);
+            }
 
             DB::commit();
 
@@ -193,8 +195,10 @@ class BookingService
                 // Add new reservation to $tour_reservations variable
                 array_push($tour_reservations, $reservation->load('tour'));
 
-                // Notify the tour provider via email
-                $this->notifyTourProviderOfBooking($reservation, $transaction);
+                if (! in_array($user->email, getDevelopersEmail())) {
+                    // Notify the tour provider via email
+                    $this->notifyTourProviderOfBooking($reservation, $transaction);
+                }
             }
 
             $status = "success";

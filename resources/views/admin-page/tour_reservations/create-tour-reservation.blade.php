@@ -334,7 +334,7 @@
                                                                         Date</label>
                                                                     <h6 id="trip-date-text"></h6>
                                                                 </div>
-                                                                <div class="col-xl-12">
+                                                                <div class="col-xl-6">
                                                                     <label for=""
                                                                         class="form-label text-primary">Tour</label>
                                                                     <h6 id="tour-name-text"></h6>
@@ -360,15 +360,111 @@
                                                                             for="aqwire-payment-method"> Aqwire </label>
                                                                     </div>
                                                                 </div>
-                                                                {{-- <div class="col-xl-6">
-                                                                    
-                                                                    <div class="form-group mb-3">
-                                                                        <input type="checkbox" name="payment_method"
-                                                                            id="payment-method-field" value="cash">
-                                                                        <label class="font-bold form-label"
-                                                                            for="payment-method-field">Cash</label>
+                                                                <div class="col-lg-12">
+                                                                    <label for=""
+                                                                        class="form-label text-primary">Insurance</label>
+                                                                    <div class="form-check form-switch mb-2">
+                                                                        <input class="form-check-input" type="checkbox"
+                                                                            id="has-insurance-checkbox"
+                                                                            name="has_insurance" value="1" />
+                                                                        <label class="form-check-label"
+                                                                            for="has-insurance-checkbox">Has
+                                                                            Insurance</label>
                                                                     </div>
-                                                                </div> --}}
+                                                                    <div class="insurance-options-list d-none">
+                                                                        <label for=""
+                                                                            class="form-label text-primary">Type of
+                                                                            Plan</label>
+                                                                        <div class="form-check mb-4">
+                                                                            <input name="type_of_plan"
+                                                                                class="form-check-input" type="radio"
+                                                                                value="1" id="option-a-plan" />
+                                                                            <label class="form-check-label"
+                                                                                for="option-a-plan">
+                                                                                <div
+                                                                                    class="border rounded py-3 px-4 cursor-pointer">
+                                                                                    <h6>Option A</h6>
+                                                                                    <div>
+                                                                                        <div class="fs-10">
+                                                                                            <span
+                                                                                                class="fw-semibold">Accidental
+                                                                                                Death and
+                                                                                                Dismemberment
+                                                                                                and Disability
+                                                                                                (AD&D&D):</span>
+                                                                                            ₱ 10,000.00
+                                                                                        </div>
+                                                                                        <div class="fs-10">
+                                                                                            <span
+                                                                                                class="fw-semibold">Baggage
+                                                                                                Damage:</span>
+                                                                                            ₱ 1,000.00
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-check mb-4">
+                                                                            <input name="type_of_plan"
+                                                                                class="form-check-input" type="radio"
+                                                                                value="2" id="option-b-plan" />
+                                                                            <label class="form-check-label"
+                                                                                for="option-b-plan">
+                                                                                <div
+                                                                                    class="border rounded py-3 px-4 cursor-pointer">
+                                                                                    <h6>Option B</h6>
+                                                                                    <div>
+                                                                                        <div class="fs-10">
+                                                                                            <span
+                                                                                                class="fw-semibold">Accidental
+                                                                                                Death and
+                                                                                                Dismemberment
+                                                                                                and Disability
+                                                                                                (AD&D&D):</span>
+                                                                                            ₱ 20,000.00
+                                                                                        </div>
+                                                                                        <div class="fs-10">
+                                                                                            <span
+                                                                                                class="fw-semibold">Baggage
+                                                                                                Damage:</span>
+                                                                                            ₱ 1,500.00
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-check mb-4">
+                                                                            <input name="type_of_plan"
+                                                                                class="form-check-input" type="radio"
+                                                                                value="3" id="option-c-plan" />
+                                                                            <label class="form-check-label"
+                                                                                for="option-c-plan">
+                                                                                <div
+                                                                                    class="border rounded py-3 px-4 cursor-pointer">
+                                                                                    <h6>Option C</h6>
+                                                                                    <div>
+                                                                                        <div class="fs-10">
+                                                                                            <span
+                                                                                                class="fw-semibold">Accidental
+                                                                                                Death and
+                                                                                                Dismemberment
+                                                                                                and Disability
+                                                                                                (AD&D&D):</span>
+                                                                                            ₱ 30,000.00
+                                                                                        </div>
+                                                                                        <div class="fs-10">
+                                                                                            <span
+                                                                                                class="fw-semibold">Baggage
+                                                                                                Damage:</span>
+                                                                                            ₱ 1,800.00
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -443,6 +539,16 @@
                                                                     <h6 id="total-discount-text">₱ 0.00</h6>
                                                                 </div>
                                                             </div>
+                                                            <div class="row">
+                                                                <div class="col-xl-6">
+                                                                    <div class="text-primary text-uppercase form-label">
+                                                                        Total Of
+                                                                        Insurance </div>
+                                                                </div>
+                                                                <div class="col-xl-6">
+                                                                    <h6 id="total-insurance-amount-text">₱ 0.00</h6>
+                                                                </div>
+                                                            </div>
                                                             <hr>
                                                             <div class="row">
                                                                 <div class="col-xl-6">
@@ -461,6 +567,10 @@
                                         </fieldset>
                                         <input type="hidden" name="amount" id="sub-amount-field">
                                         <input type="hidden" name="discounted_amount" id="discounted-amount-field">
+                                        <input type="hidden" name="total_insurance_amount"
+                                            id="total-insurance-amount-field" value="0">
+                                        <input type="hidden" name="insurance_amount" id="insurance-amount-field"
+                                            value="0">
                                         <input type="hidden" id="discount-field" value="0">
                                         <input type="hidden" id="total-amount-field">
                                     </form>
@@ -491,7 +601,6 @@
                     })
                 }
             });
-
         })
     </script>
 @endpush

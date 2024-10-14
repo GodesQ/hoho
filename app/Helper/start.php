@@ -95,3 +95,18 @@ if (! function_exists('generateArNumber')) {
         return 'HOHO-' . $newNumberPadded;
     }
 }
+
+if (! function_exists('getDevelopersEmail')) {
+    function getDevelopersEmail()
+    {
+        return [
+            "joebenmirana09@gmail.com",
+            "joeben@godesq.com",
+            "james@godesq.com",
+            "jamesgarnfil4@gmail.com",
+            "jamesgarnfil15@gmail.com",
+            "joecristian.jamis@godesq.com",
+            "jamisjoecristian@gmail.com"
+        ];
+    }
+}
