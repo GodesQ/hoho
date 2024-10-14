@@ -118,7 +118,7 @@ class TourReservationController extends Controller
             }
 
         } catch (Exception $exception) {
-            $exception_code = $exception->getCode() == 0 || is_nan($exception->getCode()) ? 500 : $exception->getCode();
+            $exception_code = $exception->getCode() == 0 || is_string($exception->getCode()) ? 500 : $exception->getCode();
 
             return response()->json([
                 'status' => 'failed',
