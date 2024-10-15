@@ -275,7 +275,7 @@
                                                 </div>
                                                 <div class="col-xl-6">
                                                     <h6 id="sub_amount_text">₱
-                                                        {{ number_format($reservation->total_insurance_amount, 2) }}
+                                                        {{ number_format(($reservation->reservation_insurance->total_insurance_amount ?? 0), 2) }}
                                                     </h6>
                                                 </div>
                                             </div>
