@@ -38,7 +38,7 @@ class SenangdaliService
             "id_no" => rand(100000, 10000000),
             "email_id" => $user->email,
             "travel_date" => $reservation->start_date,
-            "type_of_plan" => $reservation->type_of_plan,
+            "type_of_plan" => $reservation->reservation_insurance->type_of_plan,
             "no_of_pax" => [(string) $reservation->number_of_pass],
             "ticket_id" => $reservation->number_of_pass <= 1 ? [$reservation->reservation_codes[0]->code] : $reservation->reservation_codes->map(function ($reservation_code) {
                 return $reservation_code->code;
