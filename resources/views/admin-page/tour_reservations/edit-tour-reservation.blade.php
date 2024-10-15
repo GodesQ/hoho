@@ -177,7 +177,7 @@
                                                 <div class="fw-semibold text-primary form-label">Type of Plan </div>
                                                 @if ($reservation->reservation_insurance->type_of_plan ?? false)
                                                     <div class="badge bg-label-primary">
-                                                        {{ 'Option' . ' ' . $reservation->type_of_plan ?? 'No Type of Plan Found' }}
+                                                        {{ 'Option' . ' ' . $reservation->reservation_insurance->type_of_plan ?? 'No Type of Plan Found' }}
                                                     </div>
                                                 @else
                                                     <div class="badge bg-label-primary">
