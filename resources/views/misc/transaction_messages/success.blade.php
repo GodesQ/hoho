@@ -89,7 +89,7 @@
             data-app-light-img="{{ URL::asset('assets/img/illustrations/payment_success.png') }}"
           />
         </div>
-        <div class="d-flex justify-content-center align-items-center gap-3">
+        <div class="d-flex justify-content-center align-items-center flex-column flex-md-row gap-3 mt-3">
           <a href="https://book.philippines-hoho.ph/" class="btn btn-outline-primary"><i class='bx bx-desktop'></i> Visit Our B2C Platform</a>
           <a href="https://philippines-hoho.ph/" class="btn btn-outline-primary"><i class='bx bx-globe'></i> Visit Our website</a>
           <a href="https://www.facebook.com/philippineshoponhopoff" class="btn btn-outline-primary"><i class='bx bxl-facebook'></i> Visit Our Facebook Page</a>
