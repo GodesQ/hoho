@@ -207,6 +207,8 @@ class BookingService
             if ($items[0]['type'] == TourTypeEnum::DIY_TOUR) {
                 $request_model = $this->aqwireService->createRequestModel($transaction, $user);
                 $payment_response = $this->aqwireService->pay($request_model);
+
+                $this->updateTransactionAfterPayment($transaction, $payment_response);
                 $status = "paying";
             }
 
@@ -223,6 +225,18 @@ class BookingService
             DB::rollBack();
             throw $e;
         }
+    }
+
+    public function updateTransactionAfterPayment($transaction, $payment_response)
+    {
+        $update_transaction = $transaction->update([
+            'aqwire_transactionId' => $payment_response['data']['transactionId'],
+            'payment_url' => $payment_response['paymentUrl'],
+            'payment_status' => Str::lower($payment_response['data']['status']),
+            'payment_details' => json_encode($payment_response),
+        ]);
+
+        return $update_transaction;
     }
 
     private function storeTransaction($request, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
