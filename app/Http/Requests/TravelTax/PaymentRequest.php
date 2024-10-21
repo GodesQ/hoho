@@ -25,7 +25,7 @@ class PaymentRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'nullable|exists:users,id',
             'processing_fee' => 'required|numeric',
             'discount' => 'required|numeric',
             'total_amount' => 'required|numeric',
