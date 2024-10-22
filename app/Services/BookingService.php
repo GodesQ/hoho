@@ -75,9 +75,9 @@ class BookingService
 
             $total_amount = $this->getTotalAmountOfBooking($sub_amount, $additional_charges['total'], $total_of_discount);
 
-            if ($request->has_insurance) {
-                $total_amount += $request->total_insurance_amount;
-            }
+            // if ($request->has_insurance) {
+            //     $total_amount += $request->total_insurance_amount;
+            // }
 
             // Store transaction in database
             $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_of_discount, $additional_charges['total']);
@@ -163,7 +163,7 @@ class BookingService
                 $discounted_amount = array_key_exists('discounted_amount', $item) ? intval($item['discounted_amount']) : intval($item['amount']);
                 $sub_amount += intval($item['amount']) ?? 0;
                 $total_discount += intval($item['amount']) - $discounted_amount;
-                $total_insurance_amount += intval($item['total_insurance_amount']) ?? 0;
+                // $total_insurance_amount += intval($item['total_insurance_amount']) ?? 0;
             }
 
             // Get additional charges
@@ -173,7 +173,7 @@ class BookingService
             $total_amount = $this->getTotalAmountOfBooking($sub_amount, $additional_charges['total'], $total_discount);
 
             // Add the insurance amount in total amoi
-            $total_amount += $total_insurance_amount;
+            // $total_amount += $total_insurance_amount;
 
             // Store a transaction in database
             $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_discount, $additional_charges['total']);
@@ -282,7 +282,7 @@ class BookingService
 
             // Insurance
             $has_insurance = $item['has_insurance'] ?? $request->has_insurance ?? false;
-            $type_of_plan = $item['type_of_plan'] ?? $request->type_of_plan ?? null;
+            $type_of_plan = $item['type_of_plan'] ?? $request->type_of_plan ?? 1;
             $total_insurance_amount = $item['total_insurance_amount'] ?? $request->total_insurance_amount ?? 0.00;
 
             // Store tour reservation in database
@@ -298,7 +298,7 @@ class BookingService
                 'reference_code' => $transaction->reference_no,
                 'order_transaction_id' => $transaction->id,
                 'start_date' => $trip_start_date,
-                'has_insurance' => $has_insurance,
+                'has_insurance' => 1,
                 'end_date' => $trip_end_date,
                 'status' => 'pending',
                 'number_of_pass' => $number_of_pax,
@@ -310,15 +310,13 @@ class BookingService
             ]);
 
             // Add the Reservation Insurance
-            if ($has_insurance) {
-                TourReservationInsurance::create([
-                    'insurance_id' => $has_insurance ? rand(1000000, 100000000) : null,
-                    'reservation_id' => $reservation->id,
-                    'type_of_plan' => $type_of_plan,
-                    'total_insurance_amount' => $total_insurance_amount,
-                    'number_of_pax' => $reservation->number_of_pass,
-                ]);
-            }
+            TourReservationInsurance::create([
+                'insurance_id' => rand(1000000, 100000000),
+                'reservation_id' => $reservation->id,
+                'type_of_plan' => $type_of_plan,
+                'total_insurance_amount' => $total_insurance_amount,
+                'number_of_pax' => $reservation->number_of_pass,
+            ]);
 
             // Check if the request has a file of requirements and if it's valid
             if ($request->hasFile('requirement') && $request->file('requirement')->isValid()) {
