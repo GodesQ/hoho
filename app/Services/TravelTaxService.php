@@ -77,6 +77,11 @@ class TravelTaxService
         }
     }
 
+    public function sendTravelTaxAPI($traveltax, $transaction, $primary_passenger)
+    {
+        $requestModel = $this->travelTaxAPIRequestModel($transaction, $transaction, $primary_passenger);
+    }
+
     private function storeTransaction($request, $referenceNumber, $totalAmount)
     {
         $transaction = Transaction::create([
@@ -94,6 +99,11 @@ class TravelTaxService
         ]);
 
         return $transaction;
+    }
+
+    public function travelTaxAPIRequestModel($traveltax, $transaction, $primary_passenger)
+    {
+        return true;
     }
 
     private function storeTravelTaxPayment($request, $transaction, $totalAmount)
