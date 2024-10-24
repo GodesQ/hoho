@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enum\TransactionTypeEnum;
 use App\Mail\PaymentRequestMail;
 use App\Mail\TourProviderBookingNotification;
 use App\Models\ReservationUserCode;
@@ -9,6 +10,7 @@ use App\Models\Role;
 use App\Models\Tour;
 use App\Models\TourReservation;
 use App\Models\TourReservationCustomerDetail;
+use App\Models\TourReservationInsurance;
 use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
@@ -237,8 +239,13 @@ class TourReservationService
     {
         try {
 
-            if (! $request->firstname || ! $request->lastname || ! $request->contact_no) {
-                throw new Exception("The first name, last name and contact number must be filled in completely in your profile to continue.");
+            if (! $request->firstname || ! $request->lastname || ! $request->contact_no)
+                throw new Exception("The first name, last name and contact number must be filled in correctly in your profile to continue.");
+
+            $phone_number = "+{$request->contact_no}";
+
+            if (! preg_match('/^\+\d{10,12}$/', $phone_number)) {
+                throw new Exception("The contact number must be a valid E.164 format.");
             }
 
             $referenceNumber = $this->generateReferenceNo();
@@ -247,7 +254,7 @@ class TourReservationService
             $totalOfDiscount = 0;
             $totalOfAdditionalCharges = 0;
 
-            $items = [];
+            $items = $request->items;
 
             if (is_string($request->items) && is_array(json_decode($request->items, true))) {
                 $items = json_decode($request->items, true);
@@ -260,8 +267,10 @@ class TourReservationService
             foreach ($items as $key => $item) {
                 $subAmount += intval($item['amount']) ?? 0;
                 $totalOfDiscount += (intval($item['amount'] ?? 0) - (intval($item['discounted_amount'] ?? 0) ?? intval($item['amount'])));
-                $totalOfAdditionalCharges += $this->getTotalOfAdditionalCharges(($item['number_of_pax'] ?? 0), $additionalCharges);
             }
+
+            $additional_charges = processAdditionalCharges($subAmount);
+            $totalOfAdditionalCharges = $additional_charges['total'];
 
             # Calculate Total Amount ((sub amount - total of discount) + total of additional charges)              
             $totalAmount = ($subAmount - $totalOfDiscount) + $totalOfAdditionalCharges;
@@ -272,9 +281,9 @@ class TourReservationService
                 'sub_amount' => $subAmount ?? $totalAmount,
                 'total_additional_charges' => $totalOfAdditionalCharges ?? 0,
                 'total_discount' => $totalOfDiscount ?? 0,
-                'transaction_type' => 'book_tour',
+                'transaction_type' => TransactionTypeEnum::BOOK_TOUR,
                 'payment_amount' => $totalAmount,
-                'additional_charges' => json_encode($additionalCharges),
+                'additional_charges' => json_encode($additional_charges['list']),
                 'aqwire_paymentMethodCode' => $request->payment_method ?? null,
                 'order_date' => Carbon::now(),
                 'transaction_date' => Carbon::now(),
@@ -298,9 +307,19 @@ class TourReservationService
                     'number_of_pass' => $item['number_of_pax'],
                     'ticket_pass' => $item['type'] == 'DIY' ? $item['ticket_pass'] : null,
                     'promo_code' => $request->promo_code,
+                    'has_insurance' => 1,
                     'requirement_file_path' => null,
                     'discount_amount' => $subAmount - $totalOfDiscount,
                     'created_user_type' => 'guest'
+                ]);
+
+                // Add the Reservation Insurance
+                TourReservationInsurance::create([
+                    'insurance_id' => rand(1000000, 100000000),
+                    'reservation_id' => $reservation->id,
+                    'type_of_plan' => 1,
+                    'total_insurance_amount' => 0,
+                    'number_of_pax' => $reservation->number_of_pass,
                 ]);
 
                 TourReservationCustomerDetail::create([

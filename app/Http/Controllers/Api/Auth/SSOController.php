@@ -14,7 +14,7 @@ class SSOController extends Controller
     public function register(SSORegisterRequest $request)
     {
         $data = $request->validated();
-        $account_id = $this->generateRandomUuid();
+        $account_id = generateRandomUuid();
 
         $fullContactNumber = $request->contact_number;
         $countryCode = substr($fullContactNumber, 0, 3);
@@ -39,7 +39,7 @@ class SSOController extends Controller
         $user = User::where("email", $request->email)->first();
 
         $data = $request->validated();
-        $account_id = $this->generateRandomUuid();
+        $account_id = generateRandomUuid();
 
         $fullContactNumber = $request->contact_number;
         $countryCode = substr($fullContactNumber, 0, 3);
@@ -60,7 +60,7 @@ class SSOController extends Controller
             return response([
                 'status' => FALSE,
                 'message' => 'Your password is incorrect. Please check and try again.'
-            ]);
+            ], 400);
         }
 
         $token = $user->createToken("API TOKEN")->plainTextToken;

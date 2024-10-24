@@ -6,9 +6,11 @@ use App\Enum\TransactionTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Mail\BookingConfirmationMail;
 use App\Mail\HotelReservationReceipt;
+use App\Mail\TravelTaxMail;
 use App\Models\HotelReservation;
 use App\Models\Order;
 use App\Models\ReservationUserCode;
+use App\Models\TravelTaxPassenger;
 use App\Models\TravelTaxPayment;
 use App\Services\SenangdaliService;
 use App\Services\TourReservationService;
@@ -126,6 +128,9 @@ class AqwireController extends Controller
     public function travelTaxSuccess(Request $request)
     {
         try {
+            ini_set('max_execution_time', 300); // Increase execution time
+            ini_set('memory_limit', '256M'); // Optional: increase memory limit
+
             DB::beginTransaction();
 
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
@@ -140,10 +145,21 @@ class AqwireController extends Controller
 
             $travel_tax_payment = TravelTaxPayment::where('transaction_id', $transaction->id)->first();
 
+            $primary_passenger = TravelTaxPassenger::where('payment_id', $travel_tax_payment->id)
+                ->where('passenger_type', 'primary')->first();
+
+            // dd($primary_passenger);
+
             $travel_tax_payment->update([
                 'payment_method' => $request->paymentMethodCode,
                 'status' => 'paid',
             ]);
+
+
+            $pdf = PDF::loadView('pdf.travel-tax', $travel_tax_payment->load('passengers', 'transaction')->toArray());
+            // dd($pdf->loadView('pdf.travel-tax')->output());
+
+            Mail::to($primary_passenger->email_address)->send(new TravelTaxMail($travel_tax_payment, $pdf));
 
             DB::commit();
 
@@ -151,6 +167,7 @@ class AqwireController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
+            dd($e);
             abort(500);
         }
     }

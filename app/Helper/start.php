@@ -110,3 +110,33 @@ if (! function_exists('getDevelopersEmail')) {
         ];
     }
 }
+
+if (! function_exists("processAdditionalCharges")) {
+    function processAdditionalCharges(float|int $sub_amount, array $additional = [])
+    {
+        $additional_charges = [];
+
+        $convenience_fee = getConvenienceFee();
+
+        $total_of_additional_charges = $convenience_fee['type'] === 'percentage' ? $sub_amount * $convenience_fee['amount'] : $sub_amount + $convenience_fee['amount'];
+
+        array_push($additional_charges, ['convenience_fee' => $convenience_fee]);
+
+        return [
+            'list' => $additional_charges,
+            'total' => $total_of_additional_charges,
+        ];
+    }
+}
+
+if (! function_exists('generateRandomUuid')) {
+    function generateRandomUuid()
+    {
+        $data = random_bytes(16);
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // Version 4 (random)
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // Variant (RFC 4122)
+
+        $uuid = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+        return $uuid;
+    }
+}
