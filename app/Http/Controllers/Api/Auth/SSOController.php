@@ -72,12 +72,12 @@ class SSOController extends Controller
             ]));
         }
 
-        if (! Hash::check($request->password, $user->password)) {
-            return response([
-                'status' => FALSE,
-                'message' => 'Your password is incorrect. Please check and try again.'
-            ], 400);
-        }
+        // if (! Hash::check($request->password, $user->password)) {
+        //     return response([
+        //         'status' => FALSE,
+        //         'message' => 'Your password is incorrect. Please check and try again.'
+        //     ], 400);
+        // }
 
         $token = $user->createToken("API TOKEN")->plainTextToken;
 
