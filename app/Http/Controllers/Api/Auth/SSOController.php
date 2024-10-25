@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\SSOLoginRequest;
@@ -36,7 +37,22 @@ class SSOController extends Controller
 
     public function login(SSORegisterRequest $request)
     {
-        $user = User::where("email", $request->email)->first();
+
+        $admin = Admin::where("email", $request->email)
+            ->orWhere('username', $request->username)->exists();
+
+        if ($admin) {
+            return response([
+                'status' => false,
+                'message' => 'An account with this email or username already exists in the administration staff.'
+            ], 400);
+        }
+
+        $user = User::where(function ($query) use ($request) {
+            $query->where('email', $request->email)
+                ->orWhere('username', $request->username);
+        })
+            ->where('login_with', 'egov')->first();
 
         $data = $request->validated();
         $account_id = generateRandomUuid();
