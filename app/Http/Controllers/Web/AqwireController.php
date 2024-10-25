@@ -148,16 +148,26 @@ class AqwireController extends Controller
             $primary_passenger = TravelTaxPassenger::where('payment_id', $travel_tax_payment->id)
                 ->where('passenger_type', 'primary')->first();
 
-            // dd($primary_passenger);
-
             $travel_tax_payment->update([
                 'payment_method' => $request->paymentMethodCode,
                 'status' => 'paid',
             ]);
 
+            $data = $travel_tax_payment->load('passengers', 'transaction')->toArray();
 
-            $pdf = PDF::loadView('pdf.travel-tax', $travel_tax_payment->load('passengers', 'transaction')->toArray());
-            // dd($pdf->loadView('pdf.travel-tax')->output());
+            $travel_tax_qrcode_value = [
+                'transaction_number' => $travel_tax_payment->transaction_number,
+                'passengers' => $travel_tax_payment->passengers->toArray()->map(function ($passenger) {
+                    return [
+                        'name' => trim($passenger->firstname . ' ' . $passenger->lastname . ($passenger->suffix ? ' ' . $passenger->suffix : '')),
+                        'ticket_number' => $passenger->ticket_number,
+                    ];
+                })
+            ];
+
+            $qrcode = base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate(json_encode($travel_tax_qrcode_value)));
+
+            $pdf = PDF::loadView('pdf.travel-tax', ['data' => $data, 'qrcode' => $qrcode]);
 
             Mail::to($primary_passenger->email_address)->send(new TravelTaxMail($travel_tax_payment, $pdf));
 

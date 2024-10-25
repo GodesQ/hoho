@@ -82,10 +82,8 @@ class SSOController extends Controller
         $token = $user->createToken("API TOKEN")->plainTextToken;
 
         return response([
-            'status' => TRUE,
             'user' => $user,
             'token' => $token,
-            'message' => 'User Found'
         ], 200);
     }
 }
