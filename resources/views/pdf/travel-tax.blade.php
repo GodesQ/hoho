@@ -116,7 +116,7 @@
 
                             {{-- QR CODE AND NAME WITH SIGNATURE OF MANAGER --}}
                             <td width="30%" align="center">
-                                <img src="data:image/png;base64, {{ $qrcode }} " style="width: 75px;">
+                                <img src="data:image/png;base64, {{ $qrcode }} ">
                                 <div style="margin-bottom: 30px;"></div>
                                 <div style="font-weight: bold;">ATTY. BUMBO S. CRUZ</div>
                                 <div style="font-style: italic;">Manager</div>

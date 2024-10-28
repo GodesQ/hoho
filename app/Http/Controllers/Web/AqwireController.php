@@ -111,7 +111,7 @@ class AqwireController extends Controller
                 $this->tourReservationService->generateAndSendReservationCode($reservation->number_of_pass, $reservation);
 
                 if ($reservation->has_insurance) {
-                    $senangdali_insurance_request = $this->senangdaliService->__map_request_model($transaction->user, $reservation);
+                    $senangdali_insurance_request = $this->senangdaliService->__map_request_model($reservation->customer_details, $reservation);
                     $this->senangdaliService->purchasing($senangdali_insurance_request);
                 }
             }
@@ -121,6 +121,8 @@ class AqwireController extends Controller
             return redirect('aqwire/payment/view_success');
         } catch (Exception $e) {
             DB::rollBack();
+
+            dd($e);
             abort(500);
         }
     }
@@ -157,15 +159,15 @@ class AqwireController extends Controller
 
             $travel_tax_qrcode_value = [
                 'transaction_number' => $travel_tax_payment->transaction_number,
-                'passengers' => $travel_tax_payment->passengers->toArray()->map(function ($passenger) {
+                'passengers' => $travel_tax_payment->passengers->map(function ($passenger) {
                     return [
                         'name' => trim($passenger->firstname . ' ' . $passenger->lastname . ($passenger->suffix ? ' ' . $passenger->suffix : '')),
                         'ticket_number' => $passenger->ticket_number,
                     ];
-                })
+                })->toArray()  // Convert to an array after mapping
             ];
 
-            $qrcode = base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate(json_encode($travel_tax_qrcode_value)));
+            $qrcode = base64_encode(QrCode::format('svg')->size(100)->errorCorrection('H')->generate(json_encode($travel_tax_qrcode_value)));
 
             $pdf = PDF::loadView('pdf.travel-tax', ['data' => $data, 'qrcode' => $qrcode]);
 

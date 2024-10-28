@@ -13,31 +13,35 @@ use Exception;
 use Illuminate\Http\Request;
 
 class TourReservationController extends Controller
-{   
+{
     protected $bookingService;
-    public function __construct(BookingService $bookingService) {
+    public function __construct(BookingService $bookingService)
+    {
         $this->bookingService = $bookingService;
     }
 
-    public function userTourReservations(Request $request, $user_id) {
+    public function userTourReservations(Request $request, $user_id)
+    {
         $reservations = TourReservation::where('reserved_user_id', $user_id)->with('tour', 'feedback')->get();
         return TourReservationResource::collection($reservations);
     }
 
-    public function show(Request $request, $tour_reservation_id) {
+    public function show(Request $request, $tour_reservation_id)
+    {
         return TourReservationResource::make(TourReservation::findOrFail($tour_reservation_id));
     }
 
-    public function userTourReservationDates(Request $request, $user_id) {
+    public function userTourReservationDates(Request $request, $user_id)
+    {
         $tour_reservations = TourReservation::select('id', 'start_date', 'end_date')
-                ->where('reserved_user_id', $user_id)
-                ->with('tour', 'feedback')
-                ->get();
+            ->where('reserved_user_id', $user_id)
+            ->with('tour', 'feedback')
+            ->get();
 
         $disabledDates = [];
 
         foreach ($tour_reservations as $reservation) {
-            if($reservation->start_date && $reservation->end_date) {
+            if ($reservation->start_date && $reservation->end_date) {
                 $startDate = $reservation->start_date;
                 $endDate = $reservation->end_date;
 
@@ -54,7 +58,8 @@ class TourReservationController extends Controller
         ];
     }
 
-    public function store(StoreRequest $request, TourReservationService $tourReservationService) {
+    public function store(StoreRequest $request, TourReservationService $tourReservationService)
+    {
         try {
             $result = $this->bookingService->processMultipleBookingReservation($request);
 
@@ -73,8 +78,14 @@ class TourReservationController extends Controller
         // return $tourReservationService->storeRegisteredUserReservation($request);
     }
 
-    public function storeGuestReservation(Request $request, TourReservationService $tourReservationService) {
+    public function storeGuestReservation(Request $request, TourReservationService $tourReservationService)
+    {
         $mailService = new MailService;
         return $tourReservationService->storeAnonymousUserReservation($request, $mailService);
+    }
+
+    public function storeGuestSingleReservation(Request $request)
+    {
+
     }
 }

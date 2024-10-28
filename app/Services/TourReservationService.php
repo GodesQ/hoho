@@ -242,14 +242,13 @@ class TourReservationService
             if (! $request->firstname || ! $request->lastname || ! $request->contact_no)
                 throw new Exception("The first name, last name and contact number must be filled in correctly in your profile to continue.");
 
-            $phone_number = "+{$request->contact_no}";
+            $phone_number = $request->contact_no;
 
             if (! preg_match('/^\+\d{10,12}$/', $phone_number)) {
                 throw new Exception("The contact number must be a valid E.164 format.");
             }
 
             $referenceNumber = $this->generateReferenceNo();
-            $additionalCharges = $this->generateAdditionalCharges();
             $subAmount = 0;
             $totalOfDiscount = 0;
             $totalOfAdditionalCharges = 0;
@@ -304,7 +303,7 @@ class TourReservationService
                     'order_transaction_id' => $transaction->id,
                     'start_date' => $item['trip_date'],
                     'end_date' => $item['type'] == 'Guided' || $item['type'] == 'Guided Tour' ? Carbon::parse($item['trip_date'])->addDays(1) : $this->getDateOfDIYPass($item['ticket_pass'], $item['trip_date']),
-                    'number_of_pass' => $item['number_of_pax'],
+                    'number_of_pass' => $item['number_of_pass'],
                     'ticket_pass' => $item['type'] == 'DIY' ? $item['ticket_pass'] : null,
                     'promo_code' => $request->promo_code,
                     'has_insurance' => 1,
@@ -349,13 +348,13 @@ class TourReservationService
                     'category' => 'Checkout'
                 ],
                 'redirectUrl' => [
-                    'success' => env('AQWIRE_TEST_SUCCESS_URL') . $transaction->id,
-                    'cancel' => env('AQWIRE_TEST_CANCEL_URL') . $transaction->id,
-                    'callback' => env('AQWIRE_TEST_CALLBACK_URL') . $transaction->id
+                    'success' => env('AQWIRE_SUCCESS_URL') . $transaction->id,
+                    'cancel' => env('AQWIRE_CANCEL_URL') . $transaction->id,
+                    'callback' => env('AQWIRE_CALLBACK_URL') . $transaction->id
                 ],
                 'note' => 'Checkout for Tour Reservation',
                 'metadata' => [
-                    'Convenience Fee' => '99.00' . ' ' . 'Per Pax',
+                    'Convenience Fee' => '5%' . ' ' . 'Per Pax',
                 ]
             ];
 
@@ -389,7 +388,6 @@ class TourReservationService
                 'payment_url' => $responseData['paymentUrl'] ?? null,
                 'payment_status' => Str::lower($responseData['data']['status'] ?? ''),
                 'payment_details' => json_encode($responseData),
-                'additional_charges' => json_encode($additionalCharges)
             ]);
 
             $this->sendMultipleBookingNotification($items, $transaction, $request);
@@ -418,13 +416,6 @@ class TourReservationService
                 'error' => $e->getMessage()
             ], 400);
 
-        } catch (\ErrorException $e) {
-            return response([
-                'status' => 'failed',
-                'message' => 'Transaction Failed to Submit',
-                'error' => $e->getMessage()
-            ], 400);
-
         } catch (Exception $e) {
             return response([
                 'status' => 'failed',
@@ -439,7 +430,39 @@ class TourReservationService
                 'error' => $e->getMessage()
             ], 400);
         }
+    }
 
+    public function storeAnonymousUserSingleReservation(Request $request)
+    {
+        try {
+            if (! $request->firstname || ! $request->lastname || ! $request->contact_no)
+                throw new Exception("The first name, last name and contact number must be filled in correctly in your profile to continue.");
+
+            $phone_number = $request->contact_no;
+
+            if (! preg_match('/^\+\d{10,12}$/', $phone_number)) {
+                throw new Exception("The contact number must be a valid E.164 format.");
+            }
+
+            $sub_amount = intval($request->sub_amount) ?? 0;
+            $total_of_discount = 0;
+
+            // Get additional charges
+            $additional_charges = processAdditionalCharges($sub_amount);
+
+            $total_amount = $this->getTotalAmountOfBooking($sub_amount, $additional_charges['total'], $total_of_discount);
+
+            $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_of_discount, $additional_charges['total']);
+
+            // Store tour reservation and the guest details
+            // $reservation = $this->storeReservation($request, $transaction);
+            $reservation = TourReservation::create([
+
+            ]);
+
+        } catch (Exception $exception) {
+
+        }
     }
 
     public function update(Request $request)
@@ -462,7 +485,9 @@ class TourReservationService
                 if ($reservation->transaction->aqwire_paymentMethodCode === 'cash') {
                     $this->generateAndSendReservationCode($reservation->number_of_pass, $reservation);
                 } else {
-                    $this->handlePaymentForApprovedReservation($reservation);
+                    if (! $reservation->transaction->payment_url) {
+                        $this->handlePaymentForApprovedReservation($reservation);
+                    }
                 }
             }
 
@@ -476,15 +501,39 @@ class TourReservationService
         }
     }
 
+    private function storeTransaction($request, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
+    {
+        $reference_no = generateBookingReferenceNumber();
+
+        $transaction = Transaction::create([
+            'reference_no' => $reference_no,
+            'transaction_by_id' => $request->reserved_user_id,
+            'sub_amount' => $subAmount ?? $totalAmount,
+            'total_additional_charges' => $totalOfAdditionalCharges ?? 0,
+            'total_discount' => $totalOfDiscount ?? 0,
+            'transaction_type' => TransactionTypeEnum::BOOK_TOUR,
+            'payment_amount' => $totalAmount,
+            'additional_charges' => json_encode($additional_charges),
+            'payment_status' => $request->payment_method == "cash" ? 'success' : 'pending',
+            'resolution_status' => 'pending',
+            'aqwire_paymentMethodCode' => $request->payment_method == "cash" ? "cash" : null,
+            'order_date' => Carbon::now(),
+            'transaction_date' => Carbon::now(),
+        ]);
+
+        return $transaction;
+    }
+
     private function handlePaymentForApprovedReservation($reservation)
     {
-        $payment_request_model = $this->aqwireService->createRequestModel($reservation->transaction, $reservation->user);
+        if (! $reservation->transaction->payment_url) {
+            $payment_request_model = $this->aqwireService->createRequestModel($reservation->transaction, $reservation->user);
 
-        $payment_response = $this->aqwireService->pay($payment_request_model);
+            $payment_response = $this->aqwireService->pay($payment_request_model);
 
-        $this->updateTransactionAfterPayment($reservation->transaction, $payment_response);
-
-        $this->mailService->sendPaymentRequestMail($reservation->transaction, $payment_response['paymentUrl'], $payment_response['data']['expiresAt']);
+            $this->updateTransactionAfterPayment($reservation->transaction, $payment_response);
+            $this->mailService->sendPaymentRequestMail($reservation->transaction, $payment_response['paymentUrl'], $payment_response['data']['expiresAt']);
+        }
     }
 
     public function generateAndSendReservationCode($number_of_pax, $reservation)
@@ -761,6 +810,14 @@ class TourReservationService
         ];
 
         return $charges;
+    }
+
+    private function getTotalAmountOfBooking($subAmount, $totalOfAdditionalCharges, $totalOfDiscount)
+    {
+        # NOTE: The amount for each booking has already been set.
+        # This function is for additional charges, which the discounted amount calculated from all of the bookings for this transaction.
+
+        return ($subAmount - $totalOfDiscount) + $totalOfAdditionalCharges;
     }
 
     private function getTotalOfAdditionalCharges($number_of_pax, $additional_charges)
