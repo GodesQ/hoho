@@ -49,7 +49,18 @@
         </div>
 
         <div class="first-section">
-            <h2>Hi! James Garnfil</h2>
+            <h2>Payment Confirmation</h2>
+            <p>Thank you for your payment through the TIEZA Online Payment System. This document serves as your
+                Acknowledgement Receipt for the travel tax paid, which is required for international travel departing
+                from the Philippines.</p>
+
+            <h3>For Assistance</h3>
+            <p> For any inquiries or concerns regarding this payment, you may contact the TIEZA Travel Tax Helpdesk:
+            </p>
+
+            <div>
+                Email: <a href="mailto:traveltax.helpdesk@tieza.gov.ph">traveltax.helpdesk@tieza.gov.ph</a>
+            </div>
         </div>
     </div>
 </body>
