@@ -47,7 +47,7 @@
                             Payment</span></div>
                 </div>
 
-                <table width="100%" cellspacing="0px" cellpadding="0" style="margin-top: 15px;">
+                <table width="100%" cellspacing="0px" cellpadding="0" style="margin-top: 15px; z-index: 10;">
                     <tbody>
                         <tr>
                             <td width="70%">
