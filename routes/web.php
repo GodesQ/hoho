@@ -73,7 +73,7 @@ Route::get('/', function () {
     }
 });
 
-Route::view('travel-tax-pdf', 'pdf.travel-tax');
+Route::view('travel-tax-pdf', 'pdf.travel-tax-test');
 
 Route::get('delete-account', [DeleteAccountController::class, 'index'])->name('delete-account.index');
 Route::post('delete-account', [DeleteAccountController::class, 'confirmDeleteAccountEmail'])->name('delete-account.post');

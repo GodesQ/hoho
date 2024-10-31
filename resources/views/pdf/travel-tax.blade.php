@@ -6,6 +6,10 @@
     <title>Travel Tax PDF</title>
 
     <style>
+        * {
+            font-size: 14px;
+        }
+
         @page {
             size: letter;
         }
@@ -26,11 +30,15 @@
     <div style="padding: 0px;">
         <div style="border: 1px solid dodgerblue; width: 100%; height: 750px; position: relative;">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/newteccert-01-01-r02.png"
-                style="position: absolute; width: 100%; height: 100%; left: 0;top:0; opacity: 0.6;" alt="">
+                style="position: absolute; width: 100%; height: 100%; left: 0; top: 0; opacity: 0.6;" alt="">
+            <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/map1.png" alt=""
+                style="position: absolute; bottom: 30px; right: 10px; width: 290px; z-index: 1; transform: rotate(0deg);">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/uplyt.png" alt=""
-                style="width: 100%; position: absolute; left: 0; top: 0;">
+                style="width: 100%; position: absolute; left: 0; top: 0; z-index: 2;">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/bottomlyt.png"
-                alt="" style="width: 100%; position:absolute;bottom:0px;left:0px;">
+                alt="" style="width: 100%; position:absolute; bottom: 0px; left: 0px; z-index: 3;">
+            <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/love.png"
+                style="width: 120px; position:absolute; bottom: 60px; left: 40px;" alt="">
 
             <div style="position: relative; padding: 0px 40px;">
                 {{-- AR NUMBER DIV --}}
@@ -72,22 +80,22 @@
                                         <span
                                             style="font-weight: 500;">{{ $data['passengers'][0]['email_address'] }}</span>
                                     </div>
-                                    <div style="margin-top: 5px; font-size: 15px;">PAYMENT CHANNEL:
+                                    <div style="margin-top: 5px; font-size: 14px;">PAYMENT CHANNEL:
                                         <span
                                             style="font-weight: 500;">{{ $data['transaction']['aqwire_paymentMethodCode'] }}</span>
                                     </div>
-                                    <div style="margin-top: 5px; font-size: 15px;">TRANSACTION REFERENCE NUMBER:
+                                    <div style="margin-top: 5px; font-size: 14px;">TRANSACTION REFERENCE NUMBER:
                                         <span style="font-weight: 500;">{{ $data['transaction_number'] }}</span>
                                     </div>
-                                    <div style="margin-top: 5px; font-size: 15px;">DATE AND TIME:
+                                    <div style="margin-top: 5px; font-size: 14px;">DATE AND TIME:
                                         <span
                                             style="font-weight: 500;">{{ Carbon::parse($data['transaction_time'])->format('F d, Y h:i A') }}</span>
                                     </div>
-                                    <div style="margin-top: 5px; font-size: 15px;">PAYMENT REFERENCE NUMBER:
+                                    <div style="margin-top: 5px; font-size: 14px;">PAYMENT REFERENCE NUMBER:
                                         <span style="font-weight: 500;">{{ $data['reference_number'] }}</span>
                                     </div>
                                 </div>
-                                <table width="100%" style="width: 100%; margin-top: 15px;" cellpadding="2">
+                                <table width="100%" style="width: 100%; margin-top: 14px;" cellpadding="2">
                                     <thead>
                                         <tr>
                                             <th align="left" style="text-decoration: underline;">PAYMENT SUMMARY</th>
@@ -115,17 +123,19 @@
                             </td>
 
                             {{-- QR CODE AND NAME WITH SIGNATURE OF MANAGER --}}
-                            <td width="30%" align="center">
-                                <img src="data:image/png;base64, {{ $qrcode }} ">
-                                <div style="margin-bottom: 30px;"></div>
-                                <div style="font-weight: bold;">ATTY. BUMBO S. CRUZ</div>
-                                <div style="font-style: italic;">Manager</div>
-                                <div style="font-style: italic;">Travel Tax Department</div>
+                            <td width="30%" align="center" style="z-index: 10; position: relative;">
+                                <div style="margin-top: 40px;">
+                                    <img src="data:image/png;base64, {{ $qrcode }} ">
+                                    <div style="margin-bottom: 30px;"></div>
+                                    <div style="font-weight: bold;">ATTY. BUMBO S. CRUZ</div>
+                                    <div style="font-style: italic;">Manager</div>
+                                    <div style="font-style: italic;">Travel Tax Department</div>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <div>
+                <div style="position: relative; z-index: 10;">
                     <p style="font-size: 14px;">For question or concerns, you may email as at <a
                             href="traveltax.helpdesk@tieza.gov.ph">traveltax.helpdesk@tieza.gov.ph</a></p>
                     <p style="font-size: 14px;">Please print two (2) copies of this AR and present them at the airline
