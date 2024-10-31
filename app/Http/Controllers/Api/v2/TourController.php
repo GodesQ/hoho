@@ -69,14 +69,16 @@ class TourController extends Controller
             ], 400);
         }
 
-        $tours = Tour::where('type', 'Layover Tour')->where('status', 1)->get();
+        $tours = Tour::where('type', 'Layover Tour')
+            ->where('status', 1)
+            ->get();
+
         foreach ($tours as $tour) {
             $tour->setAppends([]);
         }
 
         return response([
-            'status' => TRUE,
-            'tours' => $tours
+            'tours' => TourResource::collection($tours),
         ]);
 
     }

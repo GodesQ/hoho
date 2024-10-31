@@ -75,10 +75,6 @@ class BookingService
 
             $total_amount = $this->getTotalAmountOfBooking($sub_amount, $additional_charges['total'], $total_of_discount);
 
-            // if ($request->has_insurance) {
-            //     $total_amount += $request->total_insurance_amount;
-            // }
-
             // Store transaction in database
             $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_of_discount, $additional_charges['total']);
 
@@ -137,7 +133,7 @@ class BookingService
             $user = User::where('id', $request->reserved_user_id)->first();
 
             if (! $user->firstname || ! $user->lastname || ! $user->contact_no)
-                throw new Exception("The first name, last name and contact number must be filled in correctly in your profile to continue.");
+                throw new Exception(message: "The first name, last name and contact number must be filled in correctly in your profile to continue.");
 
             $phone_number = "+{$user->countryCode}{$user->contact_no}";
 

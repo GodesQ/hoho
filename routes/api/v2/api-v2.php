@@ -52,6 +52,7 @@ Route::group(['middleware' => ['api_base_authorization']], function () {
     Route::get('transports/{transport_id}', [TransportController::class, 'show']);
 
     Route::post('tour-reservations', [TourReservationController::class, 'store']);
+    Route::post('tour-reservations/single/guest', [TourReservationController::class, 'storeGuestSingleReservation']);
     // Route::post('tour-reservations/bulk', [TourReservationController::class, 'bulk']);
     Route::post('tour-reservations/guest', [TourReservationController::class, 'storeGuestReservation']);
     Route::get('tour-reservations/users/{user_id}/reservation-dates', [TourReservationController::class, 'userTourReservationDates']);
