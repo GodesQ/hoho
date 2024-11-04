@@ -175,6 +175,20 @@ class FoodController extends Controller
     public function destroy($id)
     {
         $food = Food::findOrFail($id);
+
+        $directory = public_path('assets/img/products/') . $food->id;
+        $files = glob($directory . '/*');
+
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                @unlink($file);
+            }
+        }
+
+        // Now remove the directory
+        if (is_dir($directory))
+            @rmdir($directory);
+
         $food->delete();
 
         return response([
