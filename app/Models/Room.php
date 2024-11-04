@@ -15,6 +15,7 @@ class Room extends Model
         "image",
         "price",
         "available_pax",
+        "number_of_rooms",
         "amenities",
         "description",
         "other_images",
@@ -33,7 +34,8 @@ class Room extends Model
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
-    public function merchant() {
+    public function merchant()
+    {
         return $this->belongsTo(Merchant::class, "merchant_id");
     }
 }

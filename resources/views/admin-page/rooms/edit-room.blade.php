@@ -62,8 +62,8 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="image" class="form-label">Image <span
-                                                class="text-danger">*</span> <span>(Max File Size: 2MB)</span></label>
+                                        <label for="image" class="form-label">Image <span class="text-danger">*</span>
+                                            <span>(Max File Size: 2MB)</span></label>
                                         <input type="file" class="form-control" name="image" id="image">
                                         <span class="text-danger danger">
                                             @error('image')
@@ -91,7 +91,8 @@
                                     ?>
                                     <div class="mb-3">
                                         <label for="product_categories" class="form-label">Product Categories </label>
-                                        <select name="product_categories[]" id="product_categories" class="select2" multiple>
+                                        <select name="product_categories[]" id="product_categories" class="select2"
+                                            multiple>
                                             @foreach ($product_categories as $product_category)
                                                 <option value="{{ $product_category->id }}"
                                                     {{ in_array($product_category->id, $room_product_categories) ? 'selected' : null }}>
@@ -117,6 +118,19 @@
                                     <div class="mb-3">
                                         <label for="amenities" class="form-label">Amenities</label>
                                         <textarea name="amenities" id="amenities" cols="30" rows="5" class="form-control">{{ $room->amenities }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="number-of-rooms-field" class="form-label">Number Of Room
+                                            Available</label>
+                                        <input type="int" class="form-control" name="number_of_rooms"
+                                            id="number-of-rooms-field" value="{{ $room->number_of_rooms }}">
+                                        <span class="text-danger danger">
+                                            @error('number_of_rooms')
+                                                {{ $message }}
+                                            @enderror
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -231,10 +245,11 @@
                             <h6>Preview of Main Image</h6>
                             @if ($room->image)
                                 <img src="{{ URL::asset('assets/img/rooms/' . $room->id . '/' . $room->image) }}"
-                                    alt="{{ $room->room_name }}" style="border-radius: 10px !important;" id="previewImage" width="100%">
+                                    alt="{{ $room->room_name }}" style="border-radius: 10px !important;"
+                                    id="previewImage" width="100%">
                             @else
                                 <img src="{{ URL::asset('assets/img/default-image.jpg') }}" alt="Default Image"
-                                style="border-radius: 10px !important;" id="previewImage" width="100%">
+                                    style="border-radius: 10px !important;" id="previewImage" width="100%">
                             @endif
                         </div>
                     </div>

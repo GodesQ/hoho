@@ -27,10 +27,10 @@ class RoomController extends Controller
 
             $rooms = $rooms->with('merchant');
 
-            if($user->role === Role::MERCHANT_HOTEL_ADMIN) {
+            if ($user->role === Role::MERCHANT_HOTEL_ADMIN) {
                 $rooms = $rooms->where('merchant_id', $user->merchant_id);
             }
-            
+
             return DataTables::of($rooms)
                 ->addIndexColumn()
                 ->addColumn('merchant', function ($row) {
@@ -40,7 +40,7 @@ class RoomController extends Controller
                     return '₱ ' . number_format($row->price, 2);
                 })
                 ->addColumn('status', function ($row) {
-                    if($row->is_active) {
+                    if ($row->is_active) {
                         return '<span class="badge bg-label-success">Active</span>';
                     } else {
                         return '<span class="badge bg-label-warning">Inactive</span>';
@@ -48,7 +48,7 @@ class RoomController extends Controller
                 })
                 ->addColumn('actions', function ($row) {
                     return '<div class="dropdown">
-                                        <a href="'. route('admin.rooms.edit', $row->id) .'" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a> 
+                                        <a href="' . route('admin.rooms.edit', $row->id) . '" class="btn btn-outline-primary btn-sm"><i class="bx bx-edit-alt me-1"></i></a> 
                                         <button type="button" id="' . $row->id . '" class="btn btn-outline-danger remove-btn btn-sm"><i class="bx bx-trash me-1"></i></button>
                                     </div>';
                 })
@@ -60,14 +60,14 @@ class RoomController extends Controller
     }
 
     public function create(Request $request)
-    {   
+    {
         $user = Auth::guard('admin')->user();
-        if($user->role == Role::MERCHANT_HOTEL_ADMIN) {
-            $merchants = Merchant::where('type','Hotel')->where('id', $user->merchant_id)->get();
+        if ($user->role == Role::MERCHANT_HOTEL_ADMIN) {
+            $merchants = Merchant::where('type', 'Hotel')->where('id', $user->merchant_id)->get();
         } else {
             $merchants = Merchant::where('type', 'Hotel')->get();
         }
-        
+
 
         $product_categories = ProductCategory::get();
         return view('admin-page.rooms.create-room', compact('merchants', 'product_categories'));
@@ -100,10 +100,10 @@ class RoomController extends Controller
 
         $images = [];
 
-        if($request->has('other_images')) {
+        if ($request->has('other_images')) {
             foreach ($request->other_images as $key => $image) {
                 $time = time() . $key;
-                $name = Str::snake(Str::lower($request->room_name)) . '_' . 'other_image' . '_'  . $time;
+                $name = Str::snake(Str::lower($request->room_name)) . '_' . 'other_image' . '_' . $time;
                 $filename = $name . '.' . $image->getClientOriginalExtension();
                 $image->move(public_path() . '/assets/img/rooms/' . $room->id, $filename);
 
@@ -127,8 +127,8 @@ class RoomController extends Controller
     public function edit(Request $request)
     {
         $user = Auth::guard('admin')->user();
-        if($user->role == Role::MERCHANT_HOTEL_ADMIN) {
-            $merchants = Merchant::where('type','Hotel')->where('id', $user->merchant_id)->get();
+        if ($user->role == Role::MERCHANT_HOTEL_ADMIN) {
+            $merchants = Merchant::where('type', 'Hotel')->where('id', $user->merchant_id)->get();
         } else {
             $merchants = Merchant::where('type', 'Hotel')->get();
         }
@@ -143,7 +143,6 @@ class RoomController extends Controller
     public function update(UpdateRequest $request)
     {
         $data = $request->except('image', 'other_images');
-        // dd($request->all());
         $room = Room::where('id', $request->id)->firstOrFail();
 
         $room->update(
@@ -174,10 +173,10 @@ class RoomController extends Controller
         $images = $room->other_images ? json_decode($room->other_images) : [];
 
         // Other Images
-        if($request->has('other_images')) {
+        if ($request->has('other_images')) {
             foreach ($request->other_images as $key => $image) {
                 $time = time() . $key;
-                $name = Str::snake(Str::lower($request->name)) . '_' . 'other_image' . '_'  . $time;
+                $name = Str::snake(Str::lower($request->name)) . '_' . 'other_image' . '_' . $time;
                 $filename = $name . '.' . $image->getClientOriginalExtension();
                 $image->move(public_path() . '/assets/img/rooms/' . $room->id, $filename);
 
@@ -198,7 +197,7 @@ class RoomController extends Controller
 
         $directory = public_path('assets/img/rooms/') . $room->id;
         $files = glob($directory . '/*');
-        
+
         foreach ($files as $file) {
             if (is_file($file)) {
                 @unlink($file);
@@ -206,7 +205,8 @@ class RoomController extends Controller
         }
 
         // Now remove the directory
-        if (is_dir($directory)) @rmdir($directory);
+        if (is_dir($directory))
+            @rmdir($directory);
 
         $room->delete();
 
@@ -216,12 +216,13 @@ class RoomController extends Controller
         ];
     }
 
-    public function removeImage(Request $request) {
+    public function removeImage(Request $request)
+    {
         $room = Room::where('id', $request->id)->first();
         $images = json_decode($room->other_images);
         $image_path = $request->image_path;
 
-        if(is_array($images)) {
+        if (is_array($images)) {
             if (($key = array_search($image_path, $images)) !== false) {
                 unset($images[$key]);
                 $old_upload_image = public_path('/assets/img/rooms/') . $room->id . '/' . $image_path;
@@ -233,7 +234,7 @@ class RoomController extends Controller
             'other_images' => json_encode(array_values($images))
         ]);
 
-        if($update) {
+        if ($update) {
             return response([
                 'status' => TRUE,
                 'message' => 'Image successfully remove'
@@ -241,13 +242,14 @@ class RoomController extends Controller
         }
     }
 
-    public function lookup(Request $request) {
+    public function lookup(Request $request)
+    {
         $type = $request->type;
 
         $rooms = Room::where('room_name', $request->q)->where('is_active', true)->get();
 
         // Look up by merchant
-        if($type == 'merchant') {
+        if ($type == 'merchant') {
             $rooms = Room::where('merchant_id', $request->q)->where('is_active', true)->get();
         }
 
