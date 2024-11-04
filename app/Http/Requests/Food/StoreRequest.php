@@ -27,11 +27,11 @@ class StoreRequest extends FormRequest
             "title" => "required",
             "merchant_id" => "required",
             "price" => "required",
-            "image" => "nullable|image|max:2048",
+            "image" => "nullable|mimes:png,jpg,jpeg|max:2048",
             "food_category_id" => "required",
             "description" => "nullable",
             "note" => "nullable",
-            'other_images.*' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'other_images.*' => 'nullable|mimes:png,jpg,jpeg|max:2048',
         ];
     }
 }

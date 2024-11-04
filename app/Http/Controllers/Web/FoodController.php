@@ -65,8 +65,9 @@ class FoodController extends Controller
         return view('admin-page.foods.create-food', compact('merchants', 'foodCategories'));
     }
 
-    public function store(StoreRequest $request)
+    public function store(Request $request)
     {
+
         $data = $request->except('image', 'other_images', '_token');
 
         $food = Food::create(

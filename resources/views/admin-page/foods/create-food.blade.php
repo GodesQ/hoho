@@ -9,8 +9,15 @@
             <a href="{{ route('admin.foods.index') }}" class="btn btn-dark"><i class="bx bx-undo"></i> Back to List</a>
         </div>
 
-        <form action="{{ route('admin.foods.store') }}" method="POST">
+        <form action="{{ route('admin.foods.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
+            @if ($errors->any())
+                @foreach ($errors->all() as $error)
+                    <div class="alert alert-danger">
+                        {{ $error }}
+                    </div>
+                @endforeach
+            @endif
             <div class="row">
                 <div class="col-xl-8">
                     <div class="card">
