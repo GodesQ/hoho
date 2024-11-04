@@ -26,7 +26,7 @@ class TravelTaxService
         try {
             DB::beginTransaction();
 
-            $referenceNumber = $this->generateReferenceNo();
+            $referenceNumber = generateTravelTaxReferenceNumber();
 
             $totalAmount = $this->computeTotalAmount($request->amount, $request->processing_fee, $request->discount);
 
@@ -41,12 +41,12 @@ class TravelTaxService
                 $passenger_data = array_merge(['payment_id' => $travel_tax_payment->id], $passenger);
                 $passenger = TravelTaxPassenger::create($passenger_data);
 
-                if ($passenger['passenger_type'] === 'primary' && !$primary_passenger) {
+                if ($passenger['passenger_type'] === 'primary' && ! $primary_passenger) {
                     $primary_passenger = $passenger;
                 }
             }
 
-            if (!$primary_passenger) {
+            if (! $primary_passenger) {
                 throw new ErrorException("The primary passenger is not found.", 400);
             }
 
@@ -67,7 +67,7 @@ class TravelTaxService
 
             return [
                 'transaction' => $transaction,
-                'travel_tax_payment' => $travel_tax_payment, 
+                'travel_tax_payment' => $travel_tax_payment,
                 'url' => $responseData['paymentUrl'],
             ];
 
@@ -75,6 +75,11 @@ class TravelTaxService
             DB::rollBack();
             throw $e;
         }
+    }
+
+    public function sendTravelTaxAPI($traveltax, $transaction, $primary_passenger)
+    {
+        $requestModel = $this->travelTaxAPIRequestModel($transaction, $transaction, $primary_passenger);
     }
 
     private function storeTransaction($request, $referenceNumber, $totalAmount)
@@ -96,12 +101,19 @@ class TravelTaxService
         return $transaction;
     }
 
-    private function storeTravelTaxPayment($request, $transaction, $totalAmount) {
+    public function travelTaxAPIRequestModel($traveltax, $transaction, $primary_passenger)
+    {
+        return true;
+    }
+
+    private function storeTravelTaxPayment($request, $transaction, $totalAmount)
+    {
         $transactionNumber = $this->generateTransactionNumber();
         $user = Auth::guard('admin')->user();
 
         $travel_tax_payment = TravelTaxPayment::create([
             'user_id' => $request->user_id,
+            "ar_number" => generateARNumber(),
             'transaction_id' => $transaction->id,
             'transaction_number' => $transactionNumber,
             'reference_number' => $transaction->reference_no,

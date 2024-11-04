@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class BookingConfirmationMail extends Mailable
+class TravelTaxMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -33,10 +33,10 @@ class BookingConfirmationMail extends Mailable
     public function build()
     {
         $details = $this->details;
-        $email = $this->subject('Booking Confirmation For Passenger' . ' - ' . $details['tour_name'])->view('emails.booking-confirmation', compact('details'));
+        $email = $this->subject('Travel Tax')->view('emails.travel-tax-email', compact('details'));
 
-        if ($details['type'] == 'DIY') {
-            $email->attachData($this->pdf->output(), 'qrcodes.pdf', [
+        if ($this->pdf) {
+            $email->attachData($this->pdf->output(), 'travel_tax.pdf', [
                 'mime' => 'application/pdf',
             ]);
         }

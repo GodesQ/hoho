@@ -12,6 +12,7 @@ class TravelTaxPayment extends Model
     protected $fillable = [
         "transaction_id",
         "user_id",
+        "ar_number",
         "transaction_number",
         "reference_number",
         "transaction_time",
@@ -27,15 +28,18 @@ class TravelTaxPayment extends Model
         "created_by_role"
     ];
 
-    public function passengers() {
+    public function passengers()
+    {
         return $this->hasMany(TravelTaxPassenger::class, 'payment_id');
     }
 
-    public function payor() {
+    public function payor()
+    {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function transaction() {
+    public function transaction()
+    {
         return $this->belongsTo(Transaction::class, 'transaction_id');
     }
 }

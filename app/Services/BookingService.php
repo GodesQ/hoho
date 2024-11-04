@@ -8,6 +8,7 @@ use App\Models\LayoverTourReservationDetail;
 use App\Models\PromoCode;
 use App\Models\Referral;
 use App\Models\TourReservationCustomerDetail;
+use App\Models\TourReservationInsurance;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -39,7 +40,7 @@ class BookingService
      * @throws \Exception
      * @return array
      */
-    public function processBookingReservation(Request $request)
+    public function processBookingReservation($request)
     {
         try {
             DB::beginTransaction();
@@ -50,7 +51,7 @@ class BookingService
                 throw new Exception("User Not Found.", 404);
 
             if (! $user->firstname || ! $user->lastname)
-                throw new Exception("Please complete your name before continue to checkout", 422);
+                throw new Exception("Please complete your name before proceeding to checkout.", 422);
 
             $phone_number = "+{$user->countryCode}{$user->contact_no}";
             if (! preg_match('/^\+\d{10,12}$/', $phone_number))
@@ -98,8 +99,10 @@ class BookingService
                 $status = "paying";
             }
 
-            // Notify the tour provider based on the reservation of the guest
-            $this->notifyTourProviderOfBooking($reservation, $transaction);
+            if (! in_array($user->email, getDevelopersEmail())) {
+                // Notify the tour provider based on the reservation of the guest
+                $this->notifyTourProviderOfBooking($reservation, $transaction);
+            }
 
             DB::commit();
 
@@ -130,7 +133,7 @@ class BookingService
             $user = User::where('id', $request->reserved_user_id)->first();
 
             if (! $user->firstname || ! $user->lastname || ! $user->contact_no)
-                throw new Exception("The first name, last name and contact number must be filled in correctly in your profile to continue.");
+                throw new Exception(message: "The first name, last name and contact number must be filled in correctly in your profile to continue.");
 
             $phone_number = "+{$user->countryCode}{$user->contact_no}";
 
@@ -156,7 +159,7 @@ class BookingService
                 $discounted_amount = array_key_exists('discounted_amount', $item) ? intval($item['discounted_amount']) : intval($item['amount']);
                 $sub_amount += intval($item['amount']) ?? 0;
                 $total_discount += intval($item['amount']) - $discounted_amount;
-                $total_insurance_amount += intval($item['total_insurance_amount']) ?? 0;
+                // $total_insurance_amount += intval($item['total_insurance_amount']) ?? 0;
             }
 
             // Get additional charges
@@ -166,7 +169,7 @@ class BookingService
             $total_amount = $this->getTotalAmountOfBooking($sub_amount, $additional_charges['total'], $total_discount);
 
             // Add the insurance amount in total amoi
-            $total_amount += $total_insurance_amount;
+            // $total_amount += $total_insurance_amount;
 
             // Store a transaction in database
             $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_discount, $additional_charges['total']);
@@ -188,18 +191,30 @@ class BookingService
                 // Add new reservation to $tour_reservations variable
                 array_push($tour_reservations, $reservation->load('tour'));
 
-                // Notify the tour provider via email
-                $this->notifyTourProviderOfBooking($reservation, $transaction);
+                if (! in_array($user->email, getDevelopersEmail())) {
+                    // Notify the tour provider via email
+                    $this->notifyTourProviderOfBooking($reservation, $transaction);
+                }
             }
 
-            // $request_model = $this->aqwireService->createRequestModel($transaction, $user);
-            // $payment_response = $this->aqwireService->pay($request_model);
+            $status = "success";
+            $payment_response = null;
+
+            if ($items[0]['type'] == TourTypeEnum::DIY_TOUR) {
+                $request_model = $this->aqwireService->createRequestModel($transaction, $user);
+                $payment_response = $this->aqwireService->pay($request_model);
+
+                $this->updateTransactionAfterPayment($transaction, $payment_response);
+                $status = "paying";
+            }
 
             DB::commit();
 
             return [
+                'status' => $status,
                 'transaction' => $transaction,
                 'tour_reservations' => $tour_reservations,
+                'payment_response' => $payment_response,
             ];
 
         } catch (Exception $e) {
@@ -208,9 +223,21 @@ class BookingService
         }
     }
 
+    public function updateTransactionAfterPayment($transaction, $payment_response)
+    {
+        $update_transaction = $transaction->update([
+            'aqwire_transactionId' => $payment_response['data']['transactionId'],
+            'payment_url' => $payment_response['paymentUrl'],
+            'payment_status' => Str::lower($payment_response['data']['status']),
+            'payment_details' => json_encode($payment_response),
+        ]);
+
+        return $update_transaction;
+    }
+
     private function storeTransaction($request, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
     {
-        $reference_no = $this->generateReferenceNo();
+        $reference_no = generateBookingReferenceNumber();
 
         $transaction = Transaction::create([
             'reference_no' => $reference_no,
@@ -251,7 +278,7 @@ class BookingService
 
             // Insurance
             $has_insurance = $item['has_insurance'] ?? $request->has_insurance ?? false;
-            $type_of_plan = $item['type_of_plan'] ?? $request->type_of_plan ?? null;
+            $type_of_plan = $item['type_of_plan'] ?? $request->type_of_plan ?? 1;
             $total_insurance_amount = $item['total_insurance_amount'] ?? $request->total_insurance_amount ?? 0.00;
 
             // Store tour reservation in database
@@ -267,10 +294,7 @@ class BookingService
                 'reference_code' => $transaction->reference_no,
                 'order_transaction_id' => $transaction->id,
                 'start_date' => $trip_start_date,
-                'has_insurance' => $has_insurance,
-                'type_of_plan' => $type_of_plan,
-                'total_insurance_amount' => $total_insurance_amount,
-                'insurance_id' => $has_insurance ? rand(1000000, 100000000) : null,
+                'has_insurance' => 1,
                 'end_date' => $trip_end_date,
                 'status' => 'pending',
                 'number_of_pass' => $number_of_pax,
@@ -279,6 +303,15 @@ class BookingService
                 'discount_amount' => $transaction->sub_amount - $transaction->discount,
                 'created_by' => $request->reserved_user_id,
                 'created_user_type' => Auth::guard('admin')->user() ? Auth::guard('admin')->user()->role : 'guest'
+            ]);
+
+            // Add the Reservation Insurance
+            TourReservationInsurance::create([
+                'insurance_id' => rand(1000000, 100000000),
+                'reservation_id' => $reservation->id,
+                'type_of_plan' => $type_of_plan,
+                'total_insurance_amount' => $total_insurance_amount,
+                'number_of_pax' => $reservation->number_of_pass,
             ]);
 
             // Check if the request has a file of requirements and if it's valid
@@ -400,11 +433,6 @@ class BookingService
         # This function is for additional charges, which the discounted amount calculated from all of the bookings for this transaction.
 
         return ($subAmount - $totalOfDiscount) + $totalOfAdditionalCharges;
-    }
-
-    private function generateReferenceNo()
-    {
-        return date('Ym') . '-' . 'OT' . rand(100000, 10000000);
     }
 
     public function getDateOfDIYPass($ticket_pass, $trip_date)

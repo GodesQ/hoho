@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TravelTaxController extends Controller
-{   
+{
     public $travelTaxService;
 
     public function __construct(TravelTaxService $travelTaxService)
@@ -42,10 +42,11 @@ class TravelTaxController extends Controller
         }
     }
 
-    public function getUserTravelTaxPayments(Request $request) {
+    public function getUserTravelTaxPayments(Request $request)
+    {
         $user = Auth::user();
         $payments = TravelTaxPayment::where('user_id', $user->id)->with('passengers')->latest()->get();
-        
+
         return response([
             'status' => TRUE,
             'travel_tax_payments' => $payments

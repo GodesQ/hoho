@@ -6,9 +6,11 @@ use App\Enum\TransactionTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Mail\BookingConfirmationMail;
 use App\Mail\HotelReservationReceipt;
+use App\Mail\TravelTaxMail;
 use App\Models\HotelReservation;
 use App\Models\Order;
 use App\Models\ReservationUserCode;
+use App\Models\TravelTaxPassenger;
 use App\Models\TravelTaxPayment;
 use App\Services\SenangdaliService;
 use App\Services\TourReservationService;
@@ -109,7 +111,7 @@ class AqwireController extends Controller
                 $this->tourReservationService->generateAndSendReservationCode($reservation->number_of_pass, $reservation);
 
                 if ($reservation->has_insurance) {
-                    $senangdali_insurance_request = $this->senangdaliService->__map_request_model($transaction->user, $reservation);
+                    $senangdali_insurance_request = $this->senangdaliService->__map_request_model($reservation->customer_details, $reservation);
                     $this->senangdaliService->purchasing($senangdali_insurance_request);
                 }
             }
@@ -119,6 +121,8 @@ class AqwireController extends Controller
             return redirect('aqwire/payment/view_success');
         } catch (Exception $e) {
             DB::rollBack();
+
+            dd($e);
             abort(500);
         }
     }
@@ -126,6 +130,9 @@ class AqwireController extends Controller
     public function travelTaxSuccess(Request $request)
     {
         try {
+            ini_set('max_execution_time', 300); // Increase execution time
+            ini_set('memory_limit', '256M'); // Optional: increase memory limit
+
             DB::beginTransaction();
 
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
@@ -140,10 +147,31 @@ class AqwireController extends Controller
 
             $travel_tax_payment = TravelTaxPayment::where('transaction_id', $transaction->id)->first();
 
+            $primary_passenger = TravelTaxPassenger::where('payment_id', $travel_tax_payment->id)
+                ->where('passenger_type', 'primary')->first();
+
             $travel_tax_payment->update([
                 'payment_method' => $request->paymentMethodCode,
                 'status' => 'paid',
             ]);
+
+            $data = $travel_tax_payment->load('passengers', 'transaction')->toArray();
+
+            $travel_tax_qrcode_value = [
+                'transaction_number' => $travel_tax_payment->transaction_number,
+                'passengers' => $travel_tax_payment->passengers->map(function ($passenger) {
+                    return [
+                        'name' => trim($passenger->firstname . ' ' . $passenger->lastname . ($passenger->suffix ? ' ' . $passenger->suffix : '')),
+                        'ticket_number' => $passenger->ticket_number,
+                    ];
+                })->toArray()  // Convert to an array after mapping
+            ];
+
+            $qrcode = base64_encode(QrCode::format('svg')->size(100)->errorCorrection('H')->generate(json_encode($travel_tax_qrcode_value)));
+
+            $pdf = PDF::loadView('pdf.travel-tax', ['data' => $data, 'qrcode' => $qrcode]);
+
+            Mail::to($primary_passenger->email_address)->send(new TravelTaxMail($travel_tax_payment, $pdf));
 
             DB::commit();
 
@@ -151,6 +179,7 @@ class AqwireController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
+            dd($e);
             abort(500);
         }
     }

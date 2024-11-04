@@ -27,12 +27,10 @@ class SSORegisterRequest extends FormRequest
             'username' => [
                 'required',
                 'max:30',
-                new \App\Rules\UniqueAcrossTables('users', 'admins', 'username')
             ],
             'email' => [
                 'required',
                 'email',
-                new \App\Rules\UniqueAcrossTables('users', 'admins', 'email')
             ],
             'password' => 'required',
             'contact_number' => 'required',

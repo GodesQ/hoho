@@ -20,14 +20,14 @@ class TransportController extends Controller
     public function getTransport(Request $request)
     {
         $transport = Transport::where('id', $request->id)
-                        ->with('assigned_tour')
-                        ->firstOr(function () {
-                            return response([
-                                'status' => FALSE,
-                                'transport' => null
-                            ], 404);
-                        });
-        
+            ->with('assigned_tour')
+            ->firstOr(function () {
+                return response([
+                    'status' => FALSE,
+                    'transport' => null
+                ], 404);
+            });
+
         return response([
             'status' => TRUE,
             'transport' => $transport
@@ -63,7 +63,7 @@ class TransportController extends Controller
     {
         $transport = Transport::where('id', $request->id)->first();
 
-        if (!$transport) {
+        if (! $transport) {
             return response([
                 'status' => FALSE,
                 'message' => 'Transport Not Foud'
@@ -92,7 +92,7 @@ class TransportController extends Controller
     {
         $transport = Transport::where('id', $request->id)->first();
 
-        if (!$transport) {
+        if (! $transport) {
             return response([
                 'status' => FALSE,
                 'message' => 'Transport Not Foud'
@@ -117,8 +117,8 @@ class TransportController extends Controller
         }
     }
 
-    public function updateTracking(Request $request)
-    {
+    // public function updateTracking(Request $request)
+    // {
 
-    }
+    // }
 }

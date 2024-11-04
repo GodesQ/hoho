@@ -170,13 +170,20 @@
                                             <div class="col-lg-4 mb-4">
                                                 <div class="fw-semibold text-primary form-label">Insurance ID </div>
                                                 <div class="badge bg-label-primary">
-                                                    {{ $reservation->insurance_id ?? 'No Insurance ID Found' }}</div>
+                                                    {{ $reservation->reservation_insurance->insurance_id ?? 'No Insurance ID Found' }}
+                                                </div>
                                             </div>
                                             <div class="col-lg-4 mb-4">
                                                 <div class="fw-semibold text-primary form-label">Type of Plan </div>
-                                                <div class="badge bg-label-primary">
-                                                    {{ 'Option' . ' ' . $reservation->type_of_plan ?? 'No Type of Plan Found' }}
-                                                </div>
+                                                @if ($reservation->reservation_insurance->type_of_plan ?? false)
+                                                    <div class="badge bg-label-primary">
+                                                        {{ 'Option' . ' ' . $reservation->reservation_insurance->type_of_plan ?? 'No Type of Plan Found' }}
+                                                    </div>
+                                                @else
+                                                    <div class="badge bg-label-primary">
+                                                        No Option Found
+                                                    </div>
+                                                @endif
                                             </div>
                                             <hr>
                                             <div class="col-lg-6 mb-4">
@@ -268,7 +275,7 @@
                                                 </div>
                                                 <div class="col-xl-6">
                                                     <h6 id="sub_amount_text">₱
-                                                        {{ number_format($reservation->total_insurance_amount, 2) }}
+                                                        {{ number_format(($reservation->reservation_insurance->total_insurance_amount ?? 0), 2) }}
                                                     </h6>
                                                 </div>
                                             </div>
