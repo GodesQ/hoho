@@ -39,44 +39,44 @@ class AqwireController extends Controller
         $this->senangdaliService = $senangdaliService;
     }
 
-    public function handlePostWebhookPaid(Request $request)
-    {
-        // Check if the request method is POST
-        if ($request->isMethod('post')) {
-            // Retrieve the signature from the query string
-            $signature = $request->query('sign');
+    // public function handlePostWebhookPaid(Request $request)
+    // {
+    //     // Check if the request method is POST
+    //     if ($request->isMethod('post')) {
+    //         // Retrieve the signature from the query string
+    //         $signature = $request->query('sign');
 
-            // Get the JSON payload
-            $json = $request->getContent();
+    //         // Get the JSON payload
+    //         $json = $request->getContent();
 
-            // Get the secret key from the environment
-            // $merchantSecretKey = env('AQWIRE_MERCHANT_SECURITY_KEY');
-            $merchantSecretKey = "sk_test_vV6i66irj2vhca4iXpqZc6THFiJz3N6Y";
+    //         // Get the secret key from the environment
+    //         // $merchantSecretKey = env('AQWIRE_MERCHANT_SECURITY_KEY');
+    //         $merchantSecretKey = "sk_test_vV6i66irj2vhca4iXpqZc6THFiJz3N6Y";
 
-            // Compute the signature
-            $rawSignature = hash_hmac('sha256', $json, $merchantSecretKey, true);
-            $computedSignature = strtr(base64_encode($rawSignature), '+/', '-_');
+    //         // Compute the signature
+    //         $rawSignature = hash_hmac('sha256', $json, $merchantSecretKey, true);
+    //         $computedSignature = strtr(base64_encode($rawSignature), '+/', '-_');
 
-            // Validate the signature
-            if ($signature !== $computedSignature) {
-                return response()->json([
-                    'message' => 'Unauthorized API call'
-                ], 401);
-            }
+    //         // Validate the signature
+    //         if ($signature !== $computedSignature) {
+    //             return response()->json([
+    //                 'message' => 'Unauthorized API call'
+    //             ], 401);
+    //         }
 
-            // Return the signature and verification for debugging purposes
-            return response()->json([
-                'sign' => $signature,
-                'verify' => $computedSignature,
-                'message' => 'Data posted'
-            ], 200);
-        }
+    //         // Return the signature and verification for debugging purposes
+    //         return response()->json([
+    //             'sign' => $signature,
+    //             'verify' => $computedSignature,
+    //             'message' => 'Data posted'
+    //         ], 200);
+    //     }
 
-        // If the request method is not POST, return an error
-        return response()->json([
-            'message' => 'Invalid request method'
-        ], 401);
-    }
+    //     // If the request method is not POST, return an error
+    //     return response()->json([
+    //         'message' => 'Invalid request method'
+    //     ], 401);
+    // }
 
     public function success(Request $request)
     {
@@ -85,36 +85,7 @@ class AqwireController extends Controller
 
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
 
-            $transaction->update([
-                'aqwire_referenceId' => $request->referenceId,
-                'aqwire_paymentMethodCode' => $request->paymentMethodCode,
-                'aqwire_totalAmount' => $request->totalAmount,
-                'payment_status' => Str::lower('success'),
-                'payment_date' => Carbon::now()
-            ]);
-
-            $reservations = TourReservation::where('order_transaction_id', $transaction->id)->with('tour', 'user', 'customer_details')->get();
-
-            foreach ($reservations as $reservation) {
-                $reservation->update([
-                    'payment_method' => $request->paymentMethodCode
-                ]);
-
-                $details = [
-                    'tour' => $reservation->tour,
-                    'reservation' => $reservation,
-                    'transaction' => $transaction
-                ];
-
-                Mail::to(optional($reservation->customer_details)->email)->send(new InvoiceMail($details));
-
-                $this->tourReservationService->generateAndSendReservationCode($reservation->number_of_pass, $reservation);
-
-                if ($reservation->has_insurance) {
-                    $senangdali_insurance_request = $this->senangdaliService->__map_request_model($reservation->customer_details, $reservation);
-                    $this->senangdaliService->purchasing($senangdali_insurance_request);
-                }
-            }
+            $this->fetchAndUpdateAqwireTransaction($transaction);
 
             DB::commit();
 
@@ -137,41 +108,7 @@ class AqwireController extends Controller
 
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
 
-            $transaction->update([
-                'aqwire_referenceId' => $request->referenceId,
-                'aqwire_paymentMethodCode' => $request->paymentMethodCode,
-                'aqwire_totalAmount' => $request->totalAmount,
-                'payment_status' => Str::lower('success'),
-                'payment_date' => Carbon::now()
-            ]);
-
-            $travel_tax_payment = TravelTaxPayment::where('transaction_id', $transaction->id)->first();
-
-            $primary_passenger = TravelTaxPassenger::where('payment_id', $travel_tax_payment->id)
-                ->where('passenger_type', 'primary')->first();
-
-            $travel_tax_payment->update([
-                'payment_method' => $request->paymentMethodCode,
-                'status' => 'paid',
-            ]);
-
-            $data = $travel_tax_payment->load('passengers', 'transaction')->toArray();
-
-            $travel_tax_qrcode_value = [
-                'transaction_number' => $travel_tax_payment->transaction_number,
-                'passengers' => $travel_tax_payment->passengers->map(function ($passenger) {
-                    return [
-                        'name' => trim($passenger->firstname . ' ' . $passenger->lastname . ($passenger->suffix ? ' ' . $passenger->suffix : '')),
-                        'ticket_number' => $passenger->ticket_number,
-                    ];
-                })->toArray()  // Convert to an array after mapping
-            ];
-
-            $qrcode = base64_encode(QrCode::format('svg')->size(100)->errorCorrection('H')->generate(json_encode($travel_tax_qrcode_value)));
-
-            $pdf = PDF::loadView('pdf.travel-tax', ['data' => $data, 'qrcode' => $qrcode]);
-
-            Mail::to($primary_passenger->email_address)->send(new TravelTaxMail($travel_tax_payment, $pdf));
+            $this->fetchAndUpdateAqwireTransaction($transaction);
 
             DB::commit();
 
@@ -179,7 +116,6 @@ class AqwireController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e);
             abort(500);
         }
     }
@@ -371,54 +307,55 @@ class AqwireController extends Controller
         dd($request->id, $request->all());
     }
 
-    public function webhook_paid(Request $request)
-    {
-        header('Content-Type: application/json');
+    // public function webhook_paid(Request $request)
+    // {
+    //     header('Content-Type: application/json');
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            echo (json_encode(
-                array(
-                    'message' => 'Invalid request method'
-                )
-            ));
-            http_response_code(401);
-            exit();
-        }
+    //     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    //         echo (json_encode(
+    //             array(
+    //                 'message' => 'Invalid request method'
+    //             )
+    //         ));
+    //         http_response_code(401);
+    //         exit();
+    //     }
 
-        $signature = $_GET['sign'];
-        $json = file_get_contents('php://input');
-        $merchantSecretKey = "sk_test_vV6i66irj2vhca4iXpqZc6THFiJz3N6Y";
+    //     $signature = $_GET['sign'];
+    //     $json = file_get_contents('php://input');
+    //     $merchantSecretKey = "sk_test_vV6i66irj2vhca4iXpqZc6THFiJz3N6Y";
 
-        $rawSignature = hash_hmac('sha256', $json, $merchantSecretKey, true);
-        $computedSignature = strtr(base64_encode($rawSignature), '+/', '-_');
+    //     $rawSignature = hash_hmac('sha256', $json, $merchantSecretKey, true);
+    //     $computedSignature = strtr(base64_encode($rawSignature), '+/', '-_');
 
-        if ($signature !== $computedSignature) {
-            echo (json_encode(
-                array(
-                    'message' => 'Unauthorized API call'
-                )
-            ));
-            http_response_code(401);
-            exit();
-        }
+    //     if ($signature !== $computedSignature) {
+    //         echo (json_encode(
+    //             array(
+    //                 'message' => 'Unauthorized API call'
+    //             )
+    //         ));
+    //         http_response_code(401);
+    //         exit();
+    //     }
 
-        echo (json_encode(
-            array(
-                'sign' => $signature
-            )
-        ));
-        echo (json_encode(
-            array(
-                'verify' => $computedSignature
-            )
-        ));
-        echo (json_encode(
-            array(
-                'message' => 'Data posted'
-            )
-        ));
-        http_response_code(200);
-    }
+    //     echo (json_encode(
+    //         array(
+    //             'sign' => $signature
+    //         )
+    //     ));
+    //     echo (json_encode(
+    //         array(
+    //             'verify' => $computedSignature
+    //         )
+    //     ));
+    //     echo (json_encode(
+    //         array(
+    //             'message' => 'Data posted'
+    //         )
+    //     ));
+    //     http_response_code(200);
+    // }
+
 
     public function checkAuthorizationCode(Request $request)
     {
@@ -441,6 +378,18 @@ class AqwireController extends Controller
         return base64_encode($bin);
     }
 
+    public function checkSingleTransaction()
+    {
+        $today = Carbon::today();
+        $transaction = Transaction::where('payment_status', 'inc')
+            ->whereDate('created_at', $today)
+            ->first();
+
+        $this->fetchAndUpdateAqwireTransaction($transaction);
+
+        return "Ok";
+    }
+
     public function checkTransactions(Request $request)
     {
         $today = Carbon::today();
@@ -448,6 +397,15 @@ class AqwireController extends Controller
             ->whereDate('created_at', $today)
             ->get();
 
+        foreach ($transactions as $transaction) {
+            $this->fetchAndUpdateAqwireTransaction($transaction);
+        }
+
+        return "Ok";
+    }
+
+    private function fetchAndUpdateAqwireTransaction($transaction)
+    {
         if (config('app.env') === 'production') {
             $url = 'https://payments.aqwire.io/api/v3/transactions/check';
             $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
@@ -456,48 +414,45 @@ class AqwireController extends Controller
             $authToken = $this->getHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
         }
 
-        foreach ($transactions as $transaction) {
-            $txnId = $transaction->aqwire_transactionId;
+        $txnId = $transaction->aqwire_transactionId;
 
-            // Send HTTP request to AQWIRE API to check the transaction status
-            $response = Http::withHeaders([
-                'accept' => 'application/json',
-                'content-type' => 'application/json',
-                'Qw-Merchant-Id' => config('services.aqwire.merchant_code'),
-                'Authorization' => 'Bearer ' . $authToken,
-            ])->get("{$url}/{$txnId}");
+        // Send HTTP request to AQWIRE API to check the transaction status
+        $response = Http::withHeaders([
+            'accept' => 'application/json',
+            'content-type' => 'application/json',
+            'Qw-Merchant-Id' => config('services.aqwire.merchant_code'),
+            'Authorization' => 'Bearer ' . $authToken,
+        ])->get("{$url}/{$txnId}");
 
-            if ($response->successful()) {
-                $data = $response->json();
+        if ($response->successful()) {
+            $data = $response->json();
 
-                // Assuming the API response contains a 'status' field
-                $transaction->payment_status = Str::lower($data['status']); // Update the status
-                $transaction->aqwire_paymentMethodCode = $data['data']['paymentMethod'];
-                $transaction->aqwire_totalAmount = $data['data']['bill']['total']['amount'];
-                $transaction->aqwire_referenceId = $data['data']['referenceId'];
-                $transaction->payment_date = Carbon::parse($data['data']['paidAt'])->format('Y-m-d');
-                $transaction->save();
+            // Assuming the API response contains a 'status' field
+            $transaction->payment_status = Str::lower($data['status']); // Update the status
+            $transaction->aqwire_paymentMethodCode = $data['data']['paymentMethod'];
+            $transaction->aqwire_totalAmount = $data['data']['bill']['total']['amount'];
+            $transaction->aqwire_referenceId = $data['data']['referenceId'];
+            $transaction->payment_date = Carbon::parse($data['data']['paidAt'])->format('Y-m-d');
+            $transaction->payment_details = json_encode($data);
+            $transaction->save();
 
-                if ($transaction->transaction_type == TransactionTypeEnum::BOOK_TOUR) {
-                    $this->reservationsUpdated($transaction);
-                }
-
-                if ($transaction->transaction_type == TransactionTypeEnum::TRAVEL_TAX) {
-                    $this->travelTaxUpdated($transaction);
-                }
-
-                if ($transaction->transaction_type == TransactionTypeEnum::ORDER) {
-                    $this->orderUpdated($transaction);
-                }
-
-                if ($transaction->transaction_type == TransactionTypeEnum::HOTEL_RESERVATION) {
-                    $this->hotelReservationUpdated($transaction);
-                }
-
+            if ($transaction->transaction_type == TransactionTypeEnum::BOOK_TOUR) {
+                $this->reservationsUpdated($transaction);
             }
-        }
 
-        return "Ok";
+            if ($transaction->transaction_type == TransactionTypeEnum::TRAVEL_TAX) {
+                $this->travelTaxUpdated($transaction);
+            }
+
+            if ($transaction->transaction_type == TransactionTypeEnum::ORDER) {
+                $this->orderUpdated($transaction);
+            }
+
+            if ($transaction->transaction_type == TransactionTypeEnum::HOTEL_RESERVATION) {
+                $this->hotelReservationUpdated($transaction);
+            }
+
+        }
     }
 
     public function reservationsUpdated($transaction)
@@ -525,6 +480,37 @@ class AqwireController extends Controller
                 $senangdaliService->purchasing($senangdali_insurance_request);
             }
         }
+    }
+
+    public function travelTaxUpdated($transaction)
+    {
+        $travel_tax_payment = TravelTaxPayment::where('transaction_id', $transaction->id)->first();
+
+        $primary_passenger = TravelTaxPassenger::where('payment_id', $travel_tax_payment->id)
+            ->where('passenger_type', 'primary')->first();
+
+        $travel_tax_payment->update([
+            'payment_method' => $transaction->aqwire_paymentMethodCode,
+            'status' => 'paid',
+        ]);
+
+        $data = $travel_tax_payment->load('passengers', 'transaction')->toArray();
+
+        $travel_tax_qrcode_value = [
+            'transaction_number' => $travel_tax_payment->transaction_number,
+            'passengers' => $travel_tax_payment->passengers->map(function ($passenger) {
+                return [
+                    'name' => trim($passenger->firstname . ' ' . $passenger->lastname . ($passenger->suffix ? ' ' . $passenger->suffix : '')),
+                    'ticket_number' => $passenger->ticket_number,
+                ];
+            })->toArray()  // Convert to an array after mapping
+        ];
+
+        $qrcode = base64_encode(QrCode::format('svg')->size(100)->errorCorrection('H')->generate(json_encode($travel_tax_qrcode_value)));
+
+        $pdf = PDF::loadView('pdf.travel-tax', ['data' => $data, 'qrcode' => $qrcode]);
+
+        Mail::to($primary_passenger->email_address)->send(new TravelTaxMail($travel_tax_payment, $pdf));
     }
 
     public function generateAndSendReservationCode($number_of_pax, $reservation)
