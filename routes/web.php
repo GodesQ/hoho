@@ -283,6 +283,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::get('foods/edit/{id}', [FoodController::class, 'edit'])->name('foods.edit');
     Route::post('foods/update/{id}', [FoodController::class, 'update'])->name('foods.update');
     Route::delete('foods/destroy/{id?}', [FoodController::class, 'destroy'])->name('foods.destroy');
+    Route::delete('foods/remove_image', [FoodController::class, 'removeImage'])->name('foods.remove_image');
 
     Route::get('rooms', [RoomController::class, 'index'])->name('rooms.index');
     Route::get('rooms/create', [RoomController::class, 'create'])->name('rooms.create');
