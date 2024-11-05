@@ -28,6 +28,7 @@ class Transaction extends Model
         'transaction_date',
         'payment_date',
         'remarks',
+        'payment_provider_fee',
         'aqwire_transactionId',
         'aqwire_referenceId',
         'aqwire_paymentMethodCode',
@@ -44,12 +45,14 @@ class Transaction extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function user() {
+    public function user()
+    {
         return $this->hasOne(User::class, 'id', 'transaction_by_id');
     }
 
-    public function items() {
-        if($this->transaction_type == 'book_tour') {
+    public function items()
+    {
+        if ($this->transaction_type == 'book_tour') {
             return $this->hasMany(TourReservation::class, 'order_transaction_id');
         } else {
             return $this->hasMany(TourReservation::class, 'order_transaction_id');

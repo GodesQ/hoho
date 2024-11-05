@@ -127,20 +127,7 @@ class AqwireController extends Controller
 
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
 
-            $transaction->update([
-                'aqwire_referenceId' => $request->referenceId,
-                'aqwire_paymentMethodCode' => $request->paymentMethodCode,
-                'aqwire_totalAmount' => $request->totalAmount,
-                'payment_status' => Str::lower('success'),
-                'payment_date' => Carbon::now()
-            ]);
-
-            $travel_tax_payment = Order::where('transaction_id', $transaction->id)->first();
-
-            $travel_tax_payment->update([
-                'payment_method' => $request->paymentMethodCode,
-                'status' => 'paid',
-            ]);
+            $this->fetchAndUpdateAqwireTransaction($transaction);
 
             DB::commit();
 
@@ -157,25 +144,8 @@ class AqwireController extends Controller
             DB::beginTransaction();
 
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
-            $hotel_reservation = HotelReservation::where('transaction_id', $transaction->id)->with('reserved_user', 'room.merchant', 'transaction')->firstOrFail();
 
-            $transaction->update([
-                'aqwire_referenceId' => $request->referenceId,
-                'aqwire_paymentMethodCode' => $request->paymentMethodCode,
-                'aqwire_totalAmount' => $request->totalAmount,
-                'payment_status' => Str::lower('success'),
-                'payment_date' => Carbon::now()
-            ]);
-
-            $hotel_reservation->update([
-                'payment_status' => 'paid',
-            ]);
-
-            $details = [
-                'reservation' => $hotel_reservation,
-            ];
-
-            Mail::to($hotel_reservation->reserved_user->email)->send(new HotelReservationReceipt($details));
+            $this->fetchAndUpdateAqwireTransaction($transaction);
 
             DB::commit();
 
@@ -302,11 +272,6 @@ class AqwireController extends Controller
         return view('misc.transaction_messages.cancel');
     }
 
-    public function callback(Request $request)
-    {
-        dd($request->id, $request->all());
-    }
-
     // public function webhook_paid(Request $request)
     // {
     //     header('Content-Type: application/json');
@@ -359,15 +324,7 @@ class AqwireController extends Controller
 
     public function checkAuthorizationCode(Request $request)
     {
-        // $keyBytes = utf8_encode($key);
-        // $textBytes = utf8_encode($text);
 
-        // $hashBytes = hash_hmac('sha256', $textBytes, $keyBytes, true);
-
-        // $base64Hash = base64_encode($hashBytes);
-        // $base64Hash = str_replace(['+', '/'], ['-', '_'], $base64Hash);
-
-        // return $base64Hash;
 
         $key = config('services.aqwire.secret_key');
         $message = config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id');
@@ -425,15 +382,32 @@ class AqwireController extends Controller
         ])->get("{$url}/{$txnId}");
 
         if ($response->successful()) {
-            $data = $response->json();
+            $jsonData = $response->json();
 
-            // Assuming the API response contains a 'status' field
-            $transaction->payment_status = Str::lower($data['status']); // Update the status
-            $transaction->aqwire_paymentMethodCode = $data['data']['paymentMethod'];
-            $transaction->aqwire_totalAmount = $data['data']['bill']['total']['amount'];
-            $transaction->aqwire_referenceId = $data['data']['referenceId'];
-            $transaction->payment_date = Carbon::parse($data['data']['paidAt'])->format('Y-m-d');
-            $transaction->payment_details = json_encode($data);
+            $payment_provider_fee = $jsonData['data']['bill']['fee']['amount'] ?? 0;
+
+            // Update the payment status, converting it to lowercase
+            $transaction->payment_status = isset($jsonData['status']) ? Str::lower($jsonData['status']) : 'inc';
+
+            // Update payment provider fee with a default of 0 if it doesn't exist
+            $transaction->payment_provider_fee = $payment_provider_fee;
+
+            // Set payment method code, falling back to the existing code if not provided
+            $transaction->aqwire_paymentMethodCode = $jsonData['data']['paymentMethod'] ?? $transaction->aqwire_paymentMethodCode;
+
+            // Set the total amount, falling back to the existing total amount if not provided
+            $transaction->aqwire_totalAmount = $jsonData['data']['bill']['total']['amount'] ?? $transaction->aqwire_totalAmount;
+
+            // Set the reference ID, falling back to the existing reference ID if not provided
+            $transaction->aqwire_referenceId = $jsonData['data']['referenceId'] ?? $transaction->aqwire_referenceId;
+
+            // Parse and set the payment date if it exists
+            $transaction->payment_date = isset($jsonData['data']['paidAt']) ? Carbon::parse($jsonData['data']['paidAt'])->format('Y-m-d') : null;
+
+            // Encode all data as JSON for the payment details
+            $transaction->payment_details = json_encode($jsonData);
+
+            // Save the transaction
             $transaction->save();
 
             if ($transaction->transaction_type == TransactionTypeEnum::BOOK_TOUR) {
@@ -511,6 +485,33 @@ class AqwireController extends Controller
         $pdf = PDF::loadView('pdf.travel-tax', ['data' => $data, 'qrcode' => $qrcode]);
 
         Mail::to($primary_passenger->email_address)->send(new TravelTaxMail($travel_tax_payment, $pdf));
+    }
+
+    public function orderUpdated($transaction)
+    {
+        $order = Order::where('transaction_id', $transaction->id)->first();
+
+        $order->update([
+            'payment_method' => $transaction->aqwire_paymentMethodCode,
+            'status' => 'paid',
+        ]);
+    }
+
+    public function hotelReservationUpdated($transaction)
+    {
+        $hotel_reservation = HotelReservation::where('transaction_id', $transaction->id)
+            ->with('reserved_user', 'room.merchant', 'transaction')
+            ->firstOrFail();
+
+        $hotel_reservation->update([
+            'payment_status' => 'paid',
+        ]);
+
+        $details = [
+            'reservation' => $hotel_reservation,
+        ];
+
+        Mail::to($hotel_reservation->reserved_user->email)->send(new HotelReservationReceipt($details));
     }
 
     public function generateAndSendReservationCode($number_of_pax, $reservation)
