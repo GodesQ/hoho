@@ -204,9 +204,9 @@ class TourReservationController extends Controller
             if ($tour_type == TourTypeEnum::TRANSIT_TOUR) {
                 LayoverTourReservationDetail::create([
                     'reservation_id' => $reservation->id,
-                    'arrival_datetime' => $request->arrival_datetime,
+                    'arrival_datetime' => Carbon::parse($request->arrival_datetime)->format('Y-m-d H:i:s'),
                     'flight_to' => $request->flight_to,
-                    'departure_datetime' => $request->departure_datetime,
+                    'departure_datetime' => Carbon::parse($request->departure_datetime)->format('Y-m-d H:i:s'),
                     'flight_from' => $request->flight_from,
                     'passport_number' => $request->passport_number,
                     'special_instruction' => $request->special_instruction
