@@ -262,7 +262,11 @@ class TourReservationController extends Controller
 
         } catch (Exception $exception) {
             DB::rollBack();
-            dd($exception);
+            return response()->json([
+                'stauts' => 'failed',
+                'error' => $exception,
+                'message' => $exception->getMessage()
+            ]);
         }
     }
 
