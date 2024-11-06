@@ -266,7 +266,7 @@ class TourReservationController extends Controller
                 'stauts' => 'failed',
                 'error' => $exception,
                 'message' => $exception->getMessage()
-            ]);
+            ], 400);
         }
     }
 
