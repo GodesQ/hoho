@@ -174,7 +174,7 @@ class BookingService
             // Store a transaction in database
             $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_discount, $additional_charges['total']);
 
-            $tour_reservations = [];
+            $reservation_items = [];
 
             foreach ($items as $item) {
                 // Store tour reservation and customer details
@@ -189,7 +189,7 @@ class BookingService
                 $reservation->setAppends([]);
 
                 // Add new reservation to $tour_reservations variable
-                array_push($tour_reservations, $reservation->load('tour'));
+                array_push($reservation_items, $reservation->load('tour'));
 
                 if (! in_array($user->email, getDevelopersEmail())) {
                     // Notify the tour provider via email
@@ -213,7 +213,7 @@ class BookingService
             return [
                 'status' => $status,
                 'transaction' => $transaction,
-                'tour_reservations' => $tour_reservations,
+                'reservation_items' => $reservation_items,
                 'payment_response' => $payment_response,
             ];
 
