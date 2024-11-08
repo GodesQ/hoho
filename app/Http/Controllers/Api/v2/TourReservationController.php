@@ -83,12 +83,29 @@ class TourReservationController extends Controller
         try {
             $result = $this->bookingService->processMultipleBookingReservation($request);
 
+            if ($result['status'] == "paying") {
+                return response()->json([
+                    "status" => $result['status'],
+                    "message" => "Tour Reservations has been proccessed.",
+                    "reservations" => $result['reservation_items'],
+                    "transaction" => $result['transaction'],
+                    "payment_link" => $result['payment_response']['paymentUrl'],
+                ]);
+            }
+
             return response()->json([
-                'status' => true,
-                'message' => 'Tour reservation added successfully.',
-                'transaction' => $result['transaction'],
-                'tour_reservations' => $result['tour_reservations'],
+                "status" => $result['status'],
+                "message" => "Tour Reservations has been proccessed. Please wait for approval.",
+                "transaction" => $result['transaction'],
+                "reservations" => $result['reservation_items'],
             ]);
+
+            // return response()->json([
+            //     'status' => true,
+            //     'message' => 'Tour reservation added successfully.',
+            //     'transaction' => $result['transaction'],
+            //     'tour_reservations' => $result['tour_reservations'],
+            // ]);
         } catch (Exception $exception) {
             return response()->json([
                 'status' => false,
