@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enum\TourTypeEnum;
 use App\Enum\TransactionTypeEnum;
 use App\Mail\PaymentRequestMail;
 use App\Mail\TourProviderBookingNotification;
@@ -288,6 +289,8 @@ class TourReservationService
                 'transaction_date' => Carbon::now(),
             ]);
 
+            $reservation_items = [];
+
             # Store Multiple Reservation Items in Database
             foreach ($items as $key => $item) {
                 $reservation = TourReservation::create([
@@ -312,6 +315,8 @@ class TourReservationService
                     'created_user_type' => 'guest'
                 ]);
 
+                array_push($reservation_items, $reservation);
+
                 // Add the Reservation Insurance
                 TourReservationInsurance::create([
                     'insurance_id' => rand(1000000, 100000000),
@@ -331,63 +336,31 @@ class TourReservationService
                 ]);
             }
 
-            # Create Request Model for Payment Gateway
-            $requestModel = [
-                'uniqueId' => $transaction->reference_no,
-                'currency' => 'PHP',
-                'paymentType' => 'DTP',
-                'amount' => $transaction->payment_amount,
-                'customer' => [
-                    'name' => $request->firstname . ' ' . $request->lastname,
-                    'email' => $request->email,
-                    'mobile' => $request->contact_no,
-                ],
-                'project' => [
-                    'name' => 'Philippines Hop-On Hop-Off Checkout Reservation',
-                    'unitNumber' => '00000',
-                    'category' => 'Checkout'
-                ],
-                'redirectUrl' => [
-                    'success' => env('AQWIRE_SUCCESS_URL') . $transaction->id,
-                    'cancel' => env('AQWIRE_CANCEL_URL') . $transaction->id,
-                    'callback' => env('AQWIRE_CALLBACK_URL') . $transaction->id
-                ],
-                'note' => 'Checkout for Tour Reservation',
-                'metadata' => [
-                    'Convenience Fee' => '5%' . ' ' . 'Per Pax',
-                ]
-            ];
+            $status = "success";
+            $payment_response = null;
 
-            # Generate URL Endpoint and Auth Token for Payment Gateway
-            if (config('app.env') === 'production') {
-                $url_create = 'https://payments.aqwire.io/api/v3/transactions/create';
-                $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
-            } else {
-                $url_create = 'https://payments-sandbox.aqwire.io/api/v3/transactions/create';
-                $authToken = $this->getHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
+            $user = new User();
+            $user->firstname = $request->firstname;
+            $user->middlename = $request->middlename;
+            $user->lastname = $request->lastname;
+            $user->email = $request->email;
+            $user->mobile_number = $request->mobile_number;
+
+            $first_tour_type = $items[0]['type'] ?? $items[0]['tour_type'] ?? 'DIY';
+
+            if ($first_tour_type == TourTypeEnum::DIY_TOUR) {
+                $request_model = $this->aqwireService->createRequestModel($transaction, $user);
+                $payment_response = $this->aqwireService->pay($request_model);
+
+                $this->updateTransactionAfterPayment($transaction, $payment_response);
+                $status = "paying";
             }
-
-            $response = Http::withHeaders([
-                'accept' => 'application/json',
-                'content-type' => 'application/json',
-                'Qw-Merchant-Id' => config('services.aqwire.merchant_code'),
-                'Authorization' => 'Bearer ' . $authToken,
-            ])->post($url_create, $requestModel);
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode == 400) {
-                $content = json_decode($response->getBody()->getContents());
-                throw new Exception($content->message . ' in Aqwire Payment Gateway.');
-            }
-
-            $responseData = json_decode($response->getBody(), true);
 
             $transaction->update([
-                'aqwire_transactionId' => $responseData['data']['transactionId'] ?? null,
-                'payment_url' => $responseData['paymentUrl'] ?? null,
-                'payment_status' => Str::lower($responseData['data']['status'] ?? ''),
-                'payment_details' => json_encode($responseData),
+                'aqwire_transactionId' => $payment_response['data']['transactionId'] ?? null,
+                'payment_url' => $payment_response['paymentUrl'] ?? null,
+                'payment_status' => Str::lower($payment_response['data']['status'] ?? ''),
+                'payment_details' => json_encode($payment_response),
             ]);
 
             $this->sendMultipleBookingNotification($items, $transaction, $request);
@@ -398,23 +371,28 @@ class TourReservationService
                 'total_additional_charges' => $transaction->total_additional_charges,
                 'sub_amount' => $transaction->sub_amount,
                 'total_amount' => $transaction->payment_amount,
-                'payment_url' => $responseData['paymentUrl'],
-                'payment_expiration' => $responseData['data']['expiresAt'] ?? null,
+                'payment_url' => $payment_response['paymentUrl'],
+                'payment_expiration' => $payment_response['data']['expiresAt'] ?? null,
             ];
 
             Mail::to($request->email)->send(new PaymentRequestMail($payment_request_details));
 
-            return response([
-                'status' => 'paying',
-                'url' => $responseData['paymentUrl']
-            ], 201);
+            if ($status == "paying") {
+                return response()->json([
+                    "status" => $status,
+                    "message" => "Tour Reservations has been proccessed.",
+                    "reservations" => $reservation_items,
+                    "transaction" => $transaction,
+                    "payment_link" => $payment_response['paymentUrl'],
+                ]);
+            }
 
-        } catch (HttpException $e) {
-            return response([
-                'status' => 'failed',
-                'message' => 'Transaction Failed to Submit',
-                'error' => $e->getMessage()
-            ], 400);
+            return response()->json([
+                "status" => $status,
+                "message" => "Tour Reservations has been proccessed. Please wait for approval.",
+                "transaction" => $transaction,
+                "reservations" => $reservation_items,
+            ]);
 
         } catch (Exception $e) {
             return response([
@@ -423,12 +401,6 @@ class TourReservationService
                 'error' => $e->getMessage()
             ], 400);
 
-        } catch (\Error $e) {
-            return response([
-                'status' => 'failed',
-                'message' => 'Transaction Failed to Submit',
-                'error' => $e->getMessage()
-            ], 400);
         }
     }
 

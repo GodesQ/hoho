@@ -407,6 +407,9 @@ class AqwireController extends Controller
             // Encode all data as JSON for the payment details
             $transaction->payment_details = json_encode($jsonData);
 
+            // Compute the total amount with payment provider fee
+            $transaction->total_amount += $payment_provider_fee;
+
             // Save the transaction
             $transaction->save();
 
