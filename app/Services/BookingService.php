@@ -200,7 +200,13 @@ class BookingService
             $status = "success";
             $payment_response = null;
 
-            if ($items[0]['type'] == TourTypeEnum::DIY_TOUR) {
+
+            /**
+             *  For multiple booking, check if the first item is DIY to proceed in generating payment link by Aqwire 
+             */
+            $first_item_tour = Tour::where('id', $items[0]['tour_id'])->first();
+
+            if ($first_item_tour->type === TourTypeEnum::DIY_TOUR || $first_item_tour === "DIY Tour") {
                 $request_model = $this->aqwireService->createRequestModel($transaction, $user);
                 $payment_response = $this->aqwireService->pay($request_model);
 

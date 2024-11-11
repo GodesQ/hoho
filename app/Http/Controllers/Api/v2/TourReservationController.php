@@ -87,9 +87,9 @@ class TourReservationController extends Controller
                 return response()->json([
                     "status" => $result['status'],
                     "message" => "Tour Reservations has been proccessed.",
+                    "payment_link" => $result['payment_response']['paymentUrl'],
                     "reservations" => $result['reservation_items'],
                     "transaction" => $result['transaction'],
-                    "payment_link" => $result['payment_response']['paymentUrl'],
                 ]);
             }
 
@@ -100,12 +100,6 @@ class TourReservationController extends Controller
                 "reservations" => $result['reservation_items'],
             ]);
 
-            // return response()->json([
-            //     'status' => true,
-            //     'message' => 'Tour reservation added successfully.',
-            //     'transaction' => $result['transaction'],
-            //     'tour_reservations' => $result['tour_reservations'],
-            // ]);
         } catch (Exception $exception) {
             return response()->json([
                 'status' => false,
@@ -115,10 +109,44 @@ class TourReservationController extends Controller
         // return $tourReservationService->storeRegisteredUserReservation($request);
     }
 
-    public function storeGuestReservation(Request $request, TourReservationService $tourReservationService)
+    public function storeGuestReservations(Request $request, TourReservationService $tourReservationService)
     {
-        $mailService = new MailService;
-        return $tourReservationService->storeAnonymousUserReservation($request, $mailService);
+        try {
+            $mailService = new MailService;
+            $result = $tourReservationService->storeAnonymousUserReservations($request, $mailService);
+
+            if ($result['status'] == "paying") {
+                return response()->json([
+                    "status" => $result['status'],
+                    "message" => "Tour Reservations has been proccessed.",
+                    "payment_link" => $result['payment_response']['paymentUrl'] ?? null,
+                    "reservations" => $result['reservation_items'],
+                    "transaction" => $result['transaction'],
+                ]);
+            }
+
+            return response()->json([
+                "status" => $result['status'],
+                "message" => "Tour Reservations has been proccessed. Please wait for approval.",
+                "transaction" => $result['transaction'],
+                "reservations" => $result['reservation_items'],
+            ]);
+
+        } catch (Exception $exception) {
+            $response = [
+                'status' => 'failed',
+                'message' => 'Transaction Failed to Submit',
+                'error' => $exception->getMessage(),
+            ];
+
+            if (config('app.debug')) {
+                $response['line'] = $exception->getLine();
+                $response['trace'] = $exception->getTrace();
+            }
+
+            return response($response, 400);
+        }
+
     }
 
     public function storeGuestSingleReservation(SingleGuestReservationRequest $request)

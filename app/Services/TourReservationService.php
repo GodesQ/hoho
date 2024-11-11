@@ -43,7 +43,7 @@ class TourReservationService
         $this->bookingService = $bookingService;
     }
 
-    public function storeAnonymousUserReservation(Request $request, MailService $mailService)
+    public function storeAnonymousUserReservations(Request $request, MailService $mailService)
     {
         try {
             DB::beginTransaction();
@@ -59,58 +59,38 @@ class TourReservationService
 
             $subAmount = 0;
             $totalOfDiscount = 0;
-            $totalOfAdditionalCharges = 0;
 
-            $items = $request->items;
-
-            if (is_string($request->items) && is_array(json_decode($request->items, true))) {
-                $items = json_decode($request->items, true);
-            }
+            $items = is_string($request->items) ? json_decode($request->items, true) : $request->items;
 
             if (! is_array($items)) {
                 throw new Exception("Items is not a valid JSON type.");
             }
 
-            foreach ($items as $key => $item) {
-                $subAmount += intval($item['amount']) ?? 0;
-                $totalOfDiscount += (intval($item['amount'] ?? 0) - (intval($item['discounted_amount'] ?? 0) ?? intval($item['amount'])));
-            }
+            $subAmount = array_sum(array_column($items, 'amount'));
+            $totalOfDiscount = array_reduce($items, function ($carry, $item) {
+                return $carry + (($item['amount'] ?? 0) - ($item['discounted_amount'] ?? $item['amount']));
+            }, 0);
 
             $additional_charges = processAdditionalCharges($subAmount);
-            $totalOfAdditionalCharges = $additional_charges['total'];
 
-            # Calculate Total Amount ((sub amount - total of discount) + total of additional charges)              
-            $totalAmount = ($subAmount - $totalOfDiscount) + $totalOfAdditionalCharges;
+            $totalAmount = ($subAmount - $totalOfDiscount) + $additional_charges['total'];
 
-            # Store Transaction in Database
-            $transaction = $this->storeTransaction($request, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges);
+            $transaction = $this->storeTransaction($request, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $additional_charges['total']);
 
-            $reservation_items = [];
-
-            # Store Multiple Reservation Items in Database
-            foreach ($items as $key => $item) {
-                $reservation = $this->storeReservation($request, $transaction, $item);
-                array_push($reservation_items, $reservation);
-            }
+            $reservation_items = array_map(fn ($item) => $this->storeReservation($request, $transaction, $item), $items);
 
             $status = "success";
             $payment_response = null;
 
-            $user = new User();
-            $user->firstname = $request->firstname;
-            $user->middlename = $request->middlename;
-            $user->lastname = $request->lastname;
-            $user->email = $request->email;
-            $user->mobile_number = $request->mobile_number;
+            $user = $this->createUser($request);
 
-            $first_tour_type = $items[0]['type'] ?? $items[0]['tour_type'] ?? 'DIY';
+            $first_item_tour = Tour::where('id', $items[0]['tour_id'])->first();
 
-            if ($first_tour_type == TourTypeEnum::DIY_TOUR) {
+            if ($first_item_tour->type === TourTypeEnum::DIY_TOUR || $first_item_tour === "DIY Tour") {
                 $request_model = $this->aqwireService->createRequestModel($transaction, $user);
                 $payment_response = $this->aqwireService->pay($request_model);
 
                 $this->updateTransactionAfterPayment($transaction, $payment_response);
-                $status = "paying";
 
                 $payment_request_details = [
                     'transaction_by' => $request->firstname . ' ' . $request->lastname,
@@ -123,6 +103,7 @@ class TourReservationService
                 ];
 
                 Mail::to($request->email)->send(new PaymentRequestMail($payment_request_details));
+                $status = "paying";
 
             } else {
                 $this->sendMultipleBookingNotification($items, $transaction, $request);
@@ -130,36 +111,15 @@ class TourReservationService
 
             DB::commit();
 
-            if ($status == "paying") {
-                return response()->json([
-                    "status" => $status,
-                    "message" => "Tour Reservations has been proccessed.",
-                    "reservations" => $reservation_items,
-                    "transaction" => $transaction,
-                    "payment_link" => $payment_response['paymentUrl'],
-                ]);
-            }
-
-            return response()->json([
+            return [
                 "status" => $status,
-                "message" => "Tour Reservations has been proccessed. Please wait for approval.",
-                "transaction" => $transaction,
+                "payment_link" => $payment_response['paymentUrl'] ?? null,
                 "reservations" => $reservation_items,
-            ]);
-
-        } catch (Exception $e) {
-            $response = [
-                'status' => 'failed',
-                'message' => 'Transaction Failed to Submit',
-                'error' => $e->getMessage(),
+                "transaction" => $transaction,
             ];
 
-            if (config('app.env') !== "production") {
-                $response['line'] = $e->getLine();
-                $response['trace'] = $e->getTrace();
-            }
-
-            return response($response, 400);
+        } catch (Exception $e) {
+            throw $e;
         }
     }
 
@@ -201,6 +161,19 @@ class TourReservationService
 
 
     /**** HELPER FUNCTIONS ****/
+
+    private function createUser($request)
+    {
+        $user = new User();
+        $user->firstname = $request->firstname;
+        $user->middlename = $request->middlename;
+        $user->lastname = $request->lastname;
+        $user->email = $request->email;
+        $user->mobile_number = $request->mobile_number;
+
+        return $user;
+    }
+
     private function storeTransaction($request, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
     {
         $reference_no = generateBookingReferenceNumber();
@@ -223,6 +196,7 @@ class TourReservationService
 
         return $transaction;
     }
+
 
     private function storeReservation($request, $transaction, $item = [])
     {
