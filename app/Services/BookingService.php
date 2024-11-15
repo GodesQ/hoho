@@ -219,7 +219,7 @@ class BookingService
             return [
                 'status' => $status,
                 'transaction' => $transaction,
-                'reservation_items' => $reservation_items,
+                'tour_reservations' => $reservation_items,
                 'payment_response' => $payment_response,
             ];
 
