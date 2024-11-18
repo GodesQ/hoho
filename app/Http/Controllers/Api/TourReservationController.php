@@ -208,7 +208,7 @@ class TourReservationController extends Controller
 
         foreach ($reservations as $reservation) {
             $reservation->setAppends([]); // Exclude the "attractions" attribute for this instance
-            $reservation->tour->setAppends([]);
+            $reservation->tour?->setAppends([]);
         }
 
         return response([
