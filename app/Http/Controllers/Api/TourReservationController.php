@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TourReservation\SingleBookingRequest;
 use App\Http\Requests\TourReservation\StoreRequest;
+use App\Http\Requests\TourReservation\v2\BookRegisteredMultipleReservationsRequest;
+use App\Http\Requests\TourReservation\v2\BookRegisteredSingleReservationsRequest;
 use App\Models\Role;
 use App\Models\TourUnavailableDate;
 use ErrorException;
@@ -18,7 +20,8 @@ use App\Models\User;
 use App\Models\ReservationCodeScanLog;
 use App\Models\ReservationUserCode;
 
-use App\Services\BookingService;
+// use App\Services\BookingService;
+use App\Services\TestServices\BookingService;
 
 use Carbon\Carbon;
 
@@ -91,11 +94,10 @@ class TourReservationController extends Controller
         ]);
     }
 
-    public function storeTourReservation(SingleBookingRequest $request)
+    public function storeTourReservation(BookRegisteredSingleReservationsRequest $request)
     {
         try {
-            // dd($request->all());
-            $result = $this->bookingService->processBookingReservation($request);
+            $result = $this->bookingService->handleRegisteredSingleReservation($request);
 
             if (! isset($result['status']))
                 throw new Exception("An error occurred while processing the request. The result status could not be found.", 400);
@@ -127,10 +129,10 @@ class TourReservationController extends Controller
         }
     }
 
-    public function storeMultipleTourReservation(StoreRequest $request)
+    public function storeMultipleTourReservation(BookRegisteredMultipleReservationsRequest $request)
     {
         try {
-            $result = $this->bookingService->processMultipleBookingReservation($request);
+            $result = $this->bookingService->handleRegisteredMultipleReservations($request);
 
             if (! isset($result['status']))
                 throw new Exception("An error occurred while processing the request. The result status could not be found.", 400);

@@ -24,9 +24,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 

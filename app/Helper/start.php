@@ -140,3 +140,20 @@ if (! function_exists('generateRandomUuid')) {
         return $uuid;
     }
 }
+
+if (! function_exists('getDateOfDIYPass')) {
+    function getDateOfDIYPass($ticket_pass, $trip_date)
+    {
+        if ($ticket_pass == '1 Day Pass') {
+            $date = $trip_date->addDays(1);
+        } else if ($ticket_pass == '2 Day Pass') {
+            $date = $trip_date->addDays(2);
+        } else if ($ticket_pass == '3 Day Pass') {
+            $date = $trip_date->addDays(3);
+        } else {
+            $date = $trip_date->addDays(1);
+        }
+
+        return $date;
+    }
+}

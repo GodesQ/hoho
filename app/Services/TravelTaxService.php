@@ -10,6 +10,7 @@ use App\Enum\TransactionTypeEnum;
 use ErrorException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class TravelTaxService
@@ -80,6 +81,11 @@ class TravelTaxService
     public function sendTravelTaxAPI($traveltax, $transaction, $primary_passenger)
     {
         $requestModel = $this->travelTaxAPIRequestModel($transaction, $transaction, $primary_passenger);
+
+        $response = Http::withHeaders([
+            'accept' => 'application/json',
+            'content-type' => 'application/json',
+        ])->post("https://api-backend.tieza.online/api/fulltax_applications", $requestModel);
     }
 
     private function storeTransaction($request, $referenceNumber, $totalAmount)
@@ -103,7 +109,20 @@ class TravelTaxService
 
     public function travelTaxAPIRequestModel($traveltax, $transaction, $primary_passenger)
     {
-        return true;
+        return [
+            'date_application' => $traveltax->transaction_payment,
+            'fulltax_no' => "",
+            'ar_no' => $traveltax->ar_number,
+            'last_name' => $traveltax->primary_passenger->lastname,
+            'first_name' => $traveltax->primary_passenger->firstname,
+            'middle_name' => $traveltax->primary_passenger->middlename,
+            'ext_name' => $traveltax->primary_passenger->suffix,
+            'passport_no' => $traveltax->primary_passenger->passport_number,
+            'ticket_no' => $traveltax->primary_passenger->ticket_number,
+            'class' => $traveltax->primary_passenger->class,
+            'total_amount' => $traveltax->total_amount,
+            'mobile_no' => $traveltax->primary_passenger->mobile_number,
+        ];
     }
 
     private function storeTravelTaxPayment($request, $transaction, $totalAmount)
