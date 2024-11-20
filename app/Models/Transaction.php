@@ -18,6 +18,7 @@ class Transaction extends Model
         'total_discount',
         'transaction_type',
         'payment_amount',
+        'total_amount',
         'type',
         'additional_charges',
         'payment_status',
@@ -38,6 +39,7 @@ class Transaction extends Model
     protected $casts = [
         'transaction_by_id' => 'integer',
         'payment_amount' => 'integer',
+        'total_amount' => 'double',
         'sub_amount' => 'double',
         'total_additional_charges' => 'double',
         'total_discount' => 'double',
@@ -52,9 +54,11 @@ class Transaction extends Model
 
     public function items()
     {
-        if ($this->transaction_type == 'book_tour') {
+        if ($this->transaction_type == 'book_tour')
+        {
             return $this->hasMany(TourReservation::class, 'order_transaction_id');
-        } else {
+        } else
+        {
             return $this->hasMany(TourReservation::class, 'order_transaction_id');
         }
     }

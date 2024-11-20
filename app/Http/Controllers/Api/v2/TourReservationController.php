@@ -83,11 +83,11 @@ class TourReservationController extends Controller
         ];
     }
 
-    public function store(StoreRequest $request, TourReservationService $tourReservationService)
+    public function store(StoreRequest $request)
     {
         try
         {
-            $result = $this->bookingService->processMultipleBookingReservation($request);
+            $result = $this->bookingService->handleRegisteredMultipleReservations($request);
 
             if ($result['status'] == "paying")
             {
@@ -109,10 +109,9 @@ class TourReservationController extends Controller
 
         } catch (Exception $exception)
         {
-            return response()->json([
-                'status' => false,
-                'message' => $exception->getMessage(),
-            ], 400);
+            $message = in_array($exception->getCode(), [400, 401, 403, 404, 405, 422]) ? $exception->getMessage() : null;
+            $exceptionHandler = new ExceptionHandlerService;
+            return $exceptionHandler->handler($exception, $message, $request);
         }
         // return $tourReservationService->storeRegisteredUserReservation($request);
     }
