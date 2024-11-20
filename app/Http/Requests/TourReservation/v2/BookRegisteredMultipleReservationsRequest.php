@@ -37,8 +37,8 @@ class BookRegisteredMultipleReservationsRequest extends FormRequest
             "items.*.discounted_amount" => ["required", 'numeric'],
             "items.*.type_of_plan" => ["nullable", 'numeric'],
             "items.*.has_insurance" => ["nullable"],
-            "items.*.referral_code" => ["nullable", "exists:referrals,referral_code"],
-            "items.*.promo_code" => ["nullable", "exists:promo_codes,code"],
+            "referral_code" => ["nullable", "exists:referrals,referral_code"],
+            "promo_code" => ["nullable", "exists:promo_codes,code"],
         ];
     }
 
@@ -62,8 +62,6 @@ class BookRegisteredMultipleReservationsRequest extends FormRequest
             'items.*.discounted_amount.required' => 'Each item must include a discounted amount.',
             'items.*.discounted_amount.numeric' => 'The discounted amount must be a numeric value.',
             'items.*.type_of_plan.numeric' => 'The type of plan must be a numeric value.',
-            'items.*.referral_code.exists' => 'The referral code must exist in the referrals table.',
-            'items.*.promo_code.exists' => 'The promo code must exist in the promo codes table.',
         ];
     }
 }

@@ -34,15 +34,16 @@ class BookingService
 
     public function handleUnregisteredMultipleReservations($request)
     {
-
-    }
-
-    public function handleRegisteredMultipleReservations($request)
-    {
-        try {
+        try
+        {
             DB::beginTransaction();
 
-            $user = User::where('id', $request->reserved_user_id)->first();
+            $user = new User();
+            $user->firstname = $request->firstname;
+            $user->middlename = $request->middlename;
+            $user->lastname = $request->lastname;
+            $user->email = $request->email;
+            $user->mobile_number = preg_replace('/\D/', '', $request->contact_no);
 
             // The items will be the list of tour reservations made by the customers/tourists.
             $items = $request->items;
@@ -57,7 +58,7 @@ class BookingService
 
             $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_discount, $additional_charges['total']);
 
-            $reservation_items = array_map(fn ($item) => $this->storeReservation($request, $transaction, $item), $items);
+            $reservation_items = array_map(fn ($item) => $this->storeReservation($request, $transaction, $user, $item), $items);
 
             $status = "success";
             $payment_response = null;
@@ -65,7 +66,8 @@ class BookingService
             $this->sendMultipleBookingNotification($items, $transaction, $request);
 
             $first_item_tour = Tour::where('id', $items[0]['tour_id'])->first();
-            if ($first_item_tour->type === TourTypeEnum::DIY_TOUR || $first_item_tour->type === "DIY Tour") {
+            if ($first_item_tour->type === TourTypeEnum::DIY_TOUR || $first_item_tour->type === "DIY Tour")
+            {
                 $request_model = $this->aqwireService->createRequestModel($transaction, $user);
                 $payment_response = $this->aqwireService->pay($request_model);
                 $this->updateTransactionAfterPayment($transaction, $payment_response);
@@ -83,50 +85,110 @@ class BookingService
                 'payment_response' => $payment_response,
             ];
 
-        } catch (Exception $e) {
+
+        } catch (Exception $exception)
+        {
             DB::rollBack();
-            throw $e;
+            throw $exception;
+        }
+    }
+
+    public function handleRegisteredMultipleReservations($request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $user = User::where('id', $request->reserved_user_id)->first();
+
+            // The items will be the list of tour reservations made by the customers/tourists.
+            $items = $request->items;
+
+            $sub_amount = array_sum(array_column($items, 'amount')) ?? 0;
+            $total_discount = array_reduce($items, function ($carry, $item) {
+                return $carry + (($item['amount'] ?? 0) - ($item['discounted_amount'] ?? $item['amount']));
+            }, 0);
+
+            $additional_charges = processAdditionalCharges($sub_amount);
+            $total_amount = ($sub_amount - $total_discount) + ($additional_charges['total'] ?? 0);
+
+            $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_discount, $additional_charges['total']);
+
+            $reservation_items = array_map(fn ($item) => $this->storeReservation($request, $transaction, $user, $item), $items);
+
+            $status = "success";
+            $payment_response = null;
+
+            $this->sendMultipleBookingNotification($items, $transaction, $request);
+
+            $first_item_tour = Tour::where('id', $items[0]['tour_id'])->first();
+            if ($first_item_tour->type === TourTypeEnum::DIY_TOUR || $first_item_tour->type === "DIY Tour")
+            {
+                $request_model = $this->aqwireService->createRequestModel($transaction, $user);
+                $payment_response = $this->aqwireService->pay($request_model);
+                $this->updateTransactionAfterPayment($transaction, $payment_response);
+                $mailService = new MailService();
+                $mailService->sendPaymentRequestMail($transaction, $payment_response['paymentUrl'], $payment_response['data']['expiresAt'], $user);
+                $status = "paying";
+            }
+
+            DB::commit();
+
+            return [
+                'status' => $status,
+                'transaction' => $transaction,
+                'tour_reservations' => $reservation_items,
+                'payment_response' => $payment_response,
+            ];
+
+        } catch (Exception $exception)
+        {
+            DB::rollBack();
+            throw $exception;
 
         }
     }
 
     public function handleUnRegisteredSingleReservation($request)
     {
+        try
+        {
+            DB::beginTransaction();
 
-    }
+            $user = new User();
+            $user->firstname = $request->firstname;
+            $user->middlename = $request->middlename;
+            $user->lastname = $request->lastname;
+            $user->email = $request->email;
+            $user->mobile_number = $request->contact_no;
 
-    public function handleRegisteredSingleReservation($request)
-    {
-        try {
-            $user = User::where('id', $request->reserved_user_id)->first();
             $sub_amount = intval($request->amount) ?? 0;
             $total_discount = 0;
 
-            $promocode = PromoCode::where('code', $request->promo_code)->first();
-
-            if ($request->promo_code != null || $request->promo_code != "") {
+            if ($request->promo_code != null || $request->promo_code != "")
+            {
                 $total_discount = intval($request->amount) - intval($request->discounted_amount);
             }
 
-            if ($request->promo_code === "COMPLIHOHO") {
+            if ($request->promo_code === "COMPLIHOHO")
+            {
                 $total_discount = $request->amount;
             }
 
-            // Get additional charges
             $additional_charges = processAdditionalCharges($sub_amount);
             $total_amount = ($sub_amount - $total_discount) + ($additional_charges['total'] ?? 0);
 
-            // Store transaction in database
             $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_discount, $additional_charges['total']);
 
-            // Store tour reservation and the guest details
-            $reservation = $this->storeReservation($request, $transaction);
+            $reservation = $this->storeReservation($request, $transaction, $user);
+
 
             $status = "success";
             $payment_response = null;
 
             // Check if the tour type is DIY and the payment method is not cash.
-            if ($request->payment_method != "cash" && ($request->type == "DIY" || $request->type == "DIY Tour")) {
+            if ($request->payment_method != "cash" && ($request->type == "DIY" || $request->type == "DIY Tour"))
+            {
                 $request_payment_model = $this->aqwireService->createRequestModel($transaction, $user);
                 $payment_response = $this->aqwireService->pay($request_payment_model);
 
@@ -140,9 +202,70 @@ class BookingService
                 $status = "paying";
             }
 
-            if (! in_array($user->email, getDevelopersEmail())) {
-                // Notify the tour provider based on the reservation of the guest
-                $this->notifyTourProviderOfBooking($reservation, $transaction);
+            DB::commit();
+
+            return [
+                "status" => $status,
+                "reservation" => $reservation,
+                "payment_response" => $payment_response,
+            ];
+
+        } catch (Exception $exception)
+        {
+            DB::rollBack();
+            throw $exception;
+        }
+    }
+
+    public function handleRegisteredSingleReservation($request)
+    {
+        try
+        {
+            DB::beginTransaction();
+
+            $user = User::where('id', $request->reserved_user_id)->first();
+            $sub_amount = intval($request->amount) ?? 0;
+            $total_discount = 0;
+
+            $promocode = PromoCode::where('code', $request->promo_code)->first();
+
+            if ($request->promo_code != null || $request->promo_code != "")
+            {
+                $total_discount = intval($request->amount) - intval($request->discounted_amount);
+            }
+
+            if ($request->promo_code === "COMPLIHOHO")
+            {
+                $total_discount = $request->amount;
+            }
+
+            // Get additional charges
+            $additional_charges = processAdditionalCharges($sub_amount);
+            $total_amount = ($sub_amount - $total_discount) + ($additional_charges['total'] ?? 0);
+
+            // Store transaction in database
+            $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_discount, $additional_charges['total']);
+
+            // Store tour reservation and the guest details
+            $reservation = $this->storeReservation($request, $transaction, $user);
+
+            $status = "success";
+            $payment_response = null;
+
+            // Check if the tour type is DIY and the payment method is not cash.
+            if ($request->payment_method != "cash" && ($request->type == "DIY" || $request->type == "DIY Tour"))
+            {
+                $request_payment_model = $this->aqwireService->createRequestModel($transaction, $user);
+                $payment_response = $this->aqwireService->pay($request_payment_model);
+
+                $transaction->update([
+                    'aqwire_transactionId' => $payment_response['data']['transactionId'],
+                    'payment_url' => $payment_response['paymentUrl'],
+                    'payment_status' => Str::lower($payment_response['data']['status']),
+                    'payment_details' => json_encode($payment_response),
+                ]);
+
+                $status = "paying";
             }
 
             DB::commit();
@@ -152,12 +275,14 @@ class BookingService
                 "reservation" => $reservation,
                 "payment_response" => $payment_response,
             ];
-        } catch (Exception $exception) {
+        } catch (Exception $exception)
+        {
+            DB::rollBack();
             throw $exception;
         }
     }
 
-    /// HELPERS
+    /*************************************************************** HELPERS *****************************************************/
 
     private function storeTransaction($request, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
     {
@@ -182,12 +307,11 @@ class BookingService
         return $transaction;
     }
 
-    private function storeReservation($request, $transaction, $item = [])
+    private function storeReservation($request, $transaction, $user, $item = [])
     {
-        try {
+        try
+        {
             DB::beginTransaction();
-
-            $user = User::findOrFail($request->reserved_user_id);
 
             // Get the start and end date of the booking
             $trip_date = empty($item) ? $request->trip_date : $item['trip_date'];
@@ -241,7 +365,8 @@ class BookingService
             ]);
 
             // Check if the request has a file of requirements and if it's valid
-            if ($request->hasFile('requirement') && $request->file('requirement')->isValid()) {
+            if ($request->hasFile('requirement') && $request->file('requirement')->isValid())
+            {
                 $file = $request->file('requirement');
                 $file_name = Str::random(7) . '-' . time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path() . '/assets/img/tour_reservations/requirements/' . $reservation->id, $file_name);
@@ -253,67 +378,84 @@ class BookingService
 
             // Check if the referral code is valid and existing in the referral list
             $referral = Referral::where('referral_code', $request->referral_code)->first();
-            if ($referral) {
+            if ($referral)
+            {
                 $reservation->update([
                     'referral_merchant_id' => $referral->merchant_id,
                     'referral_code' => $referral->referral_code,
                 ]);
             }
 
+            $user_email = $user->email_address ?? $user->email;
+            $user_mobile_number = "+" . ($user->mobile_number ?? $user->countryCode . $user->contact_no);
+
             // Store customer details of tour reservation in database
             TourReservationCustomerDetail::create([
                 'tour_reservation_id' => $reservation->id,
                 'firstname' => $user->firstname,
                 'lastname' => $user->lastname,
-                'email' => $user->email,
-                'contact_no' => '+' . $user->countryCode . $user->contact_no,
+                'email' => $user_email,
+                'contact_no' => $user_mobile_number,
                 'address' => null,
             ]);
 
-            if ($item['type'] === TourTypeEnum::TRANSIT_TOUR) {
-                $this->storeTransitTourDetails($reservation, $item);
+            if ($tour_type === TourTypeEnum::TRANSIT_TOUR)
+            {
+                $transit_details = [
+                    'arrival_datetime' => $item['arrival_datetime'] ?? $request->arrival_datetime,
+                    'departure_datetime' => $item['departure_datetime'] ?? $request->departure_datetime,
+                    'flight_to' => $item['flight_to'] ?? $request->flight_to,
+                    'flight_from' => $item['flight_from'] ?? $request->flight_from,
+                    'passport_number' => $item['passport_number'] ?? $request->passport_number,
+                    'special_instruction' => $item['special_instruction'] ?? $request->special_instruction,
+                ];
+
+                $this->storeTransitTourDetails($reservation, $transit_details);
             }
 
-            if (! in_array($user->email, getDevelopersEmail())) {
+            if (! in_array($user->email, getDevelopersEmail()))
+            {
                 // Notify the tour provider via email
-                $this->notifyTourProviderOfBooking($reservation, $transaction);
+                $this->notifyTourProviderOfBooking($reservation, $transaction, $user);
             }
 
             DB::commit();
             return $reservation;
-        } catch (Exception $e) {
+        } catch (Exception $e)
+        {
             DB::rollBack();
             throw $e;
         }
     }
 
-    private function storeTransitTourDetails($reservation, $item)
+    private function storeTransitTourDetails($reservation, $transit_details)
     {
         $layover_user_details = LayoverTourReservationDetail::create([
             'reservation_id' => $reservation->id,
-            'arrival_datetime' => $item['arrival_datetime'],
-            'flight_to' => $item['flight_to'],
-            'departure_datetime' => $item['departure_datetime'],
-            'flight_from' => $item['flight_from'],
-            'passport_number' => $item['passport_number'],
-            'special_instruction' => $item['special_instruction']
+            'arrival_datetime' => $transit_details['arrival_datetime'],
+            'flight_to' => $transit_details['flight_to'],
+            'departure_datetime' => $transit_details['departure_datetime'],
+            'flight_from' => $transit_details['flight_from'],
+            'passport_number' => $transit_details['passport_number'],
+            'special_instruction' => $transit_details['special_instruction']
         ]);
 
         return $layover_user_details;
     }
 
-    private function notifyTourProviderOfBooking($reservation, $transaction)
+    private function notifyTourProviderOfBooking($reservation, $transaction, $user)
     {
         $tour = Tour::where('id', $reservation->tour_id)->first();
 
         $details = [
             'tour_provider_name' => $tour->tour_provider->merchant->name ?? '',
-            'reserved_passenger' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
+            'reserved_passenger' => $user->firstname . ' ' . $user->lastname,
             'trip_date' => $reservation->start_date,
             'tour_name' => $tour->name
         ];
 
-        if ($tour?->tour_provider?->contact_email) {
+        if ($tour?->tour_provider?->contact_email)
+        {
             $recipientEmail = config('app.env') === 'production' ? $tour->tour_provider->contact_email : config('mail.test_receiver');
             $ccRecipientEmail = config('app.env') === 'production' ? 'philippinehoho@tourism.gov.ph' : config('mail.test_receiver');
             Mail::to($recipientEmail)->cc($ccRecipientEmail)->send(new TourProviderBookingNotification($details));
@@ -334,14 +476,17 @@ class BookingService
 
     private function sendMultipleBookingNotification($items, $transaction, $request)
     {
-        foreach ($items as $key => $item) {
+        foreach ($items as $key => $item)
+        {
             $tour = Tour::where('id', $item['tour_id'])->first();
 
-            if (! $tour) {
+            if (! $tour)
+            {
                 throw new Exception("No Tour Found in Item " . ($key + 1));
             }
 
-            if ($tour->tour_provider) {
+            if ($tour->tour_provider)
+            {
                 $details = [
                     'tour_provider_name' => $tour->tour_provider->merchant->name,
                     'reserved_passenger' => $request->firstname . ' ' . $request->lastname,
@@ -349,7 +494,8 @@ class BookingService
                     'tour_name' => $tour->name
                 ];
 
-                if ($tour?->tour_provider?->contact_email) {
+                if ($tour?->tour_provider?->contact_email)
+                {
                     $recipientEmail = config('app.env') === 'production' ? $tour->tour_provider->contact_email : config('mail.test_receiver');
                     Mail::to($recipientEmail)->send(new TourProviderBookingNotification($details));
                 }

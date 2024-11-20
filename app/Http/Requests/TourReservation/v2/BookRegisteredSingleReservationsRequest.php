@@ -32,8 +32,8 @@ class BookRegisteredSingleReservationsRequest extends FormRequest
             "tour_id" => ["required", 'exists:tours,id'],
             "number_of_pass" => ["required", 'integer'],
             "payment_method" => ["required", 'in:cash,aqwire'],
-            "promo_code" => ["required", 'exists:promo_codes,code'],
-            "referral_code" => ["required", 'exists:referrals,referral_code'],
+            "promo_code" => ["nullable", 'exists:promo_codes,code'],
+            "referral_code" => ["nullable", 'exists:referrals,referral_code'],
             "amount" => ["required", 'numeric'],
             "discounted_amount" => ["required", 'numeric'],
             "arrival_datetime" => ["required_if:type,Transit"],
@@ -41,8 +41,8 @@ class BookRegisteredSingleReservationsRequest extends FormRequest
             "flight_from" => ["required_if:type,Transit"],
             "flight_to" => ["required_if:type,Transit"],
             "passport_number" => ["required_if:type,Transit"],
-            "has_insurance" => ["required_if:type,Transit"],
-            "type_of_plan" => ["required_if:type,Transit"],
+            "has_insurance" => ["nullable"],
+            "type_of_plan" => ["nullable"],
         ];
     }
 }
