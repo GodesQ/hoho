@@ -95,7 +95,7 @@ class TourReservationController extends Controller
                     "status" => $result['status'],
                     "message" => "Tour Reservations has been proccessed.",
                     "payment_link" => $result['payment_response']['paymentUrl'],
-                    "reservations" => $result['reservation_items'],
+                    "reservations" => $result['tour_reservations'],
                     "transaction" => $result['transaction'],
                 ]);
             }
@@ -104,7 +104,7 @@ class TourReservationController extends Controller
                 "status" => $result['status'],
                 "message" => "Tour Reservations has been proccessed. Please wait for approval.",
                 "transaction" => $result['transaction'],
-                "reservations" => $result['reservation_items'],
+                "reservations" => $result['tour_reservations'],
             ]);
 
         } catch (Exception $exception)
