@@ -17,10 +17,12 @@ class AqwireService
     public function pay($body)
     {
         # Generate URL Endpoint and Auth Token for Payment Gateway
-        if (config('app.env') === 'production') {
+        if (config('app.env') === 'production')
+        {
             $url = 'https://payments.aqwire.io/api/v3/transactions/create';
             $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
-        } else {
+        } else
+        {
             $url = 'https://payments-sandbox.aqwire.io/api/v3/transactions/create';
             $authToken = $this->getHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
         }
@@ -34,9 +36,10 @@ class AqwireService
 
         $statusCode = $response->getStatusCode();
 
-        if ($statusCode == 400) {
+        if ($statusCode == 400)
+        {
             $content = json_decode($response->getBody()->getContents());
-            throw new ErrorException($content->message . ' in Aqwire Payment Gateway.');
+            throw new ErrorException($content->message . ' in Aqwire Payment Gateway.', 400);
         }
 
         $responseData = json_decode($response->getBody(), true);
@@ -48,7 +51,8 @@ class AqwireService
         $customer_email = $customer->email_address ?? $customer->email;
         $customer_mobile_number = "+" . ($customer->mobile_number ?? $customer->countryCode . $customer->contact_no);
 
-        switch ($transaction->transaction_type) {
+        switch ($transaction->transaction_type)
+        {
             case 'book_tour':
                 $success = config('aqwire.success.book_tour');
                 $cancel = config('aqwire.cancel.book_tour');
@@ -58,16 +62,16 @@ class AqwireService
                 $cancel = config('aqwire.cancel.travel_tax');
                 break;
             case 'order':
-                    $success = config('aqwire.success.order');
-                    $cancel = config('aqwire.cancel.order');
+                $success = config('aqwire.success.order');
+                $cancel = config('aqwire.cancel.order');
                 break;
 
             case 'hotel_reservation':
-                    $success = config('aqwire.success.hotel_reservation');
-                    $cancel = config('aqwire.cancel.hotel_reservation');
+                $success = config('aqwire.success.hotel_reservation');
+                $cancel = config('aqwire.cancel.hotel_reservation');
                 break;
 
-            default: 
+            default:
                 $success = config('aqwire.success.book_tour');
                 $cancel = config('aqwire.cancel.book_tour');
                 break;

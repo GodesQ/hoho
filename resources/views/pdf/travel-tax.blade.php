@@ -128,9 +128,11 @@
                                 <div style="margin-top: 40px;">
                                     <img src="data:image/png;base64, {{ $qrcode }} ">
                                     <div style="margin-bottom: 30px;"></div>
-                                    <div style="font-weight: bold;">ATTY. BUMBO S. CRUZ</div>
+                                    <div style="font-weight: bold; z-index: 99; postion: relative;">ATTY. BUMBO S. CRUZ
+                                    </div>
                                     <div style="font-style: italic;">Manager</div>
-                                    <div style="font-style: italic;">Travel Tax Department</div>
+                                    <div style="font-style: italic; z-index: 99; postion: relative;">Travel Tax
+                                        Department</div>
                                 </div>
                             </td>
                         </tr>

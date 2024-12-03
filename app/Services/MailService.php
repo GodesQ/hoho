@@ -6,10 +6,14 @@ use Illuminate\Support\Facades\Mail;
 
 class MailService
 {
-    public function sendPaymentRequestMail($transaction, $payment_url, $payment_expiration)
-    {   
+    public function sendPaymentRequestMail($transaction, $payment_url, $payment_expiration, $user = null)
+    {
+
+        $fullname = $user ? $user->firstname . ' ' . $user->lastname : $transaction->user->firstname . ' ' . $transaction->user->lastname;
+        $email = $user ? $user->email : $transaction->user->email;
+
         $payment_request_details = [
-            'transaction_by' => $transaction->user->firstname . ' ' . $transaction->user->lastname,
+            'transaction_by' => $fullname,
             'reference_no' => $transaction->reference_no,
             'total_additional_charges' => $transaction->total_additional_charges,
             'sub_amount' => $transaction->sub_amount,
@@ -18,10 +22,11 @@ class MailService
             'payment_expiration' => $payment_expiration ?? null,
         ];
 
-        Mail::to($transaction->user->email)->send(new PaymentRequestMail($payment_request_details));
+        Mail::to($email)->send(new PaymentRequestMail($payment_request_details));
     }
 
-    public function sendTourProviderBookingNotificationMail() {
+    public function sendTourProviderBookingNotificationMail()
+    {
 
     }
 }

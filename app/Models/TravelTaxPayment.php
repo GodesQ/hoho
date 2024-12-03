@@ -33,6 +33,11 @@ class TravelTaxPayment extends Model
         return $this->hasMany(TravelTaxPassenger::class, 'payment_id');
     }
 
+    public function primary_passenger()
+    {
+        return $this->hasOne(TravelTaxPassenger::class, 'payment_id')->where('passenger_type', 'primary');
+    }
+
     public function payor()
     {
         return $this->belongsTo(User::class, 'user_id');

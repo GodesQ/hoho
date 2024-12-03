@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Enum\TourTypeEnum;
 use App\Enum\TransactionTypeEnum;
 use App\Mail\PaymentRequestMail;
 use App\Mail\TourProviderBookingNotification;
+use App\Models\Referral;
 use App\Models\ReservationUserCode;
 use App\Models\Role;
 use App\Models\Tour;
@@ -22,9 +24,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 
@@ -41,203 +41,10 @@ class TourReservationService
         $this->bookingService = $bookingService;
     }
 
-    public function storeRegisteredUserReservation(Request $request)
+    public function storeAnonymousUserReservations(Request $request, MailService $mailService)
     {
         try {
-            $user = User::findOrFail($request->reserved_user_id);
-
-            if (! $user->firstname || ! $user->lastname || ! $user->contact_no) {
-                throw new Exception("The first name, last name and contact number must be filled in completely in your profile to continue.");
-            }
-
-            $referenceNumber = $this->generateReferenceNo();
-            $additionalCharges = $this->generateAdditionalCharges();
-            $subAmount = 0;
-            $totalOfDiscount = 0;
-            $totalOfAdditionalCharges = 0;
-
-            $items = [];
-
-            if (is_string($request->items) && is_array(json_decode($request->items, true))) {
-                $items = json_decode($request->items, true);
-            }
-
-            if (! is_array($items)) {
-                throw new Exception("Items is not a valid JSON type.");
-            }
-
-            if (count($items) === 0) {
-                throw new Exception("Items is empty. Please populate to continue.");
-            }
-
-            foreach ($items as $key => $item) {
-                $subAmount += intval($item['amount']) ?? 0;
-                $totalOfDiscount += (intval($item['amount'] ?? 0) - (intval($item['discounted_amount'] ?? 0) ?? intval($item['amount'])));
-                $totalOfAdditionalCharges += $this->getTotalOfAdditionalCharges(($item['number_of_pax'] ?? 0), $additionalCharges);
-            }
-
-            # Calculate Total Amount ((sub amount - total of discount) + total of additional charges)              
-            $totalAmount = ($subAmount - $totalOfDiscount) + $totalOfAdditionalCharges;
-
-            # Store Transaction in Database
-            $transaction = Transaction::create([
-                'reference_no' => $referenceNumber,
-                'transaction_by_id' => $user->id,
-                'sub_amount' => $subAmount ?? $totalAmount,
-                'total_additional_charges' => $totalOfAdditionalCharges ?? 0,
-                'total_discount' => $totalOfDiscount ?? 0,
-                'transaction_type' => 'book_tour',
-                'payment_amount' => $totalAmount,
-                'additional_charges' => json_encode($additionalCharges),
-                'aqwire_paymentMethodCode' => $request->payment_method ?? null,
-                'order_date' => Carbon::now(),
-                'transaction_date' => Carbon::now(),
-            ]);
-
-            foreach ($items as $key => $item) {
-                $reservation = TourReservation::create([
-                    'tour_id' => $item['tour_id'],
-                    'type' => $item['type'],
-                    'total_additional_charges' => $totalOfAdditionalCharges,
-                    'discount' => $totalOfDiscount,
-                    'sub_amount' => $subAmount,
-                    'amount' => $totalAmount,
-                    'reserved_user_id' => $request->reserved_user_id,
-                    'passenger_ids' => null,
-                    'reference_code' => $transaction->reference_no,
-                    'order_transaction_id' => $transaction->id,
-                    'start_date' => $item['trip_date'],
-                    'end_date' => $item['type'] == 'Guided' || $item['type'] == 'Guided Tour' ? Carbon::parse($item['trip_date'])->addDays(1) : $this->getDateOfDIYPass($item['ticket_pass'], $item['trip_date']),
-                    'number_of_pass' => $item['number_of_pax'],
-                    'ticket_pass' => $item['type'] == 'DIY' ? $item['ticket_pass'] : null,
-                    'promo_code' => $request->promo_code,
-                    'requirement_file_path' => null,
-                    'discount_amount' => $subAmount - $totalOfDiscount,
-                    'created_user_type' => 'guest'
-                ]);
-
-                TourReservationCustomerDetail::create([
-                    'tour_reservation_id' => $reservation->id,
-                    'firstname' => $user->firstname,
-                    'lastname' => $user->lastname,
-                    'email' => $user->email,
-                    'contact_no' => '+' . $user->countryCode . $user->contact_no,
-                    'address' => null,
-                ]);
-            }
-
-            # Create Request Model for Payment Gateway
-            $requestModel = [
-                'uniqueId' => $transaction->reference_no,
-                'currency' => 'PHP',
-                'paymentType' => 'DTP',
-                'amount' => $transaction->payment_amount,
-                'customer' => [
-                    'name' => $user->firstname . ' ' . $user->lastname,
-                    'email' => $user->email,
-                    'mobile' => '+' . $user->countryCode . preg_replace('/[^0-9]/', '', $user->contact_no),
-                ],
-                'project' => [
-                    'name' => 'Philippines Hop-On Hop-Off Checkout Reservation',
-                    'unitNumber' => '00000',
-                    'category' => 'Checkout'
-                ],
-                'redirectUrl' => [
-                    'success' => env('AQWIRE_TEST_SUCCESS_URL') . $transaction->id,
-                    'cancel' => env('AQWIRE_TEST_CANCEL_URL') . $transaction->id,
-                    'callback' => env('AQWIRE_TEST_CALLBACK_URL') . $transaction->id
-                ],
-                'note' => 'Checkout for Tour Reservation',
-                'metadata' => [
-                    'Convenience Fee' => '99.00' . ' ' . 'Per Pax',
-                ]
-            ];
-
-            # Generate URL Endpoint and Auth Token for Payment Gateway
-            if (config('app.env') === 'production') {
-                $url_create = 'https://payments.aqwire.io/api/v3/transactions/create';
-                $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
-            } else {
-                $url_create = 'https://payments-sandbox.aqwire.io/api/v3/transactions/create';
-                $authToken = $this->getHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
-            }
-
-            $response = Http::withHeaders([
-                'accept' => 'application/json',
-                'content-type' => 'application/json',
-                'Qw-Merchant-Id' => config('services.aqwire.merchant_code'),
-                'Authorization' => 'Bearer ' . $authToken,
-            ])->post($url_create, $requestModel);
-
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode == 400) {
-                $content = json_decode($response->getBody()->getContents());
-                throw new Exception($content->message . ' in Aqwire Payment Gateway.');
-            }
-
-            $responseData = json_decode($response->getBody(), true);
-
-            $transaction->update([
-                'aqwire_transactionId' => $responseData['data']['transactionId'] ?? null,
-                'payment_url' => $responseData['paymentUrl'] ?? null,
-                'payment_status' => Str::lower($responseData['data']['status'] ?? ''),
-                'payment_details' => json_encode($responseData),
-                'additional_charges' => json_encode($additionalCharges)
-            ]);
-
-            $this->sendMultipleBookingNotification($items, $transaction, $request);
-
-            $payment_request_details = [
-                'transaction_by' => $user->firstname . ' ' . $user->lastname,
-                'reference_no' => $transaction->reference_no,
-                'total_additional_charges' => $transaction->total_additional_charges,
-                'sub_amount' => $transaction->sub_amount,
-                'total_amount' => $transaction->payment_amount,
-                'payment_url' => $responseData['paymentUrl'],
-                'payment_expiration' => $responseData['data']['expiresAt'] ?? null,
-            ];
-
-            Mail::to($user->email)->send(new PaymentRequestMail($payment_request_details));
-
-            return response([
-                'status' => 'paying',
-                'url' => $responseData['paymentUrl']
-            ], 201);
-
-        } catch (HttpException $e) {
-            return response([
-                'status' => 'failed',
-                'message' => 'Transaction Failed to Submit',
-                'error' => $e->getMessage()
-            ], 400);
-
-        } catch (\ErrorException $e) {
-            return response([
-                'status' => 'failed',
-                'message' => 'Transaction Failed to Submit',
-                'error' => $e->getMessage()
-            ], 400);
-
-        } catch (Exception $e) {
-            return response([
-                'status' => 'failed',
-                'message' => 'Transaction Failed to Submit',
-                'error' => $e->getMessage()
-            ], 400);
-
-        } catch (\Error $e) {
-            return response([
-                'status' => 'failed',
-                'message' => 'Transaction Failed to Submit',
-                'error' => $e->getMessage()
-            ], 400);
-        }
-    }
-
-    public function storeAnonymousUserReservation(Request $request, MailService $mailService)
-    {
-        try {
+            DB::beginTransaction();
 
             if (! $request->firstname || ! $request->lastname || ! $request->contact_no)
                 throw new Exception("The first name, last name and contact number must be filled in correctly in your profile to continue.");
@@ -248,220 +55,69 @@ class TourReservationService
                 throw new Exception("The contact number must be a valid E.164 format.");
             }
 
-            $referenceNumber = $this->generateReferenceNo();
             $subAmount = 0;
             $totalOfDiscount = 0;
-            $totalOfAdditionalCharges = 0;
 
-            $items = $request->items;
-
-            if (is_string($request->items) && is_array(json_decode($request->items, true))) {
-                $items = json_decode($request->items, true);
-            }
+            $items = is_string($request->items) ? json_decode($request->items, true) : $request->items;
 
             if (! is_array($items)) {
                 throw new Exception("Items is not a valid JSON type.");
             }
 
-            foreach ($items as $key => $item) {
-                $subAmount += intval($item['amount']) ?? 0;
-                $totalOfDiscount += (intval($item['amount'] ?? 0) - (intval($item['discounted_amount'] ?? 0) ?? intval($item['amount'])));
-            }
+            $subAmount = array_sum(array_column($items, 'amount'));
+            $totalOfDiscount = array_reduce($items, function ($carry, $item) {
+                return $carry + (($item['amount'] ?? 0) - ($item['discounted_amount'] ?? $item['amount']));
+            }, 0);
 
             $additional_charges = processAdditionalCharges($subAmount);
-            $totalOfAdditionalCharges = $additional_charges['total'];
 
-            # Calculate Total Amount ((sub amount - total of discount) + total of additional charges)              
-            $totalAmount = ($subAmount - $totalOfDiscount) + $totalOfAdditionalCharges;
+            $totalAmount = ($subAmount - $totalOfDiscount) + $additional_charges['total'];
 
-            # Store Transaction in Database
-            $transaction = Transaction::create([
-                'reference_no' => $referenceNumber,
-                'sub_amount' => $subAmount ?? $totalAmount,
-                'total_additional_charges' => $totalOfAdditionalCharges ?? 0,
-                'total_discount' => $totalOfDiscount ?? 0,
-                'transaction_type' => TransactionTypeEnum::BOOK_TOUR,
-                'payment_amount' => $totalAmount,
-                'additional_charges' => json_encode($additional_charges['list']),
-                'aqwire_paymentMethodCode' => $request->payment_method ?? null,
-                'order_date' => Carbon::now(),
-                'transaction_date' => Carbon::now(),
-            ]);
+            $transaction = $this->storeTransaction($request, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $additional_charges['total']);
 
-            # Store Multiple Reservation Items in Database
-            foreach ($items as $key => $item) {
-                $reservation = TourReservation::create([
-                    'tour_id' => $item['tour_id'],
-                    'type' => $item['type'],
-                    'total_additional_charges' => $totalOfAdditionalCharges,
-                    'discount' => $totalOfDiscount,
-                    'sub_amount' => $subAmount,
-                    'amount' => $totalAmount,
-                    'reserved_user_id' => null,
-                    'passenger_ids' => null,
-                    'reference_code' => $transaction->reference_no,
-                    'order_transaction_id' => $transaction->id,
-                    'start_date' => $item['trip_date'],
-                    'end_date' => $item['type'] == 'Guided' || $item['type'] == 'Guided Tour' ? Carbon::parse($item['trip_date'])->addDays(1) : $this->getDateOfDIYPass($item['ticket_pass'], $item['trip_date']),
-                    'number_of_pass' => $item['number_of_pass'],
-                    'ticket_pass' => $item['type'] == 'DIY' ? $item['ticket_pass'] : null,
-                    'promo_code' => $request->promo_code,
-                    'has_insurance' => 1,
-                    'requirement_file_path' => null,
-                    'discount_amount' => $subAmount - $totalOfDiscount,
-                    'created_user_type' => 'guest'
-                ]);
+            $reservation_items = array_map(fn ($item) => $this->storeReservation($request, $transaction, $item), $items);
 
-                // Add the Reservation Insurance
-                TourReservationInsurance::create([
-                    'insurance_id' => rand(1000000, 100000000),
-                    'reservation_id' => $reservation->id,
-                    'type_of_plan' => 1,
-                    'total_insurance_amount' => 0,
-                    'number_of_pax' => $reservation->number_of_pass,
-                ]);
+            $status = "success";
+            $payment_response = null;
 
-                TourReservationCustomerDetail::create([
-                    'tour_reservation_id' => $reservation->id,
-                    'firstname' => $request->firstname,
-                    'lastname' => $request->lastname,
-                    'email' => $request->email,
-                    'contact_no' => preg_replace('/[^0-9]/', '', $request->contact_no),
-                    'address' => $request->address,
-                ]);
-            }
+            $user = $this->createUser($request);
 
-            # Create Request Model for Payment Gateway
-            $requestModel = [
-                'uniqueId' => $transaction->reference_no,
-                'currency' => 'PHP',
-                'paymentType' => 'DTP',
-                'amount' => $transaction->payment_amount,
-                'customer' => [
-                    'name' => $request->firstname . ' ' . $request->lastname,
-                    'email' => $request->email,
-                    'mobile' => $request->contact_no,
-                ],
-                'project' => [
-                    'name' => 'Philippines Hop-On Hop-Off Checkout Reservation',
-                    'unitNumber' => '00000',
-                    'category' => 'Checkout'
-                ],
-                'redirectUrl' => [
-                    'success' => env('AQWIRE_SUCCESS_URL') . $transaction->id,
-                    'cancel' => env('AQWIRE_CANCEL_URL') . $transaction->id,
-                    'callback' => env('AQWIRE_CALLBACK_URL') . $transaction->id
-                ],
-                'note' => 'Checkout for Tour Reservation',
-                'metadata' => [
-                    'Convenience Fee' => '5%' . ' ' . 'Per Pax',
-                ]
-            ];
+            $first_item_tour = Tour::where('id', $items[0]['tour_id'])->first();
 
-            # Generate URL Endpoint and Auth Token for Payment Gateway
-            if (config('app.env') === 'production') {
-                $url_create = 'https://payments.aqwire.io/api/v3/transactions/create';
-                $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
+            if ($first_item_tour->type === TourTypeEnum::DIY_TOUR || $first_item_tour === "DIY Tour") {
+                $request_model = $this->aqwireService->createRequestModel($transaction, $user);
+                $payment_response = $this->aqwireService->pay($request_model);
+
+                $this->updateTransactionAfterPayment($transaction, $payment_response);
+
+                $payment_request_details = [
+                    'transaction_by' => $request->firstname . ' ' . $request->lastname,
+                    'reference_no' => $transaction->reference_no,
+                    'total_additional_charges' => $transaction->total_additional_charges,
+                    'sub_amount' => $transaction->sub_amount,
+                    'total_amount' => $transaction->payment_amount,
+                    'payment_url' => $payment_response['paymentUrl'] ?? null,
+                    'payment_expiration' => $payment_response['data']['expiresAt'] ?? null,
+                ];
+
+                Mail::to($request->email)->send(new PaymentRequestMail($payment_request_details));
+                $status = "paying";
+
             } else {
-                $url_create = 'https://payments-sandbox.aqwire.io/api/v3/transactions/create';
-                $authToken = $this->getHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
+                $this->sendMultipleBookingNotification($items, $transaction, $request);
             }
 
-            $response = Http::withHeaders([
-                'accept' => 'application/json',
-                'content-type' => 'application/json',
-                'Qw-Merchant-Id' => config('services.aqwire.merchant_code'),
-                'Authorization' => 'Bearer ' . $authToken,
-            ])->post($url_create, $requestModel);
+            DB::commit();
 
-            $statusCode = $response->getStatusCode();
-
-            if ($statusCode == 400) {
-                $content = json_decode($response->getBody()->getContents());
-                throw new Exception($content->message . ' in Aqwire Payment Gateway.');
-            }
-
-            $responseData = json_decode($response->getBody(), true);
-
-            $transaction->update([
-                'aqwire_transactionId' => $responseData['data']['transactionId'] ?? null,
-                'payment_url' => $responseData['paymentUrl'] ?? null,
-                'payment_status' => Str::lower($responseData['data']['status'] ?? ''),
-                'payment_details' => json_encode($responseData),
-            ]);
-
-            $this->sendMultipleBookingNotification($items, $transaction, $request);
-
-            $payment_request_details = [
-                'transaction_by' => $request->firstname . ' ' . $request->lastname,
-                'reference_no' => $transaction->reference_no,
-                'total_additional_charges' => $transaction->total_additional_charges,
-                'sub_amount' => $transaction->sub_amount,
-                'total_amount' => $transaction->payment_amount,
-                'payment_url' => $responseData['paymentUrl'],
-                'payment_expiration' => $responseData['data']['expiresAt'] ?? null,
+            return [
+                "status" => $status,
+                "payment_link" => $payment_response['paymentUrl'] ?? null,
+                "reservations" => $reservation_items,
+                "transaction" => $transaction,
             ];
-
-            Mail::to($request->email)->send(new PaymentRequestMail($payment_request_details));
-
-            return response([
-                'status' => 'paying',
-                'url' => $responseData['paymentUrl']
-            ], 201);
-
-        } catch (HttpException $e) {
-            return response([
-                'status' => 'failed',
-                'message' => 'Transaction Failed to Submit',
-                'error' => $e->getMessage()
-            ], 400);
 
         } catch (Exception $e) {
-            return response([
-                'status' => 'failed',
-                'message' => 'Transaction Failed to Submit',
-                'error' => $e->getMessage()
-            ], 400);
-
-        } catch (\Error $e) {
-            return response([
-                'status' => 'failed',
-                'message' => 'Transaction Failed to Submit',
-                'error' => $e->getMessage()
-            ], 400);
-        }
-    }
-
-    public function storeAnonymousUserSingleReservation(Request $request)
-    {
-        try {
-            if (! $request->firstname || ! $request->lastname || ! $request->contact_no)
-                throw new Exception("The first name, last name and contact number must be filled in correctly in your profile to continue.");
-
-            $phone_number = $request->contact_no;
-
-            if (! preg_match('/^\+\d{10,12}$/', $phone_number)) {
-                throw new Exception("The contact number must be a valid E.164 format.");
-            }
-
-            $sub_amount = intval($request->sub_amount) ?? 0;
-            $total_of_discount = 0;
-
-            // Get additional charges
-            $additional_charges = processAdditionalCharges($sub_amount);
-
-            $total_amount = $this->getTotalAmountOfBooking($sub_amount, $additional_charges['total'], $total_of_discount);
-
-            $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_of_discount, $additional_charges['total']);
-
-            // Store tour reservation and the guest details
-            // $reservation = $this->storeReservation($request, $transaction);
-            $reservation = TourReservation::create([
-
-            ]);
-
-        } catch (Exception $exception) {
-
+            throw $e;
         }
     }
 
@@ -501,6 +157,21 @@ class TourReservationService
         }
     }
 
+
+    /**** HELPER FUNCTIONS ****/
+
+    private function createUser($request)
+    {
+        $user = new User();
+        $user->firstname = $request->firstname;
+        $user->middlename = $request->middlename;
+        $user->lastname = $request->lastname;
+        $user->email = $request->email;
+        $user->mobile_number = $request->mobile_number;
+
+        return $user;
+    }
+
     private function storeTransaction($request, $totalAmount, $additional_charges, $subAmount, $totalOfDiscount, $totalOfAdditionalCharges)
     {
         $reference_no = generateBookingReferenceNumber();
@@ -522,6 +193,103 @@ class TourReservationService
         ]);
 
         return $transaction;
+    }
+
+
+    private function storeReservation($request, $transaction, $item = [])
+    {
+        try {
+            DB::beginTransaction();
+
+            $user = User::find($request->reserved_user_id);
+
+            // Get the start and end date of the booking
+            $trip_date = empty($item) ? $request->trip_date : $item['trip_date'];
+            $trip_start_date = Carbon::parse($trip_date);
+            $trip_end_date = $request->type == 'Guided' ? $trip_start_date->addDays(1) : $this->getDateOfDIYPass($request->ticket_pass, $trip_start_date);
+
+            // Set reservation details
+            $tour_id = empty($item) ? $request->tour_id : $item['tour_id'];
+            $tour_type = empty($item) ? $request->type : $item['type'];
+            $number_of_pax = empty($item) ? $request->number_of_pass : $item['number_of_pass'];
+            $ticket_pass = empty($item) ? $request->ticket_pass : $item['ticket_pass'];
+
+            // Insurance
+            $has_insurance = $item['has_insurance'] ?? $request->has_insurance ?? false;
+            $type_of_plan = $item['type_of_plan'] ?? $request->type_of_plan ?? 1;
+            $total_insurance_amount = $item['total_insurance_amount'] ?? $request->total_insurance_amount ?? 0.00;
+
+            // Store tour reservation in database
+            $reservation = TourReservation::create([
+                'tour_id' => $tour_type === 'DIY' || $tour_type === 'DIY Tour' ? 63 : $tour_id, // Set the tour id to 63 when the tour type is DIY (For Main DIY: Tour)
+                'type' => $tour_type,
+                'total_additional_charges' => $transaction->total_additional_charges,
+                'discount' => $transaction->total_discount,
+                'sub_amount' => $transaction->sub_amount,
+                'amount' => $transaction->payment_amount,
+                'reserved_user_id' => $request->reserved_user_id,
+                'passenger_ids' => $request->has('passenger_ids') ? json_encode($request->passenger_ids) : json_encode([$request->reserved_user_id]),
+                'reference_code' => $transaction->reference_no,
+                'order_transaction_id' => $transaction->id,
+                'start_date' => $trip_start_date,
+                'has_insurance' => 1,
+                'end_date' => $trip_end_date,
+                'status' => 'pending',
+                'number_of_pass' => $number_of_pax,
+                'ticket_pass' => $tour_type === 'DIY' || $tour_type === 'DIY Tour' ? ($ticket_pass ?? '1 Day Pass') : null,
+                'promo_code' => $request->promo_code,
+                'discount_amount' => $transaction->sub_amount - $transaction->discount,
+                'created_by' => $request->reserved_user_id,
+                'created_user_type' => Auth::guard('admin')->user() ? Auth::guard('admin')->user()->role : 'guest'
+            ]);
+
+            // Add the Reservation Insurance
+            TourReservationInsurance::create([
+                'insurance_id' => rand(1000000, 100000000),
+                'reservation_id' => $reservation->id,
+                'type_of_plan' => $type_of_plan,
+                'total_insurance_amount' => $total_insurance_amount,
+                'number_of_pax' => $reservation->number_of_pass,
+            ]);
+
+            // Check if the request has a file of requirements and if it's valid
+            if ($request->hasFile('requirement') && $request->file('requirement')->isValid()) {
+                $file = $request->file('requirement');
+                $file_name = Str::random(7) . '-' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path() . '/assets/img/tour_reservations/requirements/' . $reservation->id, $file_name);
+
+                $reservation->update([
+                    'requirement_file_path' => $file_name
+                ]);
+            }
+
+            // Check if the referral code is valid and existing in the referral list
+            $referral = Referral::where('referral_code', $request->referral_code)->first();
+            if ($referral) {
+                $reservation->update([
+                    'referral_merchant_id' => $referral->merchant_id,
+                    'referral_code' => $referral->referral_code,
+                ]);
+            }
+
+            $user_contact_number = $user ? $user->countryCode . $user->contact_no : preg_replace('/\D/', '', ($request->contact_no ?? $request->contact_number));
+
+            // Store customer details of tour reservation in database
+            TourReservationCustomerDetail::create([
+                'tour_reservation_id' => $reservation->id,
+                'firstname' => $user ? $user->firstname : $request->firstname,
+                'lastname' => $user ? $user->lastname : $request->lastname,
+                'email' => $user ? $user->email : ($request->email ?? $request->email_address),
+                'contact_no' => $user_contact_number,
+                'address' => $request->address ?? null,
+            ]);
+
+            DB::commit();
+            return $reservation;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     private function handlePaymentForApprovedReservation($reservation)

@@ -174,7 +174,7 @@ class BookingService
             // Store a transaction in database
             $transaction = $this->storeTransaction($request, $total_amount, $additional_charges['list'], $sub_amount, $total_discount, $additional_charges['total']);
 
-            $tour_reservations = [];
+            $reservation_items = [];
 
             foreach ($items as $item) {
                 // Store tour reservation and customer details
@@ -189,7 +189,7 @@ class BookingService
                 $reservation->setAppends([]);
 
                 // Add new reservation to $tour_reservations variable
-                array_push($tour_reservations, $reservation->load('tour'));
+                array_push($reservation_items, $reservation->load('tour'));
 
                 if (! in_array($user->email, getDevelopersEmail())) {
                     // Notify the tour provider via email
@@ -200,7 +200,12 @@ class BookingService
             $status = "success";
             $payment_response = null;
 
-            if ($items[0]['type'] == TourTypeEnum::DIY_TOUR) {
+
+            /**
+             *  For multiple booking, check if the first item is DIY to proceed in generating payment link by Aqwire 
+             */
+            $first_item_tour = Tour::where('id', $items[0]['tour_id'])->first();
+            if ($first_item_tour->type === TourTypeEnum::DIY_TOUR || $first_item_tour->type === "DIY Tour") {
                 $request_model = $this->aqwireService->createRequestModel($transaction, $user);
                 $payment_response = $this->aqwireService->pay($request_model);
 
@@ -213,7 +218,7 @@ class BookingService
             return [
                 'status' => $status,
                 'transaction' => $transaction,
-                'tour_reservations' => $tour_reservations,
+                'tour_reservations' => $reservation_items,
                 'payment_response' => $payment_response,
             ];
 
