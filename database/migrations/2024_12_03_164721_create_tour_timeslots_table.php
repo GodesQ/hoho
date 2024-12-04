@@ -14,12 +14,12 @@ class CreateTourTimeslotsTable extends Migration
     public function up()
     {
         Schema::create('tour_timeslots', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->unsignedInteger('tour_id');
             $table->time('start_time');
             $table->time('end_time');
             $table->timestamps();
-            
+
             $table->foreign('tour_id', 'tour_timeslots_tour_id_foreign')->references('id')->on('tours')->onDelete('cascade')->onUpdate('cascade');
         });
     }

@@ -14,7 +14,7 @@ class CreateSystemLogsTable extends Migration
     public function up()
     {
         Schema::create('system_logs', function (Blueprint $table) {
-            $table->bigInteger('id')->primary();
+            $table->bigIncrements('id');
             $table->unsignedInteger('user_id')->index('system_logs_user_id_foreign');
             $table->string('action', 50);
             $table->string('model', 100);

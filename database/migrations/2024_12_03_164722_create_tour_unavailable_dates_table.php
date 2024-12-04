@@ -14,7 +14,7 @@ class CreateTourUnavailableDatesTable extends Migration
     public function up()
     {
         Schema::create('tour_unavailable_dates', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->date('unavailable_date');
             $table->mediumText('reason')->nullable();
             $table->timestamps();

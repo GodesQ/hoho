@@ -14,7 +14,7 @@ class CreateAdminsTable extends Migration
     public function up()
     {
         Schema::create('admins', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->string('username', 255);
             $table->string('email', 255);
             $table->string('admin_profile', 255)->nullable();
@@ -35,7 +35,7 @@ class CreateAdminsTable extends Migration
             $table->unsignedInteger('merchant_id')->nullable();
             $table->unsignedInteger('transport_id')->nullable();
             $table->timestamps();
-            
+
             $table->foreign('merchant_id', 'admins_merchant_id_foreign')->references('id')->on('merchants')->onDelete('set NULL')->onUpdate('cascade');
             $table->foreign('transport_id', 'admins_transport_id_foreign')->references('id')->on('transports')->onDelete('set NULL')->onUpdate('cascade');
         });

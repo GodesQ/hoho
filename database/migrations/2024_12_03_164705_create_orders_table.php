@@ -14,7 +14,7 @@ class CreateOrdersTable extends Migration
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->unsignedInteger('product_id');
             $table->unsignedInteger('customer_id');
             $table->unsignedInteger('transaction_id');
@@ -26,7 +26,7 @@ class CreateOrdersTable extends Migration
             $table->string('status', 100);
             $table->date('order_date');
             $table->timestamps();
-            
+
             $table->foreign('customer_id', 'orders_buyer_id_foreign')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('product_id', 'orders_product_id_foreign')->references('id')->on('products')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('transaction_id', 'orders_transaction_id_foreign')->references('id')->on('transactions')->onDelete('cascade')->onUpdate('cascade');

@@ -14,7 +14,7 @@ class CreateForgotPasswordTokensTable extends Migration
     public function up()
     {
         Schema::create('forgot_password_tokens', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->string('email', 100);
             $table->string('token', 255);
             $table->timestamps();

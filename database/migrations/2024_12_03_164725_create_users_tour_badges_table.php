@@ -14,7 +14,7 @@ class CreateUsersTourBadgesTable extends Migration
     public function up()
     {
         Schema::create('users_tour_badges', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->integer('user_id');
             $table->integer('tour_reservation_id')->nullable();
             $table->integer('badge_id');

@@ -14,14 +14,14 @@ class CreateReferralsTable extends Migration
     public function up()
     {
         Schema::create('referrals', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->string('referral_name', 100);
             $table->string('referral_code', 100);
             $table->unsignedInteger('merchant_id')->nullable();
             $table->longText('qrcode')->nullable();
             $table->integer('commision')->default(0);
             $table->timestamps();
-            
+
             $table->foreign('merchant_id', 'referrals_merchant_id_foreign')->references('id')->on('merchants')->onDelete('set NULL')->onUpdate('cascade');
         });
     }

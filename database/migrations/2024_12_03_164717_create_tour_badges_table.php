@@ -14,7 +14,7 @@ class CreateTourBadgesTable extends Migration
     public function up()
     {
         Schema::create('tour_badges', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->integer('tour_id');
             $table->string('badge_name', 255);
             $table->string('badge_code', 255);

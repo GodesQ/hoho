@@ -14,7 +14,7 @@ class CreateAttractionsTable extends Migration
     public function up()
     {
         Schema::create('attractions', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->string('name', 255);
             $table->integer('attraction_provider')->nullable();
             $table->longText('featured_image')->nullable();
@@ -41,7 +41,7 @@ class CreateAttractionsTable extends Migration
             $table->mediumText('nearest_restaurant_ids')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
-            
+
             $table->foreign('organization_id', 'attractions_organization_id_foreign')->references('id')->on('organizations')->onDelete('set NULL')->onUpdate('cascade');
         });
     }

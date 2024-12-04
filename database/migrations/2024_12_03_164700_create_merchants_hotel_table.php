@@ -14,7 +14,7 @@ class CreateMerchantsHotelTable extends Migration
     public function up()
     {
         Schema::create('merchants_hotel', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->unsignedInteger('merchant_id')->nullable();
             $table->string('brochure', 255)->nullable();
             $table->mediumText('images')->nullable();
@@ -28,7 +28,7 @@ class CreateMerchantsHotelTable extends Migration
             $table->longText('business_hours')->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrent();
-            
+
             $table->foreign('merchant_id', 'merchant_hotels_merchant_id_foreign')->references('id')->on('merchants')->onDelete('cascade')->onUpdate('cascade');
         });
     }

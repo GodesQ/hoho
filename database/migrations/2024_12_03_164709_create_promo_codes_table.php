@@ -14,7 +14,7 @@ class CreatePromoCodesTable extends Migration
     public function up()
     {
         Schema::create('promo_codes', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->string('name', 255);
             $table->string('code', 255);
             $table->mediumText('description')->nullable();

@@ -14,7 +14,7 @@ class CreateHotelRoomsTable extends Migration
     public function up()
     {
         Schema::create('hotel_rooms', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->integer('merchant_hotel_id');
             $table->mediumText('room_name')->nullable();
             $table->mediumText('room_type')->nullable();
