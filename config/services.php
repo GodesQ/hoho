@@ -38,6 +38,8 @@ return [
 
     'checkout' => [
         'type' => "HPP",
-    ]
+    ],
+
+    'travel_tax_hoho_token' => 'aem3eex$i7oaLohqueegish3chai7pHu7THow3ain9ohQua*sia7webohHeeQU9sah4Ohth[ez4ob3up9pa3vIo4daexoo9Eiz7noovah4uu{shie^xohc7aiph9johxeIkoa3osh7tho7OhgU>r9kex4ahch9gaipae]cees7rAe7vooraI7chUb3ath9quier4Vah7eeMah-th3aeng7CeefooZo7ek;oosh9eeph9aepie9oom7ootee9oog',
 
 ];

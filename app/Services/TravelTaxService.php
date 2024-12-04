@@ -8,6 +8,7 @@ use App\Models\TravelTaxPayment;
 use Carbon\Carbon;
 use App\Enum\TransactionTypeEnum;
 use ErrorException;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -80,12 +81,20 @@ class TravelTaxService
 
     public function sendTravelTaxAPI($traveltax, $transaction, $primary_passenger)
     {
-        $requestModel = $this->travelTaxAPIRequestModel($transaction, $transaction, $primary_passenger);
+        try {
+            $requestModel = $this->travelTaxAPIRequestModel($transaction, $transaction, $primary_passenger);
 
-        $response = Http::withHeaders([
-            'accept' => 'application/json',
-            'content-type' => 'application/json',
-        ])->post("https://api-backend.tieza.online/api/fulltax_applications", $requestModel);
+            $response = Http::withHeaders([
+                'accept' => 'application/json',
+                'content-type' => 'application/json',
+            ])->post("https://api-backend.tieza.online/api/fulltax_applications", $requestModel);
+
+            return $response;
+
+        } catch (Exception $exception) {
+            DB::rollBack();
+            throw $exception;
+        }
     }
 
     private function storeTransaction($request, $referenceNumber, $totalAmount)
@@ -122,6 +131,19 @@ class TravelTaxService
             'class' => $traveltax->primary_passenger->class,
             'total_amount' => $traveltax->total_amount,
             'mobile_no' => $traveltax->primary_passenger->mobile_number,
+            'email_address' => $traveltax->primary_passenger->email_address,
+            'airlines_id' => 2,
+            'user_token' => config('services.travel_tax_hoho_token'),
+            'pax_info' => $traveltax->passengers->map(function ($passenger) {
+                return [
+                    'last_name' => $passenger->firstname,
+                    'first_name' => $passenger->firstname,
+                    'middle_name' => $passenger->firstname,
+                    'ext_name' => $passenger->suffix,
+                    'passport_no' => $passenger->passport_number,
+                    'ticket_no' => $passenger->ticket_number,
+                ];
+            })->toArray(),
         ];
     }
 
