@@ -14,7 +14,7 @@ class CreateFoodsTable extends Migration
     public function up()
     {
         Schema::create('foods', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->unsignedInteger('merchant_id');
             $table->string('title', 255);
             $table->text('image')->nullable();
@@ -25,7 +25,7 @@ class CreateFoodsTable extends Migration
             $table->json('other_images')->nullable();
             $table->boolean('is_active')->default(1);
             $table->timestamps();
-            
+
             $table->foreign('food_category_id', 'foods_food_category_id_foreign')->references('id')->on('food_categories')->onDelete('set NULL')->onUpdate('cascade');
             $table->foreign('merchant_id', 'foods_merchant_id_foreign')->references('id')->on('merchants')->onDelete('cascade')->onUpdate('cascade');
         });

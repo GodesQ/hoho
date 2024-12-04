@@ -14,7 +14,7 @@ class CreateDeleteAccountTokensTable extends Migration
     public function up()
     {
         Schema::create('delete_account_tokens', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->string('email', 100);
             $table->integer('code');
             $table->string('token', 100);

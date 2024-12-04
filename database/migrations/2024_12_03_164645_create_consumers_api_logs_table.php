@@ -14,7 +14,7 @@ class CreateConsumersApiLogsTable extends Migration
     public function up()
     {
         Schema::create('consumers_api_logs', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->unsignedInteger('consumer_id');
             $table->timestamp('request_timestamp');
             $table->string('http_method', 20);

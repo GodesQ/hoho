@@ -22,7 +22,7 @@ if (! function_exists('maintenanceMode')) {
     {
         $setting = AppSetting::where('code', 'hoho_mobile')->first();
 
-        return $setting->maintenance_mode;
+        return $setting->maintenance_mode ?? false;
     }
 
 }

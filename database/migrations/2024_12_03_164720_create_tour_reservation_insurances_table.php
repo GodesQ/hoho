@@ -14,7 +14,7 @@ class CreateTourReservationInsurancesTable extends Migration
     public function up()
     {
         Schema::create('tour_reservation_insurances', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->integer('reservation_id');
             $table->integer('insurance_id');
             $table->integer('type_of_plan');

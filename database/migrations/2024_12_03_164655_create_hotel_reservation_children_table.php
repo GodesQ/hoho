@@ -14,11 +14,11 @@ class CreateHotelReservationChildrenTable extends Migration
     public function up()
     {
         Schema::create('hotel_reservation_children', function (Blueprint $table) {
-            $table->integer('id')->primary();
-            $table->integer('reservation_id');
+            $table->increments('id');
+            $table->unsignedInteger('reservation_id');
             $table->integer('age');
             $table->timestamps();
-            
+
             $table->foreign('reservation_id', 'hotel_reservations_reservation_id_foreign')->references('id')->on('hotel_reservations')->onDelete('cascade')->onUpdate('cascade');
         });
     }

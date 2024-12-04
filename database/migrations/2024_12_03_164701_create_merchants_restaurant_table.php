@@ -14,7 +14,7 @@ class CreateMerchantsRestaurantTable extends Migration
     public function up()
     {
         Schema::create('merchants_restaurant', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->unsignedInteger('merchant_id')->nullable();
             $table->string('brochure', 255)->nullable();
             $table->mediumText('images')->nullable();
@@ -30,7 +30,7 @@ class CreateMerchantsRestaurantTable extends Migration
             $table->mediumText('atmosphere')->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrent();
-            
+
             $table->foreign('merchant_id', 'merchant_restaurants_merchant_id_foreign')->references('id')->on('merchants')->onDelete('cascade')->onUpdate('cascade');
         });
     }

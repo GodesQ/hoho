@@ -14,7 +14,7 @@ class CreateTourReservationCustomerDetailsTable extends Migration
     public function up()
     {
         Schema::create('tour_reservation_customer_details', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->unsignedInteger('tour_reservation_id');
             $table->string('firstname', 50)->nullable();
             $table->string('lastname', 50)->nullable();
@@ -22,7 +22,7 @@ class CreateTourReservationCustomerDetailsTable extends Migration
             $table->string('contact_no', 20)->nullable();
             $table->text('address')->nullable();
             $table->timestamps();
-            
+
             $table->foreign('tour_reservation_id', 'customer_details_tour_reservation_id_foreign')->references('id')->on('tour_reservations')->onDelete('cascade')->onUpdate('cascade');
         });
     }

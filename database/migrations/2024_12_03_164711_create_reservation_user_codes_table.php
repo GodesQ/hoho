@@ -15,7 +15,7 @@ class CreateReservationUserCodesTable extends Migration
     {
         Schema::create('reservation_user_codes', function (Blueprint $table) {
             $table->id();
-            $table->integer('reservation_id');
+            $table->unsignedInteger('reservation_id');
             $table->string('code', 100);
             $table->integer('scan_count')->default(0);
             $table->timestamp('start_datetime')->nullable();

@@ -14,7 +14,7 @@ class CreateAppSettingsTable extends Migration
     public function up()
     {
         Schema::create('app_settings', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->string('code', 100);
             $table->boolean('maintenance_mode')->default(0);
             $table->timestamps();

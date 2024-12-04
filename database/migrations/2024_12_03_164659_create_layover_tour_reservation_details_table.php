@@ -14,7 +14,7 @@ class CreateLayoverTourReservationDetailsTable extends Migration
     public function up()
     {
         Schema::create('layover_tour_reservation_details', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->unsignedInteger('reservation_id');
             $table->dateTime('arrival_datetime');
             $table->string('flight_to', 255);
@@ -23,7 +23,7 @@ class CreateLayoverTourReservationDetailsTable extends Migration
             $table->string('passport_number', 150);
             $table->text('special_instruction')->nullable();
             $table->timestamps();
-            
+
             $table->foreign('reservation_id', 'layover_tour_reservation_id_foreign')->references('id')->on('tour_reservations')->onDelete('cascade')->onUpdate('cascade');
         });
     }

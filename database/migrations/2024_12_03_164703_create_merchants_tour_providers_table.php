@@ -14,7 +14,7 @@ class CreateMerchantsTourProvidersTable extends Migration
     public function up()
     {
         Schema::create('merchants_tour_providers', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->increments('id');
             $table->unsignedInteger('merchant_id')->nullable();
             $table->mediumText('images')->nullable();
             $table->mediumText('payment_options')->nullable();
@@ -29,7 +29,7 @@ class CreateMerchantsTourProvidersTable extends Migration
             $table->integer('account_id')->nullable();
             $table->timestamp('created_at')->nullable()->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrent();
-            
+
             $table->foreign('merchant_id', 'merchant_tour_providers_merchant_id_foreign')->references('id')->on('merchants')->onDelete('cascade')->onUpdate('cascade');
         });
     }
