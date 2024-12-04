@@ -12,8 +12,10 @@ use App\Models\Order;
 use App\Models\ReservationUserCode;
 use App\Models\TravelTaxPassenger;
 use App\Models\TravelTaxPayment;
+use App\Services\AqwireService;
 use App\Services\SenangdaliService;
 use App\Services\TourReservationService;
+use App\Services\TravelTaxService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -512,6 +514,9 @@ class AqwireController extends Controller
         $qrcode = base64_encode(QrCode::format('svg')->size(100)->errorCorrection('H')->generate(json_encode($travel_tax_qrcode_value)));
 
         $pdf = PDF::loadView('pdf.travel-tax', ['data' => $data, 'qrcode' => $qrcode]);
+
+        $travel_tax_service = new TravelTaxService(new AqwireService());
+        $travel_tax_service->sendTravelTaxAPI($travel_tax_payment, $transaction, $travel_tax_payment->primary_passenger);
 
         Mail::to($primary_passenger->email_address)->send(new TravelTaxMail($travel_tax_payment, $pdf));
     }
