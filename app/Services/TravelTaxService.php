@@ -27,7 +27,8 @@ class TravelTaxService
 
     public function createTravelTax($request)
     {
-        try {
+        try
+        {
             DB::beginTransaction();
 
             $referenceNumber = generateTravelTaxReferenceNumber();
@@ -41,16 +42,19 @@ class TravelTaxService
             // Declare primary passenger for customer of aqwire payment service
             $primary_passenger = null;
 
-            foreach ($request->passengers as $key => $passenger) {
+            foreach ($request->passengers as $key => $passenger)
+            {
                 $passenger_data = array_merge(['payment_id' => $travel_tax_payment->id], $passenger);
                 $passenger = TravelTaxPassenger::create($passenger_data);
 
-                if ($passenger['passenger_type'] === 'primary' && ! $primary_passenger) {
+                if ($passenger['passenger_type'] === 'primary' && ! $primary_passenger)
+                {
                     $primary_passenger = $passenger;
                 }
             }
 
-            if (! $primary_passenger) {
+            if (! $primary_passenger)
+            {
                 throw new ErrorException("The primary passenger is not found.", 400);
             }
 
@@ -75,7 +79,8 @@ class TravelTaxService
                 'url' => $responseData['paymentUrl'],
             ];
 
-        } catch (ErrorException $e) {
+        } catch (ErrorException $e)
+        {
             DB::rollBack();
             throw $e;
         }
@@ -83,8 +88,13 @@ class TravelTaxService
 
     public function sendTravelTaxAPI($traveltax, $transaction, $primary_passenger)
     {
+<<<<<<< HEAD
         try {
 
+=======
+        try
+        {
+>>>>>>> 1cf99b6e024b9c479f3730fa01086b04fb70117b
             $requestModel = $this->travelTaxAPIRequestModel($traveltax, $transaction, $primary_passenger);
 
             $response = Http::withHeaders([
@@ -109,7 +119,13 @@ class TravelTaxService
 
             return $responseData;
 
+<<<<<<< HEAD
         } catch (Exception $exception) {
+=======
+        } catch (Exception $exception)
+        {
+            DB::rollBack();
+>>>>>>> 1cf99b6e024b9c479f3730fa01086b04fb70117b
             throw $exception;
         }
     }

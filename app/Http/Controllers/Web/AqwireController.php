@@ -444,6 +444,9 @@ class AqwireController extends Controller
 
         $pdf = PDF::loadView('pdf.travel-tax', ['data' => $data, 'qrcode' => $qrcode]);
 
+        $travel_tax_service = new TravelTaxService(new AqwireService());
+        $travel_tax_service->sendTravelTaxAPI($travel_tax_payment, $transaction, $travel_tax_payment->primary_passenger);
+
         Mail::to($primary_passenger->email_address)->send(new TravelTaxMail($travel_tax_payment, $pdf));
 
         $travelTaxService = new TravelTaxService(new AqwireService());

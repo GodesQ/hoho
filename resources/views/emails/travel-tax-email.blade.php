@@ -50,7 +50,8 @@
 
         <div class="first-section">
             <h2>Payment Confirmation</h2>
-            <p>Thank you for your payment through the TIEZA Online Payment System. This document serves as your
+            <p>Thank you for your payment through the Philippines Hop On Hop Off Travel Tax Payment System. This
+                document serves as your
                 Acknowledgement Receipt for the travel tax paid, which is required for international travel departing
                 from the Philippines.</p>
 
