@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Models\Transaction;
+use App\Models\TravelTaxAPILog;
 use App\Models\TravelTaxPassenger;
 use App\Models\TravelTaxPayment;
 use Carbon\Carbon;
 use App\Enum\TransactionTypeEnum;
+use Date;
 use ErrorException;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -82,17 +84,32 @@ class TravelTaxService
     public function sendTravelTaxAPI($traveltax, $transaction, $primary_passenger)
     {
         try {
-            $requestModel = $this->travelTaxAPIRequestModel($transaction, $transaction, $primary_passenger);
+
+            $requestModel = $this->travelTaxAPIRequestModel($traveltax, $transaction, $primary_passenger);
 
             $response = Http::withHeaders([
                 'accept' => 'application/json',
                 'content-type' => 'application/json',
             ])->post("https://api-backend.tieza.online/api/fulltax_applications", $requestModel);
 
-            return $response;
+            $statusCode = $response->getStatusCode();
+
+            if ($statusCode == 400) {
+                $content = json_decode($response->getBody()->getContents());
+                TravelTaxAPILog::create(['travel_tax_id' => $traveltax->id, 'status_code' => $statusCode, 'response' => json_encode($content), 'date_of_submission' => Carbon::now()]);
+                return;
+            }
+
+            $responseData = json_decode($response->getBody(), true);
+            TravelTaxAPILog::create(['travel_tax_id' => $traveltax->id, 'status_code' => $statusCode, 'response' => json_encode($responseData), 'date_of_submission' => Carbon::now()]);
+
+            $traveltax->update([
+                'is_sent_api' => true,
+            ]);
+
+            return $responseData;
 
         } catch (Exception $exception) {
-            DB::rollBack();
             throw $exception;
         }
     }
@@ -118,28 +135,35 @@ class TravelTaxService
 
     public function travelTaxAPIRequestModel($traveltax, $transaction, $primary_passenger)
     {
+
+        $travelTaxClass = $primary_passenger->class == 'first class' ? 'First' : 'Economy';
+
         return [
-            'date_application' => $traveltax->transaction_payment,
-            'fulltax_no' => "",
+            'date_application' => $traveltax->transaction_time,
+            'fulltax_no' => $transaction->reference_no,
             'ar_no' => $traveltax->ar_number,
-            'last_name' => $traveltax->primary_passenger->lastname,
-            'first_name' => $traveltax->primary_passenger->firstname,
-            'middle_name' => $traveltax->primary_passenger->middlename,
-            'ext_name' => $traveltax->primary_passenger->suffix,
-            'passport_no' => $traveltax->primary_passenger->passport_number,
-            'ticket_no' => $traveltax->primary_passenger->ticket_number,
-            'class' => $traveltax->primary_passenger->class,
+            'last_name' => $primary_passenger->lastname,
+            'first_name' => $primary_passenger->firstname,
+            'middle_name' => $primary_passenger->middlename,
+            'ext_name' => $primary_passenger->suffix ?? 'N/A',
+            'passport_no' => $primary_passenger->passport_number,
+            'ticket_no' => $primary_passenger->ticket_number,
+            'class' => $travelTaxClass,
             'total_amount' => $traveltax->total_amount,
-            'mobile_no' => $traveltax->primary_passenger->mobile_number,
-            'email_address' => $traveltax->primary_passenger->email_address,
+            'mobile_no' => $primary_passenger->mobile_number,
+            'email_address' => $primary_passenger->email_address,
             'airlines_id' => 2,
+            'departure_date' => $primary_passenger->departure_date,
+            'no_of_pax' => $traveltax->passengers->count(),
             'user_token' => config('services.travel_tax_hoho_token'),
+            'is_multiple' => $traveltax->passengers->count() > 1,
+            'date' => Carbon::now(),
             'pax_info' => $traveltax->passengers->map(function ($passenger) {
                 return [
-                    'last_name' => $passenger->firstname,
+                    'last_name' => $passenger->lastname,
                     'first_name' => $passenger->firstname,
-                    'middle_name' => $passenger->firstname,
-                    'ext_name' => $passenger->suffix,
+                    'middle_name' => $passenger->middlename,
+                    'ext_name' => $passenger->suffix ?? 'N/A',
                     'passport_no' => $passenger->passport_number,
                     'ticket_no' => $passenger->ticket_number,
                 ];
@@ -172,6 +196,11 @@ class TravelTaxService
         ]);
 
         return $travel_tax_payment;
+    }
+
+    private function storeAPILog($traveltax, $data, $status_code)
+    {
+        TravelTaxAPILog::create(['travel_tax_id' => $traveltax->id, 'status_code' => $status_code, 'response' => json_encode($data), 'date_of_submission' => Carbon::now()]);
     }
 
     private function computeTotalAmount($amount, $processing_fee, $discount)

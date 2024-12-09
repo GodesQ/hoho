@@ -24,6 +24,7 @@ class TravelTaxPayment extends Model
         "payment_method",
         "payment_time",
         "status",
+        "is_sent_api",
         "created_by",
         "created_by_role"
     ];

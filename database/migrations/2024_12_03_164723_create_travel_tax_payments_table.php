@@ -28,11 +28,12 @@ class CreateTravelTaxPaymentsTable extends Migration
             $table->double('total_amount', 10, 2);
             $table->string('payment_method', 100)->nullable();
             $table->dateTime('payment_time');
+            $table->boolean('is_sent_api')->default(0);
             $table->enum('status', ['unpaid', 'paid'])->default('unpaid');
             $table->string('created_by_role', 100)->nullable();
             $table->integer('created_by')->nullable();
             $table->timestamps();
-            
+
             $table->foreign('transaction_id', 'travel_tax_payments_transaction_id_foreign')->references('id')->on('transactions')->onDelete('cascade')->onUpdate('cascade');
         });
     }

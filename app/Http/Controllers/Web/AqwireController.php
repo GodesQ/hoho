@@ -12,8 +12,10 @@ use App\Models\Order;
 use App\Models\ReservationUserCode;
 use App\Models\TravelTaxPassenger;
 use App\Models\TravelTaxPayment;
+use App\Services\AqwireService;
 use App\Services\SenangdaliService;
 use App\Services\TourReservationService;
+use App\Services\TravelTaxService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +24,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\InvoiceMail;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Log;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 use App\Models\Transaction;
@@ -80,8 +83,7 @@ class AqwireController extends Controller
 
     public function success(Request $request)
     {
-        try
-        {
+        try {
             DB::beginTransaction();
 
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
@@ -91,43 +93,32 @@ class AqwireController extends Controller
             DB::commit();
 
             return redirect('aqwire/payment/view_success');
-        } catch (Exception $e)
-        {
+        } catch (Exception $e) {
             DB::rollBack();
-
-            dd($e);
             abort(500);
         }
     }
 
     public function travelTaxSuccess(Request $request)
     {
-        try
-        {
+        try {
             ini_set('max_execution_time', 300); // Increase execution time
             ini_set('memory_limit', '256M'); // Optional: increase memory limit
-
-            DB::beginTransaction();
 
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
 
             $this->fetchAndUpdateAqwireTransaction($transaction);
 
-            DB::commit();
-
             return redirect('aqwire/payment/view_success');
 
-        } catch (Exception $e)
-        {
-            DB::rollBack();
+        } catch (Exception $e) {
             abort(500);
         }
     }
 
     public function orderSuccess(Request $request)
     {
-        try
-        {
+        try {
             DB::beginTransaction();
 
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
@@ -137,8 +128,7 @@ class AqwireController extends Controller
             DB::commit();
 
             return redirect('aqwire/payment/view_success');
-        } catch (Exception $e)
-        {
+        } catch (Exception $e) {
             DB::rollBack();
             abort(500);
         }
@@ -146,8 +136,7 @@ class AqwireController extends Controller
 
     public function hotelReservationSuccess(Request $request)
     {
-        try
-        {
+        try {
             DB::beginTransaction();
 
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
@@ -157,8 +146,7 @@ class AqwireController extends Controller
             DB::commit();
 
             return redirect('aqwire/payment/view_success');
-        } catch (Exception $e)
-        {
+        } catch (Exception $e) {
             DB::rollBack();
             abort(500);
         }
@@ -166,8 +154,7 @@ class AqwireController extends Controller
 
     public function hotelReservationCancel(Request $request)
     {
-        try
-        {
+        try {
             DB::beginTransaction();
 
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
@@ -188,8 +175,7 @@ class AqwireController extends Controller
             DB::commit();
 
             return redirect('aqwire/payment/view_cancel');
-        } catch (\Throwable $th)
-        {
+        } catch (\Throwable $th) {
             DB::rollBack();
             abort(500);
         }
@@ -197,8 +183,7 @@ class AqwireController extends Controller
 
     public function orderCancel(Request $request)
     {
-        try
-        {
+        try {
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
 
             $transaction->update([
@@ -217,8 +202,7 @@ class AqwireController extends Controller
             ]);
 
             return redirect('aqwire/payment/view_cancel');
-        } catch (Exception $e)
-        {
+        } catch (Exception $e) {
             DB::rollBack();
             abort(500);
         }
@@ -231,8 +215,7 @@ class AqwireController extends Controller
 
     public function cancel(Request $request)
     {
-        try
-        {
+        try {
             DB::beginTransaction();
 
             $transaction = Transaction::where('aqwire_transactionId', $request->transactionId)->firstOrFail();
@@ -252,8 +235,7 @@ class AqwireController extends Controller
 
             return redirect('aqwire/payment/view_cancel');
 
-        } catch (Exception $e)
-        {
+        } catch (Exception $e) {
             DB::rollBack();
             abort(500);
         }
@@ -285,55 +267,6 @@ class AqwireController extends Controller
     {
         return view('misc.transaction_messages.cancel');
     }
-
-    // public function webhook_paid(Request $request)
-    // {
-    //     header('Content-Type: application/json');
-
-    //     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    //         echo (json_encode(
-    //             array(
-    //                 'message' => 'Invalid request method'
-    //             )
-    //         ));
-    //         http_response_code(401);
-    //         exit();
-    //     }
-
-    //     $signature = $_GET['sign'];
-    //     $json = file_get_contents('php://input');
-    //     $merchantSecretKey = "sk_test_vV6i66irj2vhca4iXpqZc6THFiJz3N6Y";
-
-    //     $rawSignature = hash_hmac('sha256', $json, $merchantSecretKey, true);
-    //     $computedSignature = strtr(base64_encode($rawSignature), '+/', '-_');
-
-    //     if ($signature !== $computedSignature) {
-    //         echo (json_encode(
-    //             array(
-    //                 'message' => 'Unauthorized API call'
-    //             )
-    //         ));
-    //         http_response_code(401);
-    //         exit();
-    //     }
-
-    //     echo (json_encode(
-    //         array(
-    //             'sign' => $signature
-    //         )
-    //     ));
-    //     echo (json_encode(
-    //         array(
-    //             'verify' => $computedSignature
-    //         )
-    //     ));
-    //     echo (json_encode(
-    //         array(
-    //             'message' => 'Data posted'
-    //         )
-    //     ));
-    //     http_response_code(200);
-    // }
 
 
     public function checkAuthorizationCode(Request $request)
@@ -368,8 +301,7 @@ class AqwireController extends Controller
             ->whereDate('created_at', $today)
             ->get();
 
-        foreach ($transactions as $transaction)
-        {
+        foreach ($transactions as $transaction) {
             $this->fetchAndUpdateAqwireTransaction($transaction);
         }
 
@@ -378,88 +310,88 @@ class AqwireController extends Controller
 
     private function fetchAndUpdateAqwireTransaction($transaction)
     {
-        if (config('app.env') === 'production')
-        {
-            $url = 'https://payments.aqwire.io/api/v3/transactions/check';
-            $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
-        } else
-        {
-            $url = 'https://payments-sandbox.aqwire.io/api/v3/transactions/check';
-            $authToken = $this->getHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
+        try {
+            if (config('app.env') === 'production') {
+                $url = 'https://payments.aqwire.io/api/v3/transactions/check';
+                $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
+            } else {
+                $url = 'https://payments-sandbox.aqwire.io/api/v3/transactions/check';
+                $authToken = $this->getHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
+            }
+
+            $txnId = $transaction->aqwire_transactionId;
+
+            // Send HTTP request to AQWIRE API to check the transaction status
+            $response = Http::withHeaders([
+                'accept' => 'application/json',
+                'content-type' => 'application/json',
+                'Qw-Merchant-Id' => config('services.aqwire.merchant_code'),
+                'Authorization' => 'Bearer ' . $authToken,
+            ])->get("{$url}/{$txnId}");
+
+            if ($response->successful()) {
+                DB::transaction(function () use ($transaction, $response) {
+                    $jsonData = $response->json();
+
+                    $payment_provider_fee = $jsonData['data']['bill']['fee']['amount'] ?? 0;
+
+                    // Update the payment status, converting it to lowercase
+                    $transaction->payment_status = isset($jsonData['status']) ? Str::lower($jsonData['status']) : 'inc';
+
+                    // Update payment provider fee with a default of 0 if it doesn't exist
+                    $transaction->payment_provider_fee = $payment_provider_fee;
+
+                    // Set payment method code, falling back to the existing code if not provided
+                    $transaction->aqwire_paymentMethodCode = $jsonData['data']['paymentMethod'] ?? $transaction->aqwire_paymentMethodCode;
+
+                    // Set the total amount, falling back to the existing total amount if not provided
+                    $transaction->aqwire_totalAmount = $jsonData['data']['bill']['total']['amount'] ?? $transaction->aqwire_totalAmount;
+
+                    // Set the reference ID, falling back to the existing reference ID if not provided
+                    $transaction->aqwire_referenceId = $jsonData['data']['referenceId'] ?? $transaction->aqwire_referenceId;
+
+                    // Parse and set the payment date if it exists
+                    $transaction->payment_date = isset($jsonData['data']['paidAt']) ? Carbon::parse($jsonData['data']['paidAt'])->format('Y-m-d') : null;
+
+                    // Encode all data as JSON for the payment details
+                    $transaction->payment_details = json_encode($jsonData);
+
+                    // Compute the total amount with payment provider fee
+                    $transaction->total_amount += $payment_provider_fee;
+
+                    // Save the transaction
+                    $transaction->save();
+                });
+
+                if ($transaction->transaction_type == TransactionTypeEnum::BOOK_TOUR) {
+                    $this->reservationsUpdated($transaction);
+                }
+
+                if ($transaction->transaction_type == TransactionTypeEnum::TRAVEL_TAX) {
+                    $this->travelTaxUpdated($transaction);
+                }
+
+                if ($transaction->transaction_type == TransactionTypeEnum::ORDER) {
+                    $this->orderUpdated($transaction);
+                }
+
+                if ($transaction->transaction_type == TransactionTypeEnum::HOTEL_RESERVATION) {
+                    $this->hotelReservationUpdated($transaction);
+                }
+
+            }
+
+        } catch (Exception $exception) {
+            throw $exception;
         }
 
-        $txnId = $transaction->aqwire_transactionId;
-
-        // Send HTTP request to AQWIRE API to check the transaction status
-        $response = Http::withHeaders([
-            'accept' => 'application/json',
-            'content-type' => 'application/json',
-            'Qw-Merchant-Id' => config('services.aqwire.merchant_code'),
-            'Authorization' => 'Bearer ' . $authToken,
-        ])->get("{$url}/{$txnId}");
-
-        if ($response->successful())
-        {
-            $jsonData = $response->json();
-
-            $payment_provider_fee = $jsonData['data']['bill']['fee']['amount'] ?? 0;
-
-            // Update the payment status, converting it to lowercase
-            $transaction->payment_status = isset($jsonData['status']) ? Str::lower($jsonData['status']) : 'inc';
-
-            // Update payment provider fee with a default of 0 if it doesn't exist
-            $transaction->payment_provider_fee = $payment_provider_fee;
-
-            // Set payment method code, falling back to the existing code if not provided
-            $transaction->aqwire_paymentMethodCode = $jsonData['data']['paymentMethod'] ?? $transaction->aqwire_paymentMethodCode;
-
-            // Set the total amount, falling back to the existing total amount if not provided
-            $transaction->aqwire_totalAmount = $jsonData['data']['bill']['total']['amount'] ?? $transaction->aqwire_totalAmount;
-
-            // Set the reference ID, falling back to the existing reference ID if not provided
-            $transaction->aqwire_referenceId = $jsonData['data']['referenceId'] ?? $transaction->aqwire_referenceId;
-
-            // Parse and set the payment date if it exists
-            $transaction->payment_date = isset($jsonData['data']['paidAt']) ? Carbon::parse($jsonData['data']['paidAt'])->format('Y-m-d') : null;
-
-            // Encode all data as JSON for the payment details
-            $transaction->payment_details = json_encode($jsonData);
-
-            // Compute the total amount with payment provider fee
-            $transaction->total_amount += $payment_provider_fee;
-
-            // Save the transaction
-            $transaction->save();
-
-            if ($transaction->transaction_type == TransactionTypeEnum::BOOK_TOUR)
-            {
-                $this->reservationsUpdated($transaction);
-            }
-
-            if ($transaction->transaction_type == TransactionTypeEnum::TRAVEL_TAX)
-            {
-                $this->travelTaxUpdated($transaction);
-            }
-
-            if ($transaction->transaction_type == TransactionTypeEnum::ORDER)
-            {
-                $this->orderUpdated($transaction);
-            }
-
-            if ($transaction->transaction_type == TransactionTypeEnum::HOTEL_RESERVATION)
-            {
-                $this->hotelReservationUpdated($transaction);
-            }
-
-        }
     }
 
     public function reservationsUpdated($transaction)
     {
         $reservations = TourReservation::where('order_transaction_id', $transaction->id)->with('tour', 'user', 'customer_details')->get();
 
-        foreach ($reservations as $reservation)
-        {
+        foreach ($reservations as $reservation) {
             $reservation->update([
                 'payment_method' => $transaction->aqwire_paymentMethodCode
             ]);
@@ -476,8 +408,7 @@ class AqwireController extends Controller
 
             $this->generateAndSendReservationCode($reservation->number_of_pass, $reservation);
 
-            if ($reservation->has_insurance)
-            {
+            if ($reservation->has_insurance) {
                 $senangdaliService = new SenangdaliService();
                 $senangdali_insurance_request = $senangdaliService->__map_request_model($user, $reservation);
                 $senangdaliService->purchasing($senangdali_insurance_request);
@@ -514,6 +445,9 @@ class AqwireController extends Controller
         $pdf = PDF::loadView('pdf.travel-tax', ['data' => $data, 'qrcode' => $qrcode]);
 
         Mail::to($primary_passenger->email_address)->send(new TravelTaxMail($travel_tax_payment, $pdf));
+
+        $travelTaxService = new TravelTaxService(new AqwireService());
+        $travelTaxService->sendTravelTaxAPI($travel_tax_payment, $transaction, $travel_tax_payment->primary_passenger);
     }
 
     public function orderUpdated($transaction)
@@ -545,12 +479,10 @@ class AqwireController extends Controller
 
     public function generateAndSendReservationCode($number_of_pax, $reservation)
     {
-        try
-        {
+        try {
             $reservations_codes = $this->generateReservationCode($number_of_pax, $reservation);
 
-            if ($reservation->customer_details)
-            {
+            if ($reservation->customer_details) {
                 $what = $reservation->type == 'DIY' ? (
                     $reservation->ticket_pass . " x " . $reservation->number_of_pass . " pax " . "(Valid for 24 hours from first tap)"
                 )
@@ -572,11 +504,9 @@ class AqwireController extends Controller
 
                 $pdf = null;
 
-                if ($reservation->type == 'DIY Tour' || $reservation->type == 'DIY')
-                {
+                if ($reservation->type == 'DIY Tour' || $reservation->type == 'DIY') {
                     $qrCodes = [];
-                    foreach ($reservations_codes as $code)
-                    {
+                    foreach ($reservations_codes as $code) {
                         $value = $code . "&" . $reservation->id;
                         $qrCodes[] = base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate($value));
                     }
@@ -587,8 +517,7 @@ class AqwireController extends Controller
 
                 return $reservations_codes;
             }
-        } catch (Exception $e)
-        {
+        } catch (Exception $e) {
             throw $e;
         }
     }
@@ -600,8 +529,7 @@ class AqwireController extends Controller
         $random_letters = strtoupper(Str::random(5));
         $reservation_codes = [];
 
-        for ($i = 1; $i <= $number_of_pass; $i++)
-        {
+        for ($i = 1; $i <= $number_of_pass; $i++) {
             // Generate the pass number with leading zeros (e.g., -001)
             $pass_number = str_pad($i, 3, '0', STR_PAD_LEFT);
 
@@ -610,8 +538,7 @@ class AqwireController extends Controller
 
             $reservation_codes_exist = ReservationUserCode::where('reservation_id', $reservation->id)->count();
 
-            if ($reservation_codes_exist < $number_of_pass)
-            {
+            if ($reservation_codes_exist < $number_of_pass) {
                 $create_code = ReservationUserCode::create([
                     'reservation_id' => $reservation->id,
                     'code' => $code
