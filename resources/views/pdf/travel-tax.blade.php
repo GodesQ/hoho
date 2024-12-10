@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <title>Travel Tax PDF</title>
 
     <style>
@@ -27,8 +26,15 @@
 </head>
 
 <body>
+    <?php
+    $passengerCount = count($data['passengers']);
+    $minHeight = 750; // Minimum height in px
+    $maxHeight = 900; // Maximum height in px
+    $height = max($minHeight, min($maxHeight, 750 + ($passengerCount - 1) * 20)); // Adjust height dynamically
+    ?>
+
     <div style="padding: 0px;">
-        <div style="border: 1px solid dodgerblue; width: 100%; height: 900px; position: relative;">
+        <div style="border: 1px solid dodgerblue; width: 100%; height: <?= $height ?>px; position: relative;">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/newteccert-01-01-r02.png"
                 style="position: absolute; width: 100%; height: 100%; left: 0; top: 0; opacity: 0.6;" alt="">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/map1.png" alt=""
@@ -139,7 +145,7 @@
                 <div style="position: relative; z-index: 10;">
                     <p style="font-size: 14px;">For question or concerns, you may email as at <a
                             href="traveltax.helpdesk@tieza.gov.ph">traveltax.helpdesk@tieza.gov.ph</a></p>
-                    <p style="font-size: 14px;">Please present soft/hard copy at the airline check in counter before
+                    <p style="font-size: 14px;">Please present soft/hard copy at the airline check-in counter before
                         boarding.</p>
                     <p>Sincerely, </p>
                     <p>TIEZA</p>
