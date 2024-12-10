@@ -88,13 +88,8 @@ class TravelTaxService
 
     public function sendTravelTaxAPI($traveltax, $transaction, $primary_passenger)
     {
-<<<<<<< HEAD
-        try {
-
-=======
         try
         {
->>>>>>> 1cf99b6e024b9c479f3730fa01086b04fb70117b
             $requestModel = $this->travelTaxAPIRequestModel($traveltax, $transaction, $primary_passenger);
 
             $response = Http::withHeaders([
@@ -104,7 +99,8 @@ class TravelTaxService
 
             $statusCode = $response->getStatusCode();
 
-            if ($statusCode == 400) {
+            if ($statusCode == 400)
+            {
                 $content = json_decode($response->getBody()->getContents());
                 TravelTaxAPILog::create(['travel_tax_id' => $traveltax->id, 'status_code' => $statusCode, 'response' => json_encode($content), 'date_of_submission' => Carbon::now()]);
                 return;
@@ -119,13 +115,9 @@ class TravelTaxService
 
             return $responseData;
 
-<<<<<<< HEAD
-        } catch (Exception $exception) {
-=======
         } catch (Exception $exception)
         {
             DB::rollBack();
->>>>>>> 1cf99b6e024b9c479f3730fa01086b04fb70117b
             throw $exception;
         }
     }

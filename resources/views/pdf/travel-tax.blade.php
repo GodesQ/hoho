@@ -128,9 +128,6 @@
                                 <div style="margin-top: 40px;">
                                     <img src="data:image/png;base64, {{ $qrcode }} ">
                                     <div style="margin-bottom: 30px;"></div>
-                                    <div style="font-weight: bold; z-index: 99; postion: relative;">ATTY. BUMBO S. CRUZ
-                                    </div>
-                                    <div style="font-style: italic;">Manager</div>
                                     <div style="font-style: italic; z-index: 99; postion: relative;">Travel Tax
                                         Department</div>
                                 </div>
@@ -141,8 +138,7 @@
                 <div style="position: relative; z-index: 10;">
                     <p style="font-size: 14px;">For question or concerns, you may email as at <a
                             href="traveltax.helpdesk@tieza.gov.ph">traveltax.helpdesk@tieza.gov.ph</a></p>
-                    <p style="font-size: 14px;">Please print two (2) copies of this AR and present them at the airline
-                        check-in counter before
+                    <p style="font-size: 14px;">Please present soft/hard copy at the airline check in counter before
                         boarding.</p>
                     <p>Sincerely, </p>
                     <p>TIEZA</p>
