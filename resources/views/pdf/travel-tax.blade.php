@@ -28,11 +28,11 @@
 
 <body>
     <div style="padding: 0px;">
-        <div style="border: 1px solid dodgerblue; width: 100%; height: 850px; position: relative;">
+        <div style="border: 1px solid dodgerblue; width: 100%; height: 880px; position: relative;">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/newteccert-01-01-r02.png"
                 style="position: absolute; width: 100%; height: 100%; left: 0; top: 0; opacity: 0.6;" alt="">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/map1.png" alt=""
-                style="position: absolute; bottom: 30px; right: 10px; width: 290px; z-index: 1; transform: rotate(0deg);">
+                style="position: absolute; bottom: 30px; right: 10px; width: 290px; z-index: 1; transform: rotate(0deg); opacity: 0.5 !important;">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/uplyt.png" alt=""
                 style="width: 100%; position: absolute; left: 0; top: 0; z-index: 2;">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/bottomlyt.png"
@@ -126,7 +126,8 @@
                             {{-- QR CODE AND NAME WITH SIGNATURE OF MANAGER --}}
                             <td width="30%" align="center" style="z-index: 10; position: relative;">
                                 <div style="margin-top: 40px;">
-                                    <img src="data:image/png;base64, {{ $qrcode }} ">
+                                    <img src="data:image/png;base64, {{ $qrcode }} "
+                                        style="z-index: 100 !important; position: relative;">
                                     <div style="margin-bottom: 10px;"></div>
                                     <div style="font-style: italic; z-index: 99; postion: relative;">Travel Tax
                                         Department</div>
