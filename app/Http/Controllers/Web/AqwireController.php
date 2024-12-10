@@ -458,17 +458,18 @@ class AqwireController extends Controller
 
         $data = $travel_tax_payment->load('passengers', 'transaction')->toArray();
 
-        $travel_tax_qrcode_value = [
-            'transaction_number' => $travel_tax_payment->transaction_number,
-            'passengers' => $travel_tax_payment->passengers->map(function ($passenger) {
-                return [
-                    'name' => trim($passenger->firstname . ' ' . $passenger->lastname . ($passenger->suffix ? ' ' . $passenger->suffix : '')),
-                    'ticket_number' => $passenger->ticket_number,
-                ];
-            })->toArray()  // Convert to an array after mapping
-        ];
+        $travel_tax_qrcode_value = "AR No.: {$travel_tax_payment->ar_number}\n";
+        $travel_tax_qrcode_value .= "Transaction No.: {$travel_tax_payment->transaction_number}\n";
+        $travel_tax_qrcode_value .= "Reference No.: {$travel_tax_payment->reference_number}\n\n";
 
-        $qrcode = base64_encode(QrCode::format('svg')->size(180)->errorCorrection('L')->generate(json_encode($travel_tax_qrcode_value)));
+        foreach ($travel_tax_payment->passengers as $passenger)
+        {
+            $name = trim($passenger->firstname . ' ' . $passenger->middlename . ' ' . $passenger->lastname . ($passenger->suffix ? ' ' . $passenger->suffix : ''));
+            $travel_tax_qrcode_value .= "Name of Applicant: {$name}\n";
+            $travel_tax_qrcode_value .= "Ticket Number: {$passenger->ticket_number}\n\n";
+        }
+
+        $qrcode = base64_encode(QrCode::format('svg')->size(180)->errorCorrection('L')->generate($travel_tax_qrcode_value));
 
         $pdf = PDF::loadView('pdf.travel-tax', ['data' => $data, 'qrcode' => $qrcode]);
 
