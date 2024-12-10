@@ -468,7 +468,7 @@ class AqwireController extends Controller
             })->toArray()  // Convert to an array after mapping
         ];
 
-        $qrcode = base64_encode(QrCode::format('svg')->size(300)->errorCorrection('H')->generate(json_encode($travel_tax_qrcode_value)));
+        $qrcode = base64_encode(QrCode::format('svg')->size(200)->errorCorrection('H')->generate(json_encode($travel_tax_qrcode_value)));
 
         $pdf = PDF::loadView('pdf.travel-tax', ['data' => $data, 'qrcode' => $qrcode]);
 
