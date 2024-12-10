@@ -28,7 +28,7 @@
 
 <body>
     <div style="padding: 0px;">
-        <div style="border: 1px solid dodgerblue; width: 100%; height: 750px; position: relative;">
+        <div style="border: 1px solid dodgerblue; width: 100%; max-height: 900px; position: relative;">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/newteccert-01-01-r02.png"
                 style="position: absolute; width: 100%; height: 100%; left: 0; top: 0; opacity: 0.6;" alt="">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/map1.png" alt=""

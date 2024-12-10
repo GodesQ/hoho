@@ -55,7 +55,7 @@ class TravelTaxService
 
             if (! $primary_passenger)
             {
-                throw new ErrorException("The primary passenger is not found.", 400);
+                throw new ErrorException("The primary passenger is not found.", 404);
             }
 
             // Create request model for payment request
