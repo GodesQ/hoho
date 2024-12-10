@@ -114,8 +114,12 @@ class AqwireController extends Controller
 
             return redirect('aqwire/payment/view_success');
 
-        } catch (Exception $e)
+        } catch (Exception $exception)
         {
+            if (config('app.debug'))
+            {
+                dd($exception);
+            }
             abort(500);
         }
     }
