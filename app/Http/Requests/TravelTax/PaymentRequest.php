@@ -37,7 +37,7 @@ class PaymentRequest extends FormRequest
             'passengers.*.passport_number' => 'required|string|max:50',
             'passengers.*.ticket_number' => 'required|string|max:50',
             'passengers.*.class' => 'required|string|max:50',
-            'passengers.*.mobile_number' => 'required|string|min:12|max:20',
+            'passengers.*.mobile_number' => 'required|string|min:10|max:20',
             'passengers.*.email_address' => 'required|email|max:50',
             'passengers.*.destination' => 'required|string|max:50',
             'passengers.*.departure_date' => 'required|max:50',

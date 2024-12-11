@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <title>Travel Tax PDF</title>
 
     <style>
@@ -27,12 +26,19 @@
 </head>
 
 <body>
+    <?php
+    $passengerCount = count($data['passengers']);
+    $minHeight = 750; // Minimum height in px
+    $maxHeight = 900; // Maximum height in px
+    $height = max($minHeight, min($maxHeight, 750 + ($passengerCount - 1) * 20)); // Adjust height dynamically
+    ?>
+
     <div style="padding: 0px;">
-        <div style="border: 1px solid dodgerblue; width: 100%; height: 750px; position: relative;">
+        <div style="border: 1px solid dodgerblue; width: 100%; height: <?= $height ?>px; position: relative;">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/newteccert-01-01-r02.png"
                 style="position: absolute; width: 100%; height: 100%; left: 0; top: 0; opacity: 0.6;" alt="">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/map1.png" alt=""
-                style="position: absolute; bottom: 30px; right: 10px; width: 290px; z-index: 1; transform: rotate(0deg);">
+                style="position: absolute; bottom: 30px; right: 10px; width: 290px; z-index: 1; transform: rotate(0deg); opacity: 0.5 !important;">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/uplyt.png" alt=""
                 style="width: 100%; position: absolute; left: 0; top: 0; z-index: 2;">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/bottomlyt.png"
@@ -126,11 +132,9 @@
                             {{-- QR CODE AND NAME WITH SIGNATURE OF MANAGER --}}
                             <td width="30%" align="center" style="z-index: 10; position: relative;">
                                 <div style="margin-top: 40px;">
-                                    <img src="data:image/png;base64, {{ $qrcode }} ">
-                                    <div style="margin-bottom: 30px;"></div>
-                                    <div style="font-weight: bold; z-index: 99; postion: relative;">ATTY. BUMBO S. CRUZ
-                                    </div>
-                                    <div style="font-style: italic;">Manager</div>
+                                    <img src="data:image/png;base64, {{ $qrcode }} "
+                                        style="z-index: 100 !important; position: relative;">
+                                    <div style="margin-bottom: 10px;"></div>
                                     <div style="font-style: italic; z-index: 99; postion: relative;">Travel Tax
                                         Department</div>
                                 </div>
@@ -141,8 +145,7 @@
                 <div style="position: relative; z-index: 10;">
                     <p style="font-size: 14px;">For question or concerns, you may email as at <a
                             href="traveltax.helpdesk@tieza.gov.ph">traveltax.helpdesk@tieza.gov.ph</a></p>
-                    <p style="font-size: 14px;">Please print two (2) copies of this AR and present them at the airline
-                        check-in counter before
+                    <p style="font-size: 14px;">Please present soft/hard copy at the airline check-in counter before
                         boarding.</p>
                     <p>Sincerely, </p>
                     <p>TIEZA</p>
