@@ -29,7 +29,7 @@ class PaymentRequest extends FormRequest
             'processing_fee' => 'required|numeric',
             'discount' => 'required|numeric',
             'total_amount' => 'required|numeric',
-            'passengers' => 'array',
+            'passengers' => 'required|array',
             'passengers.*.firstname' => 'required|string|max:50',
             'passengers.*.lastname' => 'required|string|max:50',
             'passengers.*.middlename' => 'nullable|string|max:50',

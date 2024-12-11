@@ -13,6 +13,17 @@ use App\Models\Tour;
 
 class TourController extends Controller
 {
+
+    public function index()
+    {
+        $tours = Tour::where('status', 1)->get();
+
+        return response()->json([
+            'status' => true,
+            'tours' => TourResource::collection($tours)
+        ]);
+    }
+
     public function getGuidedTours(Request $request)
     {
         $userInterests = Auth::user()->interest_ids && Auth::user()->interest_ids != 'null' ? json_decode(Auth::user()->interest_ids) : [];

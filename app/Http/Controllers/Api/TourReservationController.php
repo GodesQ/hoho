@@ -46,8 +46,7 @@ class TourReservationController extends Controller
             ->first();
 
         // dd($tour_reservation);
-        if ($tour_reservation)
-        {
+        if ($tour_reservation) {
             return response([
                 'status' => TRUE,
                 'message' => 'You have a tour reservation today',
@@ -57,7 +56,7 @@ class TourReservationController extends Controller
 
         return response([
             'status' => FALSE,
-            'message' => "You don't have a reservation for today"
+            'message' => "You do not have a reservation for today."
         ]);
     }
 
@@ -69,17 +68,14 @@ class TourReservationController extends Controller
         $disabledDates = [];
 
 
-        foreach ($tourReservations as $reservation)
-        {
-            if ($reservation->start_date && $reservation->end_date)
-            {
+        foreach ($tourReservations as $reservation) {
+            if ($reservation->start_date && $reservation->end_date) {
                 $startDate = $reservation->start_date;
                 $endDate = $reservation->end_date;
 
                 $datesInRange = \Carbon\CarbonPeriod::create($startDate, $endDate);
 
-                foreach ($datesInRange as $date)
-                {
+                foreach ($datesInRange as $date) {
                     $disabledDates[] = $date ? $date->format('Y-m-d') : null;
                 }
             }
@@ -101,15 +97,13 @@ class TourReservationController extends Controller
 
     public function storeTourReservation(BookRegisteredSingleReservationsRequest $request)
     {
-        try
-        {
+        try {
             $result = $this->bookingService->handleRegisteredSingleReservation($request);
 
             if (! isset($result['status']))
                 throw new Exception("An error occurred while processing the request. The result status could not be found.", 400);
 
-            if ($result['status'] === "success")
-            {
+            if ($result['status'] === "success") {
                 return response()->json([
                     "status" => $result['status'],
                     "message" => "Tour Reservation has been proccessed. Please wait for approval.",
@@ -117,8 +111,7 @@ class TourReservationController extends Controller
                 ]);
             }
 
-            if ($result['status'] === "paying")
-            {
+            if ($result['status'] === "paying") {
                 return response()->json([
                     "status" => $result['status'],
                     "message" => "Tour Reservation has been proccessed.",
@@ -127,8 +120,7 @@ class TourReservationController extends Controller
                 ]);
             }
 
-        } catch (Exception $exception)
-        {
+        } catch (Exception $exception) {
             $message = in_array($exception->getCode(), [400, 401, 403, 404, 405, 422]) ? $exception->getMessage() : null;
             $exceptionHandler = new ExceptionHandlerService;
             return $exceptionHandler->handler($exception, $message, $request);
@@ -137,15 +129,13 @@ class TourReservationController extends Controller
 
     public function storeMultipleTourReservation(BookRegisteredMultipleReservationsRequest $request)
     {
-        try
-        {
+        try {
             $result = $this->bookingService->handleRegisteredMultipleReservations($request);
 
             if (! isset($result['status']))
                 throw new Exception("An error occurred while processing the request. The result status could not be found.", 400);
 
-            if ($result['status'] === "success")
-            {
+            if ($result['status'] === "success") {
                 return response()->json([
                     "status" => $result['status'],
                     "message" => "Tour Reservation has been proccessed. Please wait for approval.",
@@ -153,8 +143,7 @@ class TourReservationController extends Controller
                 ]);
             }
 
-            if ($result['status'] === "paying")
-            {
+            if ($result['status'] === "paying") {
                 return response()->json([
                     "status" => $result['status'],
                     "message" => "Tour Reservation has been proccessed.",
@@ -163,8 +152,7 @@ class TourReservationController extends Controller
                 ]);
             }
 
-        } catch (Exception $exception)
-        {
+        } catch (Exception $exception) {
             $message = in_array($exception->getCode(), [400, 401, 403, 404, 405, 422]) ? $exception->getMessage() : null;
             $exceptionHandler = new ExceptionHandlerService;
             return $exceptionHandler->handler($exception, $message, $request);
@@ -188,8 +176,7 @@ class TourReservationController extends Controller
     {
         $reservation_code = ReservationUserCode::where('id', $request->id)->first();
 
-        if (! $reservation_code)
-        {
+        if (! $reservation_code) {
             return response([
                 'status' => FALSE,
                 'message' => 'Reservation Not Found',
@@ -218,8 +205,7 @@ class TourReservationController extends Controller
             ])
             ->get();
 
-        foreach ($reservations as $reservation)
-        {
+        foreach ($reservations as $reservation) {
             $reservation->setAppends([]); // Exclude the "attractions" attribute for this instance
             $reservation->tour?->setAppends([]);
         }
@@ -310,29 +296,18 @@ class TourReservationController extends Controller
         $today = date('Y-m-d');
         $user = Auth::user();
 
-        if ($user->role != Role::BUS_OPERATOR)
-        {
+        if ($user->role != Role::BUS_OPERATOR) {
             return response([
                 'status' => FALSE,
                 'message' => 'The current authenticated user is not a bus operator.'
-            ], 400);
+            ], 401);
         }
-
-        // $tour_reservation = TourReservation::where('id', $request->reservation_id)->with('tour.transport')->first();
-        // if (!$tour_reservation) {
-        //     return response([
-        //         'status' => FALSE,
-        //         'message' => 'Failed! No Tour Reservation Found',
-        //         'tour_reservation' => $tour_reservation
-        //     ], 404);
-        // }
 
         $qrcode = ReservationUserCode::where('code', $request->code)->first();
 
         // $qrcode = $tour_reservation->reservation_codes()->where('code', $request->code)->first();
 
-        if (! $qrcode)
-        {
+        if (! $qrcode) {
             return response([
                 'status' => FALSE,
                 'message' => 'Failed! Invalid QR Code',
@@ -341,12 +316,10 @@ class TourReservationController extends Controller
 
         // return response($this->getDatesInRange($tour_reservation->start_date, $tour_reservation->end_date));
 
-        if ($qrcode->start_datetime)
-        {
+        if ($qrcode->start_datetime) {
             $startDatetime = \DateTime::createFromFormat('Y-m-d H:i:s', $qrcode->start_datetime);
 
-            if ($startDatetime && $startDatetime->format('Y-m-d') != $today)
-            {
+            if ($startDatetime && $startDatetime->format('Y-m-d') != $today) {
                 return response([
                     'status' => FALSE,
                     'message' => 'Failed! You already use this QR Code in other date.',
@@ -354,14 +327,12 @@ class TourReservationController extends Controller
             }
         }
 
-        if ($qrcode->status == 'hop_on')
-        {
+        if ($qrcode->status == 'hop_on') {
             $status = 'hop_off';
             $user->transport()->update([
                 'available_seats' => $user->transport->available_seats + 1,
             ]);
-        } else
-        {
+        } else {
             $status = 'hop_on';
             $user->transport()->update([
                 'available_seats' => $user->transport->available_seats - 1,
@@ -399,8 +370,7 @@ class TourReservationController extends Controller
 
         $dates = array();
 
-        while ($start_date <= $end_date)
-        {
+        while ($start_date <= $end_date) {
             $dates[] = $start_date->format('Y-m-d');
             $start_date->add(new \DateInterval('P1D'));
         }

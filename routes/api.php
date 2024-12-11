@@ -73,9 +73,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('user/update_interest', [UserController::class, 'updateInterest']);
     Route::delete('user/delete', [UserController::class, 'destroyAccount']);
 
-    Route::get('user/reservations', [TourReservationController::class, 'getUserReservations']);
-    Route::get('user/future_reservations_dates', [TourReservationController::class, 'getAllUserFutureDateReservations']);
+    Route::get('users/{user_id}/future-reservations', [TourReservationController::class, 'getAllUserFutureDateReservations']); // New Version
+    Route::get('user/future_reservations_dates', [TourReservationController::class, 'getAllUserFutureDateReservations']); // Older Version
 
+    Route::get('users/{user_id}/reservations', [TourReservationController::class, 'getUserReservations']); // New Version
+    Route::get('user/reservations', [TourReservationController::class, 'getUserReservations']); // Older Version
 
     Route::get('reservation/ticket-passes', [TourReservationController::class, 'getDIYTicketPassReservations']); // New Version
     Route::get('ticket_pass', [TourReservationController::class, 'getDIYTicketPassReservations']); // Older Version
@@ -90,12 +92,17 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('reservation/store', [TourReservationController::class, 'storeMultipleTourReservation']);
 
     Route::get('organizations', [OrganizationController::class, 'getOrganizations']);
+    Route::get('organizations/{id}', [OrganizationController::class, 'getOrganization']);
     Route::get('organization/{id}', [OrganizationController::class, 'getOrganization']);
 
+    Route::get('attractions/{id}', [AttractionController::class, 'getAttraction']);
     Route::get('attraction/{id}', [AttractionController::class, 'getAttraction']);
+
+    Route::get('merchants/{id}', [MerchantController::class, 'getMerchant']);
     Route::get('merchant/{id}', [MerchantController::class, 'getMerchant']);
 
     Route::group(['prefix' => 'tours'], function () {
+        Route::get('/', [TourController::class, 'index']);
         Route::get('guided', [TourController::class, 'getGuidedTours']);
         Route::get('diy', [TourController::class, 'getDIYTours']);
         Route::get('transit', [TourController::class, 'getTransitTours']);
@@ -129,11 +136,17 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('reservation-codes/verify', [TourReservationController::class, 'scanReservationCode']); // New Version
     Route::get('reservation_codes/verify/{reservation_id}/{code}', [TourReservationController::class, 'verifyReservationCode']); // Older Version
 
+    Route::post('referral-codes/verify', [ReferralController::class, 'verifyReferralCode']);
     Route::get('verify_referral_code/{referral_code}', [ReferralController::class, 'verifyReferralCode']);
 
-    Route::get('tour_badges', [TourBadgeController::class, 'getAllTourBadges']);
-    Route::get('tour_badges/user_badges', [TourBadgeController::class, 'getUserTourBadges']);
-    Route::post('tour_badge/check', [TourBadgeController::class, 'checkBadge']);
+    Route::get('tour-badges', [TourBadgeController::class, 'getAllTourBadges']); // New Version
+    Route::get('tour_badges', [TourBadgeController::class, 'getAllTourBadges']); // Old Version
+
+    Route::get('tour-badges/user-badges', [TourBadgeController::class, 'getUserTourBadges']); // New Version
+    Route::get('tour_badges/user_badges', [TourBadgeController::class, 'getUserTourBadges']); // Old Version
+
+    Route::post('tour-badges/verify', [TourBadgeController::class, 'checkBadge']); // New Version
+    Route::post('tour_badge/check', [TourBadgeController::class, 'checkBadge']); // Old Version
 
     Route::get('rooms/merchants/{merchant_id}', [RoomController::class, 'getMerchantRooms']);
 
