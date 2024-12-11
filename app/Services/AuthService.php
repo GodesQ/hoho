@@ -28,10 +28,10 @@ class AuthService
 
             $user = $this->authenticateUser($request, $fieldType);
 
-            if (!$user)
+            if (! $user)
                 throw new Exception('Invalid Credentials.');
 
-            if (!Hash::check($request->password, $user->password)) {
+            if (! Hash::check($request->password, $user->password)) {
                 $isOldUser = $user && $user->is_old_user;
 
                 if ($isOldUser)
@@ -119,8 +119,9 @@ class AuthService
     {
         $user = User::where($fieldType, $username)->first();
 
-        if (!$user) {
+        if (! $user) {
             $user = Admin::where($fieldType, $username)->first();
+            $user?->transport?->assigned_tour?->setAppends([]);
         }
 
         return $user;
@@ -142,7 +143,7 @@ class AuthService
 
     private function validateUserVerifiedEmail($user)
     {
-        if ($user instanceof User && !$user->is_verify) {
+        if ($user instanceof User && ! $user->is_verify) {
             throw new ErrorException("Please verify your email before signing in. Don't forget to check your spam or junk folder.");
         }
     }
