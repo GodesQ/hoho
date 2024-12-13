@@ -95,6 +95,9 @@ class TravelTaxService
 
             if ($statusCode == 400 || $statusCode == 403 || $statusCode == 422) {
                 $content = json_decode($response->getBody()->getContents());
+                if (config('app.debug')) {
+                    dd($content);
+                }
                 TravelTaxAPILog::create(['travel_tax_id' => $traveltax->id, 'status_code' => $statusCode, 'response' => json_encode($response->getBody()), 'date_of_submission' => Carbon::now()]);
                 return;
             }
@@ -156,7 +159,7 @@ class TravelTaxService
             'departure_date' => $primary_passenger->departure_date,
             'no_of_pax' => $traveltax->passengers->count(),
             'user_token' => config('services.travel_tax_hoho_token'),
-            'is_multiple' => $traveltax->passengers->count() > 1,
+            'is_multiple' => $traveltax->passengers->count() > 1 ? true : false,
             'date' => Carbon::now(),
             'pax_info' => $traveltax->passengers->map(function ($passenger) {
                 return [
