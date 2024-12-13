@@ -96,10 +96,12 @@ class TravelTaxService
             if ($statusCode == 400 || $statusCode == 403 || $statusCode == 422) {
                 $content = json_decode($response->getBody()->getContents());
                 if (config('app.debug')) {
-                    dd($content, $statusCode, $response, config('services.travel_tax_hoho_token'), $requestModel, $response->getBody());
+                    // dd($content, $statusCode, $response, config('services.travel_tax_hoho_token'), $requestModel, $response->getBody());
                 }
-                TravelTaxAPILog::create(['travel_tax_id' => $traveltax->id, 'status_code' => $statusCode, 'response' => json_encode($response->getBody()), 'date_of_submission' => Carbon::now()]);
-                return;
+
+                $data = $content ? json_encode($content) : null;
+                TravelTaxAPILog::create(['travel_tax_id' => $traveltax->id, 'status_code' => $statusCode, 'response' => json_encode($data), 'date_of_submission' => Carbon::now()]);
+                return false;
             }
 
             $responseData = json_decode($response->getBody(), true);
