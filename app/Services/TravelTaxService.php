@@ -100,7 +100,7 @@ class TravelTaxService
                 }
 
                 $data = $content ? json_encode($content) : null;
-                TravelTaxAPILog::create(['travel_tax_id' => $traveltax->id, 'status_code' => $statusCode, 'response' => json_encode($data), 'date_of_submission' => Carbon::now()]);
+                TravelTaxAPILog::create(['travel_tax_id' => $traveltax->id, 'status_code' => $statusCode, 'response' => $data, 'date_of_submission' => Carbon::now()]);
                 return false;
             }
 
