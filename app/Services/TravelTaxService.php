@@ -27,8 +27,7 @@ class TravelTaxService
 
     public function createTravelTax($request)
     {
-        try
-        {
+        try {
             DB::beginTransaction();
 
             $referenceNumber = generateTravelTaxReferenceNumber();
@@ -42,19 +41,16 @@ class TravelTaxService
             // Declare primary passenger for customer of aqwire payment service
             $primary_passenger = null;
 
-            foreach ($request->passengers as $key => $passenger)
-            {
+            foreach ($request->passengers as $key => $passenger) {
                 $passenger_data = array_merge(['payment_id' => $travel_tax_payment->id], $passenger);
                 $passenger = TravelTaxPassenger::create($passenger_data);
 
-                if ($passenger['passenger_type'] === 'primary' && ! $primary_passenger)
-                {
+                if ($passenger['passenger_type'] === 'primary' && ! $primary_passenger) {
                     $primary_passenger = $passenger;
                 }
             }
 
-            if (! $primary_passenger)
-            {
+            if (! $primary_passenger) {
                 throw new ErrorException("The primary passenger is not found.", 404);
             }
 
@@ -79,8 +75,7 @@ class TravelTaxService
                 'url' => $responseData['paymentUrl'],
             ];
 
-        } catch (ErrorException $e)
-        {
+        } catch (ErrorException $e) {
             DB::rollBack();
             throw $e;
         }
@@ -88,8 +83,7 @@ class TravelTaxService
 
     public function sendTravelTaxAPI($traveltax, $transaction, $primary_passenger)
     {
-        try
-        {
+        try {
             $requestModel = $this->travelTaxAPIRequestModel($traveltax, $transaction, $primary_passenger);
 
             $response = Http::withHeaders([
@@ -99,8 +93,7 @@ class TravelTaxService
 
             $statusCode = $response->getStatusCode();
 
-            if ($statusCode == 400)
-            {
+            if ($statusCode == 400 || $statusCode == 403 || $statusCode == 422) {
                 $content = json_decode($response->getBody()->getContents());
                 TravelTaxAPILog::create(['travel_tax_id' => $traveltax->id, 'status_code' => $statusCode, 'response' => json_encode($content), 'date_of_submission' => Carbon::now()]);
                 return;
@@ -115,8 +108,7 @@ class TravelTaxService
 
             return $responseData;
 
-        } catch (Exception $exception)
-        {
+        } catch (Exception $exception) {
             DB::rollBack();
             throw $exception;
         }
@@ -152,7 +144,7 @@ class TravelTaxService
             'ar_no' => $traveltax->ar_number,
             'last_name' => $primary_passenger->lastname,
             'first_name' => $primary_passenger->firstname,
-            'middle_name' => $primary_passenger->middlename,
+            'middle_name' => $primary_passenger->middlename ?? 'N/A',
             'ext_name' => $primary_passenger->suffix ?? 'N/A',
             'passport_no' => $primary_passenger->passport_number,
             'ticket_no' => $primary_passenger->ticket_number,
