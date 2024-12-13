@@ -333,53 +333,22 @@ class AqwireController extends Controller
             ])->get("{$url}/{$txnId}");
 
             if ($response->successful()) {
-                DB::transaction(function () use ($transaction, $response) {
-                    $jsonData = $response->json();
-
-                    $payment_provider_fee = $jsonData['data']['bill']['fee']['amount'] ?? 0;
-
-                    // Update the payment status, converting it to lowercase
-                    $transaction->payment_status = isset($jsonData['status']) ? Str::lower($jsonData['status']) : 'inc';
-
-                    // Update payment provider fee with a default of 0 if it doesn't exist
-                    $transaction->payment_provider_fee = $payment_provider_fee;
-
-                    // Set payment method code, falling back to the existing code if not provided
-                    $transaction->aqwire_paymentMethodCode = $jsonData['data']['paymentMethod'] ?? $transaction->aqwire_paymentMethodCode;
-
-                    // Set the total amount, falling back to the existing total amount if not provided
-                    $transaction->aqwire_totalAmount = $jsonData['data']['bill']['total']['amount'] ?? $transaction->aqwire_totalAmount;
-
-                    // Set the reference ID, falling back to the existing reference ID if not provided
-                    $transaction->aqwire_referenceId = $jsonData['data']['referenceId'] ?? $transaction->aqwire_referenceId;
-
-                    // Parse and set the payment date if it exists
-                    $transaction->payment_date = isset($jsonData['data']['paidAt']) ? Carbon::parse($jsonData['data']['paidAt'])->format('Y-m-d') : null;
-
-                    // Encode all data as JSON for the payment details
-                    $transaction->payment_details = json_encode($jsonData);
-
-                    // Compute the total amount with payment provider fee
-                    $transaction->total_amount += $payment_provider_fee;
-
-                    // Save the transaction
-                    $transaction->save();
-                });
+                $this->updateTransaction($transaction, $response);
 
                 if ($transaction->transaction_type == TransactionTypeEnum::BOOK_TOUR) {
-                    $this->reservationsUpdated($transaction);
+                    $this->updateTourReservation($transaction);
                 }
 
                 if ($transaction->transaction_type == TransactionTypeEnum::TRAVEL_TAX) {
-                    $this->travelTaxUpdated($transaction);
+                    $this->updateTravelTax($transaction);
                 }
 
                 if ($transaction->transaction_type == TransactionTypeEnum::ORDER) {
-                    $this->orderUpdated($transaction);
+                    $this->updateOrder($transaction);
                 }
 
                 if ($transaction->transaction_type == TransactionTypeEnum::HOTEL_RESERVATION) {
-                    $this->hotelReservationUpdated($transaction);
+                    $this->updateHotelReservation($transaction);
                 }
 
             }
@@ -390,7 +359,7 @@ class AqwireController extends Controller
 
     }
 
-    public function reservationsUpdated($transaction)
+    public function updateTourReservation($transaction)
     {
         $reservations = TourReservation::where('order_transaction_id', $transaction->id)->with('tour', 'user', 'customer_details')->get();
 
@@ -419,7 +388,7 @@ class AqwireController extends Controller
         }
     }
 
-    public function travelTaxUpdated($transaction)
+    public function updateTravelTax($transaction)
     {
         $travel_tax_payment = TravelTaxPayment::where('transaction_id', $transaction->id)
             ->with('primary_passenger')->first();
@@ -455,7 +424,7 @@ class AqwireController extends Controller
 
     }
 
-    public function orderUpdated($transaction)
+    public function updateOrder($transaction)
     {
         $order = Order::where('transaction_id', $transaction->id)->first();
 
@@ -465,7 +434,7 @@ class AqwireController extends Controller
         ]);
     }
 
-    public function hotelReservationUpdated($transaction)
+    public function updateHotelReservation($transaction)
     {
         $hotel_reservation = HotelReservation::where('transaction_id', $transaction->id)
             ->with('reserved_user', 'room.merchant', 'transaction')
@@ -480,6 +449,33 @@ class AqwireController extends Controller
         ];
 
         Mail::to($hotel_reservation->reserved_user->email)->send(new HotelReservationReceipt($details));
+    }
+
+    private function updateTransaction($transaction, $response)
+    {
+        DB::transaction(function () use ($transaction, $response) {
+            $jsonData = $response->json();
+
+            $payment_provider_fee = $jsonData['data']['bill']['fee']['amount'] ?? 0;
+
+            $transaction->payment_status = isset($jsonData['status']) ? Str::lower($jsonData['status']) : 'inc';
+
+            $transaction->payment_provider_fee = $payment_provider_fee;
+
+            $transaction->aqwire_paymentMethodCode = $jsonData['data']['paymentMethod'] ?? $transaction->aqwire_paymentMethodCode;
+
+            $transaction->aqwire_totalAmount = $jsonData['data']['bill']['total']['amount'] ?? $transaction->aqwire_totalAmount;
+
+            $transaction->aqwire_referenceId = $jsonData['data']['referenceId'] ?? $transaction->aqwire_referenceId;
+
+            $transaction->payment_date = isset($jsonData['data']['paidAt']) ? Carbon::parse($jsonData['data']['paidAt'])->format('Y-m-d') : null;
+
+            $transaction->payment_details = json_encode($jsonData);
+
+            $transaction->total_amount += $payment_provider_fee;
+
+            $transaction->save();
+        });
     }
 
     public function generateAndSendReservationCode($number_of_pax, $reservation)

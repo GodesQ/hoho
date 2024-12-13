@@ -58,7 +58,6 @@ Route::post('user/change_password', [UserController::class, 'changePassword']);
 Route::get('featured_merchants', [MerchantController::class, 'getFeaturedMerchants']);
 
 Route::get('app-settings/maintenance-mode', [AppSettingController::class, 'checkMaintenanceMode']);
-Route::get('promocodes/verify/{code}', action: [PromoCodeController::class, 'checkValidPromoCode']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [AuthController::class, 'logout']);
@@ -70,7 +69,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('user', [UserController::class, 'getUser']);
     Route::post('user/profile', [UserController::class, 'updateProfile']);
+
+    Route::post('user/{user_id}/interests', [UserController::class, 'updateInterest']);
     Route::post('user/update_interest', [UserController::class, 'updateInterest']);
+
     Route::delete('user/delete', [UserController::class, 'destroyAccount']);
 
     Route::get('users/{user_id}/future-reservations', [TourReservationController::class, 'getAllUserFutureDateReservations']); // New Version
@@ -128,6 +130,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('cart/store', [CartController::class, 'storeCart']);
     Route::delete('cart/destroy/{id}', [CartController::class, 'removeCart']);
     Route::delete('cart/destroy_all/user', [CartController::class, 'removeAllUserCart']);
+
+    Route::post('promocodes/verify', action: [PromoCodeController::class, 'checkValidPromoCode']); // New Version
+    Route::get('promocodes/verify/{code}', action: [PromoCodeController::class, 'checkValidPromoCode']); // Old Version
 
     Route::get('ticket_passes', [TicketPassController::class, 'getTicketPasses']);
 
