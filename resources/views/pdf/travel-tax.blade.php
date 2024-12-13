@@ -45,6 +45,18 @@
                 alt="" style="width: 100%; position:absolute; bottom: 0px; left: 0px; z-index: 3;">
             <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/love.png"
                 style="width: 120px; position:absolute; bottom: 60px; left: 40px;" alt="">
+            <!-- Centered Logo -->
+            <img src="https://dashboard.philippines-hoho.ph/public/assets/img/travel_tax_assets/tieza-logo.png"
+                alt="TIEZA Logo"
+                style="
+                position: absolute; 
+                opacity: 0.1; 
+                width: 300px; 
+                left: 50%; 
+                top: 50%; 
+                transform: translate(-50%, -50%);
+                z-index: 1;
+            ">
 
             <div style="position: relative; padding: 0px 40px;">
                 {{-- AR NUMBER DIV --}}
