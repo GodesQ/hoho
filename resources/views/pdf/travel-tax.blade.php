@@ -131,6 +131,14 @@
                                         </tr>
                                         <tr>
                                             <td>
+                                                <div style="margin-left: 20px;">
+                                                    Sub Amount:
+                                                    <span>P {{ number_format($data['amount'], 2) }}</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
                                                 <div style="margin-left: 20px; margin-top: 5px;">
                                                     TOTAL AMOUNT DUE: <span>P
                                                         {{ number_format($data['total_amount'], 2) }}</span>

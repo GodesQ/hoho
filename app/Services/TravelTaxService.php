@@ -30,6 +30,10 @@ class TravelTaxService
         try {
             DB::beginTransaction();
 
+            if (count($request->passengers) > 10) {
+                throw new ErrorException("Your current passenger list exceeds this limit. The maximum number of passengers allowed to qualify for paying the travel tax is 10. ");
+            }
+
             $referenceNumber = generateTravelTaxReferenceNumber();
 
             $totalAmount = $this->computeTotalAmount($request->amount, $request->processing_fee, $request->discount);
