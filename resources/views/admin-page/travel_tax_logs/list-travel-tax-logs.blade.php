@@ -67,6 +67,9 @@
                         data: 'actions',
                         name: 'actions'
                     }
+                ],
+                order: [
+                    [0, 'desc'] // Sort by the first column (index 0) in descending order
                 ]
             });
         }
