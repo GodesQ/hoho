@@ -33,7 +33,7 @@
                                 @if ((int) $travel_tax_log->status_code >= 200 && (int) $travel_tax_log->status_code < 300)
                                     <div class="badge bg-success">{{ $travel_tax_log->status_code }}</div>
                                 @else
-                                    <div class="badge bg-warning">{{ $travel_tax_log->status_code }}</div>
+                                    <div class="badge bg-danger">{{ $travel_tax_log->status_code }}</div>
                                 @endif
                             </div>
                             <div class="col-lg-12 mb-3">
