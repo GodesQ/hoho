@@ -331,6 +331,17 @@
         @endcan
     @endauth
 
+    @auth('admin')
+        @can('view_travel_taxes_list')
+            <li class="menu-item {{ preg_match('/admin\/travel-tax-logs/', Request::path()) ? 'active' : null }}">
+                <a href="{{ route('admin.travel_tax_logs.list') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="Travel Tax LOgs">Travel Tax Logs</div>
+                </a>
+            </li>
+        @endcan
+    @endauth
+
     <li class="menu-item {{ preg_match('/admin\/reports/', Request::path()) ? 'active open' : null }}">
         @auth('admin')
             @canany(['view_sales_report', 'view_travel_tax_report'])
