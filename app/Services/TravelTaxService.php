@@ -173,7 +173,7 @@ class TravelTaxService
                 return [
                     'last_name' => $passenger->lastname,
                     'first_name' => $passenger->firstname,
-                    'middle_name' => $passenger->middlename,
+                    'middle_name' => $passenger->middlename ?? 'N/A',
                     'ext_name' => $passenger->suffix ?? 'N/A',
                     'passport_no' => $passenger->passport_number,
                     'ticket_no' => $passenger->ticket_number,
@@ -221,11 +221,11 @@ class TravelTaxService
 
     private function generateReferenceNo()
     {
-        return date('Ym') . '-' . 'OTRX' . rand(100000, 10000000);
+        return date('Ym').'-'.'OTRX'.rand(100000, 10000000);
     }
 
     private function generateTransactionNumber()
     {
-        return 'TN' . date('Ym') . rand(100000, 10000000);
+        return 'TN'.date('Ym').rand(100000, 10000000);
     }
 }
