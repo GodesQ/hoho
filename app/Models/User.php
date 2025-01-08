@@ -76,17 +76,17 @@ class User extends Authenticatable
     protected function birthdate(): Attribute
     {
         return Attribute::make(
-            set: fn($value) => $value !== null ? Carbon::createFromFormat('Y-m-d', $value)->format('Y-m-d') : null
+            set: fn ($value) => $value !== null ? Carbon::createFromFormat('Y-m-d', $value)->format('Y-m-d') : null
         );
     }
 
 
-    protected function password(): Attribute
-    {
-        return Attribute::make(
-            set: fn($value) => Hash::make($value)
-        );
-    }
+    // protected function password(): Attribute
+    // {
+    //     return Attribute::make(
+    //         set: fn($value) => Hash::make($value)
+    //     );
+    // }
 
     protected $appends = ['interests'];
 
@@ -94,12 +94,12 @@ class User extends Authenticatable
     {
         $interest_ids = json_decode($this->interest_ids, true);
 
-        if (is_array($interest_ids) && !empty($interest_ids)) {
+        if (is_array($interest_ids) && ! empty($interest_ids)) {
             $data = Interest::whereIn('id', $interest_ids)
                 ->get()
                 ->toArray();
 
-            if (!empty($data)) {
+            if (! empty($data)) {
                 return $data;
             }
         }

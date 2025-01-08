@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TravelTaxLogController;
 use App\Http\Controllers\Web\AdminAccounts\MerchantAccountController;
 use App\Http\Controllers\Web\ApiConsumerController;
 use App\Http\Controllers\Web\ApiPermissionController;
@@ -66,9 +67,11 @@ use App\Http\Controllers\Web\AqwireController;
 */
 
 Route::get('/', function () {
-    if (Auth::guard('admin')->check()) {
+    if (Auth::guard('admin')->check())
+    {
         return redirect()->route('admin.dashboard');
-    } else {
+    } else
+    {
         return redirect()->route('admin.login');
     }
 });
@@ -455,9 +458,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
         Route::get('get_total_bookings_per_type', [DataReportController::class, 'getTotalBookingsPerType'])->name('get_total_bookings_per_type')->can('view_sales_report');
         Route::get('get_overall_sales', [DataReportController::class, 'getSalesData'])->name('get_overall_sales')->can('view_sales_report');
         Route::get('get_transaction_status_data', [DataReportController::class, 'getTransactionStatusData'])->name('get_transaction_status_data')->can('view_sales_report');
-
-
     });
+
+    Route::get('travel-tax-logs', [TravelTaxLogController::class, 'index'])->name('travel_tax_logs.list');
+    Route::get('travel-tax-logs/show/{id}', [TravelTaxLogController::class, 'show'])->name('travel_tax_logs.show');
 
     Route::get('system-logs', [SystemLogController::class, 'index'])->name('system_logs.list');
 });

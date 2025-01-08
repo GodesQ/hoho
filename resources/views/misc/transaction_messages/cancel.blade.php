@@ -40,7 +40,7 @@
     <link rel="apple-touch-icon" href="{{ URL::asset('assets/img/logo/hoho.jpg') }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ URL::asset('assets/img/logo/hoho.jpg') }}">
 
-    <title>Success - Payment Success</title>
+    <title>Cancelled - Payment Cancelled</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -78,7 +78,11 @@
       <div class="misc-wrapper">
         <h2 class="mb-2 mx-2">Payment Failed</h2>
         <p class="mb-4 mx-2">I'm sorry to hear that your transaction was failed.</p>
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-primary">Back to home</a>
+        <div class="d-flex justify-content-center align-items-center flex-column flex-md-row gap-3 mt-3">
+          <a href="https://book.philippines-hoho.ph/" class="btn btn-outline-primary"><i class='bx bx-desktop'></i> Visit Our B2C Platform</a>
+          <a href="https://philippines-hoho.ph/" class="btn btn-outline-primary"><i class='bx bx-globe'></i> Visit Our website</a>
+          <a href="https://www.facebook.com/philippineshoponhopoff" class="btn btn-outline-primary"><i class='bx bxl-facebook'></i> Visit Our Facebook Page</a>
+        </div>
         <div class="mt-3">
           <img
             src="{{ URL::asset('assets/img/illustrations/payment_failed.webp') }}"

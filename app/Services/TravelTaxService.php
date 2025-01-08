@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Models\Transaction;
+use App\Models\TravelTaxAPILog;
 use App\Models\TravelTaxPassenger;
 use App\Models\TravelTaxPayment;
 use Carbon\Carbon;
 use App\Enum\TransactionTypeEnum;
+use Date;
 use ErrorException;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +30,11 @@ class TravelTaxService
         try
         {
             DB::beginTransaction();
+
+            if (count($request->passengers) > 10)
+            {
+                throw new ErrorException("Your current passenger list exceeds this limit. The maximum number of passengers allowed to qualify for paying the travel tax is 10. ");
+            }
 
             $referenceNumber = generateTravelTaxReferenceNumber();
 
@@ -53,7 +60,7 @@ class TravelTaxService
 
             if (! $primary_passenger)
             {
-                throw new ErrorException("The primary passenger is not found.", 400);
+                throw new ErrorException("The primary passenger is not found.", 404);
             }
 
             // Create request model for payment request
@@ -95,7 +102,30 @@ class TravelTaxService
                 'content-type' => 'application/json',
             ])->post("https://api-backend.tieza.online/api/fulltax_applications", $requestModel);
 
-            return $response;
+            $statusCode = $response->getStatusCode();
+
+            if (in_array($statusCode, [400, 403, 422]))
+            {
+                $content = json_decode($response->getBody()->getContents());
+                $data = $content ? json_encode($content) : null;
+                TravelTaxAPILog::create([
+                    'travel_tax_id' => $traveltax->id,
+                    'status_code' => $statusCode,
+                    'response' => $data,
+                    'date_of_submission' => Carbon::now()
+                ]);
+
+                return;
+            }
+
+            $responseData = json_decode($response->getBody(), true);
+            TravelTaxAPILog::create(['travel_tax_id' => $traveltax->id, 'status_code' => $statusCode, 'response' => json_encode($responseData), 'date_of_submission' => Carbon::now()]);
+
+            $traveltax->update([
+                'is_sent_api' => true,
+            ]);
+
+            return $responseData;
 
         } catch (Exception $exception)
         {
@@ -125,28 +155,35 @@ class TravelTaxService
 
     public function travelTaxAPIRequestModel($traveltax, $transaction, $primary_passenger)
     {
+
+        $travelTaxClass = $primary_passenger->class == 'first class' ? 'First' : 'Economy';
+
         return [
-            'date_application' => $traveltax->transaction_payment,
-            'fulltax_no' => "",
+            'date_application' => $traveltax->transaction_time,
+            'fulltax_no' => $transaction->reference_no,
             'ar_no' => $traveltax->ar_number,
-            'last_name' => $traveltax->primary_passenger->lastname,
-            'first_name' => $traveltax->primary_passenger->firstname,
-            'middle_name' => $traveltax->primary_passenger->middlename,
-            'ext_name' => $traveltax->primary_passenger->suffix,
-            'passport_no' => $traveltax->primary_passenger->passport_number,
-            'ticket_no' => $traveltax->primary_passenger->ticket_number,
-            'class' => $traveltax->primary_passenger->class,
+            'last_name' => $primary_passenger->lastname,
+            'first_name' => $primary_passenger->firstname,
+            'middle_name' => $primary_passenger->middlename ?? 'N/A',
+            'ext_name' => $primary_passenger->suffix ?? 'N/A',
+            'passport_no' => $primary_passenger->passport_number,
+            'ticket_no' => $primary_passenger->ticket_number,
+            'class' => $travelTaxClass,
             'total_amount' => $traveltax->total_amount,
-            'mobile_no' => $traveltax->primary_passenger->mobile_number,
-            'email_address' => $traveltax->primary_passenger->email_address,
+            'mobile_no' => $primary_passenger->mobile_number,
+            'email_address' => $primary_passenger->email_address,
             'airlines_id' => 2,
+            'departure_date' => $primary_passenger->departure_date,
+            'no_of_pax' => $traveltax->passengers->count(),
             'user_token' => config('services.travel_tax_hoho_token'),
+            'is_multiple' => $traveltax->passengers->count() > 1 ? true : false,
+            'date' => Carbon::now()->toDateString(),
             'pax_info' => $traveltax->passengers->map(function ($passenger) {
                 return [
-                    'last_name' => $passenger->firstname,
+                    'last_name' => $passenger->lastname,
                     'first_name' => $passenger->firstname,
-                    'middle_name' => $passenger->firstname,
-                    'ext_name' => $passenger->suffix,
+                    'middle_name' => $passenger->middlename ?? 'N/A',
+                    'ext_name' => $passenger->suffix ?? 'N/A',
                     'passport_no' => $passenger->passport_number,
                     'ticket_no' => $passenger->ticket_number,
                 ];
@@ -161,7 +198,7 @@ class TravelTaxService
 
         $travel_tax_payment = TravelTaxPayment::create([
             'user_id' => $request->user_id,
-            "ar_number" => generateARNumber(),
+            "ar_number" => config('app.env') === 'development' ? Str::random(10) : generateARNumber(),
             'transaction_id' => $transaction->id,
             'transaction_number' => $transactionNumber,
             'reference_number' => $transaction->reference_no,
@@ -181,6 +218,11 @@ class TravelTaxService
         return $travel_tax_payment;
     }
 
+    private function storeAPILog($traveltax, $data, $status_code)
+    {
+        TravelTaxAPILog::create(['travel_tax_id' => $traveltax->id, 'status_code' => $status_code, 'response' => json_encode($data), 'date_of_submission' => Carbon::now()]);
+    }
+
     private function computeTotalAmount($amount, $processing_fee, $discount)
     {
         return ($amount + $processing_fee) - $discount;
@@ -188,11 +230,11 @@ class TravelTaxService
 
     private function generateReferenceNo()
     {
-        return date('Ym') . '-' . 'OTRX' . rand(100000, 10000000);
+        return date('Ym').'-'.'OTRX'.rand(100000, 10000000);
     }
 
     private function generateTransactionNumber()
     {
-        return 'TN' . date('Ym') . rand(100000, 10000000);
+        return 'TN'.date('Ym').rand(100000, 10000000);
     }
 }

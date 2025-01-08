@@ -28,10 +28,10 @@ class AuthService
 
             $user = $this->authenticateUser($request, $fieldType);
 
-            if (!$user)
+            if (! $user)
                 throw new Exception('Invalid Credentials.');
 
-            if (!Hash::check($request->password, $user->password)) {
+            if (! Hash::check($request->password, $user->password)) {
                 $isOldUser = $user && $user->is_old_user;
 
                 if ($isOldUser)
@@ -57,14 +57,13 @@ class AuthService
     public function register($request)
     {
         try {
-            $data = $request->except(['confirm_password']);
+            $data = $request->except(['confirm_password', 'password']);
             $account_uid = $this->generateRandomUuid();
-
-            $data['password'] = Hash::make($request->password);
 
             $contact_no_format = $this->checkContactNumberJSON($request->contact_no);
 
             $user = User::updateOrCreate(array_merge($data, [
+                'password' => Hash::make($request->password),
                 'account_uid' => $account_uid,
                 'country_of_residence' => $request->country_of_residence,
                 'contact_no' => preg_replace('/[^0-9]/', '', $contact_no_format['contactNumber']),
@@ -119,8 +118,9 @@ class AuthService
     {
         $user = User::where($fieldType, $username)->first();
 
-        if (!$user) {
+        if (! $user) {
             $user = Admin::where($fieldType, $username)->first();
+            $user?->transport?->assigned_tour?->setAppends([]);
         }
 
         return $user;
@@ -142,7 +142,7 @@ class AuthService
 
     private function validateUserVerifiedEmail($user)
     {
-        if ($user instanceof User && !$user->is_verify) {
+        if ($user instanceof User && ! $user->is_verify) {
             throw new ErrorException("Please verify your email before signing in. Don't forget to check your spam or junk folder.");
         }
     }

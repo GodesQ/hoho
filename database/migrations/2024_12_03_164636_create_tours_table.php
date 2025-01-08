@@ -30,7 +30,7 @@ class CreateToursTable extends Migration
             $table->longText('operating_hours')->nullable();
             $table->boolean('is_cancellable')->default(0);
             $table->boolean('is_refundable')->default(0);
-            $table->string('status', 100)->nullable();
+            $table->boolean('status')->default(1)->nullable();
             $table->mediumText('links')->nullable();
             $table->integer('bypass_days')->nullable();
             $table->string('disabled_days', 255)->nullable();
@@ -50,7 +50,7 @@ class CreateToursTable extends Migration
             $table->unsignedInteger('organization_id')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
-            
+
             $table->foreign('organization_id', 'tours_organization_id_foreign')->references('id')->on('organizations')->onDelete('set NULL')->onUpdate('cascade');
         });
     }
