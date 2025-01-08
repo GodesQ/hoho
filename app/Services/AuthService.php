@@ -57,14 +57,13 @@ class AuthService
     public function register($request)
     {
         try {
-            $data = $request->except(['confirm_password']);
+            $data = $request->except(['confirm_password', 'password']);
             $account_uid = $this->generateRandomUuid();
-
-            $data['password'] = Hash::make($request->password);
 
             $contact_no_format = $this->checkContactNumberJSON($request->contact_no);
 
             $user = User::updateOrCreate(array_merge($data, [
+                'password' => Hash::make($request->password),
                 'account_uid' => $account_uid,
                 'country_of_residence' => $request->country_of_residence,
                 'contact_no' => preg_replace('/[^0-9]/', '', $contact_no_format['contactNumber']),
