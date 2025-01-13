@@ -10,10 +10,51 @@
                 <h6 class="fw-medium text-primary"><a href="{{ route('admin.dashboard') }}"
                         class="text-muted fw-light">Dashboard /</a> Transactions</h6>
             </div>
+            <div class="btn btn-primary">Export as CSV</div>
         </section>
 
         <div class="row">
             <div class="col-xl">
+
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label for="search-field" class="form-label">Search</label>
+                                    <input type="text" class="form-control" id="search-field"
+                                        placeholder="Search anything...">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label for="transaction-type-field" class="form-label">Transaction Type</label>
+                                    <select id="transaction-type-field" class="form-select select2">
+                                        <option value="">All</option>
+                                        <option value="book_tour">Book Tour</option>
+                                        <option value="travel_tax">Travel Tax</option>
+                                        <option value="order">Order</option>
+                                        <option value="hotel_reservation">Hotel Reservation</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label for="status-field" class="form-label">Status</label>
+                                    <select id="status-field" class="form-select select2">
+                                        <option value="">All</option>
+                                        <option value="success">Success</option>
+                                        <option value="inc">Incompleted</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="cancelled">Cancelled</option>
+                                        <option value="failed">Failed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive-lg text-nowrap">
@@ -26,6 +67,7 @@
                                         <th>Transaction Type</th>
                                         <th>Status</th>
                                         <th>Payment Method</th>
+                                        <th>Transaction Date</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -43,15 +85,24 @@
         function loadTable() {
             let table = $('.data-table').DataTable({
                 processing: true,
-                pageLength: 10,
+                pageLength: 25,
                 responsive: true,
                 serverSide: true,
+                lengthChange: false,
+                ordering: false,
+                searching: false,
                 ajax: {
-                    url: "{{ route('admin.transactions.list') }}"
+                    url: "{{ route('admin.transactions.list') }}",
+                    data: function(d) {
+                        d.search = $('#search-field').val(),
+                            d.transaction_type = $('#transaction-type-field').val(),
+                            d.status = $('#status-field').val()
+                    }
                 },
                 columns: [{
                         data: 'reference_no',
-                        name: 'reference_no'
+                        name: 'reference_no',
+                        sortable: false,
                     },
                     {
                         data: 'user',
@@ -74,11 +125,33 @@
                         name: 'aqwire_paymentMethodCode'
                     },
                     {
+                        data: 'transaction_date',
+                        name: 'transaction_date'
+                    },
+                    {
                         data: 'actions',
                         name: 'actions'
                     }
                 ]
             });
+
+            $("#search-field").on('input', function(e) {
+                if (table) {
+                    table.draw();
+                }
+            })
+
+            $('#transaction-type-field').change(function(e) {
+                if (table) {
+                    table.draw();
+                }
+            })
+
+            $('#status-field').change(function(e) {
+                if (table) {
+                    table.draw();
+                }
+            })
         }
         loadTable();
     </script>

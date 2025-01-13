@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Models\Transaction;
@@ -45,10 +46,31 @@ class TransactionController extends Controller
                             return '<span class="badge bg-label-warning me-1">Inc</span>';
                         }
                     })
+                    ->editColumn('transaction_date', function ($row) {
+                        return Carbon::parse($row->transaction_date)->format('M-d-Y');
+                    })
                     ->addColumn('actions', function ($row) {
                         return '<div class="dropdown">
                                         <a href="/admin/transactions/edit/'.$row->id.'" class="btn btn-outline-primary btn-sm"><i class="bx bx-file me-1"></i></a>
                                     </div>';
+                    })
+                    ->filter(function ($query) use ($request) {
+                        $search = $request->search;
+                        $transaction_type = $request->transaction_type;
+                        $status = $request->status;
+
+                        if ($search) {
+                            $query->where('reference_no', 'LIKE', "%{$search}%");
+                        }
+
+                        if ($transaction_type) {
+                            $query->where("transaction_type", $transaction_type);
+                        }
+
+                        if ($status) {
+                            $query->where("payment_status", $status);
+                        }
+
                     })
                     ->rawColumns(['actions', 'status'])
                     ->make(true);
