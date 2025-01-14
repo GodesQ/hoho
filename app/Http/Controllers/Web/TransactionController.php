@@ -58,6 +58,22 @@ class TransactionController extends Controller
                         $search = $request->search;
                         $transaction_type = $request->transaction_type;
                         $status = $request->status;
+                        $transaction_date = $request->transaction_date;
+
+                        if ($transaction_date) {
+                            if (str_contains($transaction_date, 'to')) {
+                                $dates = explode('to', $transaction_date);
+
+                                $start_date = trim($dates[0]);
+                                $end_date = trim($dates[1]);
+
+                                $query->whereDate('transaction_date', '>=', $start_date)
+                                    ->whereDate('transaction_date', '<=', $end_date);
+
+                            } else {
+                                $query->where('transaction_date', $transaction_date);
+                            }
+                        }
 
                         if ($search) {
                             $query->where('reference_no', 'LIKE', "%{$search}%");
@@ -99,6 +115,54 @@ class TransactionController extends Controller
     {
         $transaction = Transaction::where('id', $request->id)->firstOrFail();
         return view('admin-page.transactions.print-transaction', compact('transaction'));
+    }
+
+    public function exportCSV(Request $request)
+    {
+        $filename = 'transactions.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        return response()->stream(function () {
+            $handle = fopen('php://output', 'w');
+
+            // Add CSV headers
+            fputcsv($handle, [
+                'Reference Number',
+                'User',
+                'Total Amount',
+                'Transaction Type',
+                'Status',
+                'Payment Method',
+                'Transaction Date',
+            ]);
+
+            // Fetch and process data in chunks
+            $transactions = Transaction::get()->map(function ($transaction) {
+                return [
+                    'reference_number' => $transaction->reference_no,
+                    'user' => $transaction->user->firstname.' '.$transaction->user->lastname,
+                    'total_amount' => $transaction->payment_amount,
+                    'transaction_type' => str_replace('_', ' ', $transaction->transaction_type),
+                    'status' => $transaction->payment_status,
+                    'payment_method' => $transaction->aqwire_paymentMethodCode,
+                    'transaction_date' => $transaction->transaction_date,
+                ];
+            })->toArray();
+
+            foreach ($transactions as $key => $transaction) {
+                fputcsv($handle, $transaction);
+            }
+
+            // Close CSV file handle
+            fclose($handle);
+        }, 200, $headers);
     }
 
 

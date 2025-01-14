@@ -3,6 +3,20 @@
 @section('title', 'Transactions List')
 
 @section('content')
+
+    <style>
+        .flatpickr-day.selected,
+        .flatpickr-day.endRange:focus,
+        .flatpickr-day.endRange:hover {
+            background: #ad2002 !important;
+        }
+
+        span.flatpickr-day.startRange,
+        span.flatpickr-day.endRange {
+            border: #ad2002 !important;
+        }
+    </style>
+
     <div class="container-xxl flex-grow-1 container-p-y">
         <section class="section-header d-flex justify-content-between align-items-center">
             <div class="title-section">
@@ -10,7 +24,6 @@
                 <h6 class="fw-medium text-primary"><a href="{{ route('admin.dashboard') }}"
                         class="text-muted fw-light">Dashboard /</a> Transactions</h6>
             </div>
-            <div class="btn btn-primary">Export as CSV</div>
         </section>
 
         <div class="row">
@@ -19,14 +32,26 @@
                 <div class="card mb-2">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-lg-4">
+                            <div class="col-xl-3">
                                 <div class="form-group">
                                     <label for="search-field" class="form-label">Search</label>
                                     <input type="text" class="form-control" id="search-field"
                                         placeholder="Search anything...">
                                 </div>
                             </div>
-                            <div class="col-lg-4">
+                            <div class="col-xl-3">
+                                <div class="form-group">
+                                    <label for="transaction-date-field" class="form-label">Transaction Date</label>
+                                    <div class="input-group">
+                                        <input type="date" id="transaction-date-field" class="form-control"
+                                            placeholder="Select Date...">
+                                        <button class="btn btn-primary" type="button" id="button-clear"
+                                            onclick="onClearTripDate()"><i class="bx bx-x"></i></button>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-xl-2">
                                 <div class="form-group">
                                     <label for="transaction-type-field" class="form-label">Transaction Type</label>
                                     <select id="transaction-type-field" class="form-select select2">
@@ -38,7 +63,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-4">
+                            <div class="col-xl-2">
                                 <div class="form-group">
                                     <label for="status-field" class="form-label">Status</label>
                                     <select id="status-field" class="form-select select2">
@@ -51,13 +76,23 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-xl-2">
+                                <label for="" class="form-label">Actions</label> <br>
+                                <div class="btn-group">
+                                    <button class="btn btn-primary" id="filter-btn" title="Filter"><i
+                                            class='bx bx-filter'></i></button>
+                                    <button class="btn btn-secondary" id="export-csv-btn"
+                                        data-url="{{ route('admin.transactions.export_csv') }}" title="Export CSV"><i
+                                            class='bx bx-export'></i></button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="card-body">
-                        <div class="table-responsive-lg text-nowrap">
+                        <div class="table-responsive text-nowrap">
                             <table class="table data-table">
                                 <thead>
                                     <tr>
@@ -82,8 +117,16 @@
 
 @push('scripts')
     <script>
+        $('#transaction-date-field').flatpickr({
+            enableTime: false,
+            dateFormat: "Y-m-d",
+            mode: "range",
+        })
+
+        var table;
+
         function loadTable() {
-            let table = $('.data-table').DataTable({
+            table = $('.data-table').DataTable({
                 processing: true,
                 pageLength: 25,
                 responsive: true,
@@ -96,7 +139,8 @@
                     data: function(d) {
                         d.search = $('#search-field').val(),
                             d.transaction_type = $('#transaction-type-field').val(),
-                            d.status = $('#status-field').val()
+                            d.status = $('#status-field').val(),
+                            d.transaction_date = $('#transaction-date-field').val()
                     }
                 },
                 columns: [{
@@ -135,24 +179,24 @@
                 ]
             });
 
-            $("#search-field").on('input', function(e) {
-                if (table) {
-                    table.draw();
-                }
-            })
-
-            $('#transaction-type-field').change(function(e) {
-                if (table) {
-                    table.draw();
-                }
-            })
-
-            $('#status-field').change(function(e) {
+            $('#filter-btn').click(function(e) {
                 if (table) {
                     table.draw();
                 }
             })
         }
+
+        function onClearTripDate() {
+            $('#transaction-date-field').val('');
+            if (table) {
+                table.draw();
+            }
+        }
+
+        $('#export-csv-btn').click(function(e) {
+            console.log(e);
+        })
+
         loadTable();
     </script>
 @endpush

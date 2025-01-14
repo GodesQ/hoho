@@ -67,11 +67,9 @@ use App\Http\Controllers\Web\AqwireController;
 */
 
 Route::get('/', function () {
-    if (Auth::guard('admin')->check())
-    {
+    if (Auth::guard('admin')->check()) {
         return redirect()->route('admin.dashboard');
-    } else
-    {
+    } else {
         return redirect()->route('admin.login');
     }
 });
@@ -357,6 +355,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth:admi
     Route::post('transactions/update/{id}', [TransactionController::class, 'update'])->name('transactions.update');
     Route::delete('transactions/destroy', [TransactionController::class, 'destroy'])->name('transactions.destroy');
     Route::get('transactions/print/{id}', [TransactionController::class, 'print'])->name('transactions.print');
+    Route::get('transactions/export-csv', [TransactionController::class, 'exportCSV'])->name('transactions.export_csv');
 
     Route::get('product_categories', [ProductCategoryController::class, 'list'])->name('product_categories.list')->can('view_product_categories_list');
     Route::get('product_categories/create', [ProductCategoryController::class, 'create'])->name('product_categories.create');
