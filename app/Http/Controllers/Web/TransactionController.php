@@ -15,15 +15,19 @@ class TransactionController extends Controller
 {
     public function list(Request $request)
     {
-        if ($request->ajax()) {
+        if ($request->ajax())
+        {
             $data = Transaction::latest();
-            if ($request->ajax()) {
+            if ($request->ajax())
+            {
                 return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('user', function ($row) {
-                        if ($row->user) {
+                        if ($row->user)
+                        {
                             return $row->user->firstname.' '.$row->user->lastname;
-                        } else {
+                        } else
+                        {
                             return 'Deleted User';
                         }
                     })
@@ -34,15 +38,20 @@ class TransactionController extends Controller
                         return str_replace('_', ' ', $row->transaction_type);
                     })
                     ->addColumn('status', function ($row) {
-                        if ($row->payment_status == 'success') {
+                        if ($row->payment_status == 'success')
+                        {
                             return '<span class="badge bg-label-success me-1">Success</span>';
-                        } else if ($row->payment_status == 'cancelled') {
+                        } else if ($row->payment_status == 'cancelled')
+                        {
                             return '<span class="badge bg-label-danger me-1">Cancelled</span>';
-                        } else if ($row->payment_status == 'failed') {
+                        } else if ($row->payment_status == 'failed')
+                        {
                             return '<span class="badge bg-label-danger me-1">Failed</span>';
-                        } else if ($row->payment_status == 'pending') {
+                        } else if ($row->payment_status == 'pending')
+                        {
                             return '<span class="badge bg-label-warning me-1">Pending</span>';
-                        } else if ($row->payment_status == 'inc') {
+                        } else if ($row->payment_status == 'inc')
+                        {
                             return '<span class="badge bg-label-warning me-1">Inc</span>';
                         }
                     })
@@ -60,8 +69,10 @@ class TransactionController extends Controller
                         $status = $request->status;
                         $transaction_date = $request->transaction_date;
 
-                        if ($transaction_date) {
-                            if (str_contains($transaction_date, 'to')) {
+                        if ($transaction_date)
+                        {
+                            if (str_contains($transaction_date, 'to'))
+                            {
                                 $dates = explode('to', $transaction_date);
 
                                 $start_date = trim($dates[0]);
@@ -70,20 +81,24 @@ class TransactionController extends Controller
                                 $query->whereDate('transaction_date', '>=', $start_date)
                                     ->whereDate('transaction_date', '<=', $end_date);
 
-                            } else {
+                            } else
+                            {
                                 $query->where('transaction_date', $transaction_date);
                             }
                         }
 
-                        if ($search) {
+                        if ($search)
+                        {
                             $query->where('reference_no', 'LIKE', "%{$search}%");
                         }
 
-                        if ($transaction_type) {
+                        if ($transaction_type)
+                        {
                             $query->where("transaction_type", $transaction_type);
                         }
 
-                        if ($status) {
+                        if ($status)
+                        {
                             $query->where("payment_status", $status);
                         }
 
@@ -129,7 +144,7 @@ class TransactionController extends Controller
             'Expires' => '0',
         ];
 
-        return response()->stream(function () {
+        return response()->stream(function () use ($request) {
             $handle = fopen('php://output', 'w');
 
             // Add CSV headers
@@ -144,26 +159,65 @@ class TransactionController extends Controller
             ]);
 
             // Fetch and process data in chunks
-            $transactions = Transaction::get()->map(function ($transaction) {
-                return [
-                    'reference_number' => $transaction->reference_no,
-                    'user' => $transaction->user->firstname.' '.$transaction->user->lastname,
-                    'total_amount' => $transaction->payment_amount,
-                    'transaction_type' => str_replace('_', ' ', $transaction->transaction_type),
-                    'status' => $transaction->payment_status,
-                    'payment_method' => $transaction->aqwire_paymentMethodCode,
-                    'transaction_date' => $transaction->transaction_date,
-                ];
-            })->toArray();
+            $transactions = Transaction::query();
 
-            foreach ($transactions as $key => $transaction) {
-                fputcsv($handle, $transaction);
+            $search = $request->search;
+            $transaction_type = $request->transaction_type;
+            $status = $request->status;
+            $transaction_date = $request->transaction_date;
+
+            // Filter transactions based on the request
+            if ($transaction_date)
+            {
+                if (str_contains($transaction_date, 'to'))
+                {
+                    $dates = explode('to', $transaction_date);
+                    $start_date = trim($dates[0]);
+                    $end_date = trim($dates[1]);
+                    $transactions->whereDate('transaction_date', '>=', $start_date)
+                        ->whereDate('transaction_date', '<=', $end_date);
+                } else
+                {
+                    $transactions->where('transaction_date', $transaction_date);
+                }
             }
 
-            // Close CSV file handle
+            if ($search)
+            {
+                $transactions->where('reference_no', 'LIKE', "%{$search}%");
+            }
+
+            if ($transaction_type)
+            {
+                $transactions->where("transaction_type", $transaction_type);
+            }
+
+            if ($status)
+            {
+                $transactions->where("payment_status", $status);
+            }
+
+            // Write transaction data to the CSV
+            $transactions->chunk(100, function ($rows) use ($handle) {
+                foreach ($rows as $transaction)
+                {
+                    fputcsv($handle, [
+                        $transaction->reference_no,
+                        $transaction->user->firstname.' '.$transaction->user->lastname,
+                        $transaction->payment_amount,
+                        str_replace('_', ' ', $transaction->transaction_type),
+                        $transaction->payment_status,
+                        $transaction->aqwire_paymentMethodCode,
+                        $transaction->transaction_date,
+                    ]);
+                }
+            });
+
+            // Close the file handle
             fclose($handle);
         }, 200, $headers);
     }
+
 
 
 }

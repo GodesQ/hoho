@@ -81,7 +81,7 @@
                                 <div class="btn-group">
                                     <button class="btn btn-primary" id="filter-btn" title="Filter"><i
                                             class='bx bx-filter'></i></button>
-                                    <button class="btn btn-secondary" id="export-csv-btn"
+                                    <button type="button" class="btn btn-secondary" id="export-csv-btn"
                                         data-url="{{ route('admin.transactions.export_csv') }}" title="Export CSV"><i
                                             class='bx bx-export'></i></button>
                                 </div>
@@ -194,8 +194,18 @@
         }
 
         $('#export-csv-btn').click(function(e) {
-            console.log(e);
-        })
+            let baseURL = $(this).data('url');
+            let searchValue = document.querySelector('#search-field').value;
+            let transactionDateValue = document.querySelector('#transaction-date-field').value;
+            let transactionTypeValue = document.querySelector('#transaction-type-field').value;
+            let statusValue = document.querySelector('#status-field').value;
+
+            let url =
+                `${baseURL}?search=${searchValue}&transaction_type=${transactionTypeValue}&transaction_date=${transactionDateValue}&status=${statusValue}`;
+            console.log(url); // Log the complete URL
+            window.location.replace(url); // Trigger the CSV download
+        });
+
 
         loadTable();
     </script>
