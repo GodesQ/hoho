@@ -20,6 +20,8 @@ class CreateTourReservationInsurancesTable extends Migration
             $table->integer('type_of_plan');
             $table->double('total_insurance_amount', 10, 2);
             $table->integer('number_of_pax');
+            $table->string('api_status_code')->nullable();
+            $table->json('api_response_body')->nullable();
             $table->timestamps();
         });
     }

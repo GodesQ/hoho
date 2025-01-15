@@ -7,10 +7,11 @@ use Illuminate\Support\Facades\Http;
 
 class SenangdaliService
 {
-    public function purchasing($body)
+    public function purchasing($body, $reservation)
     {
-        try {
-            $url = "https://api-commercial-dev.senang.io/api/others/hoponhopoff/purchasing";
+        try
+        {
+            $url = "https://api-commercial-dev.senang.io/api/hoponhopoff/purchasing";
 
             $response = Http::withHeaders([
                 'accept' => 'application/json',
@@ -19,14 +20,17 @@ class SenangdaliService
 
             $statusCode = $response->getStatusCode();
 
-            if ($statusCode == 400) {
-                $content = json_decode($response->getBody()->getContents());
-                throw new ErrorException($content->message . ' in Aqwire Payment Gateway.');
+            if (! $response->successful())
+            {
+                $reservation->reservation_insurance->update([
+                    'api_status_code' => $statusCode,
+                    'api_response_body' => $response->getBody()->getContents(),
+                ]);
             }
             $responseData = json_decode($response->getBody(), true);
-
             return $responseData;
-        } catch (Exception $exception) {
+        } catch (Exception $exception)
+        {
             throw $exception;
         }
     }
@@ -34,7 +38,7 @@ class SenangdaliService
     public function __map_request_model($user, $reservation)
     {
         return [
-            "name" => ($user->firstname ?? " ") . " " . ($user->lastname ?? " "),
+            "name" => ($user->firstname ?? " ")." ".($user->lastname ?? " "),
             "id_no" => rand(100000, 10000000),
             "email_id" => $user->email,
             "travel_date" => $reservation->start_date,

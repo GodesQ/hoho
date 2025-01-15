@@ -278,6 +278,7 @@ class BookingService
         } catch (Exception $exception)
         {
             DB::rollBack();
+            dd($exception);
             throw $exception;
         }
     }
@@ -307,6 +308,14 @@ class BookingService
         return $transaction;
     }
 
+    /**
+     * Summary of storeReservation
+     * @param mixed $request
+     * @param mixed $transaction
+     * @param mixed $user
+     * @param mixed $item
+     * @return TourReservation|\Illuminate\Database\Eloquent\Model
+     */
     private function storeReservation($request, $transaction, $user, $item = [])
     {
         try
@@ -355,39 +364,18 @@ class BookingService
 
             $reservation->setAppends([]);
 
-            // Add the Reservation Insurance
-            TourReservationInsurance::create([
-                'insurance_id' => rand(1000000, 100000000),
-                'reservation_id' => $reservation->id,
-                'type_of_plan' => $type_of_plan,
-                'total_insurance_amount' => $total_insurance_amount,
-                'number_of_pax' => $reservation->number_of_pass,
-            ]);
+            $this->storeTourInsurance($reservation, $type_of_plan, $total_insurance_amount);
 
             // Check if the request has a file of requirements and if it's valid
             if ($request->hasFile('requirement') && $request->file('requirement')->isValid())
             {
-                $file = $request->file('requirement');
-                $file_name = Str::random(7) . '-' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path() . '/assets/img/tour_reservations/requirements/' . $reservation->id, $file_name);
-
-                $reservation->update([
-                    'requirement_file_path' => $file_name
-                ]);
+                $this->saveAndUploadRequirement($request, $reservation);
             }
 
-            // Check if the referral code is valid and existing in the referral list
-            $referral = Referral::where('referral_code', $request->referral_code)->first();
-            if ($referral)
-            {
-                $reservation->update([
-                    'referral_merchant_id' => $referral->merchant_id,
-                    'referral_code' => $referral->referral_code,
-                ]);
-            }
+            $this->checkAndStoreReferralCode($reservation, $request->referral_code);
 
             $user_email = $user->email_address ?? $user->email;
-            $user_mobile_number = "+" . ($user->mobile_number ?? $user->countryCode . $user->contact_no);
+            $user_mobile_number = "+".($user->mobile_number ?? $user->countryCode.$user->contact_no);
 
             // Store customer details of tour reservation in database
             TourReservationCustomerDetail::create([
@@ -432,9 +420,9 @@ class BookingService
     {
         $layover_user_details = LayoverTourReservationDetail::create([
             'reservation_id' => $reservation->id,
-            'arrival_datetime' => $transit_details['arrival_datetime'],
+            'arrival_datetime' => Carbon::parse($transit_details['arrival_datetime']),
             'flight_to' => $transit_details['flight_to'],
-            'departure_datetime' => $transit_details['departure_datetime'],
+            'departure_datetime' => Carbon::parse($transit_details['departure_datetime']),
             'flight_from' => $transit_details['flight_from'],
             'passport_number' => $transit_details['passport_number'],
             'special_instruction' => $transit_details['special_instruction']
@@ -443,13 +431,38 @@ class BookingService
         return $layover_user_details;
     }
 
+    private function checkAndStoreReferralCode($reservation, $referral_code)
+    {
+        // Check if the referral code is valid and existing in the referral list
+        $referral = Referral::where('referral_code', $referral_code)->first();
+        if ($referral)
+        {
+            $reservation->update([
+                'referral_merchant_id' => $referral->merchant_id,
+                'referral_code' => $referral->referral_code,
+            ]);
+        }
+    }
+
+    private function storeTourInsurance($reservation, $type_of_plan, $total_insurance_amount)
+    {
+        // Add the Reservation Insurance
+        TourReservationInsurance::create(attributes: [
+            'insurance_id' => rand(1000000, 100000000),
+            'reservation_id' => $reservation->id,
+            'type_of_plan' => $type_of_plan,
+            'total_insurance_amount' => $total_insurance_amount,
+            'number_of_pax' => $reservation->number_of_pass,
+        ]);
+    }
+
     private function notifyTourProviderOfBooking($reservation, $transaction, $user)
     {
         $tour = Tour::where('id', $reservation->tour_id)->first();
 
         $details = [
             'tour_provider_name' => $tour->tour_provider->merchant->name ?? '',
-            'reserved_passenger' => $user->firstname . ' ' . $user->lastname,
+            'reserved_passenger' => $user->firstname.' '.$user->lastname,
             'trip_date' => $reservation->start_date,
             'tour_name' => $tour->name
         ];
@@ -482,14 +495,14 @@ class BookingService
 
             if (! $tour)
             {
-                throw new Exception("No Tour Found in Item " . ($key + 1));
+                throw new Exception("No Tour Found in Item ".($key + 1));
             }
 
             if ($tour->tour_provider)
             {
                 $details = [
                     'tour_provider_name' => $tour->tour_provider->merchant->name,
-                    'reserved_passenger' => $request->firstname . ' ' . $request->lastname,
+                    'reserved_passenger' => $request->firstname.' '.$request->lastname,
                     'trip_date' => $item['trip_date'],
                     'tour_name' => $tour->name
                 ];
@@ -501,5 +514,16 @@ class BookingService
                 }
             }
         }
+    }
+
+    private function saveAndUploadRequirement($request, $reservation)
+    {
+        $file = $request->file('requirement');
+        $file_name = Str::random(7).'-'.time().'.'.$file->getClientOriginalExtension();
+        $file->move(public_path().'/assets/img/tour_reservations/requirements/'.$reservation->id, $file_name);
+
+        $reservation->update([
+            'requirement_file_path' => $file_name
+        ]);
     }
 }

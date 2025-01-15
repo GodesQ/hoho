@@ -58,15 +58,18 @@ class CheckAqwireTransaction extends Command
             ->whereDate('created_at', $today)
             ->get();
 
-        if (config('app.env') === 'production') {
+        if (config('app.env') === 'production')
+        {
             $url = 'https://payments.aqwire.io/api/v3/transactions/check';
-            $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
-        } else {
+            $authToken = $this->getLiveHMACSignatureHash(config('services.aqwire.merchant_code').':'.config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
+        } else
+        {
             $url = 'https://payments-sandbox.aqwire.io/api/v3/transactions/check';
-            $authToken = $this->getHMACSignatureHash(config('services.aqwire.merchant_code') . ':' . config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
+            $authToken = $this->getHMACSignatureHash(config('services.aqwire.merchant_code').':'.config('services.aqwire.client_id'), config('services.aqwire.secret_key'));
         }
 
-        foreach ($transactions as $transaction) {
+        foreach ($transactions as $transaction)
+        {
             $txnId = $transaction->aqwire_transactionId;
 
             // Send HTTP request to AQWIRE API to check the transaction status
@@ -74,10 +77,11 @@ class CheckAqwireTransaction extends Command
                 'accept' => 'application/json',
                 'content-type' => 'application/json',
                 'Qw-Merchant-Id' => config('services.aqwire.merchant_code'),
-                'Authorization' => 'Bearer ' . $authToken,
+                'Authorization' => 'Bearer '.$authToken,
             ])->get("{$url}/{$txnId}");
 
-            if ($response->successful()) {
+            if ($response->successful())
+            {
                 $data = $response->json();
 
                 // Assuming the API response contains a 'status' field
@@ -88,19 +92,23 @@ class CheckAqwireTransaction extends Command
                 $transaction->payment_date = Carbon::parse($data['data']['paidAt'])->format('Y-m-d');
                 $transaction->save();
 
-                if ($transaction->transaction_type == TransactionTypeEnum::BOOK_TOUR) {
+                if ($transaction->transaction_type == TransactionTypeEnum::BOOK_TOUR)
+                {
                     $this->reservationsUpdated($transaction);
                 }
 
-                if ($transaction->transaction_type == TransactionTypeEnum::TRAVEL_TAX) {
+                if ($transaction->transaction_type == TransactionTypeEnum::TRAVEL_TAX)
+                {
                     $this->travelTaxUpdated($transaction);
                 }
 
-                if ($transaction->transaction_type == TransactionTypeEnum::ORDER) {
+                if ($transaction->transaction_type == TransactionTypeEnum::ORDER)
+                {
                     $this->orderUpdated($transaction);
                 }
 
-                if ($transaction->transaction_type == TransactionTypeEnum::HOTEL_RESERVATION) {
+                if ($transaction->transaction_type == TransactionTypeEnum::HOTEL_RESERVATION)
+                {
                     $this->hotelReservationUpdated($transaction);
                 }
 
@@ -115,7 +123,8 @@ class CheckAqwireTransaction extends Command
     {
         $reservations = TourReservation::where('order_transaction_id', $transaction->id)->with('tour', 'user', 'customer_details')->get();
 
-        foreach ($reservations as $reservation) {
+        foreach ($reservations as $reservation)
+        {
             $reservation->update([
                 'payment_method' => $transaction->aqwire_paymentMethodCode
             ]);
@@ -130,10 +139,11 @@ class CheckAqwireTransaction extends Command
 
             $this->generateAndSendReservationCode($reservation->number_of_pass, $reservation);
 
-            if ($reservation->has_insurance) {
+            if ($reservation->has_insurance)
+            {
                 $senangdaliService = new SenangdaliService();
                 $senangdali_insurance_request = $senangdaliService->__map_request_model($transaction->user, $reservation);
-                $senangdaliService->purchasing($senangdali_insurance_request);
+                $senangdaliService->purchasing($senangdali_insurance_request, $reservation);
             }
         }
     }
@@ -196,22 +206,24 @@ class CheckAqwireTransaction extends Command
 
     public function generateAndSendReservationCode($number_of_pax, $reservation)
     {
-        try {
+        try
+        {
             $reservations_codes = $this->generateReservationCode($number_of_pax, $reservation);
 
-            if ($reservation->customer_details) {
+            if ($reservation->customer_details)
+            {
                 $what = $reservation->type == 'DIY' ? (
-                    $reservation->ticket_pass . " x " . $reservation->number_of_pass . " pax " . "(Valid for 24 hours from first tap)"
+                    $reservation->ticket_pass." x ".$reservation->number_of_pass." pax "."(Valid for 24 hours from first tap)"
                 )
                     : (
-                        "1 Guided Tour " . '"' . $reservation->tour->name . '"' . ' x ' . $reservation->number_of_pass . ' pax'
+                        "1 Guided Tour ".'"'.$reservation->tour->name.'"'.' x '.$reservation->number_of_pass.' pax'
                     );
 
                 $trip_date = Carbon::parse($reservation->start_date);
                 $when = $trip_date->format('l, F j, Y');
 
                 $details = [
-                    'name' => $reservation->customer_details->firstname . ' ' . $reservation->customer_details->lastname,
+                    'name' => $reservation->customer_details->firstname.' '.$reservation->customer_details->lastname,
                     'what' => $what,
                     'when' => $when,
                     'where' => 'Robinson’s Manila',
@@ -221,10 +233,12 @@ class CheckAqwireTransaction extends Command
 
                 $pdf = null;
 
-                if ($reservation->type == 'DIY Tour' || $reservation->type == 'DIY') {
+                if ($reservation->type == 'DIY Tour' || $reservation->type == 'DIY')
+                {
                     $qrCodes = [];
-                    foreach ($reservations_codes as $code) {
-                        $value = $code . "&" . $reservation->id;
+                    foreach ($reservations_codes as $code)
+                    {
+                        $value = $code."&".$reservation->id;
                         $qrCodes[] = base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate($value));
                     }
                     $pdf = PDF::loadView('pdf.qrcodes', ['qrCodes' => $qrCodes]);
@@ -234,7 +248,8 @@ class CheckAqwireTransaction extends Command
 
                 return $reservations_codes;
             }
-        } catch (Exception $e) {
+        } catch (Exception $e)
+        {
             throw $e;
         }
     }
@@ -246,7 +261,8 @@ class CheckAqwireTransaction extends Command
         $random_letters = strtoupper(Str::random(5));
         $reservation_codes = [];
 
-        for ($i = 1; $i <= $number_of_pass; $i++) {
+        for ($i = 1; $i <= $number_of_pass; $i++)
+        {
             // Generate the pass number with leading zeros (e.g., -001)
             $pass_number = str_pad($i, 3, '0', STR_PAD_LEFT);
 
@@ -255,7 +271,8 @@ class CheckAqwireTransaction extends Command
 
             $reservation_codes_exist = ReservationUserCode::where('reservation_id', $reservation->id)->count();
 
-            if ($reservation_codes_exist < $number_of_pass) {
+            if ($reservation_codes_exist < $number_of_pass)
+            {
                 $create_code = ReservationUserCode::create([
                     'reservation_id' => $reservation->id,
                     'code' => $code
