@@ -14,6 +14,8 @@ class TourReservationInsurance extends Model
         "insurance_id",
         "type_of_plan",
         "total_insurance_amount",
-        "number_of_pax"
+        "number_of_pax",
+        "api_status_code",
+        "api_response_body",
     ];
 }
