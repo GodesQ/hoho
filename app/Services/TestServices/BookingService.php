@@ -420,9 +420,9 @@ class BookingService
     {
         $layover_user_details = LayoverTourReservationDetail::create([
             'reservation_id' => $reservation->id,
-            'arrival_datetime' => Carbon::parse($transit_details['arrival_datetime'])->format('m-d-Y H:i:s'),
+            'arrival_datetime' => Carbon::parse($transit_details['arrival_datetime']),
             'flight_to' => $transit_details['flight_to'],
-            'departure_datetime' => Carbon::parse($transit_details['departure_datetime'])->format('m-d-Y H:i:s'),
+            'departure_datetime' => Carbon::parse($transit_details['departure_datetime']),
             'flight_from' => $transit_details['flight_from'],
             'passport_number' => $transit_details['passport_number'],
             'special_instruction' => $transit_details['special_instruction']
