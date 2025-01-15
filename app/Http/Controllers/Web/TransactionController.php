@@ -203,7 +203,7 @@ class TransactionController extends Controller
                 {
                     fputcsv($handle, [
                         $transaction->reference_no,
-                        $transaction->user->firstname.' '.$transaction->user->lastname,
+                        ($transaction->user ? $transaction->user->firstname.' '.$transaction->user->lastname : "No User Found"),
                         $transaction->payment_amount,
                         str_replace('_', ' ', $transaction->transaction_type),
                         $transaction->payment_status,
