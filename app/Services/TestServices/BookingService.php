@@ -34,8 +34,7 @@ class BookingService
 
     public function handleUnregisteredMultipleReservations($request)
     {
-        try
-        {
+        try {
             DB::beginTransaction();
 
             $user = new User();
@@ -66,8 +65,7 @@ class BookingService
             $this->sendMultipleBookingNotification($items, $transaction, $request);
 
             $first_item_tour = Tour::where('id', $items[0]['tour_id'])->first();
-            if ($first_item_tour->type === TourTypeEnum::DIY_TOUR || $first_item_tour->type === "DIY Tour")
-            {
+            if ($first_item_tour->type === TourTypeEnum::DIY_TOUR || $first_item_tour->type === "DIY Tour") {
                 $request_model = $this->aqwireService->createRequestModel($transaction, $user);
                 $payment_response = $this->aqwireService->pay($request_model);
                 $this->updateTransactionAfterPayment($transaction, $payment_response);
@@ -86,8 +84,7 @@ class BookingService
             ];
 
 
-        } catch (Exception $exception)
-        {
+        } catch (Exception $exception) {
             DB::rollBack();
             throw $exception;
         }
@@ -95,14 +92,25 @@ class BookingService
 
     public function handleRegisteredMultipleReservations($request)
     {
-        try
-        {
+        try {
             DB::beginTransaction();
+
+            // Retrieve all potential conflicting reservations in one query
+            $conflictingReservations = TourReservation::where("reserved_user_id", $request->reserved_user_id)
+                ->whereIn("start_date", collect($request->items)->pluck('trip_date')->filter()->toArray())
+                ->get();
+
+            if ($conflictingReservations->isNotEmpty()) {
+                throw new Exception(
+                    "The guest already has an existing tour reservation on one or more selected dates. Please change your trip dates and try again.",
+                    400
+                );
+            }
 
             $user = User::where('id', $request->reserved_user_id)->first();
 
-            // The items will be the list of tour reservations made by the customers/tourists.
             $items = $request->items;
+
 
             $sub_amount = array_sum(array_column($items, 'amount')) ?? 0;
             $total_discount = array_reduce($items, function ($carry, $item) {
@@ -122,8 +130,7 @@ class BookingService
             $this->sendMultipleBookingNotification($items, $transaction, $request);
 
             $first_item_tour = Tour::where('id', $items[0]['tour_id'])->first();
-            if ($first_item_tour->type === TourTypeEnum::DIY_TOUR || $first_item_tour->type === "DIY Tour")
-            {
+            if ($first_item_tour->type === TourTypeEnum::DIY_TOUR || $first_item_tour->type === "DIY Tour") {
                 $request_model = $this->aqwireService->createRequestModel($transaction, $user);
                 $payment_response = $this->aqwireService->pay($request_model);
                 $this->updateTransactionAfterPayment($transaction, $payment_response);
@@ -141,8 +148,7 @@ class BookingService
                 'payment_response' => $payment_response,
             ];
 
-        } catch (Exception $exception)
-        {
+        } catch (Exception $exception) {
             DB::rollBack();
             throw $exception;
 
@@ -151,8 +157,7 @@ class BookingService
 
     public function handleUnRegisteredSingleReservation($request)
     {
-        try
-        {
+        try {
             DB::beginTransaction();
 
             $user = new User();
@@ -165,13 +170,11 @@ class BookingService
             $sub_amount = intval($request->amount) ?? 0;
             $total_discount = 0;
 
-            if ($request->promo_code != null || $request->promo_code != "")
-            {
+            if ($request->promo_code != null || $request->promo_code != "") {
                 $total_discount = intval($request->amount) - intval($request->discounted_amount);
             }
 
-            if ($request->promo_code === "COMPLIHOHO")
-            {
+            if ($request->promo_code === "COMPLIHOHO") {
                 $total_discount = $request->amount;
             }
 
@@ -187,8 +190,7 @@ class BookingService
             $payment_response = null;
 
             // Check if the tour type is DIY and the payment method is not cash.
-            if ($request->payment_method != "cash" && ($request->type == "DIY" || $request->type == "DIY Tour"))
-            {
+            if ($request->payment_method != "cash" && ($request->type == "DIY" || $request->type == "DIY Tour")) {
                 $request_payment_model = $this->aqwireService->createRequestModel($transaction, $user);
                 $payment_response = $this->aqwireService->pay($request_payment_model);
 
@@ -210,8 +212,7 @@ class BookingService
                 "payment_response" => $payment_response,
             ];
 
-        } catch (Exception $exception)
-        {
+        } catch (Exception $exception) {
             DB::rollBack();
             throw $exception;
         }
@@ -219,9 +220,15 @@ class BookingService
 
     public function handleRegisteredSingleReservation($request)
     {
-        try
-        {
+        try {
             DB::beginTransaction();
+
+            $existing_reservation = TourReservation::where("reserved_user_id", $request->reserved_user_id)
+                ->whereDate("start_date", $request->trip_date)->first();
+
+            if ($existing_reservation) {
+                throw new Exception("Already have an existing tour reservation today. Please change your trip date and select a tour again.", 400);
+            }
 
             $user = User::where('id', $request->reserved_user_id)->first();
             $sub_amount = intval($request->amount) ?? 0;
@@ -229,13 +236,11 @@ class BookingService
 
             $promocode = PromoCode::where('code', $request->promo_code)->first();
 
-            if ($request->promo_code != null || $request->promo_code != "")
-            {
+            if ($request->promo_code != null || $request->promo_code != "") {
                 $total_discount = intval($request->amount) - intval($request->discounted_amount);
             }
 
-            if ($request->promo_code === "COMPLIHOHO")
-            {
+            if ($request->promo_code === "COMPLIHOHO") {
                 $total_discount = $request->amount;
             }
 
@@ -253,8 +258,7 @@ class BookingService
             $payment_response = null;
 
             // Check if the tour type is DIY and the payment method is not cash.
-            if ($request->payment_method != "cash" && ($request->type == "DIY" || $request->type == "DIY Tour"))
-            {
+            if ($request->payment_method != "cash" && ($request->type == "DIY" || $request->type == "DIY Tour")) {
                 $request_payment_model = $this->aqwireService->createRequestModel($transaction, $user);
                 $payment_response = $this->aqwireService->pay($request_payment_model);
 
@@ -275,8 +279,7 @@ class BookingService
                 "reservation" => $reservation,
                 "payment_response" => $payment_response,
             ];
-        } catch (Exception $exception)
-        {
+        } catch (Exception $exception) {
             DB::rollBack();
             dd($exception);
             throw $exception;
@@ -318,8 +321,7 @@ class BookingService
      */
     private function storeReservation($request, $transaction, $user, $item = [])
     {
-        try
-        {
+        try {
             DB::beginTransaction();
 
             // Get the start and end date of the booking
@@ -367,8 +369,7 @@ class BookingService
             $this->storeTourInsurance($reservation, $type_of_plan, $total_insurance_amount);
 
             // Check if the request has a file of requirements and if it's valid
-            if ($request->hasFile('requirement') && $request->file('requirement')->isValid())
-            {
+            if ($request->hasFile('requirement') && $request->file('requirement')->isValid()) {
                 $this->saveAndUploadRequirement($request, $reservation);
             }
 
@@ -387,8 +388,7 @@ class BookingService
                 'address' => null,
             ]);
 
-            if ($tour_type === TourTypeEnum::TRANSIT_TOUR)
-            {
+            if ($tour_type === TourTypeEnum::TRANSIT_TOUR) {
                 $transit_details = [
                     'arrival_datetime' => $item['arrival_datetime'] ?? $request->arrival_datetime,
                     'departure_datetime' => $item['departure_datetime'] ?? $request->departure_datetime,
@@ -401,16 +401,14 @@ class BookingService
                 $this->storeTransitTourDetails($reservation, $transit_details);
             }
 
-            if (! in_array($user->email, getDevelopersEmail()))
-            {
+            if (! in_array($user->email, getDevelopersEmail())) {
                 // Notify the tour provider via email
                 $this->notifyTourProviderOfBooking($reservation, $transaction, $user);
             }
 
             DB::commit();
             return $reservation;
-        } catch (Exception $e)
-        {
+        } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
@@ -435,8 +433,7 @@ class BookingService
     {
         // Check if the referral code is valid and existing in the referral list
         $referral = Referral::where('referral_code', $referral_code)->first();
-        if ($referral)
-        {
+        if ($referral) {
             $reservation->update([
                 'referral_merchant_id' => $referral->merchant_id,
                 'referral_code' => $referral->referral_code,
@@ -467,8 +464,7 @@ class BookingService
             'tour_name' => $tour->name
         ];
 
-        if ($tour?->tour_provider?->contact_email)
-        {
+        if ($tour?->tour_provider?->contact_email) {
             $recipientEmail = config('app.env') === 'production' ? $tour->tour_provider->contact_email : config('mail.test_receiver');
             $ccRecipientEmail = config('app.env') === 'production' ? 'philippinehoho@tourism.gov.ph' : config('mail.test_receiver');
             Mail::to($recipientEmail)->cc($ccRecipientEmail)->send(new TourProviderBookingNotification($details));
@@ -489,17 +485,14 @@ class BookingService
 
     private function sendMultipleBookingNotification($items, $transaction, $request)
     {
-        foreach ($items as $key => $item)
-        {
+        foreach ($items as $key => $item) {
             $tour = Tour::where('id', $item['tour_id'])->first();
 
-            if (! $tour)
-            {
+            if (! $tour) {
                 throw new Exception("No Tour Found in Item ".($key + 1));
             }
 
-            if ($tour->tour_provider)
-            {
+            if ($tour->tour_provider) {
                 $details = [
                     'tour_provider_name' => $tour->tour_provider->merchant->name,
                     'reserved_passenger' => $request->firstname.' '.$request->lastname,
@@ -507,8 +500,7 @@ class BookingService
                     'tour_name' => $tour->name
                 ];
 
-                if ($tour?->tour_provider?->contact_email)
-                {
+                if ($tour?->tour_provider?->contact_email) {
                     $recipientEmail = config('app.env') === 'production' ? $tour->tour_provider->contact_email : config('mail.test_receiver');
                     Mail::to($recipientEmail)->send(new TourProviderBookingNotification($details));
                 }
