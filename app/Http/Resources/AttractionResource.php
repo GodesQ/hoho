@@ -18,7 +18,7 @@ class AttractionResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'attraction_provider' => $this->attraction_provider,
-            'featured_image' => $this->featured_image,
+            'featured_image' => asset('assets/img/attractions/'.$this->id.'/'.$this->featured_image),
             'organization_id' => $this->organization_id,
             'images' => $this->when($request->attraction_id, $this->images),
             'contact_no' => $this->when($request->attraction_id, $this->contact_no),
