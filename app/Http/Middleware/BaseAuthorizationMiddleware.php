@@ -25,7 +25,7 @@ class BaseAuthorizationMiddleware
             // Attempt to authenticate the user with the token
             $user = Auth::user();
 
-            if (!$user && Auth::guard('sanctum')->check()) {
+            if (! $user && Auth::guard('sanctum')->check()) {
                 $user = Auth::guard('sanctum')->user();
                 Auth::loginUsingId($user->id);
             }
@@ -34,13 +34,15 @@ class BaseAuthorizationMiddleware
                 return $next($request);
             }
         } else {
-            $apiKey = $request->header('X-API-Key');
-            $apiCode = $request->header('x-api-code');
-            $consumer = ApiConsumer::where('api_code', $apiCode)->where('api_key', $apiKey)->first();
+            // $apiKey = $request->header('X-API-Key');
+            // $apiCode = $request->header('x-api-code');
+            // $consumer = ApiConsumer::where('api_code', $apiCode)->where('api_key', $apiKey)->first();
 
-            if ($consumer) {
-                return $next($request);
-            }
+            // if ($consumer) {
+            //     return $next($request);
+            // }
+
+            return $next($request);
         }
 
         return response()->json(['message' => 'Unauthorized'], 401);
