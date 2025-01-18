@@ -13,25 +13,21 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function login(LoginRequest $request) {
+    public function login(LoginRequest $request)
+    {
         $username_type = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         $user = User::where($username_type, $request->username)->first();
 
-        if(!$user) {
-            $user = Admin::where($username_type, $request->username)->first();
-            if ($user) {
-                if($user->role === Role::BUS_OPERATOR) {
-                    $user->load('transport');
-                }
-            } else {
-                return response([
-                    'message' => 'Invalid Credentials.'
-                ], 400);
-            }
+        if (! $user)
+        {
+            return response([
+                'message' => 'Invalid Credentials.'
+            ], 400);
         }
 
-        if(!Hash::check($request->password, $user->password)) {
+        if (! Hash::check($request->password, $user->password))
+        {
             $isOldUser = $user && $user->is_old_user;
             $response = [
                 'message' => $isOldUser ? 'This is an old user. Please change password' : 'Invalid credentials.',
@@ -40,7 +36,8 @@ class AuthController extends Controller
             return response($response, 400);
         }
 
-        if ($user->role == 'guest' && !$user->is_verify) {
+        if ($user->role == 'guest' && ! $user->is_verify)
+        {
             $response = [
                 'message' => 'Please verify your email first before signing in.',
             ];
@@ -49,7 +46,7 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken("API TOKEN")->plainTextToken;
-    
+
         return response([
             'user' => $user,
             'token' => $token,
@@ -57,13 +54,15 @@ class AuthController extends Controller
 
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         $user = Auth::user();
 
-        if($user) {
+        if ($user)
+        {
             Auth::logout();
         }
 
-        return response(['message'=> 'Logout Successfully'], 200);
+        return response(['message' => 'Logout Successfully'], 200);
     }
 }
