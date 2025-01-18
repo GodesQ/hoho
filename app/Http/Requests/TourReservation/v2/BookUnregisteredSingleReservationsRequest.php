@@ -33,7 +33,7 @@ class BookUnregisteredSingleReservationsRequest extends FormRequest
             "trip_date" => ['required', 'date'],
             "type" => ["required", 'in:DIY,Guided,Seasonal,Transit'],
             "tour_id" => ["required", 'exists:tours,id'],
-            "number_of_pass" => ["required", 'integer'],
+            "number_of_pass" => ["required", 'integer', 'min:1'],
             "payment_method" => ["required", 'in:cash,aqwire'],
             "promo_code" => ["nullable", 'exists:promo_codes,code'],
             "referral_code" => ["nullable", 'exists:referrals,referral_code'],
